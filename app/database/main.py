@@ -1,0 +1,16 @@
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
+# define the application
+app = FastAPI(
+    title="SpaceNet Database Editor",
+    description="Application to edit SpaceNet database objects.",
+    version="0.0"
+)
+
+# mount constituent applications
+from .api import main as api
+app.mount('/api', api.app)
+
+# mount the static directory
+app.mount("/", StaticFiles(directory="app/database/static", html=True), name="static")
