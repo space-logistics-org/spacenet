@@ -12,6 +12,7 @@ setup(
     install_requires=[
         'fastapi',
         'uvicorn[standard]',
-        'aiofiles'
+        'aiofiles',
+        "pydantic"
     ]
 )
