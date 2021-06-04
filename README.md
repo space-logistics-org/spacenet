@@ -10,7 +10,7 @@ The `spacenet/` directory contains Python library functions to define SpaceNet o
 
 ## Dependencies, Installation, and Use
 
-This project requires Python 3.7 with `setuptools`. 
+This project requires Python 3.7 with `setuptools`.
 
 To install SpaceNet dependencies, run:
 ```shell
@@ -19,7 +19,7 @@ python setup.py install
 
 To launch the SpaceNet application, run:
 ```shell
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload-dir app --reload-dir spacenet
 ```
 The default address is http://localhost:8000
 

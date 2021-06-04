@@ -1,5 +1,10 @@
 from fastapi import FastAPI
-from starlette.responses import RedirectResponse
+
+from .routers import hello_world
+from .database import Base, SessionLocal, engine
+
+# create the database if it does not yet exist
+Base.metadata.create_all(bind=engine)
 
 # define the application
 app = FastAPI(
@@ -9,8 +14,7 @@ app = FastAPI(
 )
 
 # include any application routers
-from .routers import hello_world
 app.include_router(
     hello_world.router,
-    prefix="/hello_world"
+    prefix="/hello"
 )
