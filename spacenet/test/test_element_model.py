@@ -1,26 +1,39 @@
 """
 This module contains tests for the element model and schema. The tests are organized as
 follows:
-    Each type of element, T, has its own tester class Test{T}. These tester classes are what's
-    actually run by the unittest framework, while they're backed by supporting factory classes
-    and non-instantiated tester superclasses which handle configuration.
-    For each T, a factory class is used to generate valid and invalid keyword arguments to the
-    constructor of that type. Each tester class verifies that a) when all fields are valid,
-    no error results and all fields match as assigned, b) when a field is invalid, an error
-    is always raised, and c) if a vehicle's type discriminant disagrees with its Python type,
-    an error is always raised.
-    The factories generate their inputs to keyword arguments by random selection from a fairly
-    small dataset: over the NUM_ATTEMPTS times a test occurs, the probability that a given
-    value for any one field is not exercised is quite small (and decreasing NUM_ATTEMPTS
-    improves this). The alternative approach would be a Cartesian product over all inputs, but
-    there are too many inputs for this to be feasible.
+
+Each type of element, T, has its own tester class Test{T}. These tester classes are what's
+actually run by the unittest framework, while they're backed by supporting factory classes
+and non-instantiated tester superclasses which handle configuration.
+
+For each T, a factory class is used to generate valid and invalid keyword arguments to the
+constructor of that type. Each tester class verifies that a) when all fields are valid,
+no error results and all fields match as assigned, b) when a field is invalid, an error
+is always raised, and c) if a vehicle's type discriminant disagrees with its Python type,
+an error is always raised.
+
+The factories generate their inputs to keyword arguments by random selection from a fairly
+small dataset: over the NUM_ATTEMPTS times a test occurs, the probability that a given
+value for any one field is not exercised is quite small (and increasing NUM_ATTEMPTS
+improves this).
+
+An alternative approach would be a Cartesian product over all inputs, but
+there are too many inputs for this to be feasible, This approach also likely provides
+equivalent or better coverage than equivalence partitioning: it's very likely that no
+combination of values is repeated across the many iterations of a test, and again, it's
+unlikely that any one value is untested. This means that about 7 * NUM_SAMPLES combinations are
+tested in the testAllValid cases alone. Then, equivalence partitioning likely tests fewer
+combinations of values. If some particular problematic combination of inputs causes issues,
+adding a more manual test for that specific combination is still feasible.
+
 The BaseTester class handles most of the testing logic, while factories handle their respective
-keyword argument generation logic: changing schema attributes constitutes removing them from
+keyword argument generation logic. Changing schema attributes constitutes removing them from
 a tester class (or its superclass)'s attributes, and making the factory no longer assign the
 value in the dictionary.
 """
 import random
 import unittest
+from abc import ABC, abstractmethod
 from typing import Any
 
 from pydantic import ValidationError
@@ -57,7 +70,41 @@ def getInvalidTypes(myType: ElementKind) -> list[ElementKind]:
     return [kind for kind in ElementKind if kind != myType]
 
 
-class ValidElementArgsFactory:
+class I_ValidArgsFactory(ABC):
+    """
+    Interface defining behavior of a keyword argument factory which provides valid keyword
+    arguments.
+    """
+
+    @staticmethod
+    @abstractmethod
+    def makeKeywords() -> dict[str, Any]:
+        """
+        Make valid keyword arguments for constructing an element model.
+
+        :return: the resulting keyword argument dictionary
+        """
+        pass
+
+
+class I_InvalidArgsFactory(ABC):
+    """
+    Interface defining behavior of a keyword argument factory which provides invalid keyword
+    arguments.
+    """
+
+    @staticmethod
+    @abstractmethod
+    def makeKeywords() -> dict[str, Any]:
+        """
+        Make invalid keyword arguments for constructing an element model.
+
+        :return: the resulting keyword argument dictionary
+        """
+        pass
+
+
+class ValidElementArgsFactory(I_ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for constructing
     an element model, excepting the "type" field.
@@ -73,11 +120,6 @@ class ValidElementArgsFactory:
 
     @staticmethod
     def makeKeywords() -> dict[str, Any]:
-        """
-        Make valid keyword arguments for constructing an element model.
-
-        :return: the resulting keyword argument dictionary
-        """
         kw = {
             "name": random.choice(ValidElementArgsFactory.validNames),
             "description": random.choice(ValidElementArgsFactory.validDescs),
@@ -90,7 +132,7 @@ class ValidElementArgsFactory:
         return kw
 
 
-class InvalidElementArgsFactory:
+class InvalidElementArgsFactory(I_InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid or badly-typed
     arguments for constructing an element model, excepting the "type" field.
@@ -117,6 +159,10 @@ class InvalidElementArgsFactory:
         Make invalid or badly-typed keyword arguments for constructing an element model.
 
         :return: the resulting keyword argument dictionary
+
+        This implementation first randomly checks if an attribute should be given an invalid
+        value, and if said process assigns no invalid values, selects exactly 1 attribute to
+        have an invalid value.
         """
         invalidSelected = 0
         attrs = [
@@ -184,6 +230,7 @@ class BaseTester(unittest.TestCase):
     nonEnumAttrs = ["name", "description", "accommodationMass", "mass", "volume"]
     # the attribute names which are not enumerations
     enumAttrs = ["classOfSupply", "environment"]
+
     # the attribute names which are enumerations
 
     def assertMatches(self, kw: dict, element: Element) -> None:
@@ -281,7 +328,7 @@ class TestElement(BaseTester):
         self._testInvalidType(Element)
 
 
-class ValidCargoCarrierArgsFactory:
+class ValidCargoCarrierArgsFactory(I_ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a resource container or element carrier model, excepting the "type" field.
@@ -302,7 +349,7 @@ class ValidCargoCarrierArgsFactory:
         return kw
 
 
-class InvalidCargoCarrierArgsFactory:
+class InvalidCargoCarrierArgsFactory(I_InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing a resource container or element carrier model, excepting the "type" field.
@@ -356,7 +403,7 @@ class TestResourceContainer(BaseTester):
         self._testInvalidType(ResourceContainer)
 
 
-class ValidElementCarrierArgsFactory:
+class ValidElementCarrierArgsFactory(I_ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a element carrier model, excepting the "type" field.
@@ -371,7 +418,7 @@ class ValidElementCarrierArgsFactory:
         return kw
 
 
-class InvalidElementCarrierArgsFactory:
+class InvalidElementCarrierArgsFactory(I_InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing an element carrier model, excepting the "type" field.
@@ -410,7 +457,7 @@ class TestElementCarrier(BaseTester):
         self._testInvalidType(ElementCarrier)
 
 
-class ValidAgentArgsFactory:
+class ValidAgentArgsFactory(I_ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing an agent model, excepting the "type" field.
@@ -423,7 +470,7 @@ class ValidAgentArgsFactory:
         return kw
 
 
-class InvalidAgentArgsFactory:
+class InvalidAgentArgsFactory(I_InvalidArgsFactory):
     """
         Factory class for constructing dictionaries consisting of valid arguments for
         constructing an agent model, excepting the "type" field.
@@ -472,7 +519,7 @@ class TestRoboticAgent(AgentTester):
         self._testInvalidType(RoboticAgent)
 
 
-class ValidVehicleArgsFactory:
+class ValidVehicleArgsFactory(I_ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a vehicle model, excepting the "type" field.
@@ -485,7 +532,7 @@ class ValidVehicleArgsFactory:
         return kw
 
 
-class InvalidVehicleArgsFactory:
+class InvalidVehicleArgsFactory(I_InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing a vehicle model, excepting the "type" field.
@@ -504,7 +551,7 @@ class VehicleTester(BaseTester):
     nonEnumAttrs = BaseTester.nonEnumAttrs + ["maxCrew"]
 
 
-class ValidPropulsiveArgsFactory:
+class ValidPropulsiveArgsFactory(I_ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a propulsive vehicle model, excepting the "type" field.
@@ -518,7 +565,7 @@ class ValidPropulsiveArgsFactory:
         return kw
 
 
-class InvalidPropulsiveArgsFactory:
+class InvalidPropulsiveArgsFactory(I_InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing a propulsive vehicle model, excepting the "type" field.
@@ -557,7 +604,7 @@ class TestPropulsiveVehicle(VehicleTester):
         self._testInvalidType(PropulsiveVehicle)
 
 
-class ValidSurfaceArgsFactory:
+class ValidSurfaceArgsFactory(I_ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a surface vehicle model, excepting the "type" field.
@@ -571,7 +618,7 @@ class ValidSurfaceArgsFactory:
         return kw
 
 
-class InvalidSurfaceArgsFactory:
+class InvalidSurfaceArgsFactory(I_InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing a surface vehicle model, excepting the "type" field.
