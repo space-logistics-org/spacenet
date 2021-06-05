@@ -47,6 +47,13 @@ FLOATS_IN_UNIT_INTERVAL = [i / 9 for i in range(10)]
 
 
 def getInvalidTypes(myType: ElementKind) -> list[ElementKind]:
+    """
+    Get a list of all invalid type discriminants, given that the only valid type discriminant
+    is the provided "myType".
+
+    :param myType: the valid type discriminant
+    :return:  all invalid type discriminants
+    """
     return [kind for kind in ElementKind if kind != myType]
 
 

@@ -8,9 +8,15 @@ UNIMPLEMENTED = {"message": "unimplemented"}
 
 # TODO: this might work, but you'll have to manually type-check all of them, or support
 #  operations on them from base class & just call the operation. How to resolve?
-ElementKinds = Union[element.Element, element.ResourceContainer, element.ElementCarrier,
-                     element.PropulsiveVehicle, element.SurfaceVehicle, element.RoboticAgent,
-                     element.HumanAgent]
+ElementKinds = Union[
+    element.Element,
+    element.ResourceContainer,
+    element.ElementCarrier,
+    element.PropulsiveVehicle,
+    element.SurfaceVehicle,
+    element.RoboticAgent,
+    element.HumanAgent,
+]
 
 
 @router.get("/")
@@ -25,6 +31,7 @@ async def list_records():
 
 # TODO: expected behavior when no associated ID or just invalid, but well-formed input? POST
 #  return values are also not known
+
 
 @router.get("/{id_}")
 async def find_record(id_: int):
