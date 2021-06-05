@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, conint
 from uuid import UUID, uuid4
 
 
-class ClassOfSupply(Enum):
+class ClassOfSupply(int, Enum):
     """
     An enumeration of the ten main classes of supply, and the sub-classes of supply.
     """
@@ -69,72 +69,74 @@ class ClassOfSupply(Enum):
     CoS9023 = 9023
     CoS9024 = 9024
 
-    CoSToName = {
-        CoS0: "None",
-        CoS1: "Propellants and Fuels",
-        CoS2: "Crew Provisions",
-        CoS3: "Crew Operations",
-        CoS4: "Maintenance and Upkeep",
-        CoS5: "Stowage and Restraint",
-        CoS6: "Exploration and Research",
-        CoS7: "Waste and Disposal",
-        CoS8: "Habitation and Infrastructure",
-        CoS9: "Transportation and Carriers",
-        CoS10: "Miscellaneous",
-        CoS101: "Cryogens",
-        CoS102: "Hypergols",
-        CoS103: "Nuclear Fuel",
-        CoS104: "Petroleum Fuels",
-        CoS105: "Other Fuels",
-        CoS106: "Green Propellant",
-        CoS201: "Water and Support Equipment",
-        CoS202: "Food and Support Equipment",
-        CoS203: "Gases",
-        CoS204: "Hygiene Items",
-        CoS205: "Clothing",
-        CoS206: "Personal Items",
-        CoS301: "Office Equipment and Supplies",
-        CoS302: "EVA Equipment and Consumables",
-        CoS303: "Health Equipment and Consumables",
-        CoS304: "Safety Equipment",
-        CoS305: "Communications Equipment",
-        CoS306: "Computers and Support Equipment",
-        CoS401: "Spares and Repair Parts",
-        CoS402: "Maintenance Tools",
-        CoS403: "Lubricants and Bulk Chemicals",
-        CoS404: "Batteries",
-        CoS405: "Cleaning Equipment and Consumables",
-        CoS501: "Cargo Containers and Restraints",
-        CoS502: "Inventory Management Equipment",
-        CoS601: "Science Payloads and Instruments",
-        CoS602: "Field Equipment",
-        CoS603: "Samples",
-        CoS701: "Waste",
-        CoS702: "Waste Management Equipment",
-        CoS703: "Failed Pairs",
-        CoS801: "Habitation Facilities",
-        CoS802: "Surface Mobility Systems",
-        CoS803: "Power Systems",
-        CoS804: "Robotic Systems",
-        CoS805: "Resource Utilization Systems",
-        CoS806: "Orbiting Service Systems",
-        CoS901: "Carriers, Non-propulsive Elements",
-        CoS902: "Propulsive Elements",
-        CoS4011: "Spares",
-        CoS4012: "Repair Parts",
-        CoS8041: "Science Robotics",
-        CoS8042: "Construction/Maintenance Robotics",
-        CoS9021: "Launch Vehicles",
-        CoS9022: "Upper Stages/In-Space Propulsion Systems",
-        CoS9023: "Descent Stages",
-        CoS9024: "Ascent Stages",
-    }
-
+    @property
     def name(self) -> str:
-        return self.CoSToName[self]
+        return COS_TO_NAME[self]
 
 
-class Environment(Enum):
+COS_TO_NAME = {
+    ClassOfSupply.CoS0: "None",
+    ClassOfSupply.CoS1: "Propellants and Fuels",
+    ClassOfSupply.CoS2: "Crew Provisions",
+    ClassOfSupply.CoS3: "Crew Operations",
+    ClassOfSupply.CoS4: "Maintenance and Upkeep",
+    ClassOfSupply.CoS5: "Stowage and Restraint",
+    ClassOfSupply.CoS6: "Exploration and Research",
+    ClassOfSupply.CoS7: "Waste and Disposal",
+    ClassOfSupply.CoS8: "Habitation and Infrastructure",
+    ClassOfSupply.CoS9: "Transportation and Carriers",
+    ClassOfSupply.CoS10: "Miscellaneous",
+    ClassOfSupply.CoS101: "Cryogens",
+    ClassOfSupply.CoS102: "Hypergols",
+    ClassOfSupply.CoS103: "Nuclear Fuel",
+    ClassOfSupply.CoS104: "Petroleum Fuels",
+    ClassOfSupply.CoS105: "Other Fuels",
+    ClassOfSupply.CoS106: "Green Propellant",
+    ClassOfSupply.CoS201: "Water and Support Equipment",
+    ClassOfSupply.CoS202: "Food and Support Equipment",
+    ClassOfSupply.CoS203: "Gases",
+    ClassOfSupply.CoS204: "Hygiene Items",
+    ClassOfSupply.CoS205: "Clothing",
+    ClassOfSupply.CoS206: "Personal Items",
+    ClassOfSupply.CoS301: "Office Equipment and Supplies",
+    ClassOfSupply.CoS302: "EVA Equipment and Consumables",
+    ClassOfSupply.CoS303: "Health Equipment and Consumables",
+    ClassOfSupply.CoS304: "Safety Equipment",
+    ClassOfSupply.CoS305: "Communications Equipment",
+    ClassOfSupply.CoS306: "Computers and Support Equipment",
+    ClassOfSupply.CoS401: "Spares and Repair Parts",
+    ClassOfSupply.CoS402: "Maintenance Tools",
+    ClassOfSupply.CoS403: "Lubricants and Bulk Chemicals",
+    ClassOfSupply.CoS404: "Batteries",
+    ClassOfSupply.CoS405: "Cleaning Equipment and Consumables",
+    ClassOfSupply.CoS501: "Cargo Containers and Restraints",
+    ClassOfSupply.CoS502: "Inventory Management Equipment",
+    ClassOfSupply.CoS601: "Science Payloads and Instruments",
+    ClassOfSupply.CoS602: "Field Equipment",
+    ClassOfSupply.CoS603: "Samples",
+    ClassOfSupply.CoS701: "Waste",
+    ClassOfSupply.CoS702: "Waste Management Equipment",
+    ClassOfSupply.CoS703: "Failed Pairs",
+    ClassOfSupply.CoS801: "Habitation Facilities",
+    ClassOfSupply.CoS802: "Surface Mobility Systems",
+    ClassOfSupply.CoS803: "Power Systems",
+    ClassOfSupply.CoS804: "Robotic Systems",
+    ClassOfSupply.CoS805: "Resource Utilization Systems",
+    ClassOfSupply.CoS806: "Orbiting Service Systems",
+    ClassOfSupply.CoS901: "Carriers, Non-propulsive Elements",
+    ClassOfSupply.CoS902: "Propulsive Elements",
+    ClassOfSupply.CoS4011: "Spares",
+    ClassOfSupply.CoS4012: "Repair Parts",
+    ClassOfSupply.CoS8041: "Science Robotics",
+    ClassOfSupply.CoS8042: "Construction/Maintenance Robotics",
+    ClassOfSupply.CoS9021: "Launch Vehicles",
+    ClassOfSupply.CoS9022: "Upper Stages/In-Space Propulsion Systems",
+    ClassOfSupply.CoS9023: "Descent Stages",
+    ClassOfSupply.CoS9024: "Ascent Stages",
+}
+
+
+class Environment(str, Enum):
     """
     An enumeration of the environments an element can be carried in or carry elements in.
     """
@@ -143,7 +145,7 @@ class Environment(Enum):
     Unpressurized = "Unpressurized"
 
 
-class ElementKind(Enum):
+class ElementKind(str, Enum):
     """
     An enumeration of all the types of Element.
     """
