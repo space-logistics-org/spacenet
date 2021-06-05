@@ -12,8 +12,8 @@ no error results and all fields match as assigned, b) when a field is invalid, a
 is always raised, and c) if a vehicle's type discriminant disagrees with its Python type,
 an error is always raised.
 
-The factories generate their inputs to keyword arguments by random selection from a fairly
-small dataset: over the NUM_ATTEMPTS times a test occurs, the probability that a given
+The factories generate their inputs to keyword arguments by pseudo-random selection from a
+fairly small dataset: over the NUM_ATTEMPTS times a test occurs, the probability that a given
 value for any one field is not exercised is quite small (and increasing NUM_ATTEMPTS
 improves this).
 
@@ -25,6 +25,9 @@ unlikely that any one value is untested. This means that about 7 * NUM_SAMPLES c
 tested in the testAllValid cases alone. Then, equivalence partitioning likely tests fewer
 combinations of values. If some particular problematic combination of inputs causes issues,
 adding a more manual test for that specific combination is still feasible.
+
+Reproducing a failure is possible because the seed is deterministically generated: the tests
+failing once should be repeatable each time, as the same sequence of values is always produced.
 
 The BaseTester class handles most of the testing logic, while factories handle their respective
 keyword argument generation logic. Changing schema attributes constitutes removing them from
@@ -51,6 +54,7 @@ from spacenet.schemas.element import (
 )
 
 NUM_ATTEMPTS = 500
+SEED = "spacenet"
 STRINGS = ["foo", "bar", "baz"]
 NON_NEG_INTS = list(range(10))
 NEG_INTS = [-1 * (n + 1) for n in NON_NEG_INTS]
@@ -230,8 +234,10 @@ class BaseTester(unittest.TestCase):
     nonEnumAttrs = ["name", "description", "accommodationMass", "mass", "volume"]
     # the attribute names which are not enumerations
     enumAttrs = ["classOfSupply", "environment"]
-
     # the attribute names which are enumerations
+
+    def setUp(self) -> None:
+        random.seed(SEED)
 
     def assertMatches(self, kw: dict, element: Element) -> None:
         """
