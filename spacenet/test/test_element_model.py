@@ -34,7 +34,7 @@ value in the dictionary.
 import random
 import unittest
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Dict, List
 
 from pydantic import ValidationError
 
@@ -59,7 +59,7 @@ NEG_FLOATS = [float(-1 * i) for i in range(1, 10)]
 FLOATS_IN_UNIT_INTERVAL = [i / 9 for i in range(10)]
 
 
-def getInvalidTypes(myType: ElementKind) -> list[ElementKind]:
+def getInvalidTypes(myType: ElementKind) -> List[ElementKind]:
     """
     Get a list of all invalid type discriminants, given that the only valid type discriminant
     is the provided "myType".
@@ -78,7 +78,7 @@ class I_ValidArgsFactory(ABC):
 
     @staticmethod
     @abstractmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         """
         Make valid keyword arguments for constructing an element model.
 
@@ -95,7 +95,7 @@ class I_InvalidArgsFactory(ABC):
 
     @staticmethod
     @abstractmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         """
         Make invalid keyword arguments for constructing an element model.
 
@@ -119,7 +119,7 @@ class ValidElementArgsFactory(I_ValidArgsFactory):
     validVolumes = validMasses
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = {
             "name": random.choice(ValidElementArgsFactory.validNames),
             "description": random.choice(ValidElementArgsFactory.validDescs),
@@ -154,7 +154,7 @@ class InvalidElementArgsFactory(I_InvalidArgsFactory):
     badlyTypedVolumes = badlyTypedMasses
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         """
         Make invalid or badly-typed keyword arguments for constructing an element model.
 
@@ -276,7 +276,7 @@ class BaseTester(unittest.TestCase):
             for type_ in self.validTypes:
                 kw = factory.makeKeywords()
                 if type_:
-                    kw |= {"type": type_}
+                    kw["type"] = type_
                 element = elementType(**kw)
                 self.assertMatches(kw, element)
 
@@ -305,7 +305,7 @@ class BaseTester(unittest.TestCase):
         factory = self.validFactory()
         kw = factory.makeKeywords()
         for type_ in self.invalidTypes:
-            kw |= {"type": type_}
+            kw["type"] = type_
             with self.assertRaises(
                 ValidationError, msg=f"{kw} should have raised an error"
             ):
@@ -338,7 +338,7 @@ class ValidCargoCarrierArgsFactory(I_ValidArgsFactory):
     validMaxCargoVolume = NON_NEG_FLOATS
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = ValidElementArgsFactory.makeKeywords()
         kw["maxCargoMass"] = random.choice(
             ValidCargoCarrierArgsFactory.validMaxCargoMass
@@ -361,7 +361,7 @@ class InvalidCargoCarrierArgsFactory(I_InvalidArgsFactory):
     badlyTypedMaxCargoVolume = STRINGS
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = ValidCargoCarrierArgsFactory.makeKeywords()
         rand = random.random()
         if rand < 0.25:
@@ -410,7 +410,7 @@ class ValidElementCarrierArgsFactory(I_ValidArgsFactory):
     """
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = ValidCargoCarrierArgsFactory.makeKeywords()
         kw["cargoEnvironment"] = random.choice(
             [variant.value for variant in Environment]
@@ -428,7 +428,7 @@ class InvalidElementCarrierArgsFactory(I_InvalidArgsFactory):
     badlyTypedCargoEnvironments = list(range(10))
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidCargoCarrierArgsFactory, InvalidCargoCarrierArgsFactory)
         ).makeKeywords()
@@ -464,7 +464,7 @@ class ValidAgentArgsFactory(I_ValidArgsFactory):
     """
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = ValidElementArgsFactory.makeKeywords()
         kw["activeTimeFraction"] = random.choice(NON_NEG_FLOATS)
         return kw
@@ -472,12 +472,12 @@ class ValidAgentArgsFactory(I_ValidArgsFactory):
 
 class InvalidAgentArgsFactory(I_InvalidArgsFactory):
     """
-        Factory class for constructing dictionaries consisting of valid arguments for
-        constructing an agent model, excepting the "type" field.
-        """
+    Factory class for constructing dictionaries consisting of valid arguments for
+    constructing an agent model, excepting the "type" field.
+    """
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidElementArgsFactory, InvalidElementArgsFactory)
         ).makeKeywords()
@@ -526,7 +526,7 @@ class ValidVehicleArgsFactory(I_ValidArgsFactory):
     """
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = ValidCargoCarrierArgsFactory.makeKeywords()
         kw["maxCrew"] = random.choice(NON_NEG_INTS)
         return kw
@@ -539,7 +539,7 @@ class InvalidVehicleArgsFactory(I_InvalidArgsFactory):
     """
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidCargoCarrierArgsFactory, InvalidCargoCarrierArgsFactory)
         ).makeKeywords()
@@ -558,7 +558,7 @@ class ValidPropulsiveArgsFactory(I_ValidArgsFactory):
     """
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = ValidVehicleArgsFactory.makeKeywords()
         kw["omsISP"] = random.choice(NON_NEG_INTS + NON_NEG_FLOATS)
         kw["maxOMS"] = random.choice(NON_NEG_INTS + NON_NEG_FLOATS)
@@ -572,7 +572,7 @@ class InvalidPropulsiveArgsFactory(I_InvalidArgsFactory):
     """
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidVehicleArgsFactory, InvalidVehicleArgsFactory)
         ).makeKeywords()
@@ -611,7 +611,7 @@ class ValidSurfaceArgsFactory(I_ValidArgsFactory):
     """
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = ValidVehicleArgsFactory.makeKeywords()
         kw["maxSpeed"] = random.choice(NON_NEG_INTS + NON_NEG_FLOATS)
         kw["maxFuel"] = random.choice(NON_NEG_INTS + NON_NEG_FLOATS)
@@ -625,7 +625,7 @@ class InvalidSurfaceArgsFactory(I_InvalidArgsFactory):
     """
 
     @staticmethod
-    def makeKeywords() -> dict[str, Any]:
+    def makeKeywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidVehicleArgsFactory, InvalidVehicleArgsFactory)
         ).makeKeywords()

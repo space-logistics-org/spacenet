@@ -69,7 +69,7 @@ class ClassOfSupply(Enum):
     CoS9023 = 9023
     CoS9024 = 9024
 
-    COS_TO_NAME = {
+    CoSToName = {
         CoS0: "None",
         CoS1: "Propellants and Fuels",
         CoS2: "Crew Provisions",
@@ -131,7 +131,7 @@ class ClassOfSupply(Enum):
     }
 
     def name(self) -> str:
-        return self.COS_TO_NAME[self]
+        return self.CoSToName[self]
 
 
 class Environment(Enum):
@@ -162,10 +162,11 @@ class DomainModel(BaseModel):
     """
     A base class which generates a unique ID for each instantiation of a schema.
 
-    Uniqueness comes from random number generation, so collisions are possible, but unlikely.
+    Uniqueness comes from random number generation, so collisions are possible, but very
+    unlikely.
     """
 
-    id_: UUID = Field(default_factory=uuid4, const=True)
+    id_: UUID = Field(default_factory=uuid4, title="ID", const=True)
 
 
 def typeFieldWithDefault(default: ElementKind) -> Field:
@@ -184,20 +185,27 @@ class Element(DomainModel):
     A generic element.
     """
 
-    name: str = Field(..., description="name of the element")
-    description: str = Field(..., description="short description of the element")
-    classOfSupply: ClassOfSupply = Field(..., description="class of supply number")
+    name: str = Field(..., title="Name", description="name of the element")
+    description: str = Field(
+        ..., title="Description", description="short description of the element"
+    )
+    classOfSupply: ClassOfSupply = Field(
+        ..., title="Class of Supply", description="class of supply number"
+    )
     type: ElementKind = typeFieldWithDefault(ElementKind.Element)
-    environment: Environment = Field(..., description="the element's environment")
+    environment: Environment = Field(
+        ..., title="Environment", description="the element's environment"
+    )
     accommodationMass: float = Field(
         ...,
         ge=0,
+        title="Accommodation Mass",
         description="the amount of additional COS5 "
         "required to pack the element inside a"
         " carrier.",
     )
-    mass: float = Field(..., ge=0, description="mass in kg")
-    volume: float = Field(..., ge=0, description="volume in m^3")
+    mass: float = Field(..., ge=0, title="Mass", description="mass in kg")
+    volume: float = Field(..., ge=0, title="Volume", description="volume in m^3")
 
 
 class CargoCarrier(Element, ABC):
@@ -205,9 +213,14 @@ class CargoCarrier(Element, ABC):
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
     """
 
-    maxCargoMass: float = Field(..., ge=0, description="cargo capacity constraint (kg)")
+    maxCargoMass: float = Field(
+        ..., ge=0, title="Max Cargo Mass", description="cargo capacity constraint (kg)"
+    )
     maxCargoVolume: float = Field(
-        ..., ge=0, description="cargo capacity constraint (m^3)"
+        ...,
+        ge=0,
+        title="Maximum Cargo Volume",
+        description="cargo capacity constraint (m^3)",
     )
 
 
@@ -227,6 +240,7 @@ class ElementCarrier(CargoCarrier):
     type: ElementKind = typeFieldWithDefault(ElementKind.ElementCarrier)
     cargoEnvironment: Environment = Field(
         ...,
+        title="Cargo Environment",
         description="the cargo's environment — if "
         "unpressurized, "
         "cannot add pressurized elements as "
@@ -241,7 +255,8 @@ class Agent(Element, ABC):
 
     activeTimeFraction: float = Field(
         ...,
-        description="the fraction of the day that an agent" "is active (available)",
+        title="Active Time Fraction",
+        description="the fraction of the day that an agent is active (available)",
         ge=0,
     )
 
@@ -269,7 +284,7 @@ class Vehicle(Element, ABC):
 
     type: ElementKind = typeFieldWithDefault(ElementKind.Vehicle)
     maxCrew: conint(strict=True, ge=0) = Field(
-        ..., description="crew capacity constraint"
+        ..., title="Maximum Crew Count", description="crew capacity constraint"
     )
 
 
@@ -279,8 +294,12 @@ class PropulsiveVehicle(Vehicle, CargoCarrier):
     """
 
     type: ElementKind = typeFieldWithDefault(ElementKind.Propulsive)
-    omsISP: float = Field(..., ge=0, description="OMS specific impulse (s)")
-    maxOMS: float = Field(..., ge=0, description="maximum OMS fuel (units)")
+    omsISP: float = Field(
+        ..., ge=0, title="OMS ISP", description="OMS specific impulse (s)"
+    )
+    maxOMS: float = Field(
+        ..., ge=0, title="Maximum OMS Fuel", description="maximum OMS fuel (units)"
+    )
     # omsID: ResourceID
 
 
@@ -290,6 +309,10 @@ class SurfaceVehicle(Vehicle, CargoCarrier):
     """
 
     type: ElementKind = typeFieldWithDefault(ElementKind.Surface)
-    maxSpeed: float = Field(..., ge=0, description="maximum speed (kph)")
-    maxFuel: float = Field(..., ge=0, description="maximum fuel (units)")
+    maxSpeed: float = Field(
+        ..., ge=0, title="Maximum Speed", description="maximum speed (kph)"
+    )
+    maxFuel: float = Field(
+        ..., ge=0, title="Maximum Fuel", description="maximum fuel (units)"
+    )
     # fuelID: ResourceID
