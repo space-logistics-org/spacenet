@@ -1,78 +1,51 @@
-from typing import Union
+from typing import List, Union
 
-from fastapi import APIRouter
-from spacenet.schemas import element
+from fastapi import Depends, APIRouter, HTTPException, status
+from sqlalchemy.orm import Session
+
+from .. import database
+from spacenet.schemas import element as schemas
 
 router = APIRouter()
-UNIMPLEMENTED = {"message": "unimplemented"}
 
-# TODO: this might work, but you'll have to manually type-check all of them, or support
-#  operations on them from base class & just call the operation. How to resolve?
-ElementKinds = Union[
-    element.Element,
-    element.ResourceContainer,
-    element.ElementCarrier,
-    element.PropulsiveVehicle,
-    element.SurfaceVehicle,
-    element.RoboticAgent,
-    element.HumanAgent,
+Elements = Union[
+    schemas.Element,
+    schemas.ElementCarrier,
+    schemas.SurfaceVehicle,
+    schemas.PropulsiveVehicle,
+    schemas.RoboticAgent,
+    schemas.HumanAgent,
+    schemas.ResourceContainer,
 ]
 
-
-@router.get("/")
-async def list_records():
-    """
-    List the records of all resources.
-
-    :return: the list of the records of all resources
-    """
-    return UNIMPLEMENTED
+NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
 
-# TODO: expected behavior when no associated ID or just invalid, but well-formed input? POST
-#  return values are also not known
+@router.get("/", response_model=List[Elements])
+def list_elements(
+    skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)
+):
+    raise HTTPException(status_code=500, detail="unimplemented")
 
 
-@router.get("/{id_}")
-async def find_record(id_: int):
-    """
-    Find the record associated with the element with id "id_".
-
-    :param id_: the id of the record to find
-    :return: the record associated with the element with id "id_"
-    """
-    return UNIMPLEMENTED
+@router.get(
+    "/{id_}", response_model=Elements, responses=NOT_FOUND_RESPONSE,
+)
+def read_element(id_: int, db: Session = Depends(database.get_db)):
+    raise HTTPException(status_code=500, detail="unimplemented")
 
 
-@router.post("/")
-async def add_resource(element: ElementKinds):
-    """
-    Add the element described in the request to the database.
-
-    :param element: the information to associate with the new record
-    :return: (not known yet?)
-    """
-    return UNIMPLEMENTED
+@router.post("/", response_model=Elements, status_code=status.HTTP_201_CREATED)
+def create_element(element: Elements, db: Session = Depends(database.get_db)):
+    raise HTTPException(status_code=500, detail="unimplemented")
 
 
-@router.patch("/{id_}")
-async def update_record(id_: int, element: ElementKinds):
-    """
-    Update the record associated with the element with id "id_".
-
-    :param element: the new information to associate with the record
-    :param id_: the id of the record to find
-    :return: (not known yet?)
-    """
-    return UNIMPLEMENTED
+# TODO: PATCH requests are allowed to not have certain fields and only update the specified
+#  fields. They also won't have the corresponding IDs, so they'll need a new schema
 
 
-@router.delete("/{id_}")
-async def delete_record(id_: int):
-    """
-    Delete the record associated with the element with id "id_".
-
-    :param id_: the id of the record to find
-    :return: (not known yet?)
-    """
-    return UNIMPLEMENTED
+@router.delete(
+    "/{id_}", response_model=Elements, responses=NOT_FOUND_RESPONSE,
+)
+def delete_element(id_: int, db: Session = Depends(database.get_db)):
+    raise HTTPException(status_code=500, detail="unimplemented")

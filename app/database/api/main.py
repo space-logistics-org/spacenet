@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import hello_world, resource, element
+from .routers import hello_world, element
 from .database import Base, SessionLocal, engine
 
 # create the database if it does not yet exist
@@ -22,11 +22,6 @@ app.include_router(
 app.include_router(
     hello_world.router,
     prefix="/hello_world"
-)
-
-app.include_router(
-    resource.router,
-    prefix="/resource"
 )
 
 app.include_router(

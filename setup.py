@@ -13,6 +13,7 @@ setup(
         'fastapi',
         'uvicorn[standard]',
         'aiofiles',
-        "pydantic"
+        "pydantic",
+        "sqlalchemy"
     ]
 )
