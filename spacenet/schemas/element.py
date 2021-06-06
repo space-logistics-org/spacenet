@@ -1,8 +1,9 @@
 from abc import ABC
 from enum import Enum
+from typing import Optional, Set, Type
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field, conint
-from uuid import UUID, uuid4
 
 
 class ClassOfSupply(int, Enum):
@@ -318,3 +319,59 @@ class SurfaceVehicle(Vehicle, CargoCarrier):
         ..., ge=0, title="Maximum Fuel", description="maximum fuel (units)"
     )
     # fuelID: ResourceID
+
+
+def patchModel(
+    model: Type[BaseModel],
+    required_fields: Optional[Set[str]] = None,
+    removed_fields: Optional[Set[str]] = None,
+) -> Type[BaseModel]:
+    """
+    Given a model for creation and access, construct a model for patching which allows for a
+    subset of the fields to be optional, defaulting said fields to None. The provided model is
+    not modified, while the returned model will not change any parts of the field other than
+    its defaults and if it is required.
+
+    :param model: a pydantic model for creation and access
+    :param required_fields: fields which are still required; must be disjoint from
+                            "removed_fields" and a subset of the fields of "model"
+    :param removed_fields: fields which should be removed; must be disjoint from
+                           "required_fields" and a subset of the fields of "model"
+    :return: the resulting model, named Patch{model.__name__}
+    """
+
+    class PatchModel(model):
+        ...
+
+    required_fields = set() if required_fields is None else required_fields
+    removed_fields = set() if removed_fields is None else removed_fields
+    assert required_fields.isdisjoint(
+        removed_fields
+    ), "required_fields must be disjoint from removed_fields"
+    assert required_fields.issubset(
+        model.__fields__.keys()
+    ), "required_fields must be a subset of the fields of model"
+    assert removed_fields.issubset(
+        model.__fields__.keys()
+    ), "removed_fields must be a subset of the fields of model"
+    for field in PatchModel.__fields__.values():
+        if field.name not in required_fields:
+            field.required = False
+            field.default = None
+    for field in removed_fields:
+        del PatchModel.__fields__[field]
+    PatchModel.__name__ = f"Patch{model.__name__}"
+    PatchModel.__doc__ = (
+        f"A derivative of {model.__name__}, with a subset of the fields"
+        f"being optional, and a subset of the fields being kept."
+    )
+    return PatchModel
+
+
+PatchElement = patchModel(Element, removed_fields={"id_"})
+PatchResourceContainer = patchModel(ResourceContainer, removed_fields={"id_"})
+PatchElementCarrier = patchModel(ElementCarrier, removed_fields={"id_"})
+PatchHumanAgent = patchModel(HumanAgent, removed_fields={"id_"})
+PatchRoboticAgent = patchModel(RoboticAgent, removed_fields={"id_"})
+PatchPropulsiveVehicle = patchModel(PropulsiveVehicle, removed_fields={"id_"})
+PatchSurfaceVehicle = patchModel(SurfaceVehicle, removed_fields={"id_"})

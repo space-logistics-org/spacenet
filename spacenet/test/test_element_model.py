@@ -34,23 +34,25 @@ keyword argument generation logic. Changing schema attributes constitutes removi
 a tester class (or its superclass)'s attributes, and making the factory no longer assign the
 value in the dictionary.
 """
+import copy
 import random
 import unittest
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
-from pydantic import ValidationError
+from pydantic import BaseModel, Field, ValidationError, conint
 
 from spacenet.schemas.element import (
     Element,
-    ResourceContainer,
     ElementCarrier,
-    HumanAgent,
-    RoboticAgent,
-    PropulsiveVehicle,
-    SurfaceVehicle,
-    Environment,
     ElementKind,
+    Environment,
+    HumanAgent,
+    PropulsiveVehicle,
+    ResourceContainer,
+    RoboticAgent,
+    SurfaceVehicle,
+    patchModel,
 )
 
 NUM_ATTEMPTS = 500
@@ -234,6 +236,7 @@ class BaseTester(unittest.TestCase):
     nonEnumAttrs = ["name", "description", "accommodationMass", "mass", "volume"]
     # the attribute names which are not enumerations
     enumAttrs = ["classOfSupply", "environment"]
+
     # the attribute names which are enumerations
 
     def setUp(self) -> None:
@@ -661,3 +664,53 @@ class TestSurfaceVehicle(VehicleTester):
 
     def testInvalidType(self):
         self._testInvalidType(SurfaceVehicle)
+
+
+class TestPatchModel(unittest.TestCase):
+    """
+    Tests for the patchModel function.
+    Partitions:
+    Number of required fields:
+        0
+        > 0
+    Number of removed fields:
+        0
+        > 0
+    """
+
+    class Model(BaseModel):
+        a: int
+        b: float = Field(description="test")
+        c: conint(ge=0)
+
+    def testNoRequiredNoRemoved(self):
+        Patched = patchModel(TestPatchModel.Model)
+        for fieldName, field in TestPatchModel.Model.__fields__.items():
+            expField = copy.deepcopy(field)
+            expField.required = False
+            expField.default = None
+            actualField = Patched.__fields__[fieldName]
+            # using repr b/c __eq__ isn't implemented for Field
+            self.assertEqual(repr(expField), repr(actualField))
+
+    def testSomeRequired(self):
+        required = {"a"}
+        Patched = patchModel(TestPatchModel.Model, required_fields=required)
+        for fieldName, field in TestPatchModel.Model.__fields__.items():
+            if fieldName in required:
+                expField = field
+            else:
+                expField = copy.deepcopy(field)
+                expField.required = False
+                expField.default = None
+            actualField = Patched.__fields__[fieldName]
+            self.assertEqual(repr(expField), repr(actualField))
+
+    def testSomeRemoved(self):
+        removed = {"c"}
+        Patched = patchModel(TestPatchModel.Model, removed_fields=removed)
+        self.assertTrue(Patched.__fields__.keys().isdisjoint(removed))
+        self.assertEqual(
+            set(TestPatchModel.Model.__fields__.keys()) - removed,
+            set(Patched.__fields__.keys()),
+        )
