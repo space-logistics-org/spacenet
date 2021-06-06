@@ -18,6 +18,16 @@ Elements = Union[
     schemas.ResourceContainer,
 ]
 
+PatchElements = Union[
+    schemas.PatchElement,
+    schemas.PatchElementCarrier,
+    schemas.PatchSurfaceVehicle,
+    schemas.PatchPropulsiveVehicle,
+    schemas.PatchRoboticAgent,
+    schemas.PatchHumanAgent,
+    schemas.PatchResourceContainer,
+]
+
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
 
@@ -42,6 +52,13 @@ def create_element(element: Elements, db: Session = Depends(database.get_db)):
 
 # TODO: PATCH requests are allowed to not have certain fields and only update the specified
 #  fields. They also won't have the corresponding IDs, so they'll need a new schema
+
+
+@router.patch("/{id_}", response_model=Elements)
+def patch_element(
+    id_: int, element: PatchElements, db: Session = Depends(database.get_db)
+):
+    raise HTTPException(status_code=500, detail="unimplemented")
 
 
 @router.delete(
