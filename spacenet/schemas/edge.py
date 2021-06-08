@@ -86,6 +86,12 @@ class FlightEdge(Edge):
         title="Type",
         description="Type of edge",
     )
+    duration: float = Field(
+        ...,
+        title="duration",
+        description="Duration of flight edge",
+        ge=0
+    )
     max_crew: float = Field(
         ...,
         title="Max Crew",
