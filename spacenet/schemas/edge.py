@@ -15,11 +15,6 @@ class Edge(BaseModel):
     """
     Base class for all edges.
     """
-    id: int = Field(
-        ...,
-        title="ID",
-        description="Unique edge identifier"
-    )
     name: str = Field(
         ...,
         title="Name",
@@ -50,6 +45,7 @@ class SurfaceEdge(Edge):
         default=EdgeType.Surface,
         title="Type",
         description="Type of edge",
+        const=True
     )
     distance: float = Field(
         ...,
@@ -67,6 +63,7 @@ class SpaceEdge(Edge):
         default=EdgeType.Space,
         title="Type",
         description="Type of edge",
+        const=True
     )
     duration: float = Field(
         ...,
@@ -85,6 +82,7 @@ class FlightEdge(Edge):
         default=EdgeType.Flight,
         title="Type",
         description="Type of edge",
+        const=True
     )
     duration: float = Field(
         ...,

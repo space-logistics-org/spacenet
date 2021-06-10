@@ -28,11 +28,6 @@ class Node(BaseModel):
     """
     Base class for all nodes.
     """
-    id: int = Field(
-        ...,
-        title="ID",
-        description="Unique node identifier"
-    )
     name: str = Field(
         ...,
         title="Name",
@@ -57,7 +52,8 @@ class SurfaceNode(Node):
     type: NodeType = Field(
         default=NodeType.Surface,
         title="Type",
-        description="Type of node (surface, orbital, or lagrange)"
+        description="Type of node (surface, orbital, or lagrange)",
+        const=True
     )
     latitude: float = Field(
         ...,
@@ -82,7 +78,8 @@ class OrbitalNode(Node):
     type: NodeType = Field(
         default=NodeType.Orbital,
         title="Type",
-        description="Type of node (surface, orbital, or lagrange)"
+        description="Type of node (surface, orbital, or lagrange)",
+        const=True
     )
     apoapsis: float = Field(
         ...,
@@ -111,7 +108,8 @@ class LagrangeNode(Node):
     type: NodeType = Field(
         default=NodeType.Lagrange,
         title="Type",
-        description="Type of node (surface, orbital, or lagrange)"
+        description="Type of node (surface, orbital, or lagrange)",
+        const=True
     )
     body_2: Body = Field(
         ...,
