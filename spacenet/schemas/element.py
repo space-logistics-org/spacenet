@@ -1,9 +1,43 @@
+<<<<<<< HEAD
 from abc import ABC
 from enum import Enum
 from typing import Optional, Set, Type
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field, conint
+=======
+"""
+This module defines the schemas for Elements and the corresponding subtypes. Notably, each
+schema has a variant for Update operations and for Read operations, with the base variant being
+used for Create operations. The variants for update operations make all fields optional except
+for a type discriminant, and the variant for read operations requires returning a unique
+identifier alongside all other data.
+
+Internally, multiple mixins are used to generate the aforementioned behaviors: a mixin
+implements requiring a UUID, and another implements making a subset of fields optional. This
+means that fields are specified in as few places as possible.
+
+The module exports the schemas for Elements and corresponding subtypes explicitly.
+"""
+from abc import ABC
+from enum import Enum
+from typing import Optional
+
+from pydantic import BaseModel, Field, conint
+from typing_extensions import Literal
+
+from .mixins import RequiresOnlyType, RequiresUUID
+
+__all__ = [
+    "Element",
+    "ResourceContainer",
+    "ElementCarrier",
+    "HumanAgent",
+    "RoboticAgent",
+    "PropulsiveVehicle",
+    "SurfaceVehicle",
+]
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 
 
 class ClassOfSupply(int, Enum):
@@ -161,6 +195,7 @@ class ElementKind(str, Enum):
     Surface = "Surface"
 
 
+<<<<<<< HEAD
 class DomainModel(BaseModel):
     """
     A base class which generates a unique ID for each instantiation of a schema.
@@ -184,6 +219,9 @@ def typeFieldWithDefault(default: ElementKind) -> Field:
 
 
 class Element(DomainModel):
+=======
+class Element(BaseModel):
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
     """
     A generic element.
     """
@@ -192,6 +230,7 @@ class Element(DomainModel):
     description: str = Field(
         ..., title="Description", description="short description of the element"
     )
+<<<<<<< HEAD
     classOfSupply: ClassOfSupply = Field(
         ..., title="Class of Supply", description="class of supply number"
     )
@@ -200,6 +239,16 @@ class Element(DomainModel):
         ..., title="Environment", description="the element's environment"
     )
     accommodationMass: float = Field(
+=======
+    class_of_supply: ClassOfSupply = Field(
+        ..., title="Class of Supply", description="class of supply number"
+    )
+    type: Literal[ElementKind.Element] = Field(description="the element's type")
+    environment: Environment = Field(
+        ..., title="Environment", description="the element's environment"
+    )
+    accommodation_mass: float = Field(
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
         ...,
         ge=0,
         title="Accommodation Mass",
@@ -216,10 +265,17 @@ class CargoCarrier(Element, ABC):
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
     """
 
+<<<<<<< HEAD
     maxCargoMass: float = Field(
         ..., ge=0, title="Max Cargo Mass", description="cargo capacity constraint (kg)"
     )
     maxCargoVolume: float = Field(
+=======
+    max_cargo_mass: Optional[float] = Field(
+        ..., ge=0, title="Max Cargo Mass", description="cargo capacity constraint (kg)"
+    )
+    max_cargo_volume: Optional[float] = Field(
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
         ...,
         ge=0,
         title="Maximum Cargo Volume",
@@ -232,7 +288,13 @@ class ResourceContainer(CargoCarrier):
     An element representing a container for resources.
     """
 
+<<<<<<< HEAD
     type: ElementKind = typeFieldWithDefault(ElementKind.ResourceContainer)
+=======
+    type: Literal[ElementKind.ResourceContainer] = Field(
+        description="the element's type"
+    )
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 
 
 class ElementCarrier(CargoCarrier):
@@ -240,8 +302,13 @@ class ElementCarrier(CargoCarrier):
     An element which can carry other elements.
     """
 
+<<<<<<< HEAD
     type: ElementKind = typeFieldWithDefault(ElementKind.ElementCarrier)
     cargoEnvironment: Environment = Field(
+=======
+    type: Literal[ElementKind.ElementCarrier] = Field(description="the element's type")
+    cargo_environment: Environment = Field(
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
         ...,
         title="Cargo Environment",
         description="the cargo's environment — if "
@@ -256,11 +323,19 @@ class Agent(Element, ABC):
     An abstract base class representing a generic Agent element.
     """
 
+<<<<<<< HEAD
     activeTimeFraction: float = Field(
+=======
+    active_time_fraction: float = Field(
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
         ...,
         title="Active Time Fraction",
         description="the fraction of the day that an agent is active (available)",
         ge=0,
+<<<<<<< HEAD
+=======
+        le=1,
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
     )
 
 
@@ -269,7 +344,11 @@ class HumanAgent(Agent):
     An element representing a human agent, like a crew member.
     """
 
+<<<<<<< HEAD
     type: ElementKind = typeFieldWithDefault(ElementKind.HumanAgent)
+=======
+    type: Literal[ElementKind.HumanAgent] = Field(description="the element's type")
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 
 
 class RoboticAgent(Agent):
@@ -277,25 +356,42 @@ class RoboticAgent(Agent):
     An element representing a robotic agent.
     """
 
+<<<<<<< HEAD
     type: ElementKind = typeFieldWithDefault(ElementKind.RoboticAgent)
 
 
 class Vehicle(Element, ABC):
+=======
+    type: Literal[ElementKind.RoboticAgent] = Field(description="the element's type")
+
+
+class Vehicle(CargoCarrier, ABC):
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
     """
     An abstract base class representing a generic Vehicle, surface or propulsive.
     """
 
+<<<<<<< HEAD
     type: ElementKind = typeFieldWithDefault(ElementKind.Vehicle)
     maxCrew: conint(strict=True, ge=0) = Field(
+=======
+    type: Literal[ElementKind.Vehicle] = Field(description="the element's type")
+    max_crew: conint(strict=True, ge=0) = Field(
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
         ..., title="Maximum Crew Count", description="crew capacity constraint"
     )
 
 
+<<<<<<< HEAD
 class PropulsiveVehicle(Vehicle, CargoCarrier):
+=======
+class PropulsiveVehicle(Vehicle):
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
     """
     An element representing a vehicle with its own propulsion via OMS.
     """
 
+<<<<<<< HEAD
     type: ElementKind = typeFieldWithDefault(ElementKind.Propulsive)
     omsISP: float = Field(
         ..., ge=0, title="OMS ISP", description="OMS specific impulse (s)"
@@ -307,10 +403,24 @@ class PropulsiveVehicle(Vehicle, CargoCarrier):
 
 
 class SurfaceVehicle(Vehicle, CargoCarrier):
+=======
+    type: Literal[ElementKind.Propulsive] = Field(description="the element's type")
+    isp: float = Field(
+        ..., ge=0, title="Specific Impulse", description="specific impulse (s)"
+    )
+    max_fuel: float = Field(
+        ..., ge=0, title="Maximum Fuel", description="maximum fuel (units)"
+    )
+    propellant_id: conint(strict=True)  # TODO: this needs constraints or to be an enum
+
+
+class SurfaceVehicle(Vehicle):
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
     """
     An element representing a surface vehicle.
     """
 
+<<<<<<< HEAD
     type: ElementKind = typeFieldWithDefault(ElementKind.Surface)
     maxSpeed: float = Field(
         ..., ge=0, title="Maximum Speed", description="maximum speed (kph)"
@@ -375,3 +485,13 @@ PatchHumanAgent = patchModel(HumanAgent, removed_fields={"id_"})
 PatchRoboticAgent = patchModel(RoboticAgent, removed_fields={"id_"})
 PatchPropulsiveVehicle = patchModel(PropulsiveVehicle, removed_fields={"id_"})
 PatchSurfaceVehicle = patchModel(SurfaceVehicle, removed_fields={"id_"})
+=======
+    type: Literal[ElementKind.Surface] = Field(description="the element's type")
+    max_speed: float = Field(
+        ..., ge=0, title="Maximum Speed", description="maximum speed (kph)"
+    )
+    max_fuel: float = Field(
+        ..., ge=0, title="Maximum Fuel", description="maximum fuel (units)"
+    )
+    fuel_id: conint(strict=True)  # TODO: this needs constraints or to be an enum
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296

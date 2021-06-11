@@ -16,12 +16,18 @@ app = FastAPI(
 # include any application routers
 app.include_router(
     hello_world.router,
-    prefix="/hello"
+    prefix="/hello",
 )
 
 app.include_router(
     hello_world.router,
+<<<<<<< HEAD
     prefix="/hello_world"
+=======
+    prefix="/hello_world",
+    include_in_schema=False,
+    deprecated=True
+>>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 )
 
 app.include_router(
