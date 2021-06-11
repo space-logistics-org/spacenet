@@ -18,8 +18,6 @@ from typing import Optional
 from pydantic import BaseModel, Field, conint
 from typing_extensions import Literal
 
-from .mixins import RequiresOnlyType, RequiresUUID
-
 __all__ = [
     "Element",
     "ResourceContainer",
