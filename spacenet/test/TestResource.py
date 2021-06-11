@@ -1,13 +1,13 @@
 import unittest
 from pydantic import ValidationError
-from spacenet.schemas.Resource import DiscreteResource, ContinuousResource
+from spacenet.schemas.Resource import DiscreteResource, ContinuousResource, ResourceType, ClassOfSupply
 
 class TestDisResource(unittest.TestCase):
     def test_good_data(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "discrete"
-        cos_ = 101
+        type_ = ResourceType("discrete")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105
         unitvolume_ = 150
@@ -22,8 +22,8 @@ class TestDisResource(unittest.TestCase):
     def test_invalidID(self):
         id_ = "G"
         name_ = "Fuel"
-        type_ = "discrete"
-        cos_ = 101
+        type_ = ResourceType("discrete")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105
         unitvolume_ = 150
@@ -32,8 +32,8 @@ class TestDisResource(unittest.TestCase):
     def test_invalidName(self):
         id_ = 1
         name_ = 100
-        type_ = "discrete"
-        cos_ = 101
+        type_ = ResourceType("discrete")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105
         unitvolume_ = 150
@@ -43,7 +43,7 @@ class TestDisResource(unittest.TestCase):
         id_ = 1
         name_ = "Fuel"
         type_ = 10
-        cos_ = 101
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105
         unitvolume_ = 150
@@ -52,7 +52,7 @@ class TestDisResource(unittest.TestCase):
     def test_invalidCOS(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "discrete"
+        type_ = ResourceType("discrete")
         cos_ = "free"
         units_ = "kg"
         unitmass_ = 105
@@ -62,8 +62,8 @@ class TestDisResource(unittest.TestCase):
     def test_invalidUnits(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "discrete"
-        cos_ = 101
+        type_ = ResourceType("discrete")
+        cos_ = ClassOfSupply(101)
         units_ = 5
         unitmass_ = 105
         unitvolume_ = 150
@@ -72,8 +72,8 @@ class TestDisResource(unittest.TestCase):
     def test_invalidMass(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "discrete"
-        cos_ = 101
+        type_ = ResourceType("discrete")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = -10
         unitvolume_ = 150
@@ -82,8 +82,8 @@ class TestDisResource(unittest.TestCase):
     def test_invalidVolume(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "discrete"
-        cos_ = 101
+        type_ = ResourceType("discrete")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105
         unitvolume_ = "vol"
@@ -94,8 +94,8 @@ class TestConResource(unittest.TestCase):
     def test_good_data(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "continuous"
-        cos_ = 101
+        type_ = ResourceType("continuous")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105.5
         unitvolume_ = 150.8
@@ -110,8 +110,8 @@ class TestConResource(unittest.TestCase):
     def test_invalidID(self):
         id_ = "G"
         name_ = "Fuel"
-        type_ = "continuous"
-        cos_ = 101
+        type_ = ResourceType("continuous")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105.5
         unitvolume_ = 150.8
@@ -120,8 +120,8 @@ class TestConResource(unittest.TestCase):
     def test_invalidName(self):
         id_ = 1
         name_ = 100
-        type_ = "continuous"
-        cos_ = 101
+        type_ = ResourceType("continuous")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105.5
         unitvolume_ = 150.8
@@ -131,7 +131,7 @@ class TestConResource(unittest.TestCase):
         id_ = 1
         name_ = "Fuel"
         type_ = 10
-        cos_ = 101
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105.5
         unitvolume_ = 150.8
@@ -140,7 +140,7 @@ class TestConResource(unittest.TestCase):
     def test_invalidCOS(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "continuous"
+        type_ = ResourceType("continuous")
         cos_ = "free"
         units_ = "kg"
         unitmass_ = 105.5
@@ -150,8 +150,8 @@ class TestConResource(unittest.TestCase):
     def test_invalidUnits(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "continuous"
-        cos_ = 101
+        type_ = ResourceType("continuous")
+        cos_ = ClassOfSupply(101)
         units_ = 5
         unitmass_ = 105.5
         unitvolume_ = 150.8
@@ -160,8 +160,8 @@ class TestConResource(unittest.TestCase):
     def test_invalidMass(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "continuous"
-        cos_ = 101
+        type_ = ResourceType("continuous")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = -10
         unitvolume_ = 150.8
@@ -170,8 +170,8 @@ class TestConResource(unittest.TestCase):
     def test_invalidVolume(self):
         id_ = 1
         name_ = "Fuel"
-        type_ = "continuous"
-        cos_ = 101
+        type_ = ResourceType("continuous")
+        cos_ = ClassOfSupply(101)
         units_ = "kg"
         unitmass_ = 105.5
         unitvolume_ = "vol"
