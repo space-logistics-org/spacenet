@@ -3,7 +3,7 @@ name = "spacenet"
 version = "3.0.0"
 description = "SpaceNet Toolkit"
 authors = [
-  "Paul Grogan <pgrogan@stevens.edu"
+  "Paul Grogan <pgrogan@stevens.edu>"
 ]
 readme = "README.md"
 homepage = "https://github.com/space-logistics-org/spacenet"

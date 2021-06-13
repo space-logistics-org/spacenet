@@ -12,7 +12,7 @@ from app.database.api.database import Base, SessionLocal, engine
 class TestHelloWorld(unittest.TestCase):
     def setUp(self):
         Base.metadata.create_all(bind=engine)
-        self.db = db = SessionLocal()
+        self.db = SessionLocal()
 
     def tearDown(self):
         self.db.close()
