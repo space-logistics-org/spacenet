@@ -14,7 +14,8 @@ This project requires Python 3.7 with `setuptools`.
 
 To install SpaceNet dependencies, run:
 ```shell
-python setup.py install
+python -m pip install spacenet/
+python -m pip install app/
 ```
 
 To launch the SpaceNet application, run:
