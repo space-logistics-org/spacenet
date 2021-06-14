@@ -1,9 +1,11 @@
-from typing import List, Union
+import uuid
+from typing import List, Type, Union
 
 from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 
 from .. import database
+from ..models import element as models
 from ..schemas.element import *
 
 router = APIRouter()
@@ -38,6 +40,18 @@ ReadElements = Union[
     ReadResourceContainer,
 ]
 
+SCHEMA_TO_MODEL = {
+    Element: models.Element,
+    ElementCarrier: models.ElementCarrier,
+    ResourceContainer: models.ResourceContainer,
+    HumanAgent: models.HumanAgent,
+    RoboticAgent: models.RoboticAgent,
+    PropulsiveVehicle: models.PropulsiveVehicle,
+    SurfaceVehicle: models.SurfaceVehicle,
+}
+
+MODEL_TO_SCHEMA = {model: schema for schema, model in SCHEMA_TO_MODEL.items()}
+
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
 
@@ -46,10 +60,9 @@ NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
     response_model=List[ReadElements],
     description="List elements currently in the database.",
 )
-def list_elements(
-    skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)
-):
-    raise HTTPException(status_code=500, detail="unimplemented")
+def list_elements(db: Session = Depends(database.get_db)):
+    db_elements = db.query(models.Element).all()
+    return db_elements
 
 
 @router.get(
@@ -59,7 +72,12 @@ def list_elements(
     description="Find a specific element in the database.",
 )
 def read_element(id_: int, db: Session = Depends(database.get_db)):
-    raise HTTPException(status_code=500, detail="unimplemented")
+    db_element = db.query(models.Element).get(id_)
+    if db_element is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"No element found with id={id_}"
+        )
+    return db_element
 
 
 @router.post(
@@ -69,7 +87,11 @@ def read_element(id_: int, db: Session = Depends(database.get_db)):
     description="Add a new element to the database.",
 )
 def create_element(element: Elements, db: Session = Depends(database.get_db)):
-    raise HTTPException(status_code=500, detail="unimplemented")
+    db_element = SCHEMA_TO_MODEL[type(element)](**element.dict())
+    db.add(db_element)
+    db.commit()
+    db.refresh(db_element)
+    return db_element
 
 
 @router.patch(
@@ -81,6 +103,12 @@ def create_element(element: Elements, db: Session = Depends(database.get_db)):
 def patch_element(
     id_: int, element: UpdateElements, db: Session = Depends(database.get_db)
 ):
+    db_element = db.query(models.Element).get(id_)
+    if db_element is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"No element found with id={id_}"
+        )
+
     raise HTTPException(status_code=500, detail="unimplemented")
 
 
@@ -91,4 +119,11 @@ def patch_element(
     description="Delete an element from the database.",
 )
 def delete_element(id_: int, db: Session = Depends(database.get_db)):
-    raise HTTPException(status_code=500, detail="unimplemented")
+    db_element = db.query(models.Element).get(id_)
+    if db_element is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"No element found with id={id_}"
+        )
+    db.delete(db_element)
+    db.commit()
+    return db_element
