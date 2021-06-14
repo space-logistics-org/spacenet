@@ -11,7 +11,6 @@ class TestEdge(unittest.TestCase):
         badIDData = {"name": "FL-GA", "id": 1, "description": "Surface Edge from Florida to Georgia", "type": "Surface", "origin_id": "", "destination_id": 2, "distance": 100}
         goodEdge = SurfaceEdge(**goodData)
         self.assertEqual(goodEdge.name, goodData.get("name"))
-        self.assertEqual(goodEdge.id, goodData.get("id"))
         self.assertEqual(goodEdge.description, goodData.get("description"))
         self.assertEqual(goodEdge.type, goodData.get("type"))
         self.assertEqual(goodEdge.origin_id, goodData.get("origin_id"))
@@ -28,11 +27,10 @@ class TestEdge(unittest.TestCase):
             badIDEdge = SurfaceEdge(**badIDData)
 
     def testSpaEdge(self):
-        goodData = {"name": "Earth-Moon", "id": 1, "description": "Space edge from Earth to the moon", "type": "Surface", "origin_id": 1, "destination_id": 2, "duration": 100}
-        badDurationData = {"name": "Earth-Moon", "id": 1, "description": "Space edge from Earth to the moon", "type": "Surface", "origin_id": 1, "destination_id": 2, "duration": -100}
+        goodData = {"name": "Earth-Moon", "id": 1, "description": "Space edge from Earth to the moon", "type": "Space", "origin_id": 1, "destination_id": 2, "duration": 100}
+        badDurationData = {"name": "Earth-Moon", "id": 1, "description": "Space edge from Earth to the moon", "type": "Space", "origin_id": 1, "destination_id": 2, "duration": -100}
         goodEdge = SpaceEdge(**goodData)
         self.assertEqual(goodEdge.name, goodData.get("name"))
-        self.assertEqual(goodEdge.id, goodData.get("id"))
         self.assertEqual(goodEdge.description, goodData.get("description"))
         self.assertEqual(goodEdge.type, goodData.get("type"))
         self.assertEqual(goodEdge.origin_id, goodData.get("origin_id"))
@@ -48,7 +46,6 @@ class TestEdge(unittest.TestCase):
         badMax_cargoData = {"name": "Earth-Moon", "id": 1, "description": "Flight edge from Earth to the moon", "type": "Flight", "origin_id": 1, "destination_id": 2, "duration": 100, "max_crew": 10, "max_cargo": -10}
         goodEdge = FlightEdge(**goodData)
         self.assertEqual(goodEdge.name, goodData.get("name"))
-        self.assertEqual(goodEdge.id, goodData.get("id"))
         self.assertEqual(goodEdge.description, goodData.get("description"))
         self.assertEqual(goodEdge.type, goodData.get("type"))
         self.assertEqual(goodEdge.origin_id, goodData.get("origin_id"))
