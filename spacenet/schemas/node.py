@@ -97,7 +97,8 @@ class OrbitalNode(Node):
         ...,
         title="Inclination",
         description="Inclination of orbit",
-        ge=0
+        ge=0,
+        le=90
     )
 
 
