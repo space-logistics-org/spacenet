@@ -5,7 +5,7 @@ from abc import ABC
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field, conint
+from pydantic import BaseModel, Field, conint, NonNegativeFloat, NonNegativeInt
 from typing_extensions import Literal
 
 from ..constants import Environment, ClassOfSupply
@@ -60,8 +60,8 @@ class Element(BaseModel):
         "required to pack the element inside a"
         " carrier.",
     )
-    mass: float = Field(..., ge=0, title="Mass", description="mass in kg")
-    volume: float = Field(..., ge=0, title="Volume", description="volume in m^3")
+    mass: NonNegativeFloat = Field(..., title="Mass", description="mass in kg")
+    volume: NonNegativeFloat = Field(..., title="Volume", description="volume in m^3")
 
 
 class CargoCarrier(Element, ABC):
@@ -69,12 +69,11 @@ class CargoCarrier(Element, ABC):
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
     """
 
-    max_cargo_mass: Optional[float] = Field(
-        ..., ge=0, title="Max Cargo Mass", description="cargo capacity constraint (kg)"
+    max_cargo_mass: Optional[NonNegativeFloat] = Field(
+        ..., title="Max Cargo Mass", description="cargo capacity constraint (kg)"
     )
-    max_cargo_volume: Optional[float] = Field(
+    max_cargo_volume: Optional[NonNegativeFloat] = Field(
         ...,
-        ge=0,
         title="Maximum Cargo Volume",
         description="cargo capacity constraint (m^3)",
     )
@@ -152,11 +151,11 @@ class PropulsiveVehicle(Vehicle):
     """
 
     type: Literal[ElementKind.Propulsive] = Field(description="the element's type")
-    isp: float = Field(
-        ..., ge=0, title="Specific Impulse", description="specific impulse (s)"
+    isp: NonNegativeFloat = Field(
+        ..., title="Specific Impulse", description="specific impulse (s)"
     )
-    max_fuel: float = Field(
-        ..., ge=0, title="Maximum Fuel", description="maximum fuel (units)"
+    max_fuel: NonNegativeFloat = Field(
+        ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
     propellant_id: conint(strict=True)  # TODO: this needs constraints or to be an enum
 
@@ -167,10 +166,10 @@ class SurfaceVehicle(Vehicle):
     """
 
     type: Literal[ElementKind.Surface] = Field(description="the element's type")
-    max_speed: float = Field(
-        ..., ge=0, title="Maximum Speed", description="maximum speed (kph)"
+    max_speed: NonNegativeFloat = Field(
+        ..., title="Maximum Speed", description="maximum speed (kph)"
     )
-    max_fuel: float = Field(
-        ..., ge=0, title="Maximum Fuel", description="maximum fuel (units)"
+    max_fuel: NonNegativeFloat = Field(
+        ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
     fuel_id: conint(strict=True)  # TODO: this needs constraints or to be an enum
