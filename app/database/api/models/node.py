@@ -3,7 +3,7 @@ from ..database import Base
 
 class Node(Base):
 
-    _tablename_ = "Nodes"
+    __tablename__ = "Nodes"
 
     id = Column(Integer, primary_key = True, index = True)
     type = Column(String)
