@@ -26,33 +26,33 @@ class TestOptionalFields(unittest.TestCase):
         b: float = Field(description="test")
         c: conint(ge=0)
 
-    def testAllMadeOptional(self):
+    def test_all_made_optional(self):
         class OptionalModel(self.Model, OptionalFields):
             pass
 
-        for fieldName, field in self.Model.__fields__.items():
-            expField = copy.deepcopy(field)
-            expField.required = False
-            expField.default = None
-            actualField = OptionalModel.__fields__[fieldName]
+        for field_name, field in self.Model.__fields__.items():
+            exp_field = copy.deepcopy(field)
+            exp_field.required = False
+            exp_field.default = None
+            actual_field = OptionalModel.__fields__[field_name]
             # using repr b/c __eq__ isn't implemented for Field
-            self.assertEqual(repr(expField), repr(actualField))
+            self.assertEqual(repr(exp_field), repr(actual_field))
 
-    def testSomeMadeOptional(self):
+    def test_some_made_optional(self):
         class PartialOptionalModel(self.Model, OptionalFields, excluded_fields={"a"}):
             pass
 
         optional_fields = (
-            fieldName
-            for fieldName in set(self.Model.__fields__.keys()).difference({"a"})
+            field_name
+            for field_name in set(self.Model.__fields__.keys()).difference({"a"})
         )
-        for fieldName in optional_fields:
-            field = self.Model.__fields__[fieldName]
-            expField = copy.deepcopy(field)
-            expField.required = False
-            expField.default = None
-            actualField = PartialOptionalModel.__fields__[fieldName]
-            self.assertEqual(repr(expField), repr(actualField))
+        for field_name in optional_fields:
+            field = self.Model.__fields__[field_name]
+            exp_field = copy.deepcopy(field)
+            exp_field.required = False
+            exp_field.default = None
+            actual_field = PartialOptionalModel.__fields__[field_name]
+            self.assertEqual(repr(exp_field), repr(actual_field))
         self.assertEqual(
             repr(TestOptionalFields.Model.__fields__["a"]),
             repr(PartialOptionalModel.__fields__["a"]),
@@ -67,13 +67,13 @@ class TestRequiresUUID(unittest.TestCase):
     class Model(BaseModel):
         pass
 
-    def testRequiresUUID(self):
+    def test_requires_uuid(self):
         class ModelWithUUID(self.Model, RequiresUUID):
             pass
 
         self.assertEqual(len(ModelWithUUID.__fields__), 1)
-        fieldName, field = ModelWithUUID.__fields__.popitem()
-        self.assertEqual(fieldName, "id_")
+        field_name, field = ModelWithUUID.__fields__.popitem()
+        self.assertEqual(field_name, "id_")
         self.assertIsInstance(field, ModelField)
         self.assertEqual(UUID, field.type_)
         self.assertTrue(field.required)

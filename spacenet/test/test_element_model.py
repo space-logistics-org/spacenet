@@ -23,7 +23,7 @@ there are too many inputs for this to be feasible, This approach also likely pro
 equivalent or better coverage than equivalence partitioning: it's very likely that no
 combination of values is repeated across the many iterations of a test, and again, it's
 unlikely that any one value is untested. This means that about 7 * NUM_SAMPLES combinations are
-tested in the testAllValid cases alone. Then, equivalence partitioning likely tests fewer
+tested in the test_all_valid cases alone. Then, equivalence partitioning likely tests fewer
 combinations of values. If some particular problematic combination of inputs causes issues,
 adding a more manual test for that specific combination is still feasible.
 
@@ -59,22 +59,29 @@ NEG_FLOATS = [float(-1 * i) for i in range(1, 10)]
 FLOATS_IN_UNIT_INTERVAL = [i / 9 for i in range(10)]
 
 
-def getInvalidTypes(myType: ElementKind) -> Tuple[ElementKind, ...]:
+def get_invalid_types(my_type: ElementKind) -> Tuple[ElementKind, ...]:
     """
     Get a list of all invalid type discriminants, given that the only valid type discriminant
     is the provided "myType".
 
-    :param myType: the valid type discriminant
+    :param my_type: the valid type discriminant
     :return:  all invalid type discriminants
     """
-    return tuple(kind for kind in ElementKind if kind != myType)
+    return tuple(kind for kind in ElementKind if kind != my_type)
 
 
-def withID(kw: Dict) -> Dict:
+def with_id(kw: Dict) -> Dict:
+    """
+    Construct a new dictionary which adds a field "id_" with a value of type uuid to the
+    provided dictionary.
+
+    :param kw: input dictionary
+    :return: copy of input dictionary with new field "id_"
+    """
     return {**kw, "id_": uuid.uuid4()}
 
 
-class I_ValidArgsFactory(ABC):
+class ValidArgsFactory(ABC):
     """
     Interface defining behavior of a keyword argument factory which provides valid keyword
     arguments.
@@ -82,7 +89,7 @@ class I_ValidArgsFactory(ABC):
 
     @staticmethod
     @abstractmethod
-    def makeKeywords() -> Dict[str, Any]:
+    def make_keywords() -> Dict[str, Any]:
         """
         Make valid keyword arguments for constructing an element model.
 
@@ -91,7 +98,7 @@ class I_ValidArgsFactory(ABC):
         pass
 
 
-class I_InvalidArgsFactory(ABC):
+class InvalidArgsFactory(ABC):
     """
     Interface defining behavior of a keyword argument factory which provides invalid keyword
     arguments.
@@ -99,7 +106,7 @@ class I_InvalidArgsFactory(ABC):
 
     @staticmethod
     @abstractmethod
-    def makeKeywords() -> Dict[str, Any]:
+    def make_keywords() -> Dict[str, Any]:
         """
         Make invalid keyword arguments for constructing an element model.
 
@@ -108,7 +115,7 @@ class I_InvalidArgsFactory(ABC):
         pass
 
 
-class ValidElementArgsFactory(I_ValidArgsFactory):
+class ValidElementArgsFactory(ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for constructing
     an element model, excepting the "type" field.
@@ -123,7 +130,7 @@ class ValidElementArgsFactory(I_ValidArgsFactory):
     validVolumes = validMasses
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
+    def make_keywords() -> Dict[str, Any]:
         kw = {
             "name": random.choice(ValidElementArgsFactory.validNames),
             "description": random.choice(ValidElementArgsFactory.validDescs),
@@ -136,7 +143,7 @@ class ValidElementArgsFactory(I_ValidArgsFactory):
         return kw
 
 
-class InvalidElementArgsFactory(I_InvalidArgsFactory):
+class InvalidElementArgsFactory(InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid or badly-typed
     arguments for constructing an element model, excepting the "type" field.
@@ -158,7 +165,7 @@ class InvalidElementArgsFactory(I_InvalidArgsFactory):
     badlyTypedVolumes = badlyTypedMasses
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
+    def make_keywords() -> Dict[str, Any]:
         """
         Make invalid or badly-typed keyword arguments for constructing an element model.
 
@@ -168,7 +175,7 @@ class InvalidElementArgsFactory(I_InvalidArgsFactory):
         value, and if said process assigns no invalid values, selects exactly 1 attribute to
         have an invalid value.
         """
-        invalidSelected = 0
+        invalid_selected = 0
         attrs = [
             "Names",
             "Descs",
@@ -178,7 +185,7 @@ class InvalidElementArgsFactory(I_InvalidArgsFactory):
             "Masses",
             "Volumes",
         ]
-        fieldNames = [
+        field_names = [
             "name",
             "description",
             "class_of_supply",
@@ -188,27 +195,29 @@ class InvalidElementArgsFactory(I_InvalidArgsFactory):
             "volume",
         ]
         kw = {}
-        for attr, fieldName in zip(attrs, fieldNames):
-            options = InvalidElementArgsFactory.getOptions(attr)
+        for attr, field_name in zip(attrs, field_names):
+            options = InvalidElementArgsFactory.get_options(attr)
             ix = random.randrange(len(options))
             if ix != 0:
-                invalidSelected += 1
+                invalid_selected += 1
             option = options[ix]
-            attrValue = random.choice(option)
-            kw[fieldName] = attrValue
-        if invalidSelected == 0:
-            badAttrIx = random.randrange(2, len(attrs))  # exclude name and description
-            attr, fieldName = attrs[badAttrIx], fieldNames[badAttrIx]
-            options = InvalidElementArgsFactory.getOptions(attr)[
+            attr_value = random.choice(option)
+            kw[field_name] = attr_value
+        if invalid_selected == 0:
+            bad_attr_ix = random.randrange(
+                2, len(attrs)
+            )  # exclude name and description
+            attr, field_name = attrs[bad_attr_ix], field_names[bad_attr_ix]
+            options = InvalidElementArgsFactory.get_options(attr)[
                 1:
             ]  # exclude first valid
             option = random.choice(options)
-            attrValue = random.choice(option)
-            kw[fieldName] = attrValue
+            attr_value = random.choice(option)
+            kw[field_name] = attr_value
         return kw
 
     @staticmethod
-    def getOptions(attr: str) -> list:
+    def get_options(attr: str) -> list:
         options = [
             getattr(ValidElementArgsFactory, f"valid{attr}"),
             getattr(InvalidElementArgsFactory, f"badlyTyped{attr}"),
@@ -237,7 +246,7 @@ class BaseTester:
 
     # the attribute names which are enumerations
 
-    def assertMatches(self, kw: dict, element: Element) -> None:
+    def assert_matches(self, kw: dict, element: Element) -> None:
         """
         Verify that the fields of the provided Element match the corresponding values in the
         provided keyword argument dictionary which created it.
@@ -270,50 +279,50 @@ class BaseTester:
             msg=f"Expected element.type to be {self.validType}",
         )
 
-    def testAllValid(self) -> None:
+    def test_all_valid(self) -> None:
         """
         Verify that, when all fields are valid, no error is raised when constructing a model
         from keyword arguments, and that all fields match what is expected.
         """
         factory = self.validFactory()
         for _ in range(NUM_ATTEMPTS):
-            kw = factory.makeKeywords()
+            kw = factory.make_keywords()
             kw["type"] = self.validType
             element = self.elementType(**kw)
-            self.assertMatches(kw, element)
+            self.assert_matches(kw, element)
 
-    def testMissingFields(self):
+    def test_missing_fields(self):
         factory = self.validFactory()
         for _ in range(NUM_ATTEMPTS):
-            kw = factory.makeKeywords()
+            kw = factory.make_keywords()
             kw["type"] = self.validType
-            missingField, _ = kw.popitem()
+            missing_field, _ = kw.popitem()
             with self.assertRaises(
-                ValidationError, msg=f"provided keywords are missing {missingField}"
+                ValidationError, msg=f"provided keywords are missing {missing_field}"
             ):
                 self.elementType(**kw)
 
-    def testInvalidValues(self) -> None:
+    def test_invalid_values(self) -> None:
         """
         Verify that, when at least one field takes on an invalid value, an error is raised when
         constructing a model from keyword arguments.
         """
         factory = self.invalidFactory()
         for _ in range(NUM_ATTEMPTS):
-            kw = factory.makeKeywords()
+            kw = factory.make_keywords()
             kw["type"] = self.validType
             with self.assertRaises(
                 ValidationError, msg=f"{kw} should have raised an error"
             ):
                 self.elementType(**kw)
 
-    def testInvalidType(self) -> None:
+    def test_invalid_type(self) -> None:
         """
         Verify that, when the type discriminant of an element does not match what it's expected
         to, validation fails.
         """
         factory = self.validFactory()
-        kw = factory.makeKeywords()
+        kw = factory.make_keywords()
         for type_ in self.invalidTypes:
             kw["type"] = type_
             with self.assertRaises(
@@ -334,13 +343,13 @@ class SeededTester(unittest.TestCase):
 
 class TestElement(SeededTester, BaseTester):
     validType = ElementKind.Element
-    invalidTypes = getInvalidTypes(myType=validType)
+    invalidTypes = get_invalid_types(my_type=validType)
     validFactory = ValidElementArgsFactory
     invalidFactory = InvalidElementArgsFactory
     elementType = Element
 
 
-class ValidCargoCarrierArgsFactory(I_ValidArgsFactory):
+class ValidCargoCarrierArgsFactory(ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a resource container or element carrier model, excepting the "type" field.
@@ -350,8 +359,8 @@ class ValidCargoCarrierArgsFactory(I_ValidArgsFactory):
     validMaxCargoVolume = NON_NEG_FLOATS + [None]
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
-        kw = ValidElementArgsFactory.makeKeywords()
+    def make_keywords() -> Dict[str, Any]:
+        kw = ValidElementArgsFactory.make_keywords()
         kw["max_cargo_mass"] = random.choice(
             ValidCargoCarrierArgsFactory.validMaxCargoMass
         )
@@ -361,7 +370,7 @@ class ValidCargoCarrierArgsFactory(I_ValidArgsFactory):
         return kw
 
 
-class InvalidCargoCarrierArgsFactory(I_InvalidArgsFactory):
+class InvalidCargoCarrierArgsFactory(InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing a resource container or element carrier model, excepting the "type" field.
@@ -373,8 +382,8 @@ class InvalidCargoCarrierArgsFactory(I_InvalidArgsFactory):
     badlyTypedMaxCargoVolume = STRINGS
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
-        kw = ValidCargoCarrierArgsFactory.makeKeywords()
+    def make_keywords() -> Dict[str, Any]:
+        kw = ValidCargoCarrierArgsFactory.make_keywords()
         rand = random.random()
         if rand < 0.25:
             kw["max_cargo_mass"] = random.choice(
@@ -400,29 +409,29 @@ class InvalidCargoCarrierArgsFactory(I_InvalidArgsFactory):
 
 class TestResourceContainer(SeededTester, BaseTester):
     validType = ElementKind.ResourceContainer
-    invalidTypes = getInvalidTypes(myType=validType)
+    invalidTypes = get_invalid_types(my_type=validType)
     validFactory = ValidCargoCarrierArgsFactory
     invalidFactory = InvalidCargoCarrierArgsFactory
     nonEnumAttrs = BaseTester.nonEnumAttrs + ["max_cargo_mass", "max_cargo_volume"]
     elementType = ResourceContainer
 
 
-class ValidElementCarrierArgsFactory(I_ValidArgsFactory):
+class ValidElementCarrierArgsFactory(ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a element carrier model, excepting the "type" field.
     """
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
-        kw = ValidCargoCarrierArgsFactory.makeKeywords()
+    def make_keywords() -> Dict[str, Any]:
+        kw = ValidCargoCarrierArgsFactory.make_keywords()
         kw["cargo_environment"] = random.choice(
             [variant.value for variant in Environment]
         )
         return kw
 
 
-class InvalidElementCarrierArgsFactory(I_InvalidArgsFactory):
+class InvalidElementCarrierArgsFactory(InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing an element carrier model, excepting the "type" field.
@@ -432,10 +441,10 @@ class InvalidElementCarrierArgsFactory(I_InvalidArgsFactory):
     badlyTypedCargoEnvironments = list(range(10))
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
+    def make_keywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidCargoCarrierArgsFactory, InvalidCargoCarrierArgsFactory)
-        ).makeKeywords()
+        ).make_keywords()
         kw["cargo_environment"] = random.choice(
             InvalidElementCarrierArgsFactory.invalidCargoEnvironments
             + InvalidElementCarrierArgsFactory.badlyTypedCargoEnvironments
@@ -445,7 +454,7 @@ class InvalidElementCarrierArgsFactory(I_InvalidArgsFactory):
 
 class TestElementCarrier(SeededTester, BaseTester):
     validType = ElementKind.ElementCarrier
-    invalidTypes = getInvalidTypes(myType=validType)
+    invalidTypes = get_invalid_types(my_type=validType)
     validFactory = ValidElementCarrierArgsFactory
     invalidFactory = InvalidCargoCarrierArgsFactory
     nonEnumAttrs = TestResourceContainer.nonEnumAttrs
@@ -453,7 +462,7 @@ class TestElementCarrier(SeededTester, BaseTester):
     elementType = ElementCarrier
 
 
-class ValidAgentArgsFactory(I_ValidArgsFactory):
+class ValidAgentArgsFactory(ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing an agent model, excepting the "type" field.
@@ -462,15 +471,15 @@ class ValidAgentArgsFactory(I_ValidArgsFactory):
     validTImeFractions = FLOATS_IN_UNIT_INTERVAL
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
-        kw = ValidElementArgsFactory.makeKeywords()
+    def make_keywords() -> Dict[str, Any]:
+        kw = ValidElementArgsFactory.make_keywords()
         kw["active_time_fraction"] = random.choice(
             ValidAgentArgsFactory.validTImeFractions
         )
         return kw
 
 
-class InvalidAgentArgsFactory(I_InvalidArgsFactory):
+class InvalidAgentArgsFactory(InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing an agent model, excepting the "type" field.
@@ -482,10 +491,10 @@ class InvalidAgentArgsFactory(I_InvalidArgsFactory):
     badlyTypedTimeFractions = STRINGS
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
+    def make_keywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidElementArgsFactory, InvalidElementArgsFactory)
-        ).makeKeywords()
+        ).make_keywords()
         kw["active_time_fraction"] = random.choice(
             InvalidAgentArgsFactory.invalidTimeFractions
             + InvalidAgentArgsFactory.badlyTypedTimeFractions
@@ -501,17 +510,17 @@ class AgentTester(BaseTester):
 
 class TestHumanAgent(SeededTester, AgentTester):
     validType = ElementKind.HumanAgent
-    invalidTypes = getInvalidTypes(myType=validType)
+    invalidTypes = get_invalid_types(my_type=validType)
     elementType = HumanAgent
 
 
 class TestRoboticAgent(SeededTester, AgentTester):
     validType = ElementKind.RoboticAgent
-    invalidTypes = getInvalidTypes(myType=validType)
+    invalidTypes = get_invalid_types(my_type=validType)
     elementType = RoboticAgent
 
 
-class ValidVehicleArgsFactory(I_ValidArgsFactory):
+class ValidVehicleArgsFactory(ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a vehicle model, excepting the "type" field.
@@ -521,14 +530,14 @@ class ValidVehicleArgsFactory(I_ValidArgsFactory):
     validMaxCrews = NON_NEG_INTS
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
-        kw = ValidCargoCarrierArgsFactory.makeKeywords()
+    def make_keywords() -> Dict[str, Any]:
+        kw = ValidCargoCarrierArgsFactory.make_keywords()
         kw["max_crew"] = random.choice(ValidVehicleArgsFactory.validMaxCrews)
         kw["max_fuel"] = random.choice(ValidVehicleArgsFactory.validMaxFuels)
         return kw
 
 
-class InvalidVehicleArgsFactory(I_InvalidArgsFactory):
+class InvalidVehicleArgsFactory(InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing a vehicle model, excepting the "type" field.
@@ -540,36 +549,36 @@ class InvalidVehicleArgsFactory(I_InvalidArgsFactory):
     badlyTypedMaxCrews = STRINGS
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
+    def make_keywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidCargoCarrierArgsFactory, InvalidCargoCarrierArgsFactory)
-        ).makeKeywords()
+        ).make_keywords()
         rand = random.random()
         if rand < 0.25:
-            maxFuelOptions = (
+            max_fuel_options = (
                 InvalidVehicleArgsFactory.invalidMaxFuels
                 + InvalidVehicleArgsFactory.badlyTypedMaxFuels
             )
-            maxCrewOptions = (
+            max_crew_options = (
                 InvalidVehicleArgsFactory.invalidMaxCrews
                 + InvalidVehicleArgsFactory.badlyTypedMaxCrews
             )
         elif rand < 0.5:
-            maxFuelOptions = (
+            max_fuel_options = (
                 InvalidVehicleArgsFactory.invalidMaxFuels
                 + InvalidVehicleArgsFactory.badlyTypedMaxFuels
             )
-            maxCrewOptions = ValidVehicleArgsFactory.validMaxCrews
+            max_crew_options = ValidVehicleArgsFactory.validMaxCrews
 
         else:
-            maxFuelOptions = ValidVehicleArgsFactory.validMaxFuels
-            maxCrewOptions = (
+            max_fuel_options = ValidVehicleArgsFactory.validMaxFuels
+            max_crew_options = (
                 InvalidVehicleArgsFactory.invalidMaxCrews
                 + InvalidVehicleArgsFactory.badlyTypedMaxCrews
             )
 
-        kw["max_crew"] = random.choice(maxCrewOptions)
-        kw["max_fuel"] = random.choice(maxFuelOptions)
+        kw["max_crew"] = random.choice(max_crew_options)
+        kw["max_fuel"] = random.choice(max_fuel_options)
         return kw
 
 
@@ -577,7 +586,7 @@ class VehicleTester(BaseTester):
     nonEnumAttrs = BaseTester.nonEnumAttrs + ["max_crew"]
 
 
-class ValidPropulsiveArgsFactory(I_ValidArgsFactory):
+class ValidPropulsiveArgsFactory(ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a propulsive vehicle model, excepting the "type" field.
@@ -587,14 +596,14 @@ class ValidPropulsiveArgsFactory(I_ValidArgsFactory):
     validPropIDs = NON_NEG_INTS + NEG_INTS
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
-        kw = ValidVehicleArgsFactory.makeKeywords()
+    def make_keywords() -> Dict[str, Any]:
+        kw = ValidVehicleArgsFactory.make_keywords()
         kw["isp"] = random.choice(ValidPropulsiveArgsFactory.validISPs)
         kw["propellant_id"] = random.choice(ValidPropulsiveArgsFactory.validPropIDs)
         return kw
 
 
-class InvalidPropulsiveArgsFactory(I_InvalidArgsFactory):
+class InvalidPropulsiveArgsFactory(InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing a propulsive vehicle model, excepting the "type" field.
@@ -606,47 +615,47 @@ class InvalidPropulsiveArgsFactory(I_InvalidArgsFactory):
     badlyTypedPropIDs = STRINGS
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
+    def make_keywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidVehicleArgsFactory, InvalidVehicleArgsFactory)
-        ).makeKeywords()
+        ).make_keywords()
         rand = random.random()
         if rand < 0.25:
-            ispOptions = (
+            isp_options = (
                 InvalidPropulsiveArgsFactory.invalidISPs
                 + InvalidPropulsiveArgsFactory.badlyTypedISPs
             )
-            propellantIDOptions = (
+            propellant_id_options = (
                 InvalidPropulsiveArgsFactory.invalidPropIDs
                 + InvalidPropulsiveArgsFactory.badlyTypedPropIDs
             )
         elif rand < 0.5:
-            ispOptions = (
+            isp_options = (
                 InvalidPropulsiveArgsFactory.invalidISPs
                 + InvalidPropulsiveArgsFactory.badlyTypedISPs
             )
-            propellantIDOptions = ValidPropulsiveArgsFactory.validPropIDs
+            propellant_id_options = ValidPropulsiveArgsFactory.validPropIDs
         else:
-            ispOptions = ValidPropulsiveArgsFactory.validISPs
-            propellantIDOptions = (
+            isp_options = ValidPropulsiveArgsFactory.validISPs
+            propellant_id_options = (
                 InvalidPropulsiveArgsFactory.invalidPropIDs
                 + InvalidPropulsiveArgsFactory.badlyTypedPropIDs
             )
-        kw["isp"] = random.choice(ispOptions)
-        kw["propellant_id"] = random.choice(propellantIDOptions)
+        kw["isp"] = random.choice(isp_options)
+        kw["propellant_id"] = random.choice(propellant_id_options)
         return kw
 
 
 class TestPropulsiveVehicle(SeededTester, VehicleTester):
     validType = ElementKind.Propulsive
-    invalidTypes = getInvalidTypes(myType=validType)
+    invalidTypes = get_invalid_types(my_type=validType)
     validFactory = ValidPropulsiveArgsFactory
     invalidFactory = InvalidPropulsiveArgsFactory
     nonEnumAttrs = VehicleTester.nonEnumAttrs + ["max_fuel", "isp"]
     elementType = PropulsiveVehicle
 
 
-class ValidSurfaceArgsFactory(I_ValidArgsFactory):
+class ValidSurfaceArgsFactory(ValidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of valid arguments for
     constructing a surface vehicle model, excepting the "type" field.
@@ -656,14 +665,14 @@ class ValidSurfaceArgsFactory(I_ValidArgsFactory):
     validFuelIDs = NON_NEG_INTS + NEG_INTS
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
-        kw = ValidVehicleArgsFactory.makeKeywords()
+    def make_keywords() -> Dict[str, Any]:
+        kw = ValidVehicleArgsFactory.make_keywords()
         kw["max_speed"] = random.choice(ValidSurfaceArgsFactory.validMaxSpeeds)
         kw["fuel_id"] = random.choice(ValidSurfaceArgsFactory.validFuelIDs)
         return kw
 
 
-class InvalidSurfaceArgsFactory(I_InvalidArgsFactory):
+class InvalidSurfaceArgsFactory(InvalidArgsFactory):
     """
     Factory class for constructing dictionaries consisting of invalid arguments for
     constructing a surface vehicle model, excepting the "type" field.
@@ -675,40 +684,40 @@ class InvalidSurfaceArgsFactory(I_InvalidArgsFactory):
     badlyTypedFuelIDs = STRINGS
 
     @staticmethod
-    def makeKeywords() -> Dict[str, Any]:
+    def make_keywords() -> Dict[str, Any]:
         kw = random.choice(
             (ValidVehicleArgsFactory, InvalidVehicleArgsFactory)
-        ).makeKeywords()
+        ).make_keywords()
         rand = random.random()
         if rand < 0.25:
-            maxSpeedOptions = (
+            max_speed_options = (
                 InvalidSurfaceArgsFactory.invalidMaxSpeeds
                 + InvalidSurfaceArgsFactory.badlyTypedMaxSpeeds
             )
-            fuelIDOptions = (
+            fuel_id_options = (
                 InvalidSurfaceArgsFactory.invalidFuelIDs
                 + InvalidSurfaceArgsFactory.badlyTypedFuelIDs
             )
         elif rand < 0.5:
-            maxSpeedOptions = (
+            max_speed_options = (
                 InvalidSurfaceArgsFactory.invalidMaxSpeeds
                 + InvalidSurfaceArgsFactory.badlyTypedMaxSpeeds
             )
-            fuelIDOptions = ValidSurfaceArgsFactory.validFuelIDs
+            fuel_id_options = ValidSurfaceArgsFactory.validFuelIDs
         else:
-            maxSpeedOptions = ValidSurfaceArgsFactory.validMaxSpeeds
-            fuelIDOptions = (
+            max_speed_options = ValidSurfaceArgsFactory.validMaxSpeeds
+            fuel_id_options = (
                 InvalidSurfaceArgsFactory.invalidFuelIDs
                 + InvalidSurfaceArgsFactory.badlyTypedFuelIDs
             )
-        kw["max_speed"] = random.choice(maxSpeedOptions)
-        kw["fuel_id"] = random.choice(fuelIDOptions)
+        kw["max_speed"] = random.choice(max_speed_options)
+        kw["fuel_id"] = random.choice(fuel_id_options)
         return kw
 
 
 class TestSurfaceVehicle(SeededTester, VehicleTester):
     validType = ElementKind.Surface
-    invalidTypes = getInvalidTypes(myType=validType)
+    invalidTypes = get_invalid_types(my_type=validType)
     validFactory = ValidSurfaceArgsFactory
     invalidFactory = InvalidSurfaceArgsFactory
     nonEnumAttrs = VehicleTester.nonEnumAttrs + ["max_fuel", "max_speed"]
