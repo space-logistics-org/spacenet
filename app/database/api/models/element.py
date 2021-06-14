@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.orm import declared_attr
 from ..database import Base
 
+from spacenet.schemas.element import ElementKind
+
 
 class Element(Base):
     __tablename__ = "Elements"
@@ -16,7 +18,10 @@ class Element(Base):
     mass = Column(Float)
     volume = Column(Float)
 
-    __mapper_args__ = {"polymorphic_on": type, "polymorphic_identity": "Element"}
+    __mapper_args__ = {
+        "polymorphic_on": type,
+        "polymorphic_identity": ElementKind.Element.value,
+    }
 
 
 class CargoCarrier(Element):
@@ -34,13 +39,13 @@ class CargoCarrier(Element):
 
 class ResourceContainer(CargoCarrier):
 
-    __mapper_args__ = {"polymorphic_identity": "Resource Container"}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.ResourceContainer.value}
 
 
 class ElementCarrier(CargoCarrier):
     cargo_environment = Column(String)
 
-    __mapper_args__ = {"polymorphic_identity": "Element Carrier"}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.ElementCarrier.value}
 
 
 class Agent(Element):
@@ -52,12 +57,12 @@ class Agent(Element):
 
 
 class HumanAgent(Agent):
-    __mapper_args__ = {"polymorphic_identity": "Human Agent"}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.HumanAgent.value}
     pass
 
 
 class RoboticAgent(Agent):
-    __mapper_args__ = {"polymorphic_identity": "Robotic Agent"}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.RoboticAgent.value}
     pass
 
 
@@ -78,11 +83,11 @@ class PropulsiveVehicle(Vehicle):
     isp = Column(Float)
     propellant_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": "Propulsive Vehicle"}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.Propulsive.value}
 
 
 class SurfaceVehicle(Vehicle):
     max_speed = Column(Float)
     fuel_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": "Surface Vehicle"}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.Surface.value}
