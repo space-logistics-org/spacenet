@@ -1,7 +1,6 @@
-import uuid
-from typing import List, Type, Union
+from typing import List, Union
 
-from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from .. import database
@@ -50,8 +49,6 @@ SCHEMA_TO_MODEL = {
     SurfaceVehicle: models.SurfaceVehicle,
 }
 
-MODEL_TO_SCHEMA = {model: schema for schema, model in SCHEMA_TO_MODEL.items()}
-
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
 
@@ -75,7 +72,8 @@ def read_element(id_: int, db: Session = Depends(database.get_db)):
     db_element = db.query(models.Element).get(id_)
     if db_element is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"No element found with id={id_}"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No element found with id={id_}",
         )
     return db_element
 
@@ -97,7 +95,7 @@ def create_element(element: Elements, db: Session = Depends(database.get_db)):
 @router.patch(
     "/{id_}",
     response_model=ReadElements,
-    responses=NOT_FOUND_RESPONSE,
+    responses={**NOT_FOUND_RESPONSE, status.HTTP_409_CONFLICT: {"msg": str}},
     description="Update an existing element in the database.",
 )
 def patch_element(
@@ -106,10 +104,20 @@ def patch_element(
     db_element = db.query(models.Element).get(id_)
     if db_element is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"No element found with id={id_}"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No element found with id={id_}",
         )
-
-    raise HTTPException(status_code=500, detail="unimplemented")
+    if element.type != db_element.type:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Element found with id={id_} is of type {db_element.type}; cannot update "
+            f"type to {element.type} ",
+        )
+    for field_name, field in element.dict().items():
+        if field_name != "type" and field is not None:
+            setattr(db_element, field_name, field)
+    db.commit()
+    return db_element
 
 
 @router.delete(
@@ -122,8 +130,12 @@ def delete_element(id_: int, db: Session = Depends(database.get_db)):
     db_element = db.query(models.Element).get(id_)
     if db_element is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"No element found with id={id_}"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No element found with id={id_}",
         )
     db.delete(db_element)
     db.commit()
     return db_element
+
+
+# TODO: test all of these after implementing patch
