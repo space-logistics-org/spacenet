@@ -41,7 +41,7 @@ from spacenet.schemas.element import ElementKind
 from ..api.database import Base, get_db
 from ..api.models.element import Element as ElementModel
 from ..api.main import app
-from spacenet.test.factories import *
+from spacenet.test.element_factories import *
 from .utilities import with_type, make_subset, first_subset_second, filter_val_not_none
 
 client = TestClient(app)
