@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy.orm import declared_attr
 from ..database import Base
 
 
@@ -15,41 +16,48 @@ class Element(Base):
     mass = Column(Float)
     volume = Column(Float)
 
-    __mapper_args__ = {"polymorphic_on": type, "polymorphic_identity": "element"}
+    __mapper_args__ = {"polymorphic_on": type, "polymorphic_identity": "Element"}
 
 
 class CargoCarrier(Element):
 
     __abstract__ = True
 
-    max_cargo_mass = Column(Float)
-    max_cargo_volume = Column(Float)
+    @declared_attr
+    def max_cargo_mass(cls):
+        return Element.__table__.c.get("max_cargo_mass", Column(Float))
+
+    @declared_attr
+    def max_cargo_volume(cls):
+        return Element.__table__.c.get("max_cargo_volume", Column(Float))
 
 
 class ResourceContainer(CargoCarrier):
 
-    __mapper_args__ = {"polymorphic_identity": "resource_container"}
+    __mapper_args__ = {"polymorphic_identity": "Resource Container"}
 
 
 class ElementCarrier(CargoCarrier):
     cargo_environment = Column(String)
 
-    __mapper_args__ = {"polymorphic_identity": "element_carrier"}
+    __mapper_args__ = {"polymorphic_identity": "Element Carrier"}
 
 
 class Agent(Element):
     __abstract__ = True
 
-    active_time_fraction = Column(Float)
+    @declared_attr
+    def active_time_fraction(cls):
+        return Element.__table__.c.get("active_time_fraction", Column(Float))
 
 
 class HumanAgent(Agent):
-    __mapper_args__ = {"polymorphic_identity": "human_agent"}
+    __mapper_args__ = {"polymorphic_identity": "Human Agent"}
     pass
 
 
 class RoboticAgent(Agent):
-    __mapper_args__ = {"polymorphic_identity": "robotic_agent"}
+    __mapper_args__ = {"polymorphic_identity": "Robotic Agent"}
     pass
 
 
@@ -57,19 +65,24 @@ class Vehicle(CargoCarrier):
 
     __abstract__ = True
 
-    max_crew = Column(Integer)
-    max_fuel = Column(Float)
+    @declared_attr
+    def max_crew(cls):
+        return Element.__table__.c.get("max_crew", Column(Integer))
+
+    @declared_attr
+    def max_fuel(cls):
+        return Element.__table__.c.get("max_fuel", Column(Float))
 
 
 class PropulsiveVehicle(Vehicle):
     isp = Column(Float)
     propellant_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": "propulsive_vehicle"}
+    __mapper_args__ = {"polymorphic_identity": "Propulsive Vehicle"}
 
 
 class SurfaceVehicle(Vehicle):
     max_speed = Column(Float)
     fuel_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": "surface_vehicle"}
+    __mapper_args__ = {"polymorphic_identity": "Surface Vehicle"}
