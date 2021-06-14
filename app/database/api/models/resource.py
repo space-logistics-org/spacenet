@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float
 from ..database import Base
+from spacenet.schemas.resource import ResourceType
 
 
 class Resource(Base):
@@ -16,14 +17,14 @@ class Resource(Base):
 
 
 class DiscreteResource(Resource):
-    unitmass = Column(Integer)
-    unitvolume = Column(Integer)
+    unit_mass = Column(Integer)
+    unit_volume = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": "discrete"}
+    __mapper_args__ = {"polymorphic_identity": ResourceType.discrete.value}
 
 
 class ContinuousResource(Resource):
-    unitmass = Column(Float)
-    unitvolume = Column(Float)
+    unit_mass = Column(Float)
+    unit_volume = Column(Float)
 
-    __mapper_args__ = {"polymorphic_identity": "continuous"}
+    __mapper_args__ = {"polymorphic_identity": ResourceType.continuous.value}
