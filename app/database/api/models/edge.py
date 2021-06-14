@@ -12,16 +12,24 @@ class Edge(Base):
     origin_id = Column(Integer)
     destination_id = Column(Integer)
 
+    __mapper_args__ = {"polymorphic_on": type, "polymorphic_identity": "edge"}
+
 
 class SurfaceEdge(Edge):
     distance = Column(Float)
 
+    __mapper_args__ = {"polymorphic_identity": "surface"}
+
 
 class SpaceEdge(Edge):
     duration = Column(Float)
+
+    __mapper_args__ = {"polymorphic_identity": "space"}
 
 
 class FlightEdge(Edge):
     duration = Column(Float)
     max_crew = Column(Float)
     max_cargo = Column(Float)
+
+    __mapper_args__ = {"polymorphic_identity": "flight"}
