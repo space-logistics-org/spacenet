@@ -10,7 +10,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field, conint
 from pydantic.fields import ModelField
 
-from spacenet.schemas.mixins import OptionalFields, RequiresUUID
+from spacenet.schemas.mixins import OptionalFields, RequiresID
 
 
 class TestOptionalFields(unittest.TestCase):
@@ -59,21 +59,21 @@ class TestOptionalFields(unittest.TestCase):
         )
 
 
-class TestRequiresUUID(unittest.TestCase):
+class TestRequiresID(unittest.TestCase):
     """
-    Tests for the RequiresUUID class.
+    Tests for the RequiresID class.
     """
 
     class Model(BaseModel):
         pass
 
     def test_requires_uuid(self):
-        class ModelWithUUID(self.Model, RequiresUUID):
+        class ModelWithID(self.Model, RequiresID):
             pass
 
-        self.assertEqual(len(ModelWithUUID.__fields__), 1)
-        field_name, field = ModelWithUUID.__fields__.popitem()
-        self.assertEqual(field_name, "id_")
+        self.assertEqual(len(ModelWithID.__fields__), 1)
+        field_name, field = ModelWithID.__fields__.popitem()
+        self.assertEqual(field_name, "id")
         self.assertIsInstance(field, ModelField)
-        self.assertEqual(UUID, field.type_)
+        self.assertEqual(int, field.type_)
         self.assertTrue(field.required)

@@ -18,6 +18,7 @@ __all__ = [
     "RoboticAgent",
     "PropulsiveVehicle",
     "SurfaceVehicle",
+    "ElementKind",
 ]
 
 
@@ -31,7 +32,6 @@ class ElementKind(str, Enum):
     ElementCarrier = "ElementCarrier"
     HumanAgent = "HumanAgent"
     RoboticAgent = "RoboticAgent"
-    Vehicle = "Vehicle"
     Propulsive = "Propulsive"
     Surface = "Surface"
 
@@ -141,7 +141,6 @@ class Vehicle(CargoCarrier, ABC):
     An abstract base class representing a generic Vehicle, surface or propulsive.
     """
 
-    type: Literal[ElementKind.Vehicle] = Field(description="the element's type")
     max_crew: conint(strict=True, ge=0) = Field(
         ..., title="Maximum Crew Count", description="crew capacity constraint"
     )

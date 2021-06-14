@@ -4,26 +4,23 @@ be useful across different schema modules.
 """
 from abc import ABC
 from typing import Optional
-from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 __all__ = [
-    "RequiresUUID",
+    "RequiresID",
     "RequiresOnlyType",
-    "OptionalFields"
+    "OptionalFields",
+    "ReadSchema"
 ]
 
 
-class RequiresUUID(BaseModel, ABC):
+class RequiresID(BaseModel, ABC):
     """
-    A mixin which generates a unique ID for each instantiation of a schema.
-
-    Uniqueness comes from random number generation, so collisions are possible, but very
-    unlikely.
+    A mixin which requires each instantiation of a schema contain an integral ID field.
     """
 
-    id_: UUID = Field(title="ID")
+    id: int = Field(title="ID")
 
 
 class OptionalFields(BaseModel, ABC):
@@ -56,3 +53,8 @@ class RequiresOnlyType(OptionalFields):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(excluded_fields={"type"}, **kwargs)
+
+
+class ReadSchema(RequiresID):
+    class Config:
+        orm_mode = True
