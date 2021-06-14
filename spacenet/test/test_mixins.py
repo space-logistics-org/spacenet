@@ -59,9 +59,9 @@ class TestOptionalFields(unittest.TestCase):
         )
 
 
-class TestRequiresUUID(unittest.TestCase):
+class TestRequiresID(unittest.TestCase):
     """
-    Tests for the RequiresUUID class.
+    Tests for the RequiresID class.
     """
 
     class Model(BaseModel):
@@ -73,7 +73,7 @@ class TestRequiresUUID(unittest.TestCase):
 
         self.assertEqual(len(ModelWithID.__fields__), 1)
         field_name, field = ModelWithID.__fields__.popitem()
-        self.assertEqual(field_name, "id_")
+        self.assertEqual(field_name, "id")
         self.assertIsInstance(field, ModelField)
-        self.assertEqual(UUID, field.type_)
+        self.assertEqual(int, field.type_)
         self.assertTrue(field.required)
