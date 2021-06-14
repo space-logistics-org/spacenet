@@ -19,7 +19,7 @@ from spacenet.schemas.element import (
     HumanAgent,
     RoboticAgent,
 )
-from spacenet.schemas.mixins import RequiresUUID, RequiresOnlyType
+from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
 
 __all__ = [
     "Element",
@@ -50,7 +50,7 @@ class UpdateElement(Element, RequiresOnlyType):
     pass
 
 
-class ReadElement(Element, RequiresUUID):
+class ReadElement(Element, ReadSchema):
     pass
 
 
@@ -58,7 +58,7 @@ class UpdateElementCarrier(ElementCarrier, RequiresOnlyType):
     pass
 
 
-class ReadElementCarrier(ElementCarrier, RequiresUUID):
+class ReadElementCarrier(ElementCarrier, ReadSchema):
     pass
 
 
@@ -66,7 +66,7 @@ class UpdateResourceContainer(ResourceContainer, RequiresOnlyType):
     pass
 
 
-class ReadResourceContainer(ResourceContainer, RequiresUUID):
+class ReadResourceContainer(ResourceContainer, ReadSchema):
     pass
 
 
@@ -74,7 +74,7 @@ class UpdateSurfaceVehicle(SurfaceVehicle, RequiresOnlyType):
     pass
 
 
-class ReadSurfaceVehicle(SurfaceVehicle, RequiresUUID):
+class ReadSurfaceVehicle(SurfaceVehicle, ReadSchema):
     pass
 
 
@@ -82,7 +82,7 @@ class UpdatePropulsiveVehicle(PropulsiveVehicle, RequiresOnlyType):
     pass
 
 
-class ReadPropulsiveVehicle(PropulsiveVehicle, RequiresUUID):
+class ReadPropulsiveVehicle(PropulsiveVehicle, ReadSchema):
     pass
 
 
@@ -90,7 +90,7 @@ class UpdateHumanAgent(HumanAgent, RequiresOnlyType):
     pass
 
 
-class ReadHumanAgent(HumanAgent, RequiresUUID):
+class ReadHumanAgent(HumanAgent, ReadSchema):
     pass
 
 
@@ -98,5 +98,5 @@ class UpdateRoboticAgent(RoboticAgent, RequiresOnlyType):
     pass
 
 
-class ReadRoboticAgent(RoboticAgent, RequiresUUID):
+class ReadRoboticAgent(RoboticAgent, ReadSchema):
     pass
