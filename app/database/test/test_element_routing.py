@@ -108,7 +108,7 @@ def test_empty(element_type: ElementKind):
     assert response.status_code == 200
     assert response.json() == []
     # GET w/o any elements: should 404
-    response = client.get("/")
+    response = client.get("/element/1")
     assert response.status_code == 404
 
 
@@ -117,7 +117,7 @@ def test_create(element_type: ElementKind):
     valid_factory, invalid_factory = KIND_TO_FACTORIES[element_type]
     # POST an invalid element: should 422
     invalid_kw = invalid_factory.make_keywords()
-    response = client.post("/element/", json=json.dumps(invalid_kw))
+    response = client.post("/element/", json=invalid_kw)
     assert response.status_code == 422
     # POST a valid element: should 201
     valid_kw = with_type(valid_factory.make_keywords(), element_type)
