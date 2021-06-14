@@ -18,7 +18,7 @@ __all__ = [
     "RoboticAgent",
     "PropulsiveVehicle",
     "SurfaceVehicle",
-    "ElementKind"
+    "ElementKind",
 ]
 
 
