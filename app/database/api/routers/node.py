@@ -17,18 +17,6 @@ Nodes = Union[
     LagrangeNode
 ]
 
-UpdateNodes = Union[
-    UpdateSurfaceNode,
-    UpdateOrbitalNode,
-    UpdateLagrangeNode
-]
-
-ReadNodes = Union[
-    ReadSurfaceNode,
-    ReadOrbitalNode,
-    ReadLagrangeNode
-]
-
 SCHEMA_TO_MODEL = {
     SurfaceNode: models.SurfaceNode,
     OrbitalNode: models.OrbitalNode,
@@ -42,7 +30,7 @@ TYPE_TO_SCHEMA = {
 }
 
 
-@router.post("/", response_model=ReadNodes)
+@router.post("/", response_model=Nodes)
 def create_node(
         node: Nodes,
         # token: str = Depends(oauth2_scheme),
@@ -55,7 +43,7 @@ def create_node(
     return db_node
 
 
-@router.get("/", response_model=List[ReadNodes])
+@router.get("/", response_model=List[Nodes])
 def list_nodes(
         skip: int = 0,
         limit: int = 100,
@@ -64,7 +52,7 @@ def list_nodes(
     return db.query(models.node).offset(skip).limit(limit).all()
 
 
-@router.get("/{node_id}", response_model=ReadNodes)
+@router.get("/{node_id}", response_model=Nodes)
 def read_node(
         node_id: int,
         db: Session = Depends(database.get_db)
@@ -75,7 +63,7 @@ def read_node(
     return db_node
 
 
-@router.put("/{node_id}", response_model=ReadNodes)
+@router.put("/{node_id}", response_model=Nodes)
 def update_node(
         node_id: int,
         node: Nodes,
@@ -93,7 +81,7 @@ def update_node(
     return db_node
 
 
-@router.delete("/{node_id}", response_model=ReadNodes)
+@router.delete("/{node_id}", response_model=Nodes)
 def delete_node(
         node_id: int,
         # token: str = Depends(oauth2_scheme),
