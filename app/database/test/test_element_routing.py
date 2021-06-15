@@ -28,7 +28,6 @@ For each Element type:
             - 200 (ID exists)
             - 404 (no such ID)
 """
-import json
 import random
 from typing import Dict, List, Tuple, Type
 
@@ -41,7 +40,8 @@ from spacenet.schemas.element import ElementKind
 from ..api.database import Base, get_db
 from ..api.models.element import Element as ElementModel
 from ..api.main import app
-from spacenet.test.factories import *
+from spacenet.test.element_factories import *
+from .utilities import with_type, make_subset, first_subset_second, filter_val_not_none
 
 client = TestClient(app)
 
@@ -85,34 +85,6 @@ KIND_TO_FACTORIES: Dict[
 TESTED_VARIANTS: List[ElementKind] = [variant for variant in ElementKind]
 
 
-def with_type(d: Dict, kind: ElementKind) -> Dict:
-    return {**d, "type": kind}
-
-
-def make_subset(d: Dict) -> Dict:
-    ret = d.copy()
-    for field in d:
-        if random.random() < 0.25:
-            del ret[field]
-    return ret
-
-
-def first_subset_second(first: Dict, second: Dict) -> bool:
-    """
-    Return true if first is a subset of second, false otherwise
-
-    :param first: first dict
-    :param second: second dict
-    :return: true if all elements in first are in second,
-             and are mapped to same value, else false
-    """
-    return all(k in second and first[k] == second[k] for k in first)
-
-
-def val_not_none(d: Dict) -> Dict:
-    return {k: v for k, v in d.items() if v is not None}
-
-
 @pytest.fixture(scope="module")
 def element_routing():
     ElementModel.__table__.create(engine)
@@ -122,7 +94,7 @@ def element_routing():
 
 
 @pytest.fixture(autouse=True)
-def reseed():
+def reseed_and_clear_tables():
     ElementModel.__table__.drop(engine, checkfirst=False)
     ElementModel.__table__.create(engine, checkfirst=True)
     random.seed("spacenet")
@@ -135,16 +107,16 @@ def test_empty(element_type: ElementKind):
     assert response.status_code == 200
     assert response.json() == []
     # GET w/o any elements: should 404
-    response = client.get("/")
+    response = client.get("/element/1")
     assert response.status_code == 404
 
 
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)
-def test_post(element_type: ElementKind):
+def test_create(element_type: ElementKind):
     valid_factory, invalid_factory = KIND_TO_FACTORIES[element_type]
     # POST an invalid element: should 422
     invalid_kw = invalid_factory.make_keywords()
-    response = client.post("/element/", json=json.dumps(invalid_kw))
+    response = client.post("/element/", json=invalid_kw)
     assert response.status_code == 422
     # POST a valid element: should 201
     valid_kw = with_type(valid_factory.make_keywords(), element_type)
@@ -167,7 +139,7 @@ def test_post(element_type: ElementKind):
 
 
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)
-def test_patch(element_type: ElementKind):
+def test_update(element_type: ElementKind):
     def check_get():
         get_r = client.get(f"/element/{id_}")
         assert get_r.status_code == 200
@@ -182,7 +154,7 @@ def test_patch(element_type: ElementKind):
     patch_kw = with_type(make_subset(valid_factory.make_keywords()), element_type)
     patch_r = client.patch(f"/element/{id_}", json=patch_kw)
     assert patch_r.status_code == 200
-    expected_fields = {**kw, **val_not_none(patch_kw), "id": id_}
+    expected_fields = {**kw, **filter_val_not_none(patch_kw), "id": id_}
     assert expected_fields == patch_r.json()
     # GET that element: should match new vals
     check_get()
@@ -206,9 +178,6 @@ def test_patch(element_type: ElementKind):
     assert bad_patch.status_code == 422
     # GET that element: should not have changed
     check_get()
-    # DELETE the element
-    del_r = client.delete(f"/element/{id_}")
-    assert del_r.status_code == 200
 
 
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)

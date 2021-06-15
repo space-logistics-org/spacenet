@@ -45,7 +45,7 @@ from spacenet.schemas.element import *
 from spacenet.schemas.element import (
     ElementKind,
 )
-from .factories import *
+from .element_factories import *
 
 NUM_ATTEMPTS = 500
 SEED = "spacenet"
