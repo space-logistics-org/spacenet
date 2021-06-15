@@ -12,28 +12,24 @@ from ..schemas.node import *
 router = APIRouter()
 
 Nodes = Union[
-    Node,
     SurfaceNode,
     OrbitalNode,
     LagrangeNode
 ]
 
 UpdateNodes = Union[
-    UpdateNode,
     UpdateSurfaceNode,
     UpdateOrbitalNode,
     UpdateLagrangeNode
 ]
 
 ReadNodes = Union[
-    ReadNode,
     ReadSurfaceNode,
     ReadOrbitalNode,
     ReadLagrangeNode
 ]
 
 SCHEMA_TO_MODEL = {
-    Node: models.Node,
     SurfaceNode: models.SurfaceNode,
     OrbitalNode: models.OrbitalNode,
     LagrangeNode: models.LagrangeNode
@@ -109,4 +105,3 @@ def delete_node(
     db.delete(db_node)
     db.commit()
     return db_node
-
