@@ -1,37 +1,15 @@
 from typing import List, Union
 
-from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from .. import database
-<<<<<<< HEAD
-from spacenet.schemas import element as schemas
-=======
+from ..models import element as models
 from ..schemas.element import *
->>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 
 router = APIRouter()
 
 Elements = Union[
-<<<<<<< HEAD
-    schemas.Element,
-    schemas.ElementCarrier,
-    schemas.SurfaceVehicle,
-    schemas.PropulsiveVehicle,
-    schemas.RoboticAgent,
-    schemas.HumanAgent,
-    schemas.ResourceContainer,
-]
-
-PatchElements = Union[
-    schemas.PatchElement,
-    schemas.PatchElementCarrier,
-    schemas.PatchSurfaceVehicle,
-    schemas.PatchPropulsiveVehicle,
-    schemas.PatchRoboticAgent,
-    schemas.PatchHumanAgent,
-    schemas.PatchResourceContainer,
-=======
     Element,
     ElementCarrier,
     SurfaceVehicle,
@@ -59,86 +37,101 @@ ReadElements = Union[
     ReadRoboticAgent,
     ReadHumanAgent,
     ReadResourceContainer,
->>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 ]
+
+SCHEMA_TO_MODEL = {
+    Element: models.Element,
+    ElementCarrier: models.ElementCarrier,
+    ResourceContainer: models.ResourceContainer,
+    HumanAgent: models.HumanAgent,
+    RoboticAgent: models.RoboticAgent,
+    PropulsiveVehicle: models.PropulsiveVehicle,
+    SurfaceVehicle: models.SurfaceVehicle,
+}
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
 
-<<<<<<< HEAD
-@router.get("/", response_model=List[Elements])
-=======
 @router.get(
     "/",
     response_model=List[ReadElements],
     description="List elements currently in the database.",
 )
->>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
-def list_elements(
-    skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)
-):
-    raise HTTPException(status_code=500, detail="unimplemented")
+def list_elements(db: Session = Depends(database.get_db)):
+    db_elements = db.query(models.Element).all()
+    return db_elements
 
 
 @router.get(
-<<<<<<< HEAD
-    "/{id_}", response_model=Elements, responses=NOT_FOUND_RESPONSE,
-=======
     "/{id_}",
     response_model=ReadElements,
     responses=NOT_FOUND_RESPONSE,
     description="Find a specific element in the database.",
->>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 )
 def read_element(id_: int, db: Session = Depends(database.get_db)):
-    raise HTTPException(status_code=500, detail="unimplemented")
+    db_element = db.query(models.Element).get(id_)
+    if db_element is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No element found with id={id_}",
+        )
+    return db_element
 
 
-<<<<<<< HEAD
-@router.post("/", response_model=Elements, status_code=status.HTTP_201_CREATED)
-=======
 @router.post(
     "/",
     response_model=ReadElements,
     status_code=status.HTTP_201_CREATED,
     description="Add a new element to the database.",
 )
->>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 def create_element(element: Elements, db: Session = Depends(database.get_db)):
-    raise HTTPException(status_code=500, detail="unimplemented")
+    db_element = SCHEMA_TO_MODEL[type(element)](**element.dict())
+    db.add(db_element)
+    db.commit()
+    db.refresh(db_element)
+    return db_element
 
 
-<<<<<<< HEAD
-# TODO: PATCH requests are allowed to not have certain fields and only update the specified
-#  fields. They also won't have the corresponding IDs, so they'll need a new schema
-
-
-@router.patch("/{id_}", response_model=Elements)
-def patch_element(
-    id_: int, element: PatchElements, db: Session = Depends(database.get_db)
-=======
 @router.patch(
     "/{id_}",
     response_model=ReadElements,
-    responses=NOT_FOUND_RESPONSE,
+    responses={**NOT_FOUND_RESPONSE, status.HTTP_409_CONFLICT: {"msg": str}},
     description="Update an existing element in the database.",
 )
 def patch_element(
     id_: int, element: UpdateElements, db: Session = Depends(database.get_db)
->>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 ):
-    raise HTTPException(status_code=500, detail="unimplemented")
+    db_element = db.query(models.Element).get(id_)
+    if db_element is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No element found with id={id_}",
+        )
+    if element.type != db_element.type:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Element found with id={id_} is of type {db_element.type}; cannot update "
+            f"type to {element.type} ",
+        )
+    for field_name, field in element.dict().items():
+        if field_name != "type" and field is not None:
+            setattr(db_element, field_name, field)
+    db.commit()
+    return db_element
 
 
 @router.delete(
-<<<<<<< HEAD
-    "/{id_}", response_model=Elements, responses=NOT_FOUND_RESPONSE,
-=======
     "/{id_}",
-    response_model=ReadElements,
     responses=NOT_FOUND_RESPONSE,
     description="Delete an element from the database.",
->>>>>>> a14263327e51c6b639d2ebd658e5b12615f88296
 )
 def delete_element(id_: int, db: Session = Depends(database.get_db)):
-    raise HTTPException(status_code=500, detail="unimplemented")
+    db_element = db.query(models.Element).get(id_)
+    if db_element is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No element found with id={id_}",
+        )
+    db.delete(db_element)
+    db.commit()
+    return {"msg": f"Successfully deleted element with id={id_}"}
