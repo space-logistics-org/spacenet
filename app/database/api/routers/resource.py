@@ -49,7 +49,7 @@ def to_schema_kwargs(
         "cos": db_model.cos,
         "units": db_model.units,
         "unit_mass": getattr(db_model, "unit_mass" + suffix),
-        "unit_volume": getattr(db_model, "unit_volume" + suffix)
+        "unit_volume": getattr(db_model, "unit_volume" + suffix),
     }
 
 

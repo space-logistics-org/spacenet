@@ -15,8 +15,7 @@ class Resource(Base):
     cos = Column(Integer)
     units = Column(String)
 
-    __mapper_args__ = {"polymorphic_identity": "resource",
-                       "polymorphic_on": type}
+    __mapper_args__ = {"polymorphic_identity": "resource", "polymorphic_on": type}
 
 
 class DiscreteResource(Resource):

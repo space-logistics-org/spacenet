@@ -45,7 +45,7 @@ VALID_DISCRETE_ARGS = {
     "unit_mass": 10,
     "unit_volume": 20,
     "description": "baz",
-    "units": "kg"
+    "units": "kg",
 }
 
 OTHER_VALID_DISCRETE_ARGS = {
@@ -216,5 +216,5 @@ def test_delete(resource_type: ResourceType):
     assert len(read_all_r.json()) == 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pytest.main()
