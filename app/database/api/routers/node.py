@@ -23,12 +23,6 @@ SCHEMA_TO_MODEL = {
     LagrangeNode: models.LagrangeNode
 }
 
-TYPE_TO_SCHEMA = {
-    NodeType.SurfaceNode: SurfaceNode,
-    NodeType.OrbitalNode: OrbitalNode,
-    NodeType.LagrangeNode: LagrangeNode
-}
-
 
 @router.post("/", response_model=Nodes)
 def create_node(
