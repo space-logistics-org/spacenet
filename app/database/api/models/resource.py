@@ -15,28 +15,19 @@ class Resource(Base):
     cos = Column(Integer)
     units = Column(String)
 
-    __mapper_args__ = {"polymorphic_identity": "resource"}
+    __mapper_args__ = {"polymorphic_identity": "resource",
+                       "polymorphic_on": type}
 
 
 class DiscreteResource(Resource):
-    @declared_attr
-    def unit_mass(cls):
-        return Resource.__table__.c.get("unit_mass", Column(Integer))
-
-    @declared_attr
-    def unit_volume(cls):
-        return Resource.__table__.c.get("unit_volume", Column(Integer))
+    unit_mass_i = Column(Integer)
+    unit_volume_i = Column(Integer)
 
     __mapper_args__ = {"polymorphic_identity": ResourceType.discrete.value}
 
 
 class ContinuousResource(Resource):
-    @declared_attr
-    def unit_mass(cls):
-        return Resource.__table__.c.get("unit_mass", Column(Float))
-
-    @declared_attr
-    def unit_volume(cls):
-        return Resource.__table__.c.get("unit_volume", Column(Float))
+    unit_mass_f = Column(Float)
+    unit_volume_f = Column(Float)
 
     __mapper_args__ = {"polymorphic_identity": ResourceType.continuous.value}

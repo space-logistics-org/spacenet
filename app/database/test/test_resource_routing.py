@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from spacenet.schemas.resource import ResourceType
 from .utilities import filter_val_not_none, first_subset_second, make_subset, with_type
 from ..api.database import Base, get_db
+from ..api.models.resource import Resource as ResourceModel
 from ..api.main import app
 
 
@@ -100,6 +101,19 @@ KIND_TO_ARGS: Dict[ResourceType, Tuple[Dict, Dict, Dict, Dict]] = {
 TESTED_VARIANTS: List[ResourceType] = [ResourceType.discrete, ResourceType.continuous]
 
 
+@pytest.fixture(scope="module")
+def resource_routing():
+    ResourceModel.__table__.create(engine)
+    yield
+    ResourceModel.__table__.drop(engine)
+
+
+@pytest.fixture(autouse=True)
+def clear_tables():
+    ResourceModel.__table__.drop(engine, checkfirst=False)
+    ResourceModel.__table__.create(engine, checkfirst=True)
+
+
 @pytest.mark.parametrize("resource_type", TESTED_VARIANTS)
 def test_empty(resource_type: ResourceType):
     read_all_response = client.get("/resource/")
@@ -140,7 +154,7 @@ def test_update(resource_type: ResourceType):
     post_r = client.post("/resource/", json=kw)
     assert post_r.status_code == 201
     id_ = post_r.json()["id"]
-    patch_kw = with_type(make_subset(second), resource_type)
+    patch_kw = with_type(make_subset(second), resource_type.value)
     patch_r = client.patch(f"/resource/{id_}", json=patch_kw)
     assert patch_r.status_code == 200
     expected_fields = {**kw, **filter_val_not_none(patch_kw), "id": id_}
@@ -175,7 +189,6 @@ def test_delete(resource_type: ResourceType):
         for v in posted_vals:
             assert v in read_all_r.json()
 
-    # POST 2 valid elements
     posted_vals = []
     for i in range(2):
         first, second, _, _ = KIND_TO_ARGS[resource_type]

@@ -28,7 +28,6 @@ For each Element type:
             - 200 (ID exists)
             - 404 (no such ID)
 """
-import json
 import random
 from typing import Dict, List, Tuple, Type
 

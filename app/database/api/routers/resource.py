@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Any, Dict, List, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -17,11 +17,40 @@ UpdateResources = Union[UpdateContinuous, UpdateDiscrete]
 ReadResources = Union[ReadContinuous, ReadDiscrete]
 
 SCHEMA_TO_MODEL = {
-    ResourceType.continuous: ContinuousResource,
-    ResourceType.discrete: DiscreteResource,
+    ContinuousResource: models.ContinuousResource,
+    DiscreteResource: models.DiscreteResource,
 }
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
+
+# COMMON_FIELDS = {"id", "type", "name", "description", "cos", "units"}
+# CONT_FIELDS = {"unit_mass_f", "unit_volume_f"}
+# DISCRETE_FIELDS = {"unit_mass_i", "unit_volume_i"}
+
+
+def to_db_kwargs(resource: Resources) -> Dict[str, Any]:
+    excluded = {"unit_mass", "unit_volume"}
+    ret = {k: v for k, v in resource.dict().items() if k not in excluded}
+    suffix = "_i" if isinstance(resource, DiscreteResource) else "_f"
+    ret["unit_mass" + suffix] = resource.unit_mass
+    ret["unit_volume" + suffix] = resource.unit_volume
+    return ret
+
+
+def to_schema_kwargs(
+    db_model: Union[models.DiscreteResource, models.ContinuousResource]
+) -> Dict[str, Any]:
+    suffix = "_i" if isinstance(db_model, models.DiscreteResource) else "_f"
+    return {
+        "id": db_model.id,
+        "type": db_model.type,
+        "name": db_model.name,
+        "description": db_model.description,
+        "cos": db_model.cos,
+        "units": db_model.units,
+        "unit_mass": getattr(db_model, "unit_mass" + suffix),
+        "unit_volume": getattr(db_model, "unit_volume" + suffix)
+    }
 
 
 @router.get(
@@ -31,7 +60,7 @@ NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 )
 def list_resources(db: Session = Depends(database.get_db)):
     db_resources = db.query(models.Resource).all()
-    return db_resources
+    return [to_schema_kwargs(resource) for resource in db_resources]
 
 
 @router.get(
@@ -46,7 +75,7 @@ def read_resource(id_: int, db: Session = Depends(database.get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No resource found with id={id_}",
         )
-    return db_resource
+    return to_schema_kwargs(db_resource)
 
 
 @router.post(
@@ -56,11 +85,11 @@ def read_resource(id_: int, db: Session = Depends(database.get_db)):
     description="Add a new resource to the database.",
 )
 def create_resource(resource: Resources, db: Session = Depends(database.get_db)):
-    db_resource = SCHEMA_TO_MODEL[type(resource)](**resource.dict())
+    db_resource = SCHEMA_TO_MODEL[type(resource)](**to_db_kwargs(resource))
     db.add(db_resource)
     db.commit()
     db.refresh(db_resource)
-    return db_resource
+    return to_schema_kwargs(db_resource)
 
 
 @router.patch(
@@ -85,11 +114,14 @@ def patch_resource(
             f"update "
             f"type to {resource.type} ",
         )
+    suffix = "_i" if resource.type == ResourceType.discrete else "_f"
     for field_name, field in resource.dict().items():
         if field_name != "type" and field is not None:
+            if field_name == "unit_mass" or field_name == "unit_volume":
+                field_name += suffix
             setattr(db_resource, field_name, field)
     db.commit()
-    return db_resource
+    return to_schema_kwargs(db_resource)
 
 
 @router.delete(
