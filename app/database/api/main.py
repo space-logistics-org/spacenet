@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from .routers import hello_world, element
-from .database import Base, SessionLocal, engine
+from .routers import hello_world, element, resource
+from .database import Base, engine
 
 # create the database if it does not yet exist
 Base.metadata.create_all(bind=engine)
@@ -31,5 +31,9 @@ app.include_router(
     prefix="/element"
 )
 
+app.include_router(
+    resource.router,
+    prefix="/resource"
+)
+
 # TODO: need more routing stubs to exist to progress here?
-# TODO: end-to-end testing via routers?

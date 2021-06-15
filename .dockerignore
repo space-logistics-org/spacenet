@@ -1,4 +1,3 @@
 *.pyc
 **/*.egg-info/
 sql_app.db
-test.db
