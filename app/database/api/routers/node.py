@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Union
 
-from ..database import get_db
-from ..auth import oauth2_scheme
+from .. import database
+#from ..auth import oauth2_scheme
 
 from ..models import node as models
-from spacenet.schemas.node import *, NodeType
+from ..schemas.node import *
 
 
 router = APIRouter()
@@ -49,8 +49,8 @@ TYPE_TO_SCHEMA = {
 @router.post("/", response_model=ReadNodes)
 def create_node(
         node: schemas.node,
-        token: str = Depends(oauth2_scheme),
-        db: Session = Depends(get_db)
+        #token: str = Depends(oauth2_scheme),
+        db: Session = Depends(database.get_db)
         ):
         db_node = models.node(**node.dict())
         db.add(db_node)
@@ -62,14 +62,14 @@ def create_node(
 def list_nodes(
         skip: int = 0,
         limit: int = 100,
-        db: Session = Depends(get_db)
+        db: Session = Depends(database.get_db)
     ):
     return db.query(models.node).offset(skip).limit(limit).all()
 
 @router.get("/{node_id}", response_model=ReadNodes)
 def read_node(
         node_id: int,
-        db: Session = Depends(get_db)
+        db: Session = Depends(database.get_db)
     ):
     db_node = db.query(models.node).get(node_id)
     if db_node is None:
@@ -80,8 +80,8 @@ def read_node(
 def update_node(
         node_id: int,
         node: schemas.node,
-        token: str = Depends(oauth2_scheme),
-        db: Session = Depends(get_db)
+        #token: str = Depends(oauth2_scheme),
+        db: Session = Depends(database.get_db)
     ):
     db_node = db.query(models.node).get(node_id)
     if db_node is None:
@@ -96,8 +96,8 @@ def update_node(
 @router.delete("/{node_id}", response_model=ReadNodes)
 def delete_node(
         node_id: int,
-        token: str = Depends(oauth2_scheme),
-        db: Session = Depends(get_db)
+        #token: str = Depends(oauth2_scheme),
+        db: Session = Depends(database.get_db)
     ):
     db_node = db.query(models.node).get(node_id)
     if db_node is None:
