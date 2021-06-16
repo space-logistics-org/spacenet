@@ -43,6 +43,8 @@ from ..api.main import app
 from spacenet.test.element_factories import *
 from .utilities import with_type, make_subset, first_subset_second, filter_val_not_none
 
+pytestmark = [pytest.mark.integration, pytest.mark.element]
+
 client = TestClient(app)
 
 TEST_DB_URL = "sqlite:///./test.db"
