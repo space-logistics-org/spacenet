@@ -1,7 +1,10 @@
 import unittest
 
+import pytest
 from pydantic import ValidationError
 from spacenet.schemas.node import SurfaceNode, OrbitalNode, LagrangeNode
+
+pytestmark = [pytest.mark.unit, pytest.mark.node]
 
 
 class TestNode(unittest.TestCase):

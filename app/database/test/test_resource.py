@@ -1,12 +1,16 @@
 import unittest
 import json
 import pkg_resources
+import pytest
 
 from spacenet import test
 
 from app.database.api.models import resource as models
 from app.database.api.schemas import resource as schemas
 from app.database.api.database import SessionLocal, Base, engine
+
+pytestmark = [pytest.mark.unit, pytest.mark.resource]
+
 
 class TestResource(unittest.TestCase):
     def setUp(self):

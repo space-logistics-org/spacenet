@@ -1,9 +1,14 @@
 import unittest
+
+import pytest
 from pydantic import ValidationError
 from spacenet.schemas.edge import SurfaceEdge, SpaceEdge, FlightEdge
 
+pytestmark = [pytest.mark.unit, pytest.mark.edge]
+
 
 class TestEdge(unittest.TestCase):
+
     def testSurEdge(self):
         goodData = {"name": "FL-GA", "id": 1, "description": "Surface Edge from Florida to Georgia", "type": "Surface", "origin_id": 1, "destination_id": 2, "distance": 100}
         badTypeData = {"name": "FL-GA", "id": 1, "description": "Surface Edge from Florida to Georgia", "type": "orbital", "origin_id": 1, "destination_id": 2, "distance": 100}
