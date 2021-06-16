@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import hello_world, element, resource
+from .routers import hello_world, element, resource, node
 from .database import Base, engine
 
 # create the database if it does not yet exist
@@ -34,6 +34,11 @@ app.include_router(
 app.include_router(
     resource.router,
     prefix="/resource"
+)
+
+app.include_router(
+    node.router,
+    prefix="/node"
 )
 
 # TODO: need more routing stubs to exist to progress here?
