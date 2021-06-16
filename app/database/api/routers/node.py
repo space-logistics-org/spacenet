@@ -30,7 +30,7 @@ def create_node(
         # token: str = Depends(oauth2_scheme),
         db: Session = Depends(database.get_db)
         ):
-    db_node = models.node(**node.dict())
+    db_node = models.Node(**node.dict())
     db.add(db_node)
     db.commit()
     db.refresh(db_node)
@@ -43,7 +43,7 @@ def list_nodes(
         limit: int = 100,
         db: Session = Depends(database.get_db)
         ):
-    return db.query(models.node).offset(skip).limit(limit).all()
+    return db.query(models.Node).offset(skip).limit(limit).all()
 
 
 @router.get("/{node_id}", response_model=Nodes)
@@ -51,7 +51,7 @@ def read_node(
         node_id: int,
         db: Session = Depends(database.get_db)
         ):
-    db_node = db.query(models.node).get(node_id)
+    db_node = db.query(models.Node).get(node_id)
     if db_node is None:
         raise HTTPException(status_code=404, detail="Node {:d} not found".format(node_id))
     return db_node
@@ -64,7 +64,7 @@ def update_node(
         # token: str = Depends(oauth2_scheme),
         db: Session = Depends(database.get_db)
         ):
-    db_node = db.query(models.node).get(node_id)
+    db_node = db.query(models.Node).get(node_id)
     if db_node is None:
         raise HTTPException(status_code=404, detail="Node {:d} not found".format(node_id))
     for field in node.dict():
@@ -81,7 +81,7 @@ def delete_node(
         # token: str = Depends(oauth2_scheme),
         db: Session = Depends(database.get_db)
         ):
-    db_node = db.query(models.node).get(node_id)
+    db_node = db.query(models.Node).get(node_id)
     if db_node is None:
         raise HTTPException(status_code=404, detail="Node {:d} not found".format(node_id))
     db.delete(db_node)
