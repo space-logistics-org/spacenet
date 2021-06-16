@@ -36,9 +36,9 @@ app.include_router(
     prefix="/resource"
 )
 
-app.include_router(
-    node.router,
-    prefix="/node"
-)
+# app.include_router(
+    # node.router,
+   # prefix="/node"
+# )
 
 # TODO: need more routing stubs to exist to progress here?
