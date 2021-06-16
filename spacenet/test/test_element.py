@@ -39,6 +39,7 @@ import random
 import unittest
 from typing import Tuple, Type
 
+import pytest
 from pydantic import ValidationError
 
 from spacenet.schemas.element import *
@@ -47,6 +48,7 @@ from spacenet.schemas.element import (
 )
 from .element_factories import *
 
+pytestmark = [pytest.mark.unit, pytest.mark.element]
 NUM_ATTEMPTS = 500
 SEED = "spacenet"
 

@@ -15,6 +15,7 @@ from ..api.database import Base, get_db
 from ..api.models.resource import Resource as ResourceModel
 from ..api.main import app
 
+pytestmark = [pytest.mark.integration, pytest.mark.resource]
 
 client = TestClient(app)
 
@@ -36,7 +37,6 @@ def override_get_db():
 
 
 app.dependency_overrides[get_db] = override_get_db
-
 
 VALID_DISCRETE_ARGS = {
     "name": "foo",
@@ -69,18 +69,13 @@ OTHER_VALID_CONT_ARGS = {
     "cos": 2,
 }
 
-
 INVALID_DISCRETE_ARGS = {**VALID_DISCRETE_ARGS, "cos": 99999}
-
 
 MISTYPED_DISCRETE_ARGS = {**VALID_CONT_ARGS, "unit_mass": 10, "unit_volume": 20}
 
-
 INVALID_CONT_ARGS = {**VALID_CONT_ARGS, "cos": -10}
 
-
 MISTYPED_CONT_ARGS = {**VALID_DISCRETE_ARGS, "unit_mass": 10.2, "unit_volume": 24.1}
-
 
 KIND_TO_ARGS: Dict[ResourceType, Tuple[Dict, Dict, Dict, Dict]] = {
     ResourceType.discrete: (
@@ -96,7 +91,6 @@ KIND_TO_ARGS: Dict[ResourceType, Tuple[Dict, Dict, Dict, Dict]] = {
         MISTYPED_CONT_ARGS,
     ),
 }
-
 
 TESTED_VARIANTS: List[ResourceType] = [ResourceType.discrete, ResourceType.continuous]
 
