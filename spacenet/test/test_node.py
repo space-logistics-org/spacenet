@@ -34,10 +34,10 @@ class TestNode(unittest.TestCase):
 
     def testOrbNode(self):
         goodData = {"name": "LEO", "description": "Low Earth Orbit", "body_1": "Earth",
-                    "apoapsis": 296, "periapsis": 296, "inclination": 28.5
+                    "apoapsis": 296, "periapsis": 296, "inclination": 28.5, "type": "Orbital"
                     }
         badData = {"name": "LEO", "description": "Low Earth Orbit", "body_1": "Saturn",
-                   "apoapsis": -100, "periapsis": -100, "inclination": -100
+                   "apoapsis": -100, "periapsis": -100, "inclination": -100, "type": "Orbital"
                    }
         goodNode = OrbitalNode(**goodData)
         self.assertEqual(goodNode.name, goodData.get("name"))
@@ -52,10 +52,11 @@ class TestNode(unittest.TestCase):
 
     def testLagNode(self):
         goodData = {"name": "EM L5", "description": "Earth-Moon Lagrange point 5",
-                    "body_1": "Earth", "body_2": "Moon", "lp_number": 5
+                    "body_1": "Earth", "body_2": "Moon", "lp_number": 5, "type": "Lagrange"
                     }
         badData = {"name": "LEO", "description": "Low Earth Orbit", "body_1": "Saturn",
-                   "apoapsis": -100, "periapsis": -100, "body_2": "Titan", "lp_number": 6
+                   "apoapsis": -100, "periapsis": -100, "body_2": "Titan", "lp_number": 6,
+                   "type": "Lagrange"
                    }
         goodNode = LagrangeNode(**goodData)
         self.assertEqual(goodNode.name, goodData.get("name"))

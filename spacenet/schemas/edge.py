@@ -1,3 +1,5 @@
+from typing_extensions import Literal
+
 from pydantic import BaseModel, Field
 from enum import Enum
 
@@ -41,11 +43,9 @@ class SurfaceEdge(Edge):
     """
     An edge between two surface nodes.
     """
-    type: EdgeType = Field(
-        default=EdgeType.Surface,
+    type: Literal[EdgeType.Surface] = Field(
         title="Type",
         description="Type of edge",
-        const=True
     )
     distance: float = Field(
         ...,
@@ -59,11 +59,9 @@ class SpaceEdge(Edge):
     """
     An edge between two nodes using a specified list of propulsive burns.
     """
-    type: EdgeType = Field(
-        default=EdgeType.Space,
+    type: Literal[EdgeType.Space] = Field(
         title="Type",
         description="Type of edge",
-        const=True
     )
     duration: float = Field(
         ...,
@@ -78,11 +76,10 @@ class FlightEdge(Edge):
     An edge between two nodes using flight architectures that are known to close
     with a given cargo and crew capacity.
     """
-    type: EdgeType = Field(
-        default=EdgeType.Flight,
+    type: Literal[EdgeType.Flight] = Field(
+        ...,
         title="Type",
         description="Type of edge",
-        const=True
     )
     duration: float = Field(
         ...,
