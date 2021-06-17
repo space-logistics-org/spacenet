@@ -89,9 +89,9 @@ TESTED_VARIANTS: List[ResourceType] = [ResourceType.discrete, ResourceType.conti
 
 @pytest.fixture(scope="module")
 def resource_routing():
-    ResourceModel.__table__.create(engine)
+    ResourceModel.__table__.create(test_engine)
     yield
-    ResourceModel.__table__.drop(engine)
+    ResourceModel.__table__.drop(test_engine)
 
 
 @pytest.fixture(autouse=True)
