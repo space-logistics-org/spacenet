@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Edges</title>
+  <meta name="author" content="SpaceNet Team">
+  <meta name="description" content="An editor for SpaceNet database objects.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.3.1/jszip-2.5.0/dt-1.10.25/af-2.3.7/b-1.7.1/b-colvis-1.7.1/b-html5-1.7.1/b-print-1.7.1/cr-1.5.4/date-1.1.0/fc-3.3.3/fh-3.1.9/kt-2.6.2/r-2.2.8/rg-1.1.3/rr-1.2.8/sc-2.0.4/sb-1.1.0/sp-1.3.0/sl-1.3.3/datatables.min.css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container-fluid py-4">
+    <header class="pb-3 mb-4 border-bottom">
+      <a class="d-flex align-items-center text-dark text-decoration-none"></a>
+        <img src = "SpaceNetLogo.jpg" height="30px">
+        <span class="fs-4">SpaceNet</span>
+    </header>
+    <h1 class="text-dark" class="display-5">Edges</h1>
+
+    <div>
+      <table id="edges_table" class="table table-striped table-bordered" style="width: 100%">
+        <thead class="thead-dark">
+            <tr>
+                <th> </th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <!-- <th>Duration</th>
+                <th>Distance</th> -->
+                <!-- <th>Max Crew</th>
+                <th>Max Cargo</th> -->
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Origin</th>
+            <th>Destination</th>
+            <!-- <th>Duration</th>
+            <th>Distance</th> -->
+            <!-- <th>Max Crew</th>
+            <th>Max Cargo</th> -->
+            <th>Description</th>
+          </tr>
+        </tfoot>
+      </table>
+
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.3.1/jszip-2.5.0/dt-1.10.25/af-2.3.7/b-1.7.1/b-colvis-1.7.1/b-html5-1.7.1/b-print-1.7.1/cr-1.5.4/date-1.1.0/fc-3.3.3/fh-3.1.9/kt-2.6.2/r-2.2.8/rg-1.1.3/rr-1.2.8/sc-2.0.4/sb-1.1.0/sp-1.3.0/sl-1.3.3/datatables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+          $('#edges_table tfoot th').each(function() {
+            if ($(this).index() !== 0) {
+              var title = $(this).text();
+              $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            }
+          });
+
+          $.fn.dataTable.ext.buttons.delete = {
+              extend: 'selected',
+              text: '<span data-customTooltip="Select row(s) to delete">Delete</span>',
+              className: 'btn-style',
+              action: function ( e, dt, node, config ) {
+                var record = table.rows( { selected: true } ).data();
+                console.log(record);
+                console.log(record.length);
+                for (i=0; i < record.length; i++) {
+                  var element = record[i]
+                  console.log(element)
+                  $.ajax({
+                      url: "/database/api/edge/" + element.id,
+                      method: "DELETE",
+                      success: function(data) {
+                        dt.ajax.reload();
+                    }
+                  });
+                }
+              }
+          };
+
+          $.fn.dataTable.ext.buttons.edit = {
+              extend: 'selectedSingle',
+              text: '<span data-customTooltip="Select 1 row to edit">Edit</span>',
+              className: 'btn-style',
+              action: function ( e, dt, node, config ) {
+                var record = table.rows( { selected: true } ).data()[0];
+                $.ajax({
+                  url: "/database/api/edge/" + record.id,
+                  data: JSON.stringify({
+                    message: prompt("Your message:", "Hello World")
+                  }),
+                  contentType: 'application/json; charset=utf-8',
+                  dataType: "json",
+                  method: "PUT",
+                  success: function(item) {
+                    dt.ajax.reload();
+                  }
+                });     
+              }
+          };
+
+          $.fn.dataTable.ext.buttons.add = {
+              text: 'Add Edge',
+              className: 'btn-style',
+              action: function ( e, dt, node, config ) {
+                $.ajax({
+                  url: "/database/api/edge/",
+                  data: JSON.stringify({
+                    message: prompt("Your message:", "Hello World")
+                  }),
+                  contentType: 'application/json; charset=utf-8',
+                  dataType: "json",
+                  method: "POST",
+                  success: function(item) {
+                    dt.ajax.reload();
+                  }
+                });
+              }
+          };
+
+          $.fn.dataTable.ext.buttons.export = {
+            extend: 'excel',
+            text: 'Export',
+            className: 'btn-style',
+          }
+
+          $.fn.dataTable.ext.buttons.filter = {
+            extend: 'searchBuilder',
+            text: 'Apply Filter',
+            className: 'btn-style',
+          }
+
+          var table = $(edges_table).DataTable( {
+            scrollX: true,
+            ajax: {
+              url: "/database/api/edge/",
+              dataSrc: ''
+            },
+            columns: [
+              {data: null},
+              { data: 'name' },
+              { data: 'type' },
+              { data: 'origin_id' },
+              { data: 'destination_id' },
+              { data: 'description' }
+                ],
+            buttons: [
+                'export',
+                'filter',
+                'add',
+                'edit',
+                'delete',
+            ],
+            language: {
+              searchBuilder: {
+                button: {
+                      0: 'Apply Filters',
+                      1: 'Filters (one selected)',
+                      _: 'Filters (%d)'
+                  },
+                add: 'Add Filter',
+                title: 'Apply Custom Filters',
+                data: 'Property',
+              }
+          },
+            dom: 'BQlfrtip',
+            columnDefs: [ 
+            {
+              targets:   0,
+              searchable: false,
+              orderable: false,
+              defaultContent: '',
+              className: 'select-checkbox',
+              width: '8%',
+            }],
+            select: {
+                style:    'multi',
+                selector: 'td:first-child'
+            },
+            order: [[ 1, 'asc' ]],
+          });
+
+
+          table.on( 'select deselect', function ( e, dt, type, indexes ) {
+            console.log("selected something")
+              var num_selected = table.rows( { selected: true } ).data().length;
+              if (num_selected === 0) {
+                dt.buttons([4]).text('<span data-customTooltip="Select row(s) to delete">Delete</span>')
+                dt.buttons([3]).text('<span data-customTooltip="Select 1 row to edit">Edit</span>')
+              } else if (num_selected === 1) {
+                dt.buttons([4]).text('Delete row')
+                dt.buttons([3]).text('Edit row')
+              }
+              else {
+                dt.buttons([4]).text('Delete ' + num_selected + ' rows')
+                dt.buttons([3]).text('<span data-customTooltip="Select 1 row to edit">Edit</span>')
+              }
+          } );
+
+          
+          table.columns().every( function() {
+            var that = this;
+      
+            $('input', this.footer()).on('keyup change', function() {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+          });
+          });
+
+
+    </script>
+      <footer class="pt-3 mt-4 text-muted border-top">
+        &copy; 2021
+      </footer>
+    </div>
+</body>
+
+
+</html>

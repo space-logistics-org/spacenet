@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from .routers import hello_world, element
-from .database import Base, SessionLocal, engine
+from .database import Base, engine
+from .routers import edge, element, hello_world, node, resource
 
 # create the database if it does not yet exist
 Base.metadata.create_all(bind=engine)
@@ -20,16 +20,21 @@ app.include_router(
 )
 
 app.include_router(
-    hello_world.router,
-    prefix="/hello_world",
-    include_in_schema=False,
-    deprecated=True
-)
-
-app.include_router(
     element.router,
     prefix="/element"
 )
 
-# TODO: need more routing stubs to exist to progress here?
-# TODO: end-to-end testing via routers?
+app.include_router(
+    resource.router,
+    prefix="/resource"
+)
+
+app.include_router(
+    node.router,
+    prefix="/node"
+)
+
+app.include_router(
+    edge.router,
+    prefix="/edge"
+)

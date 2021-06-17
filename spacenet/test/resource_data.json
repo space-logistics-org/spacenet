@@ -1,0 +1,182 @@
+[
+  {
+    "name": "res1",
+    "cos": 101,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 20,
+    "unit_volume": 20
+  },
+  {
+    "name": "res2",
+    "cos": 102,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 40,
+    "unit_volume": 30
+  },
+  {
+    "name": "res3",
+    "cos": 103,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 20,
+    "unit_volume": 20
+  },
+  {
+    "name": "res4",
+    "cos": 104,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 2,
+    "unit_volume": 5
+  },
+  {
+    "name": "res5",
+    "cos": 105,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 20,
+    "unit_volume": 20
+  },
+  {
+    "name": "res6",
+    "cos": 106,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 100,
+    "unit_volume": 50
+  },
+  {
+    "name": "res7",
+    "cos": 201,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 20,
+    "unit_volume": 20
+  },
+  {
+    "name": "res8",
+    "cos": 202,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 6,
+    "unit_volume": 8
+  },
+  {
+    "name": "res9",
+    "cos": 203,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 20,
+    "unit_volume": 20
+  },
+  {
+    "name": "res10",
+    "cos": 204,
+    "units": "kg",
+    "description": null,
+    "type": "discrete",
+    "unit_mass": 20,
+    "unit_volume": 20
+  },
+  {
+    "name": "res11",
+    "cos": 101,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 25.5,
+    "unit_volume": 20.0
+  },
+  {
+    "name": "res12",
+    "cos": 102,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 200.5,
+    "unit_volume": 120.1
+  },
+  {
+    "name": "res13",
+    "cos": 103,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 3.5,
+    "unit_volume": 20.9
+  },
+  {
+    "name": "res14",
+    "cos": 104,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 15.7,
+    "unit_volume": 10.0
+  },
+  {
+    "name": "res15",
+    "cos": 105,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 20.0,
+    "unit_volume": 20.0
+  },
+  {
+    "name": "res16",
+    "cos": 106,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 45.6,
+    "unit_volume": 55.455
+  },
+  {
+    "name": "res17",
+    "cos": 201,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 78.43,
+    "unit_volume": 68.0
+  },
+  {
+    "name": "res18",
+    "cos": 202,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 30.5,
+    "unit_volume": 35.4
+  },
+  {
+    "name": "res19",
+    "cos": 203,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 97.9,
+    "unit_volume": 88.5
+  },
+  {
+    "name": "res20",
+    "cos": 204,
+    "units": "kg",
+    "description": null,
+    "type": "continuous",
+    "unit_mass": 33.6,
+    "unit_volume": 45.7
+  }
+]

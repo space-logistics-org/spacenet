@@ -1,3 +1,5 @@
+from typing_extensions import Literal
+
 from pydantic import BaseModel, Field
 from enum import Enum
 
@@ -49,11 +51,10 @@ class SurfaceNode(Node):
     """
     A node on the surface of a body.
     """
-    type: NodeType = Field(
-        default=NodeType.Surface,
+    type: Literal[NodeType.Surface] = Field(
+        ...,
         title="Type",
         description="Type of node (surface, orbital, or lagrange)",
-        const=True
     )
     latitude: float = Field(
         ...,
@@ -75,11 +76,10 @@ class OrbitalNode(Node):
     """
     A node orbiting a body.
     """
-    type: NodeType = Field(
-        default=NodeType.Orbital,
+    type: Literal[NodeType.Orbital] = Field(
+        ...,
         title="Type",
         description="Type of node (surface, orbital, or lagrange)",
-        const=True
     )
     apoapsis: float = Field(
         ...,
@@ -106,11 +106,10 @@ class LagrangeNode(Node):
     """
     A node at a Lagrange point of two bodies.
     """
-    type: NodeType = Field(
-        default=NodeType.Lagrange,
+    type: Literal[NodeType.Lagrange] = Field(
+        ...,
         title="Type",
         description="Type of node (surface, orbital, or lagrange)",
-        const=True
     )
     body_2: Body = Field(
         ...,

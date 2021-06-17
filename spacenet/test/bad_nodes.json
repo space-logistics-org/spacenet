@@ -1,0 +1,44 @@
+[
+  {
+    "type": "Surface",
+    "name": "Test1",
+    "body_1": "Earth",
+    "latitude": true,
+    "longitude": true,
+    "description": "True is not valid Long/Lat"
+  },
+  {
+    "type": "Surface",
+    "name": "Test2",
+    "body_1": "Moon",
+    "latitude": 91,
+    "longitude": 45,
+    "description": "91 is not valid Lat"
+  },
+  {
+    "type": "Orbital",
+    "name": "Test3",
+    "body_1": "Mars",
+    "apoapsis": 10000,
+    "periapsis": "3000",
+    "inclination": 70,
+    "description": "String is not valid periapsis"
+  },
+  {
+    "type": "Orbital",
+    "name": "Test4",
+    "body_1": "Mars",
+    "apoapsis": 10000000,
+    "periapsis": 10000000,
+    "inclination": 190,
+    "description": "190 is not valid inclination"
+  },
+  {
+    "type": "Lagrange",
+    "name": "Test5",
+    "body_1": "Mars",
+    "body_2": "Sun",
+    "lp_number": 6,
+    "description": "6 is not valid LP number"
+  }
+]
