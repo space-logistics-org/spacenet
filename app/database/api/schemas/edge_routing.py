@@ -20,5 +20,5 @@ class UpdateSpaceEdge(SpaceEdge, RequiresOnlyType):
 class ReadFlightEdge(FlightEdge, ReadSchema):
     pass
 
-class UpdateFLightEdge(FlightEdge, RequiresOnlyType):
+class UpdateFlightEdge(FlightEdge, RequiresOnlyType):
     pass
