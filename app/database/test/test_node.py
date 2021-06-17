@@ -1,6 +1,7 @@
 import unittest
 import json
 import pkg_resources
+import pytest
 from sqlalchemy.orm import sessionmaker
 
 from spacenet import test
@@ -8,6 +9,8 @@ from spacenet import test
 from app.database.api.models import node as models
 from app.database.api.schemas import node as schemas
 from app.database.api.database import Base, engine
+
+pytestmark = [pytest.mark.unit, pytest.mark.node]
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -24,7 +27,7 @@ class TestNodeData(unittest.TestCase):
         nodes_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,
-                'goodNodes.txt'
+                'goodNodes.json'
             )
         )
 
