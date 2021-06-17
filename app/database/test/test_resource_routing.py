@@ -6,11 +6,9 @@ from typing import Dict, List, Tuple
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from spacenet.schemas.resource import ResourceType
-from .utilities import filter_val_not_none, first_subset_second, make_subset, with_type
+from .utilities import filter_val_not_none, first_subset_second, make_subset, with_type, test_engine, TestingSessionLocal
 from ..api.database import Base, get_db
 from ..api.models.resource import Resource as ResourceModel
 from ..api.main import app
@@ -19,13 +17,7 @@ pytestmark = [pytest.mark.integration, pytest.mark.resource]
 
 client = TestClient(app)
 
-TEST_DB_URL = "sqlite:///./test.db"
-
-engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False})
-
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=test_engine)
 
 
 def override_get_db():
@@ -97,15 +89,15 @@ TESTED_VARIANTS: List[ResourceType] = [ResourceType.discrete, ResourceType.conti
 
 @pytest.fixture(scope="module")
 def resource_routing():
-    ResourceModel.__table__.create(engine)
+    ResourceModel.__table__.create(test_engine)
     yield
-    ResourceModel.__table__.drop(engine)
+    ResourceModel.__table__.drop(test_engine)
 
 
 @pytest.fixture(autouse=True)
 def clear_tables():
-    ResourceModel.__table__.drop(engine, checkfirst=False)
-    ResourceModel.__table__.create(engine, checkfirst=True)
+    ResourceModel.__table__.drop(test_engine, checkfirst=False)
+    ResourceModel.__table__.create(test_engine, checkfirst=True)
 
 
 @pytest.mark.parametrize("resource_type", TESTED_VARIANTS)

@@ -8,6 +8,7 @@ from spacenet import test
 from app.database.api.models import resource as models
 from app.database.api.schemas import resource as schemas
 from app.database.api.database import SessionLocal, Base, engine
+from .utilities import TestingSessionLocal
 
 pytestmark = [pytest.mark.unit, pytest.mark.resource]
 
@@ -15,7 +16,7 @@ pytestmark = [pytest.mark.unit, pytest.mark.resource]
 class TestResource(unittest.TestCase):
     def setUp(self):
         Base.metadata.create_all(bind=engine)
-        self.db = SessionLocal()
+        self.db = TestingSessionLocal()
 
     def tearDown(self):
         self.db.close()
