@@ -13,7 +13,7 @@
 </head>
 
 <body>
-  <div class="container py-4">
+  <div class="container-fluid py-4">
     <header class="pb-3 mb-4 border-bottom">
       <a class="d-flex align-items-center text-dark text-decoration-none"></a>
         <img src = "SpaceNetLogo.jpg" height="30px">
@@ -30,10 +30,10 @@
                 <th>Type</th>
                 <th>Origin</th>
                 <th>Destination</th>
-                <th>Duration</th>
-                <th>Distance</th>
-                <th>Max Crew</th>
-                <th>Max Cargo</th>
+                <!-- <th>Duration</th>
+                <th>Distance</th> -->
+                <!-- <th>Max Crew</th>
+                <th>Max Cargo</th> -->
                 <th>Description</th>
             </tr>
         </thead>
@@ -46,10 +46,10 @@
             <th>Type</th>
             <th>Origin</th>
             <th>Destination</th>
-            <th>Duration</th>
-            <th>Distance</th>
-            <th>Max Crew</th>
-            <th>Max Cargo</th>
+            <!-- <th>Duration</th>
+            <th>Distance</th> -->
+            <!-- <th>Max Crew</th>
+            <th>Max Cargo</th> -->
             <th>Description</th>
           </tr>
         </tfoot>
@@ -151,8 +151,11 @@
             },
             columns: [
               {data: null},
-              { data: 'message' },
-              { data: 'id' },
+              { data: 'name' },
+              { data: 'type' },
+              { data: 'origin_id' },
+              { data: 'destination_id' },
+              { data: 'description' }
                 ],
             buttons: [
                 'export',
