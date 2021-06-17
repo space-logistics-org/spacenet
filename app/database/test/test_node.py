@@ -27,7 +27,7 @@ class TestNodeData(unittest.TestCase):
         nodes_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,
-                'goodNodes.json'
+                'good_nodes.json'
             )
         )
 
