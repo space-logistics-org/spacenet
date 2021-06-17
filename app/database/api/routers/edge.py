@@ -10,6 +10,9 @@ from ..schemas.edge import *
 router = APIRouter()
 
 Edges = Union[SurfaceEdge, SpaceEdge, FlightEdge]
+# TODO: this is a very temporary patch and edge routing will not work until it's removed!
+UpdateSurfaceEdge = UpdateSpaceEdge = UpdateFlightEdge = int
+ReadSurfaceEdge = ReadSpaceEdge = ReadFlightEdge = int
 UpdateEdges = Union[UpdateSurfaceEdge, UpdateSpaceEdge, UpdateFlightEdge]
 ReadEdges = Union[ReadSurfaceEdge, ReadSpaceEdge, ReadFlightEdge]
 
