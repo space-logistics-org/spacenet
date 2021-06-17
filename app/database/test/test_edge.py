@@ -1,7 +1,7 @@
 import unittest
 import json
 import pkg_resources
-from sqlalchemy.orm import sessionmaker
+import pytest
 
 from spacenet import test
 
@@ -9,6 +9,8 @@ from app.database.api.models import edge as models
 from app.database.api.schemas import edge as schemas
 from app.database.api.database import Base, engine
 from .utilities import TestingSessionLocal
+
+pytestmark = [pytest.mark.unit, pytest.mark.edge]
 
 
 class TestEdgeData(unittest.TestCase):
@@ -24,7 +26,7 @@ class TestEdgeData(unittest.TestCase):
         edge_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,
-                'goodEdges.txt'
+                'goodEdges.json'
             )
         )
 
