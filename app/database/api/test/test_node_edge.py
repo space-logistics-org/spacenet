@@ -273,7 +273,7 @@ def test_update(variant_name):
 )
 def test_delete(variant_name):
     def check_get_all():
-        read_all_r = client.get(f"/{prefix}")
+        read_all_r = client.get(f"{prefix}/")
         assert read_all_r.status_code == 200
         for v in read_all_r.json():
             assert v in posted_values
@@ -288,7 +288,6 @@ def test_delete(variant_name):
     first_good, second_good = good_values[0], random.choice(good_values[1:])
     for i in range(2):
         valid_kw = first_good if i == 0 else second_good
-        pprint.pprint(valid_kw)
         post_r = client.post(f"{prefix}/", json=valid_kw)
         assert post_r.status_code == 201, post_r.json()
         assert first_subset_second(valid_kw, post_r.json())

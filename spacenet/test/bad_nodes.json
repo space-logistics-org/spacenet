@@ -17,6 +17,15 @@
   },
   {
     "type": "Orbital",
+    "name": "Test3",
+    "body_1": "Mars",
+    "apoapsis": 10000,
+    "periapsis": "Three thousand",
+    "inclination": 70,
+    "description": "String is not valid periapsis"
+  },
+  {
+    "type": "Orbital",
     "name": "Test4",
     "body_1": "Mars",
     "apoapsis": 10000000,
