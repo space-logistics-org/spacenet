@@ -8,7 +8,14 @@ import pytest
 from fastapi.testclient import TestClient
 
 from spacenet.schemas.resource import ResourceType
-from .utilities import filter_val_not_none, first_subset_second, make_subset, with_type, test_engine, TestingSessionLocal
+from .utilities import (
+    filter_val_not_none,
+    first_subset_second,
+    make_subset,
+    with_type,
+    test_engine,
+    TestingSessionLocal,
+)
 from ..api.database import Base, get_db
 from ..api.models.resource import Resource as ResourceModel
 from ..api.main import app
