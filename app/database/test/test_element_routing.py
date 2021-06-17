@@ -39,7 +39,14 @@ from ..api.database import Base, get_db
 from ..api.models.element import Element as ElementModel
 from ..api.main import app
 from spacenet.test.element_factories import *
-from .utilities import with_type, make_subset, first_subset_second, filter_val_not_none, TestingSessionLocal, test_engine
+from .utilities import (
+    with_type,
+    make_subset,
+    first_subset_second,
+    filter_val_not_none,
+    TestingSessionLocal,
+    test_engine,
+)
 
 pytestmark = [pytest.mark.integration, pytest.mark.element]
 
@@ -200,6 +207,7 @@ def test_delete(element_type: ElementKind):
     to_delete = posted_vals.pop()
     del_r = client.delete(f"/element/{to_delete['id']}")
     assert del_r.status_code == 200
+    assert del_r.json() == to_delete
     # GET LIST and check that only 1 is present
     check_get_all()
     # DELETE the same ID: should be a 404
@@ -214,6 +222,7 @@ def test_delete(element_type: ElementKind):
     to_delete = posted_vals.pop()
     del_r = client.delete(f"/element/{to_delete['id']}")
     assert del_r.status_code == 200
+    assert del_r.json() == to_delete
     # GET LIST and check that is empty
     read_all_r = client.get("/element/")
     assert read_all_r.status_code == 200

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from .. import database
 from ..models import resource as models
+from ..models.utilities import dictify_row
 from ..schemas.resource import *
 from spacenet.schemas.resource import ResourceType
 
@@ -126,6 +127,7 @@ def patch_resource(
 
 @router.delete(
     "/{id_}",
+    response_model=ReadResources,
     responses=NOT_FOUND_RESPONSE,
     description="Delete a resource from the database.",
 )
@@ -136,6 +138,11 @@ def delete_resource(id_: int, db: Session = Depends(database.get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No resource found with id={id_}",
         )
+    suffix = "_i" if db_resource.type == ResourceType.discrete else "_f"
+    as_dict = dictify_row(db_resource)
     db.delete(db_resource)
     db.commit()
-    return {"msg": f"Successfully deleted resource with id={id_}"}
+    for field in ("unit_mass", "unit_volume"):
+        as_dict[field] = as_dict[field + suffix]
+        del as_dict[field + suffix]
+    return as_dict

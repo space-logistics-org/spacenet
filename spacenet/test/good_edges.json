@@ -1,0 +1,167 @@
+[
+  {
+    "type": "Flight",
+    "name": "Crew Launch to LEO",
+    "origin_id": 6,
+    "destination_id": 3,
+    "duration": 0.1,
+    "distance": null,
+    "max_crew": 6,
+    "max_cargo": 100,
+    "description": "KSC Launch to LEO"
+  },
+  {
+    "type": "Flight",
+    "name": "MAV Ascent from MV",
+    "origin_id": 10,
+    "destination_id": 4,
+    "duration": 0.1,
+    "distance": null,
+    "max_crew": 6,
+    "max_cargo": 300,
+    "description": "Mars Ascent Vehicle Launch"
+  },
+  {
+    "type": "Flight",
+    "name": "Improved Crew Delivery",
+    "origin_id": 6,
+    "destination_id": 8,
+    "duration": 6,
+    "distance": null,
+    "max_crew": 4,
+    "max_cargo": 1000,
+    "description": "placeholder"
+  },
+  {
+    "type": "Flight",
+    "name": "Cargo Delivery",
+    "origin_id": 6,
+    "destination_id": 8,
+    "duration": 6,
+    "distance": null,
+    "max_crew": 0,
+    "max_cargo": 14600,
+    "description": "placeholder"
+  },
+  {
+    "type": "Flight",
+    "name": "Ascent to LLO",
+    "origin_id": 9,
+    "destination_id": 2,
+    "duration": 1,
+    "distance": null,
+    "max_crew": 4,
+    "max_cargo": 100,
+    "description": "Lunar Ascent"
+  },
+  {
+    "type": "Space",
+    "name": "KSC-LEO",
+    "origin_id": 6,
+    "destination_id": 3,
+    "duration": 0.25,
+    "distance": null,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "Earth Ascent"
+  },
+  {
+    "type": "Space",
+    "name": "LEO-LLPO",
+    "origin_id": 3,
+    "destination_id": 2,
+    "duration": 4,
+    "distance": null,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "Lunar Orbit Injection"
+  },
+  {
+    "type": "Space",
+    "name": "LLPO-LSP",
+    "origin_id": 2,
+    "destination_id": 8,
+    "duration": 0.5,
+    "distance": null,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "Lunar Descent"
+  },
+  {
+    "type": "Space",
+    "name": "TMI/MOI",
+    "origin_id": 3,
+    "destination_id": 4,
+    "duration": 202,
+    "distance": null,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "Trans-Mars Injection/ Mars Orbit Insertion(Aerocapture)"
+  },
+  {
+    "type": "Space",
+    "name": "Descent to GC",
+    "origin_id": 4,
+    "destination_id": 11,
+    "duration": 0.1,
+    "distance": null,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "Descent to Gale Crater"
+  },
+  {
+    "type": "Surface",
+    "name": "LSP-SL1",
+    "origin_id": 8,
+    "destination_id": 12,
+    "duration": null,
+    "distance": 80,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "placeholder"
+  },
+  {
+    "type": "Surface",
+    "name": "LSP-SL2",
+    "origin_id": 8,
+    "destination_id": 13,
+    "duration": null,
+    "distance": 140,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "placeholder"
+  },
+  {
+    "type": "Surface",
+    "name": "LSP-SL3",
+    "origin_id": 8,
+    "destination_id": 14,
+    "duration": null,
+    "distance": 60,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "placeholder"
+  },
+  {
+    "type": "Surface",
+    "name": "SL2-SL3",
+    "origin_id": 13,
+    "destination_id": 14,
+    "duration": null,
+    "distance": 50,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "placeholder"
+  },
+  {
+    "type": "Surface",
+    "name": "Path to Malapert",
+    "origin_id": 8,
+    "destination_id": 15,
+    "duration": null,
+    "distance": 180,
+    "max_crew": null,
+    "max_cargo": null,
+    "description": "Path to Malapert Excursion"
+  }
+]
