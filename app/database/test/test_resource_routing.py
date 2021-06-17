@@ -188,6 +188,7 @@ def test_delete(resource_type: ResourceType):
     to_delete = posted_vals.pop()
     del_r = client.delete(f"/resource/{to_delete['id']}")
     assert del_r.status_code == 200
+    assert del_r.json() == to_delete
     check_get_all()
     del_r = client.delete(f"/resource/{to_delete['id']}")
     assert del_r.status_code == 404
@@ -197,6 +198,7 @@ def test_delete(resource_type: ResourceType):
     to_delete = posted_vals.pop()
     del_r = client.delete(f"/resource/{to_delete['id']}")
     assert del_r.status_code == 200
+    assert del_r.json() == to_delete
     read_all_r = client.get("/resource/")
     assert read_all_r.status_code == 200
     assert len(read_all_r.json()) == 0
