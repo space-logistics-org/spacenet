@@ -10,19 +10,17 @@ from fastapi.testclient import TestClient
 
 import spacenet
 from app.database.api.database import Base
+from app.database.api.main import app
+from app.database.api.models.edge import Edge as EdgeModel
+from app.database.api.models.node import Node as NodeModel
+from app.database.test.utilities import TestingSessionLocal, test_engine
 from spacenet.schemas.edge import EdgeType
 from spacenet.schemas.node import NodeType
 from .utilities import (
-    TestingSessionLocal,
     filter_val_not_none,
     first_subset_second,
     make_subset,
-    test_engine,
-    with_type,
 )
-from ..api.main import app
-from ..api.models.edge import Edge as EdgeModel
-from ..api.models.node import Node as NodeModel
 
 pytestmark = [pytest.mark.integration]
 

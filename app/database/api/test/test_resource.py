@@ -7,18 +7,17 @@ from typing import Dict, List, Tuple
 import pytest
 from fastapi.testclient import TestClient
 
+from app.database.api.database import Base, get_db
+from app.database.api.main import app
+from app.database.api.models.resource import Resource as ResourceModel
+from app.database.test.utilities import TestingSessionLocal, test_engine
 from spacenet.schemas.resource import ResourceType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
     make_subset,
     with_type,
-    test_engine,
-    TestingSessionLocal,
 )
-from ..api.database import Base, get_db
-from ..api.models.resource import Resource as ResourceModel
-from ..api.main import app
 
 pytestmark = [pytest.mark.integration, pytest.mark.resource]
 
