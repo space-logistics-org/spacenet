@@ -33,25 +33,19 @@ from typing import Dict, List, Tuple, Type
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from spacenet.schemas.element import ElementKind
 from ..api.database import Base, get_db
 from ..api.models.element import Element as ElementModel
 from ..api.main import app
 from spacenet.test.element_factories import *
-from .utilities import with_type, make_subset, first_subset_second, filter_val_not_none
+from .utilities import with_type, make_subset, first_subset_second, filter_val_not_none, TestingSessionLocal, test_engine
+
+pytestmark = [pytest.mark.integration, pytest.mark.element]
 
 client = TestClient(app)
 
-TEST_DB_URL = "sqlite:///./test.db"
-
-engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False})
-
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=test_engine)
 
 
 def override_get_db():
@@ -87,16 +81,16 @@ TESTED_VARIANTS: List[ElementKind] = [variant for variant in ElementKind]
 
 @pytest.fixture(scope="module")
 def element_routing():
-    ElementModel.__table__.create(engine)
+    ElementModel.__table__.create(test_engine)
     random.seed("spacenet")
     yield
-    ElementModel.__table__.drop(engine)
+    ElementModel.__table__.drop(test_engine)
 
 
 @pytest.fixture(autouse=True)
 def reseed_and_clear_tables():
-    ElementModel.__table__.drop(engine, checkfirst=False)
-    ElementModel.__table__.create(engine, checkfirst=True)
+    ElementModel.__table__.drop(test_engine, checkfirst=False)
+    ElementModel.__table__.create(test_engine, checkfirst=True)
     random.seed("spacenet")
 
 

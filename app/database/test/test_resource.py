@@ -1,17 +1,22 @@
 import unittest
 import json
 import pkg_resources
+import pytest
 
 from spacenet import test
 
 from app.database.api.models import resource as models
 from app.database.api.schemas import resource as schemas
 from app.database.api.database import SessionLocal, Base, engine
+from .utilities import TestingSessionLocal
+
+pytestmark = [pytest.mark.unit, pytest.mark.resource]
+
 
 class TestResource(unittest.TestCase):
     def setUp(self):
         Base.metadata.create_all(bind=engine)
-        self.db = SessionLocal()
+        self.db = TestingSessionLocal()
 
     def tearDown(self):
         self.db.close()
@@ -27,8 +32,8 @@ class TestResource(unittest.TestCase):
         try:
             for resource in resource_data:
                 if resource["type"] == "Continuous":
-                    resource = schemas.ContinuousResourceCreate.parse_obj(resource)
-                    db_resource = models.ContinuousResource(**resource_dict())
+                    resource = schemas.ContinuousResource.parse_obj(resource)
+                    db_resource = models.ContinuousResource(**resource.dict())
                     self.assertIsNone(db_resource.id)
                     db.add(db_resource)
                     db.commit()
@@ -38,8 +43,8 @@ class TestResource(unittest.TestCase):
                     db.commit()
 
                 elif resource["type"] == "Discrete":
-                    resource = schemas.DiscreteResourceCreate.parse_obj(resource)
-                    db_resource = models.DiscreteResource(**resource_dict())
+                    resource = schemas.DiscreteResource.parse_obj(resource)
+                    db_resource = models.DiscreteResource(**resource.dict())
                     self.assertIsNone(db_resource.id)
                     db.add(db_resource)
                     db.commit()

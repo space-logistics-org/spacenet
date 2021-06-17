@@ -1,18 +1,22 @@
 import unittest
 import json
 import pkg_resources
+import pytest
 
 from spacenet import test
 
 from app.database.api.models import hello_world as models
 from app.database.api.schemas import hello_world as schemas
-from app.database.api.database import Base, SessionLocal, engine
+from app.database.api.database import Base, engine
+from .utilities import TestingSessionLocal
+
+pytestmark = [pytest.mark.unit]
 
 
 class TestHelloWorld(unittest.TestCase):
     def setUp(self):
         Base.metadata.create_all(bind=engine)
-        self.db = SessionLocal()
+        self.db = TestingSessionLocal()
 
     def tearDown(self):
         self.db.close()
