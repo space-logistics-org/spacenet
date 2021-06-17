@@ -1,23 +1,26 @@
 import unittest
 import json
 import pkg_resources
+from sqlalchemy.orm import sessionmaker
 
 from spacenet import test
 
 from app.database.api.models import node as models
 from app.database.api.schemas import node as schemas
-from app.database.api.database import Base, SessionLocal, engine
+from app.database.api.database import Base, engine
+
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 class TestNodeData(unittest.TestCase):
     def setUp(self):
         Base.metadata.create_all(bind=engine)
-        self.db = SessionLocal()
+        self.db = TestingSessionLocal()
 
     def tearDown(self):
         self.db.close()
 
-    def test_model_goodNodes(self):
+    def test_model_good_nodes(self):
         nodes_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,

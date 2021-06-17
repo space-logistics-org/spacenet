@@ -1,24 +1,26 @@
 import unittest
 import json
 import pkg_resources
+from sqlalchemy.orm import sessionmaker
 
 from spacenet import test
 
 from app.database.api.models import edge as models
 from app.database.api.schemas import edge as schemas
-from app.database.api.database import Base, SessionLocal, engine
+from app.database.api.database import Base, engine
+from .utilities import TestingSessionLocal
 
 
 class TestEdgeData(unittest.TestCase):
 
     def setUp(self):
         Base.metadata.create_all(bind=engine)
-        self.db = SessionLocal()
+        self.db = TestingSessionLocal()
 
     def tearDown(self):
         self.db.close()
 
-    def test_model_goodEdges(self):
+    def test_model_good_edges(self):
         edge_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,
@@ -64,6 +66,7 @@ class TestEdgeData(unittest.TestCase):
                 testedge = schemas.FlightEdgeCreate.parse_obj(edge)
                 db_edge = models.FlightEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
+                print(db_edge.__dict__)
                 self.db.add(db_edge)
                 self.db.commit()
                 self.db.refresh(db_edge)
