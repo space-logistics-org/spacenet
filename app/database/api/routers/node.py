@@ -7,6 +7,7 @@ from .. import database
 
 from ..models import node as models
 from ..schemas.node import *
+from ..models.utilities import dictify_row
 
 
 router = APIRouter()
@@ -15,6 +16,12 @@ Nodes = Union[
     SurfaceNode,
     OrbitalNode,
     LagrangeNode
+]
+
+CreateNodes = Union[
+    SurfaceNodeCreate,
+    OrbitalNodeCreate,
+    LagrangeNodeCreate
 ]
 
 UpdateNodes = Union[
@@ -36,7 +43,7 @@ SCHEMA_TO_MODEL = {
 }
 
 
-@router.post("/", response_model=ReadNodes)
+@router.post("/", response_model=CreateNodes)
 def create_node(
         node: Nodes,
         # token: str = Depends(oauth2_scheme),
@@ -122,6 +129,7 @@ def delete_node(
     db_node = db.query(models.Node).get(node_id)
     if db_node is None:
         raise HTTPException(status_code=404, detail="Node {:d} not found".format(node_id))
+    as_dict = dictify_row(db_node)
     db.delete(db_node)
     db.commit()
-    return db_node
+    return as_dict
