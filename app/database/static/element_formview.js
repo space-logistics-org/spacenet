@@ -1,7 +1,24 @@
+elType ="";
+name = "";
+desc = "";
+classOS = 0;
+env = "";
+accMass = 0;
+mass = 0;
+vol = 0;
+carMass = 0;
+carVol = 0;
+atf = 0;
+maxCC = 0;
+specImp = 0;
+maxFuel = 0;
+maxSpeed = 0;
+
 
 function formSet(){
 
   $("#components #inputName").prop("disabled",true);
+  $("#components #inputDesc").prop("disabled",true);
   $("#components #inputCOS").prop("disabled",true);
   $("#components #inputEnv").prop("disabled",true);
   $("#components #inputAccMass").prop("disabled",true);
@@ -15,11 +32,12 @@ function formSet(){
   $("#components #inputMaxFuel").prop("disabled",true);
   $("#components #inputMaxSpeed").prop("disabled",true);
 
-  var elType = document.getElementById('dropPick').value;
+  elType = document.getElementById('dropPick').value;
 
   switch(elType) {
     case 'def':{
       $("#components #inputName").prop("disabled",true);
+      $("#components #inputDesc").prop("disabled",true);
       $("#components #inputCOS").prop("disabled",true);
       $("#components #inputEnv").prop("disabled",true);
       $("#components #inputAccMass").prop("disabled",true);
@@ -36,6 +54,7 @@ function formSet(){
     }
     case 'Element': {
       $("#components #inputName").prop("disabled",false);
+      $("#components #inputDesc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -45,6 +64,7 @@ function formSet(){
         }
     case 'Resource Container':{
       $("#components #inputName").prop("disabled",false);
+      $("#components #inputDesc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -55,6 +75,7 @@ function formSet(){
       break;}
     case 'Element Carrier':
     {  $("#components #inputName").prop("disabled",false);
+      $("#components #inputDesc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -64,6 +85,7 @@ function formSet(){
       break;}
     case 'Human Agent':
       {$("#components #inputName").prop("disabled",false);
+      $("#components #inputDesc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -73,6 +95,7 @@ function formSet(){
       break;}
     case 'Robotic Agent':
     {  $("#components #inputName").prop("disabled",false);
+      $("#components #inputDesc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -82,6 +105,7 @@ function formSet(){
       break;}
     case 'Propulsive Vehicle':
       {$("#components #inputName").prop("disabled",false);
+      $("#components #inputDesc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -93,6 +117,7 @@ function formSet(){
       break;}
     case 'Surface Vehicle':
       {$("#components #inputName").prop("disabled",false);
+      $("#components #inputDesc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -105,9 +130,8 @@ function formSet(){
   }
 }
 
-var elCOS = document.getElementById("inputCOS").value;
-function selector(){
-}
+
+
 
 function subclassSet(){
   elCOS = document.getElementById("inputCOS").value;
@@ -183,5 +207,146 @@ function subSelect9(){
   sub9 = document.getElementById("inputCOSSub9").value;
   if(sub9 == "Propulsive Elements"){
     document.getElementById("inputCOSSub9Sub").style.display = "block";
+
   }
+}
+
+function submitButton(){
+  alert("hi");
+  name = document.getElementById("inputName").value;
+  desc = document.getElementById("inputDesc").value;
+  //classOS =
+  type = document.getElementById("dropPick").value;
+  env = document.getElementById("inputEnv").value;
+  accMass = document.getElementById("inputAccMass").value;
+  mass = document.getElementById("inputMass").value;
+  vol = document.getElementById("inputVol").value;
+  carMass = document.getElementById("inputCarMass").value;
+  carVol = document.getElementById("inputCarVol").value;
+  atf = document.getElementById("inputATF").value;
+  maxCC = document.getElementById("inputMaxCrew").value;
+  specImp = document.getElementById("inputSpecImp").value;
+  maxFuel = document.getElementById("inputMaxFuel").value;
+  maxSpeed = document.getElementById("inputMaxSpeed").value;
+
+  switch(type){
+    case "Element":{
+        message: {
+            "name": name,
+            "description": desc,
+            "class_of_supply": classOS,
+            "type": type,
+            "environment": env,
+            "accommodation_mass": accMass,
+            "mass": mass,
+            "volume": vol
+            "max_cargo_mass": carMass,
+            "max_cargo_volume": carVol,
+            "cargo_environment": env,
+            "accommodation_mass": accMass,
+            "active_time_fraction": atf,
+            "max_crew": maxCC,
+            "isp": specImp,
+            "propellant_id":1,
+            "max_fuel": maxFuel,
+            "max_speed": maxSpeed
+        }
+        break;
+      }
+    case "Resource Container":{
+    message: {
+        "name": name,
+        "description": desc,
+        "class_of_supply": classOS,
+        "type": type,
+        "environment": env,
+        "accommodation_mass": accMass,
+        "mass": mass,
+        "volume": vol,
+        "max_cargo_mass": carMass,
+        "max_cargo_volume": inputCarVol
+    }
+    break;
+  }
+    case "Element Carrier":{
+      message: {
+          "name": name,
+          "description": desc,
+          "class_of_supply": classOS,
+          "type": type,
+          "environment": env,
+          "accommodation_mass": accMass,
+          "mass": mass,
+          "volume": vol,
+          "max_cargo_mass": carMass,
+          "max_cargo_volume": inputCarVol,
+          "cargo_environment": env
+      }
+      break
+    }
+    case "Human Agent":{
+      message: {
+          "name": name,
+          "description": desc,
+          "class_of_supply": classOS,
+          "type": type,
+          "environment": env,
+          "accommodation_mass": accMass,
+          "mass": mass,
+          "volume": vol,
+          "active_time_fraction": atf
+    }
+    break;
+  }
+    case "Robotic Agent":{
+      message: {
+          "name": name,
+          "description": desc,
+          "class_of_supply": classOS,
+          "type": type,
+          "environment": env,
+          "accommodation_mass": accMass,
+          "mass": mass,
+          "volume": vol,
+          "active_time_fraction": atf
+        }
+        break;
+      }
+      case "Propulsive Vehicle":{
+        message: {
+          "name": name,
+          "description": desc,
+          "class_of_supply": classOS,
+          "type": type,
+          "environment": env,
+          "accommodation_mass": accMass,
+          "mass": mass,
+          "volume": vol,
+          "max_cargo_mass": carMass,
+          "max_cargo_volume": carVol,
+          "max_crew": maxCC,
+          "isp": specImp,
+          "max_fuel": maxFuel,
+          "propellant_id":1
+        }
+        break;
+      }
+      case "Surface Vehicle":{
+        message: {
+          "name": name,
+          "description": desc,
+          "class_of_supply": classOS,
+          "type": type,
+          "environment": env,
+          "accommodation_mass": accMass,
+          "mass": mass,
+          "volume": vol,
+          "max_cargo_mass": carMass,
+          "max_cargo_volume": carVol,
+          "max_speed": maxSpeed,
+          "max_fuel": maxFuel,
+          "fuel_id":1
+        }
+        break;
+      }
 }
