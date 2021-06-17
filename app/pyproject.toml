@@ -1,0 +1,18 @@
+[project]
+name = "spacenet-app"
+version = "3.0.0"
+description = "SpaceNet Application"
+authors = [
+  "Paul Grogan <pgrogan@stevens.edu>"
+]
+readme = "README.md"
+homepage = "https://github.com/space-logistics-org/spacenet"
+repository = "https://github.com/space-logistics-org/spacenet"
+documentation = "https://github.com/space-logistics-org/spacenet"
+
+[build-system]
+requires = [
+    "setuptools >= 57.0.0",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
