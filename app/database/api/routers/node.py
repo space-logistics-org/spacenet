@@ -30,7 +30,7 @@ def create_node(
         # token: str = Depends(oauth2_scheme),
         db: Session = Depends(database.get_db)
         ):
-    db_node = models.Node(**node.dict())
+    db_node = SCHEMA_TO_MODEL[type(node)](**node.dict())
     db.add(db_node)
     db.commit()
     db.refresh(db_node)

@@ -10,10 +10,13 @@ from ..schemas.edge import *
 router = APIRouter()
 
 Edges = Union[SurfaceEdge, SpaceEdge, FlightEdge]
+UpdateEdges = Union[UpdateSurfaceEdge, UpdateSpaceEdge, UpdateFlightEdge]
+ReadEdges = Union[ReadSurfaceEdge, ReadSpaceEdge, ReadFlightEdge]
+
 SCHEMA_TO_MODEL = {SurfaceEdge: models.SurfaceEdge, SpaceEdge: models.SpaceEdge, FlightEdge: models.FlightEdge}
 
 #Bind a route to list objects
-@router.get("/", response_model = List[Edges])
+@router.get("/", response_model = List[ReadEdges])
 def list_edges(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
 
     db_edges = db.query(models.Edge).offset(skip).limit(limit).all()
@@ -21,7 +24,7 @@ def list_edges(skip: int = 0, limit: int = 100, db: Session = Depends(database.g
     return db_edges
 
 #Bind a route to read an object by ID
-@router.get("/{edge_id}", response_model = Edges)
+@router.get("/{edge_id}", response_model = ReadEdges)
 def read_edge(edge_id: int, db: Session = Depends(database.get_db)):
     
     db_edge = db.query(models.Edge).get(edge_id)
@@ -32,10 +35,10 @@ def read_edge(edge_id: int, db: Session = Depends(database.get_db)):
     return db_edge
 
 #Bind a route to create a new object
-@router.post("/", response_model = Edges)
+@router.post("/", response_model = ReadEdges)
 def create_edge(edge: Edges, db: Session = Depends(database.get_db)): 
 
-    db_edge = models.Edge(**edge.dict())
+    db_edge = SCHEMA_TO_MODEL[type(edge)](**edge.dict())
 
     db.add(db_edge)
 
@@ -46,8 +49,8 @@ def create_edge(edge: Edges, db: Session = Depends(database.get_db)):
     return db_edge
 
 #Bind a route to update an object by ID
-@router.put("/{edge_id}", response_model = Edges)
-def update_edge(edge_id: int, edge: Edges, db: Session = Depends(database.get_db)):
+@router.put("/{edge_id}", response_model = ReadEdges)
+def update_edge(edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)):
 
     db_edge = db.query(models.Edge).get(edge_id)
 
@@ -59,12 +62,11 @@ def update_edge(edge_id: int, edge: Edges, db: Session = Depends(database.get_db
             setattr(db_edge, field, edge.dict()[field])
 
     db.commit()
-    db.refresh(db_edge)
 
     return db_edge
 
 #Bind a route to delete an object by ID
-@router.delete("/{edge_id}", response_model = Edges)
+@router.delete("/{edge_id}", response_model = ReadEdges) #no response model??
 def delete_edge(edge_id: int, db: Session = Depends(database.get_db)):
 
     db_edge = db.query(models.Edge).get(edge_id)
