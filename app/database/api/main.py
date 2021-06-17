@@ -20,13 +20,6 @@ app.include_router(
 )
 
 app.include_router(
-    hello_world.router,
-    prefix="/hello_world",
-    include_in_schema=False,
-    deprecated=True
-)
-
-app.include_router(
     element.router,
     prefix="/element"
 )
