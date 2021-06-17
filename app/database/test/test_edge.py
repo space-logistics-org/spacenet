@@ -4,32 +4,33 @@ import pkg_resources
 
 from spacenet import test
 
-from app.database.api.models import edge as models 
-from app.database.api.schemas import edge as schemas 
+from app.database.api.models import edge as models
+from app.database.api.schemas import edge as schemas
 from app.database.api.database import Base, SessionLocal, engine
 
-class TestNodeData(unittest.TestCase):
-    
+
+class TestEdgeData(unittest.TestCase):
+
     def setUp(self):
         Base.metadata.create_all(bind=engine)
         self.db = SessionLocal()
 
     def tearDown(self):
         self.db.close()
-    
-    def test_model_goodNodes(self):
+
+    def test_model_goodEdges(self):
         edge_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,
                 'goodEdges.txt'
             )
-        ) 
-        
-        for edge in edge_data : 
-            if edge["type"] == "Surface" :
+        )
+
+        for edge in edge_data:
+            if edge["type"] == "Surface":
                 testedge = schemas.SurfaceEdgeCreate.parse_obj(edge)
                 db_edge = models.SurfaceEdge(**testedge.dict())
-                self.assertIsNone(db_edge.id) 
+                self.assertIsNone(db_edge.id)
                 self.db.add(db_edge)
                 self.db.commit()
                 self.db.refresh(db_edge)
@@ -41,11 +42,11 @@ class TestNodeData(unittest.TestCase):
                 self.assertIsNotNone(db_edge.description)
                 self.db.delete(db_edge)
                 self.db.commit()
-                 
+
             elif edge["type"] == "Space":
                 testedge = schemas.SpaceEdgeCreate.parse_obj(edge)
                 db_edge = models.SpaceEdge(**testedge.dict())
-                self.assertIsNone(db_edge.id) 
+                self.assertIsNone(db_edge.id)
                 self.db.add(db_edge)
                 self.db.commit()
                 self.db.refresh(db_edge)
@@ -58,7 +59,7 @@ class TestNodeData(unittest.TestCase):
                 self.db.delete(db_edge)
                 self.db.delete(db_edge)
                 self.db.commit()
-                
+
             elif edge["type"] == "Flight":
                 testedge = schemas.FlightEdgeCreate.parse_obj(edge)
                 db_edge = models.FlightEdge(**testedge.dict())

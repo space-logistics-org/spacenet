@@ -4,9 +4,10 @@ import pkg_resources
 
 from spacenet import test
 
-from app.database.api.models import node as models 
-from app.database.api.schemas import node as schemas 
+from app.database.api.models import node as models
+from app.database.api.schemas import node as schemas
 from app.database.api.database import Base, SessionLocal, engine
+
 
 class TestNodeData(unittest.TestCase):
     def setUp(self):
@@ -15,17 +16,17 @@ class TestNodeData(unittest.TestCase):
 
     def tearDown(self):
         self.db.close()
-    
+
     def test_model_goodNodes(self):
         nodes_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,
                 'goodNodes.txt'
             )
-        ) 
+        )
 
-        for node in nodes_data :
-            
+        for node in nodes_data:
+
             if node["type"] == "Orbital":
                 testnode = schemas.OrbitalNodeCreate.parse_obj(node)
                 db_node = models.OrbitalNode(**testnode.dict())
@@ -42,7 +43,7 @@ class TestNodeData(unittest.TestCase):
                 self.assertIsNotNone(db_node.description)
                 self.db.delete(db_node)
                 self.db.commit()
-                 
+
             elif node["type"] == "Surface":
                 testnode = schemas.SurfaceNodeCreate.parse_obj(node)
                 db_node = models.SurfaceNode(**testnode.dict())
@@ -58,7 +59,7 @@ class TestNodeData(unittest.TestCase):
                 self.assertIsNotNone(db_node.description)
                 self.db.delete(db_node)
                 self.db.commit()
-                
+
             elif node["type"] == "Lagrange":
                 testnode = schemas.LagrangeNodeCreate.parse_obj(node)
                 db_node = models.LagrangeNode(**testnode.dict())
@@ -76,20 +77,3 @@ class TestNodeData(unittest.TestCase):
                 self.db.commit()
 
 # To test, run : python -m unittest app.database.test.test_nodeDatabaseModel
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
