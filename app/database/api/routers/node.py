@@ -17,6 +17,18 @@ Nodes = Union[
     LagrangeNode
 ]
 
+UpdateElements = Union[
+    UpdateSurfaceNode,
+    UpdateOrbitalNode,
+    UpdateLagrangeNode
+]
+
+ReadElements = Union[
+    ReadSurfaceNode,
+    ReadOrbitalNode,
+    ReadLagrangeNode
+]
+
 SCHEMA_TO_MODEL = {
     SurfaceNode: models.SurfaceNode,
     OrbitalNode: models.OrbitalNode,
