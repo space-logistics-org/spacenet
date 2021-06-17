@@ -1,5 +1,4 @@
 import json
-import pprint
 import random
 from enum import Enum
 from typing import List, Type
@@ -49,17 +48,6 @@ def get_other_variants(to_exclude, enum: Type[Enum]) -> List[Enum]:
     return [variant.value for variant in enum if variant != to_exclude]
 
 
-MISTYPED_NODES = [
-    {**good_node, "type": get_other_variants(good_node["type"], NodeType)[0]}
-    for good_node in GOOD_NODE_LIST
-]
-
-MISTYPED_EDGES = [
-    {**good_edge, "type": get_other_variants(good_edge["type"], EdgeType)[0]}
-    for good_edge in GOOD_EDGE_LIST
-]
-
-
 def override_get_db():
     db = TestingSessionLocal()
     try:
@@ -79,6 +67,10 @@ NAMES_TO_VALUES = {
     **{str(variant): variant.value for variant in NODE_VARIANTS},
     **{str(variant): variant.value for variant in EDGE_VARIANTS},
 }
+NAMES_TO_VARIANTS = {
+    **{str(variant): variant for variant in NODE_VARIANTS},
+    **{str(variant): variant for variant in EDGE_VARIANTS},
+}
 
 GOOD_NODES = {
     variant.value: [obj for obj in GOOD_NODE_LIST if obj["type"] == variant.value]
@@ -93,9 +85,9 @@ GOOD_EDGES = {
 def value_to_obj(value):
     assert value in GOOD_NODES or value in GOOD_EDGES
     return (
-        (GOOD_NODES, BAD_NODE_LIST, MISTYPED_NODES)
+        (GOOD_NODES, BAD_NODE_LIST)
         if value in GOOD_NODES
-        else (GOOD_EDGES, BAD_EDGE_LIST, MISTYPED_EDGES)
+        else (GOOD_EDGES, BAD_EDGE_LIST)
     )
 
 
@@ -170,7 +162,7 @@ def test_empty(prefix):
 def test_create(variant_name):
     value = NAMES_TO_VALUES[variant_name]
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
-    good_values, bad_values, mistyped_values = VALUE_TO_OBJECTS[value]
+    good_values, bad_values = VALUE_TO_OBJECTS[value]
     good_values = good_values[value]
     bad_response = client.post(f"{prefix}/", json=random.choice(bad_values))
     assert bad_response.status_code == 422
@@ -220,8 +212,8 @@ def test_update(variant_name):
 
     value = NAMES_TO_VALUES[variant_name]
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
-    good_values, bad_values, mistyped_values = VALUE_TO_OBJECTS[value]
-    good_values = good_values[value]
+    all_good_values, bad_values = VALUE_TO_OBJECTS[value]
+    good_values = all_good_values[value]
     first_good = good_values[0]
     second_good = random.choice(good_values[1:])
     kw = first_good
@@ -238,7 +230,11 @@ def test_update(variant_name):
     bad_patch = client.patch(f"{prefix}/{not_present_id}", json=patch_kw)
     assert bad_patch.status_code == 404
     check_get()
-    mistyped = random.choice(MISTYPED_EDGES)
+    variant = NAMES_TO_VARIANTS[variant_name]
+    parent_enum = NodeType if variant_name in NODE_NAMES else EdgeType
+    other_variant = random.choice(get_other_variants(variant, parent_enum))
+    mistyped = random.choice(all_good_values[other_variant])
+    # variant to all other
     bad_patch = client.patch(f"{prefix}/{id_}", json=mistyped)
     assert bad_patch.status_code == 409
     check_get()
@@ -282,7 +278,7 @@ def test_delete(variant_name):
 
     value = NAMES_TO_VALUES[variant_name]
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
-    good_values, bad_values, mistyped_values = VALUE_TO_OBJECTS[value]
+    good_values, bad_values = VALUE_TO_OBJECTS[value]
     good_values = good_values[value]
     posted_values = []
     first_good, second_good = good_values[0], random.choice(good_values[1:])
