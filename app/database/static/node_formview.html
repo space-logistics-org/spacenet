@@ -20,13 +20,15 @@
   <div class="container py-4">
     <header class="pb-3 mb-4 border-bottom">
       <a class="d-flex align-items-center text-dark text-decoration-none"></a>
+      <a href = "formviewdir.html">
         <img src = "SpaceNetLogo.jpg" height="30px">
+      </a>
         <span class="fs-4">SpaceNet</span>
     </header>
   <h1 class= "text-center">Node Form</h1>
   <div class="text-center" class="dropdown">
   <label for="dropPick">Node Type</label>
-    <form id="element">
+    <form id="selection">
       <select id="dropPick" onChange = "formSet()" class="form-control" class="text-center">
         <option selected id="def">Choose...</option>
         <option id="SurfaceNode">Surface Node</option>
@@ -36,13 +38,62 @@
     </form>
   </div>
   <hr></hr>
-    <form id="components">
+    <form id="node">
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="inputName">Name</label>
-          <input type="text" class="form-control" id="inputName" placeholder="Element Name">
+          <input type="text" class="form-control" id="inputName" placeholder="Node Name">
         </div>
-      </div>
+        <div class="form-group col-md-6">
+          <label for="inputDesc">Description</label>
+          <input type="text" class="form-control" id="inputDesc" placeholder="Node Description">
+        </div>
+        <label for="body1">Body 1</label>
+        <select id="body1" class="form-control" class="text-center">
+          <option selected id="def">Choose...</option>
+          <option id="Sun">Sun</option>
+          <option id="Moon">Moon</option>
+          <option id="Earth">Earth</option>
+          <option id="Mars">Mars</option>
+        </select>
+        <label for="body2">Body 2</label>
+        <select id="body2" class="form-control" class="text-center">
+          <option selected id="def">Choose...</option>
+          <option id="Sun">Sun</option>
+          <option id="Moon">Moon</option>
+          <option id="Earth">Earth</option>
+          <option id="Mars">Mars</option>
+        </select>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="inputlpNum">Lagrange Point Number</label>
+            <input type="number" class="form-control" id="inputlpNum" placeholder="Lagrange Point Number">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="inputApo">Apoapsis</label>
+            <input type="number" class="form-control" id="inputApo" placeholder="Apoapsis">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="inputPeri">Periapsis</label>
+            <input type="number" class="form-control" id="inputPeri" placeholder="Periapsis">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="inputLat">Latitude</label>
+            <input type="number" class="form-control" id="inputLat" placeholder="Latitude">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="inputLong">Longitude</label>
+            <input type="number" class="form-control" id="inputLong" placeholder="Longitude">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="inputInc">Inclination</label>
+            <input type="number" class="form-control" id="inputInc" placeholder="Inclination">
+          </div>
+        </div>
+    </div>
+
     <hr></hr>
     <button type="submit" class="btn btn-primary">Submit Element</button>
   </form>
