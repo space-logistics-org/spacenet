@@ -62,7 +62,7 @@
       </div>
       <div class="form-group col-md-6">
         <label for="inputCOSSub1">Class of Supply Subclass</label>
-        <select id="inputCOSSub1" class="form-control">
+        <select id="inputCOSSub1" onchange = "setCOS()" class="form-control">
           <option selected>Choose...</option>
           <option id="101">Cryogens</option>
           <option id="102">Hypergols</option>
@@ -72,7 +72,7 @@
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub2" class="form-control">
+        <select id="inputCOSSub2" onchange = "setCOS()" class="form-control">
           <option selected>Choose...</option>
           <option id="201">Water and Support Equipment</option>
           <option id="202">Food and Support Equipment</option>
@@ -83,7 +83,7 @@
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub3" class="form-control">
+        <select id="inputCOSSub3"  onchange = "setCOS()" class="form-control">
           <option selected>Choose...</option>
           <option id="301">Office Equipment and Supplies</option>
           <option id="302">EVA Equipment and Consumables</option>
@@ -94,7 +94,7 @@
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub4" onChange="subSelect4()" class="form-control" >
+        <select id="inputCOSSub4" onChange="subSelect4(); setCOS();" class="form-control" >
           <option selected>Choose...</option>
           <option id="401">Spares and Repair Parts</option>
           <option id="402">Maintenance Tools</option>
@@ -104,14 +104,14 @@
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub5" class="form-control">
+        <select id="inputCOSSub5"  onchange = "setCOS()" class="form-control">
           <option selected>Choose...</option>
           <option id="501">Cargo Containers and Restraints</option>
           <option id="502">Inventory Management Equipment</option>
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub6" class="form-control">
+        <select id="inputCOSSub6"  onchange = "setCOS()" class="form-control">
           <option selected>Choose...</option>
           <option id="601">Science Payloads and Instruments</option>
           <option id="602">Field Equipment</option>
@@ -119,7 +119,7 @@
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub7" class="form-control">
+        <select id="inputCOSSub7"  onchange = "setCOS()" class="form-control">
           <option selected>Choose...</option>
           <option id="701">Waste</option>
           <option id="702">Waste Management Equipment</option>
@@ -127,7 +127,7 @@
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub8" onChange="subSelect8()" class="form-control">
+        <select id="inputCOSSub8" onChange="subSelect8(); setCOS();" class="form-control">
           <option selected>Choose...</option>
           <option id="801">Habitation Facilities</option>
           <option id="802">Surface Mobility Systems</option>
@@ -138,28 +138,28 @@
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub9" onChange="subSelect9()" class="form-control">
+        <select id="inputCOSSub9" onChange="subSelect9(); setCOS();" class="form-control">
           <option selected>Choose...</option>
           <option id="901">Carriers, Non-propulsive Elements</option>
           <option id="902">Propulsive Elements</option>
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub4Sub" class="form-control">
+        <select id="inputCOSSub4Sub"  onchange = "setCOS()" class="form-control">
           <option selected>Choose...</option>
           <option id="4011">Spares</option>
           <option id="4012">Repair Parts</option>
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub8Sub" class="form-control">
+        <select id="inputCOSSub8Sub"  onchange = "setCOS()" class="form-control">
           <option selected>Choose...</option>
           <option id="8041">Science Robotics</option>
           <option id="8042">Construction/Maintenance Robotics</option>
         </select>
       </div>
       <div class="form-group col-md-6">
-        <select id="inputCOSSub9Sub" class="form-control">
+        <select id="inputCOSSub9Sub" onchange = "setCOS()"  class="form-control">
           <option selected>Choose...</option>
           <option id="9021">Launch Vehicles</option>
           <option id="9022">Upper Stages/In-Space Propulsion Systems</option>
