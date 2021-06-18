@@ -5,17 +5,43 @@
   <meta charset="UTF-8">
   <title>Login</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
 <body>
   <main>
-    <h1>Login</h1>
-    <form id="login" action="">
-      <input type="text" name="username" id="username_field" class="login_form" placeholder="Username">
-      <input type="password" name="password" id="password_field" class="login_form" placeholder="Password">
-      <input type="button" value="Submit" id="login_form_submit">
-    </form>
-    <input type="button" value="getUser" id="get_current_user">
+    <div class="container py-4">
+      <header class="pb-3 mb-4 border-bottom">
+        <a class="d-flex align-items-center text-dark text-decoration-none"></a>
+          <img src = "SpaceNetLogo.jpg" height="30px">
+          <span class="fs-4">SpaceNet</span>
+      </header>
+    </div>
+
+    <div class="container-fluid d-flex justify-content-center align-items-center">
+      <div class="card d-flex text-white bg-dark justify-content-center align-items-center col-md-6 py-4">
+        <div class="card-body ">
+	  <div class="card-title d-flex justify-content-center">
+            <h1>Login</h1>
+  	  </div>
+          <form id="login" action="">
+	    <div class="container-fluid justify-content-center">
+              <div class="row py-1"><input type="text" name="username" id="username_field" class="login_form" placeholder="Username"></div>
+              <div class="row py-1"><input type="password" name="password" id="password_field" class="login_form" placeholder="Password"></div>
+	      <div class="row text-danger" id="invalid" style="display: none"><p>Invalid username/password</p></div>
+              <div class="row py-1"><input type="button" value="Submit" id="login_form_submit"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+     <div class="container fixed-bottom py-4">
+      <footer class="pt-3 mt-4 text-muted border-top">
+        &copy; 2021
+      </footer>
+     </div>
+
   </main>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script defer src="index.js"></script>

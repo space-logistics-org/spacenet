@@ -14,9 +14,12 @@ $("#login_form_submit").click(function (){
 			alert(response)
 		}
 	})*/
-	$.post("token", $("#login").serialize(), function (response){accesstoken=response["access_token"]})
+	$.post("token", $("#login").serialize(), function (response){accesstoken=response["access_token"], window.history.back();})
+	setTimeout(() => { $("#invalid").css("display", "block"); }, 1000);
 })
 
+/*
 $("#get_current_user").click(function (){
 	$.ajax({url:"users/me", success:function(response){console.log(response)}, headers:{Authorization:"Bearer "+accesstoken}})
 })
+*/
