@@ -82,18 +82,18 @@ GOOD_EDGES = {
 }
 
 
-def value_to_obj(value):
-    assert value in GOOD_NODES or value in GOOD_EDGES
+def name_to_obj(name):
+    assert name in NODE_NAMES or name in EDGE_NAMES
     return (
         (GOOD_NODES, BAD_NODE_LIST)
-        if value in GOOD_NODES
+        if name in NODE_NAMES
         else (GOOD_EDGES, BAD_EDGE_LIST)
     )
 
 
-VALUE_TO_OBJECTS = {
-    value: value_to_obj(value)
-    for value in [variant.value for variant in NODE_VARIANTS + EDGE_VARIANTS]
+NAMES_TO_OBJECTS = {
+    name: name_to_obj(name)
+    for name in [str(variant) for variant in NODE_VARIANTS + EDGE_VARIANTS]
 }
 
 VARIANT_NAME_TO_PREFIX = {
@@ -153,22 +153,21 @@ def test_empty(prefix):
             name,
             marks=[
                 pytest.mark.edge,
-                pytest.mark.xfail(reason="edge routing not working"),
             ],
         )
         for name in EDGE_NAMES
     ],
 )
 def test_create(variant_name):
-    value = NAMES_TO_VALUES[variant_name]
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
-    good_values, bad_values = VALUE_TO_OBJECTS[value]
-    good_values = good_values[value]
+    all_good_values, bad_values = NAMES_TO_OBJECTS[variant_name]
+    value = NAMES_TO_VALUES[variant_name]
+    good_values = all_good_values[value]
     bad_response = client.post(f"{prefix}/", json=random.choice(bad_values))
     assert bad_response.status_code == 422
     good_val = random.choice(good_values)
     post_response = client.post(f"{prefix}/", json=good_val)
-    assert post_response.status_code == 201
+    assert post_response.status_code == 201, f"failed for {good_val}"
     assert first_subset_second(good_val, post_response.json())
     assert len(good_val) == len(post_response.json()) - 1
     id_ = post_response.json()["id"]
@@ -198,7 +197,6 @@ def test_create(variant_name):
             name,
             marks=[
                 pytest.mark.edge,
-                pytest.mark.xfail(reason="edge routing not working"),
             ],
         )
         for name in EDGE_NAMES
@@ -210,9 +208,9 @@ def test_update(variant_name):
         assert get_r.status_code == 200
         assert expected_fields == get_r.json()
 
-    value = NAMES_TO_VALUES[variant_name]
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
-    all_good_values, bad_values = VALUE_TO_OBJECTS[value]
+    all_good_values, bad_values = NAMES_TO_OBJECTS[variant_name]
+    value = NAMES_TO_VALUES[variant_name]
     good_values = all_good_values[value]
     first_good = good_values[0]
     second_good = random.choice(good_values[1:])
@@ -261,7 +259,6 @@ def test_update(variant_name):
             name,
             marks=[
                 pytest.mark.edge,
-                pytest.mark.xfail(reason="edge routing not working"),
             ],
         )
         for name in EDGE_NAMES
@@ -276,16 +273,16 @@ def test_delete(variant_name):
         for v in posted_values:
             assert v in read_all_r.json()
 
-    value = NAMES_TO_VALUES[variant_name]
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
-    good_values, bad_values = VALUE_TO_OBJECTS[value]
-    good_values = good_values[value]
+    all_good_values, bad_values = NAMES_TO_OBJECTS[variant_name]
+    value = NAMES_TO_VALUES[variant_name]
+    good_values = all_good_values[value]
     posted_values = []
     first_good, second_good = good_values[0], random.choice(good_values[1:])
     for i in range(2):
         valid_kw = first_good if i == 0 else second_good
         post_r = client.post(f"{prefix}/", json=valid_kw)
-        assert post_r.status_code == 201, post_r.json()
+        assert post_r.status_code == 201
         assert first_subset_second(valid_kw, post_r.json())
         posted_values.append({**valid_kw, "id": post_r.json()["id"]})
     check_get_all()

@@ -38,7 +38,7 @@ class SpaceEdge(EdgeWithDuration):
 
 
 class FlightEdge(EdgeWithDuration):
-    max_crew = Column(Float)
+    max_crew = Column(Integer)
     max_cargo = Column(Float)
 
     __mapper_args__ = {"polymorphic_identity": EdgeType.Flight.value}

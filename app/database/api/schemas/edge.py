@@ -1,47 +1,30 @@
-from pydantic import Field
-from spacenet.schemas import edge as schemas
+from spacenet.schemas.edge import SurfaceEdge, SpaceEdge, FlightEdge
+from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
+
+__all__ = ["SurfaceEdge", "ReadSurfaceEdge", "UpdateSurfaceEdge",
+           "SpaceEdge", "ReadSpaceEdge", "UpdateSpaceEdge",
+           "FlightEdge", "ReadFlightEdge", "UpdateFlightEdge"]
 
 
-class SurfaceEdgeCreate(schemas.SurfaceEdge):
+class ReadSurfaceEdge(SurfaceEdge, ReadSchema):
     pass
 
 
-class SurfaceEdge(schemas.SurfaceEdge):
-    id: int = Field(
-        ...,
-        title="ID",
-        description="Unique identifier"
-    )
-
-    class Config:
-        orm_mode = True
-
-
-class SpaceEdgeCreate(schemas.SpaceEdge):
+class UpdateSurfaceEdge(SurfaceEdge, RequiresOnlyType):
     pass
 
 
-class SpaceEdge(schemas.SpaceEdge):
-    id: int = Field(
-        ...,
-        title="ID",
-        description="Unique identifier"
-    )
-
-    class Config:
-        orm_mode = True
-
-
-class FlightEdgeCreate(schemas.FlightEdge):
+class ReadSpaceEdge(SpaceEdge, ReadSchema):
     pass
 
 
-class FlightEdge(schemas.FlightEdge):
-    id: int = Field(
-        ...,
-        title="ID",
-        description="Unique identifier"
-    )
+class UpdateSpaceEdge(SpaceEdge, RequiresOnlyType):
+    pass
 
-    class Config:
-        orm_mode = True
+
+class ReadFlightEdge(FlightEdge, ReadSchema):
+    pass
+
+
+class UpdateFlightEdge(FlightEdge, RequiresOnlyType):
+    pass
