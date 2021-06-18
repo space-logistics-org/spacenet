@@ -1,10 +1,10 @@
 name: Publish Docker image
 on:
-  workflow_run:
-    workflows: [ "Build and Test" ]
-    branches: [ main ]
-    types:
-      - completed
+#  workflow_run:
+#    workflows: [ "Build and Test" ]
+#    branches: [ main ]
+#    types:
+#      - completed
   workflow_dispatch:
 
 jobs:

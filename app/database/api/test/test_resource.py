@@ -7,11 +7,17 @@ from typing import Dict, List, Tuple
 import pytest
 from fastapi.testclient import TestClient
 
+from app.database.api.database import Base, get_db
+from app.database.api.main import app
+from app.database.api.models.resource import Resource as ResourceModel
+from app.database.test.utilities import TestingSessionLocal, test_engine
 from spacenet.schemas.resource import ResourceType
-from .utilities import filter_val_not_none, first_subset_second, make_subset, with_type, test_engine, TestingSessionLocal
-from ..api.database import Base, get_db
-from ..api.models.resource import Resource as ResourceModel
-from ..api.main import app
+from .utilities import (
+    filter_val_not_none,
+    first_subset_second,
+    make_subset,
+    with_type,
+)
 
 pytestmark = [pytest.mark.integration, pytest.mark.resource]
 
@@ -188,6 +194,7 @@ def test_delete(resource_type: ResourceType):
     to_delete = posted_vals.pop()
     del_r = client.delete(f"/resource/{to_delete['id']}")
     assert del_r.status_code == 200
+    assert del_r.json() == to_delete
     check_get_all()
     del_r = client.delete(f"/resource/{to_delete['id']}")
     assert del_r.status_code == 404
@@ -197,6 +204,7 @@ def test_delete(resource_type: ResourceType):
     to_delete = posted_vals.pop()
     del_r = client.delete(f"/resource/{to_delete['id']}")
     assert del_r.status_code == 200
+    assert del_r.json() == to_delete
     read_all_r = client.get("/resource/")
     assert read_all_r.status_code == 200
     assert len(read_all_r.json()) == 0

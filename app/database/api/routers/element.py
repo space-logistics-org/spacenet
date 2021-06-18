@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from .. import database
 from ..models import element as models
 from ..schemas.element import *
+from ..models.utilities import dictify_row
 
 router = APIRouter()
 
@@ -122,6 +123,7 @@ def patch_element(
 
 @router.delete(
     "/{id_}",
+    response_model=ReadElements,
     responses=NOT_FOUND_RESPONSE,
     description="Delete an element from the database.",
 )
@@ -132,6 +134,7 @@ def delete_element(id_: int, db: Session = Depends(database.get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No element found with id={id_}",
         )
+    as_dict = dictify_row(db_element)
     db.delete(db_element)
     db.commit()
-    return {"msg": f"Successfully deleted element with id={id_}"}
+    return as_dict

@@ -77,7 +77,7 @@ class TestingData(unittest.TestCase):
         edge_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,
-                'goodEdges.json'
+                'good_edges.json'
             )
         )
 
@@ -98,7 +98,7 @@ class TestingData(unittest.TestCase):
         edge_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,
-                'goodEdges.json'
+                'good_edges.json'
             )
         )
 
@@ -117,7 +117,7 @@ class TestingData(unittest.TestCase):
         edge_data = json.loads(
             pkg_resources.resource_string(
                 test.__name__,
-                'goodEdges.json'
+                'good_edges.json'
             )
         )
 
