@@ -1,15 +1,16 @@
 from typing import Optional
 from typing_extensions import Literal
 
-from pydantic import BaseModel, PositiveInt, PositiveFloat, Field
+from pydantic import BaseModel, NonNegativeFloat, NonNegativeInt, PositiveInt, PositiveFloat, \
+    Field
 from enum import Enum
 
 from ..constants import ClassOfSupply
 
 
 class ResourceType(str, Enum):
-    discrete = "discrete"
-    continuous = "continuous"
+    discrete = "Discrete"
+    continuous = "Continuous"
 
     class Config:
         title: "Resource Type"
@@ -17,7 +18,7 @@ class ResourceType(str, Enum):
 
 class Resource(BaseModel):
     name: str = Field(..., title="Name", description="Resource name")
-    cos: ClassOfSupply = Field(
+    class_of_supply: ClassOfSupply = Field(
         ..., title="Class of Supply", description="Class of supply number"
     )
     units: str = Field(default="kg", title="Units")
@@ -34,7 +35,7 @@ class DiscreteResource(Resource):
         ..., title="Type", description="Resource type"
     )
     unit_mass: PositiveInt = Field(..., title="Unit Mass", description="Resource mass")
-    unit_volume: PositiveInt = Field(
+    unit_volume: NonNegativeInt = Field(
         ..., title="Unit Volume", description="Resource volume"
     )
 
@@ -49,7 +50,7 @@ class ContinuousResource(Resource):
     unit_mass: PositiveFloat = Field(
         ..., title="Unit Mass", description="Resource mass"
     )
-    unit_volume: PositiveFloat = Field(
+    unit_volume: NonNegativeFloat = Field(
         ..., title="Unit Volume", description="Resource volume"
     )
 
