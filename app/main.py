@@ -21,3 +21,5 @@ app.mount('/login', login.app)
 
 # mount the static directory
 app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
+
+
