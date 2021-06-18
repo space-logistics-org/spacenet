@@ -1,4 +1,3 @@
-edgeType ="";
 name = "";
 origin_id = 0;
 dest_id = 0;
@@ -8,14 +7,6 @@ max_crew = 0;
 max_cargo = 0;
 desc = "";
 
-name = document.getElementById("inputName").value;
-origin_id = document.getElementById("inputOrigin_ID").value;
-dest_id = document.getElementById("inputDestination_ID").value;
-dur = document.getElementById("inputDuration").value;
-dist = document.getElementById("inputDistance").value;
-max_crew = document.getElementById("inputMax_Crew").value;
-max_cargo = document.getElementById("inputMax_Cargo").value;
-desc = document.getElementById("inputDescription").value;
 
 
 
@@ -74,6 +65,7 @@ function formSet(){
 function onComplete(){
 
     name = document.getElementById("inputName").value;
+    type = document.getElementById("dropPick").value;
     origin_id = document.getElementById("inputOrigin_ID").value;
     dest_id = document.getElementById("inputDestination_ID").value;
     dur = document.getElementById("inputDuration").value;
@@ -88,11 +80,11 @@ function onComplete(){
           message = JSON.stringify({
           type : "Flight",
           name : name,
-          origin_id :  origin_id,
-          destination_id : dest_id,
-          duration : dur,
-          max_crew : max_crew,
-          max_cargo : max_cargo,
+          origin_id :  parseInt(origin_id),
+          destination_id : parseInt(dest_id),
+          duration : parseInt(dur),
+          max_crew : parseInt(max_crew),
+          max_cargo : parseInt(max_cargo),
           description : desc,
           });
           break;
@@ -101,9 +93,9 @@ function onComplete(){
         message = JSON.stringify({
           type : "Space",
           name : name,
-          origin_id :  origin_id,
-          destination_id : dest_id,
-          duration : dur,
+          origin_id :  parseInt(origin_id),
+          destination_id : parseInt(dest_id),
+          duration : parseInt(dur),
           description : desc,
       });
       break;
@@ -112,9 +104,9 @@ function onComplete(){
         message = JSON.stringify({
           type : "Surface",
           name : name,
-          origin_id :  origin_id,
-          destination_id : dest_id,
-          distance : dist,
+          origin_id :  parseInt(origin_id),
+          destination_id : parseInt(dest_id),
+          distance : parseInt(dist),
           description : desc,
         });
         break;
@@ -129,6 +121,8 @@ function onComplete(){
     dataType: "json",
     method: "POST",
     success: function() {
+      document.getElementById("edge").reset()
+      document.getElementById("components").reset()
       location.href = 'edge_table.html'
     }
   });
