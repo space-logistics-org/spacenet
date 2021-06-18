@@ -4,15 +4,16 @@ from sqlalchemy.orm import Session
 
 from .. import database
 from ..models import edge as models
-from ..schemas.edge import *
+from ..schemas.edge_routing import *
+from ..models.utilities import dictify_row
 
 #Build a new router
 router = APIRouter()
 
 Edges = Union[SurfaceEdge, SpaceEdge, FlightEdge]
 # TODO: this is a very temporary patch and edge routing will not work until it's removed!
-UpdateSurfaceEdge = UpdateSpaceEdge = UpdateFlightEdge = int
-ReadSurfaceEdge = ReadSpaceEdge = ReadFlightEdge = int
+# UpdateSurfaceEdge = UpdateSpaceEdge = UpdateFlightEdge = int
+# ReadSurfaceEdge = ReadSpaceEdge = ReadFlightEdge = int
 UpdateEdges = Union[UpdateSurfaceEdge, UpdateSpaceEdge, UpdateFlightEdge]
 ReadEdges = Union[ReadSurfaceEdge, ReadSpaceEdge, ReadFlightEdge]
 
@@ -69,15 +70,16 @@ def update_edge(edge_id: int, edge: UpdateEdges, db: Session = Depends(database.
     return db_edge
 
 #Bind a route to delete an object by ID
-@router.delete("/{edge_id}", response_model = ReadEdges) #no response model??
+@router.delete("/{edge_id}", response_model = ReadEdges)
 def delete_edge(edge_id: int, db: Session = Depends(database.get_db)):
 
     db_edge = db.query(models.Edge).get(edge_id)
 
     if db_edge is None:
         raise HTTPException(status_code = 404, detail = "Edge {:d} not found".format(edge_id))
-
+    
+    as_dict = dictify_row(db_edge)
     db.delete(db_edge)
     db.commit()
 
-    return db_edge
+    return as_dict
