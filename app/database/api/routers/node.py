@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Union
 
@@ -16,12 +16,6 @@ Nodes = Union[
     SurfaceNode,
     OrbitalNode,
     LagrangeNode
-]
-
-CreateNodes = Union[
-    SurfaceNodeCreate,
-    OrbitalNodeCreate,
-    LagrangeNodeCreate
 ]
 
 UpdateNodes = Union[
@@ -43,7 +37,7 @@ SCHEMA_TO_MODEL = {
 }
 
 
-@router.post("/", response_model=CreateNodes)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=ReadNodes)
 def create_node(
         node: Nodes,
         # token: str = Depends(oauth2_scheme),
@@ -76,19 +70,25 @@ def read_node(
     return db_node
 
 
-@router.put("/{node_id}", response_model=ReadNodes)
+@router.patch("/{node_id}", response_model=ReadNodes)
 def update_node(
         node_id: int,
-        node: Nodes,
+        node: UpdateNodes,
         # token: str = Depends(oauth2_scheme),
         db: Session = Depends(database.get_db)
         ):
     db_node = db.query(models.Node).get(node_id)
     if db_node is None:
         raise HTTPException(status_code=404, detail="Node {:d} not found".format(node_id))
-    for field in node.dict():
-        if hasattr(db_node, field):
-            setattr(db_node, field, node.dict()[field])
+    if node.type != db_node.type:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Node found with id={node_id} is of type {db_node.type}; cannot update "
+                   f"type to {node.type} ",
+        )
+    for field_name, field in node.dict().items():
+        if field_name != "type" and field is not None:
+            setattr(db_node, field_name, field)
     db.commit()
     db.refresh(db_node)
     return db_node
@@ -99,9 +99,9 @@ def update_node(
     response_model=ReadNodes
 )
 def patch_node(
-    id_: int, element: UpdateNodes, db: Session = Depends(database.get_db)
+    id_: int, node: UpdateNodes, db: Session = Depends(database.get_db)
 ):
-    db_node = db.query(models.node).get(id_)
+    db_node = db.query(models.Node).get(id_)
     if db_node is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
