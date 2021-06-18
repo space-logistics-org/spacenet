@@ -72,9 +72,8 @@ function formSet(){
   }
 }
 
-function submitButton(){
+function onComplete(){
 
-    alert("hello ")
     name = document.getElementById("inputName").value;
     origin_id = document.getElementById("inputOrigin_ID").value;
     dest_id = document.getElementById("inputDestination_ID").value;
@@ -122,4 +121,18 @@ function submitButton(){
         break;
     }
   }
+
+  console.log(message)
+  $.ajax({
+    url: "/database/api/edge/",
+    data: message,
+    contentType: 'application/json; charset=utf-8',
+    dataType: "json",
+    method: "POST",
+    success: function() {
+      location.href = 'edge_table.html'
+    }
+  });
+
+
 }

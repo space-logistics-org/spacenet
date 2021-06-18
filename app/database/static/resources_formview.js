@@ -1,8 +1,3 @@
-
-var recCOS = document.getElementById("inputCOS").value;
-function selector(){
-}
-
 function subclassSet(){
   recCOS = document.getElementById("inputCOS").value;
 
@@ -78,4 +73,152 @@ function subSelect9(){
   if(sub9 == "Propulsive Elements"){
     document.getElementById("inputCOSSub9Sub").style.display = "block";
   }
+}
+
+function onComplete(){
+name = document.getElementById("inputName").value;
+desc = document.getElementById("inputDesc").value;
+//classOS =
+type = document.getElementById("dropPick").value;
+env = document.getElementById("inputEnv").value;
+accMass = document.getElementById("inputAccMass").value;
+mass = document.getElementById("inputMass").value;
+vol = document.getElementById("inputVol").value;
+carMass = document.getElementById("inputCarMass").value;
+carVol = document.getElementById("inputCarVol").value;
+atf = document.getElementById("inputATF").value;
+maxCC = document.getElementById("inputMaxCrew").value;
+specImp = document.getElementById("inputSpecImp").value;
+maxFuel = document.getElementById("inputMaxFuel").value;
+maxSpeed = document.getElementById("inputMaxSpeed").value;
+
+
+switch(type){
+  case "Element":{
+      message = JSON.stringify({
+          name: name,
+          description: desc,
+          class_of_supply: classOS,
+          type: "Element",
+          environment: env,
+          accommodation_mass: accMass,
+          mass: mass,
+          volume: vol,
+          max_cargo_mass: carMass,
+          max_cargo_volume: carVol,
+          cargo_environment: env,
+          accommodation_mass: accMass,
+          active_time_fraction: atf,
+          max_crew: maxCC,
+          isp: specImp,
+          propellant_id:1,
+          max_fuel: maxFuel,
+          max_speed: maxSpeed
+      });
+      break;
+    }
+  case "Resource Container":{
+    message = JSON.stringify({
+      name: name,
+      description: desc,
+      class_of_supply: classOS,
+      type: "ResourceContainer",
+      environment: env,
+      accommodation_mass: accMass,
+      mass: mass,
+      volume: vol,
+      max_cargo_mass: carMass,
+      max_cargo_volume: inputCarVol
+  });
+  break;
+}
+  case "Element Carrier":{
+    message = JSON.stringify({
+        name: name,
+        description: desc,
+        class_of_supply: classOS,
+        type: "ElementCarrier",
+        environment: env,
+        accommodation_mass: accMass,
+        mass: mass,
+        volume: vol,
+        max_cargo_mass: carMass,
+        max_cargo_volume: inputCarVol,
+        cargo_environment: env
+    });
+    break;
+    }
+  case "Human Agent":{
+    message = JSON.stringify({
+      name: name,
+      description: desc,
+      class_of_supply: classOS,
+      type: "HumanAgent",
+      environment: env,
+      accommodation_mass: accMass,
+      mass: mass,
+      volume: vol,
+      active_time_fraction: atf
+  });
+  break;
+}
+  case "Robotic Agent":{
+    message = JSON.stringify({
+      name: name,
+      description: desc,
+      class_of_supply: classOS,
+      type: "RoboticAgent",
+      environment: env,
+      accommodation_mass: accMass,
+      mass: mass,
+      volume: vol,
+      active_time_fraction: atf
+    });
+      break;
+    }
+    case "Propulsive Vehicle":{
+      message = JSON.stringify({
+        name: name,
+        description: desc,
+        class_of_supply: classOS,
+        type: "PropulsiveVehicle",
+        environment: env,
+        accommodation_mass: accMass,
+        mass: mass,
+        volume: vol,
+        max_cargo_mass: carMass,
+        max_cargo_volume: carVol,
+        max_crew: maxCC,
+        isp: specImp,
+        max_fuel: maxFuel,
+        propellant_id:1
+      });
+      break;
+    }
+    case "Discrete":{
+      message = JSON.stringify({
+        name: name,
+        description: desc,
+        class_of_supply: classOS,
+        type: "discrete",
+        units: unit,
+        unit_mass: mass,
+        unit_volume: vol
+      });
+      break;
+    }
+  }
+
+  console.log(message)
+  $.ajax({
+    url: "/database/api/resource/",
+    data: message,
+    contentType: 'application/json; charset=utf-8',
+    dataType: "json",
+    method: "POST",
+    success: function() {
+      location.href = 'resources_table.html'
+    }
+  });
+
 }
