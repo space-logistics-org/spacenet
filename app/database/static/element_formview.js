@@ -13,7 +13,7 @@ maxCC = 0;
 specImp = 0;
 maxFuel = 0;
 maxSpeed = 0;
-
+message = "fail:(";
 
 function formSet(){
 
@@ -211,7 +211,7 @@ function subSelect9(){
   }
 }
 
-/*
+
 function onComplete(){
 name = document.getElementById("inputName").value;
 desc = document.getElementById("inputDesc").value;
@@ -229,143 +229,147 @@ specImp = document.getElementById("inputSpecImp").value;
 maxFuel = document.getElementById("inputMaxFuel").value;
 maxSpeed = document.getElementById("inputMaxSpeed").value;
 
+
 switch(type){
   case "Element":{
-      message = {
-          "name": name,
-          "description": desc,
-          "class_of_supply": classOS,
-          "type": type,
-          "environment": env,
-          "accommodation_mass": accMass,
-          "mass": mass,
-          "volume": vol
-          "max_cargo_mass": carMass,
-          "max_cargo_volume": carVol,
-          "cargo_environment": env,
-          "accommodation_mass": accMass,
-          "active_time_fraction": atf,
-          "max_crew": maxCC,
-          "isp": specImp,
-          "propellant_id":1,
-          "max_fuel": maxFuel,
-          "max_speed": maxSpeed
-      }
+      message = JSON.stringify({
+          name: name,
+          description: desc,
+          class_of_supply: classOS,
+          type: type,
+          environment: env,
+          accommodation_mass: accMass,
+          mass: mass,
+          volume: vol,
+          max_cargo_mass: carMass,
+          max_cargo_volume: carVol,
+          cargo_environment: env,
+          accommodation_mass: accMass,
+          active_time_fraction: atf,
+          max_crew: maxCC,
+          isp: specImp,
+          propellant_id:1,
+          max_fuel: maxFuel,
+          max_speed: maxSpeed
+      });
       break;
     }
   case "Resource Container":{
-    message = {
-      "name": name,
-      "description": desc,
-      "class_of_supply": classOS,
-      "type": type,
-      "environment": env,
-      "accommodation_mass": accMass,
-      "mass": mass,
-      "volume": vol,
-      "max_cargo_mass": carMass,
-      "max_cargo_volume": inputCarVol
-  }
+    message = JSON.stringify({
+      name: name,
+      description: desc,
+      class_of_supply: classOS,
+      type: type,
+      environment: env,
+      accommodation_mass: accMass,
+      mass: mass,
+      volume: vol,
+      max_cargo_mass: carMass,
+      max_cargo_volume: inputCarVol
+  });
   break;
 }
   case "Element Carrier":{
-    message = {
-        "name": name,
-        "description": desc,
-        "class_of_supply": classOS,
-        "type": type,
-        "environment": env,
-        "accommodation_mass": accMass,
-        "mass": mass,
-        "volume": vol,
-        "max_cargo_mass": carMass,
-        "max_cargo_volume": inputCarVol,
-        "cargo_environment": env
-    }
+    message = JSON.stringify({
+        name: name,
+        description: desc,
+        class_of_supply: classOS,
+        type: type,
+        environment: env,
+        accommodation_mass: accMass,
+        mass: mass,
+        volume: vol,
+        max_cargo_mass: carMass,
+        max_cargo_volume: inputCarVol,
+        cargo_environment: env
+    });
     break;
     }
   case "Human Agent":{
-    message = {
-      "name": name,
-      "description": desc,
-      "class_of_supply": classOS,
-      "type": type,
-      "environment": env,
-      "accommodation_mass": accMass,
-      "mass": mass,
-      "volume": vol,
-      "active_time_fraction": atf
-  }
+    message = JSON.stringify({
+      name: name,
+      description: desc,
+      class_of_supply: classOS,
+      type: type,
+      environment: env,
+      accommodation_mass: accMass,
+      mass: mass,
+      volume: vol,
+      active_time_fraction: atf
+  });
   break;
 }
   case "Robotic Agent":{
-    message = {
-      "name": name,
-      "description": desc,
-      "class_of_supply": classOS,
-      "type": type,
-      "environment": env,
-      "accommodation_mass": accMass,
-      "mass": mass,
-      "volume": vol,
-      "active_time_fraction": atf
-      }
+    message = JSON.stringify({
+      name: name,
+      description: desc,
+      class_of_supply: classOS,
+      type: type,
+      environment: env,
+      accommodation_mass: accMass,
+      mass: mass,
+      volume: vol,
+      active_time_fraction: atf
+    });
       break;
     }
     case "Propulsive Vehicle":{
-      message = {
-        "name": name,
-        "description": desc,
-        "class_of_supply": classOS,
-        "type": type,
-        "environment": env,
-        "accommodation_mass": accMass,
-        "mass": mass,
-        "volume": vol,
-        "max_cargo_mass": carMass,
-        "max_cargo_volume": carVol,
-        "max_crew": maxCC,
-        "isp": specImp,
-        "max_fuel": maxFuel,
-        "propellant_id":1
-      }
+      message = JSON.stringify({
+        name: name,
+        description: desc,
+        class_of_supply: classOS,
+        type: type,
+        environment: env,
+        accommodation_mass: accMass,
+        mass: mass,
+        volume: vol,
+        max_cargo_mass: carMass,
+        max_cargo_volume: carVol,
+        max_crew: maxCC,
+        isp: specImp,
+        max_fuel: maxFuel,
+        propellant_id:1
+      });
       break;
     }
     case "Surface Vehicle":{
-      message = {
-        "name": name,
-        "description": desc,
-        "class_of_supply": classOS,
-        "type": type,
-        "environment": env,
-        "accommodation_mass": accMass,
-        "mass": mass,
-        "volume": vol,
-        "max_cargo_mass": carMass,
-        "max_cargo_volume": carVol,
-        "max_speed": maxSpeed,
-        "max_fuel": maxFuel,
-        "fuel_id":1
-      }
+      message = JSON.stringify({
+        name: name,
+        description: desc,
+        class_of_supply: classOS,
+        type: type,
+        environment: env,
+        accommodation_mass: accMass,
+        mass: mass,
+        volume: vol,
+        max_cargo_mass: carMass,
+        max_cargo_volume: carVol,
+        max_speed: maxSpeed,
+        max_fuel: maxFuel,
+        fuel_id:1
+      });
       break;
     }
   }
-}
-*/
-$(document).ready(function () {
-  $("#element").submit(function (event) {
-    };
 
-    $.ajax({
-      url: "/database/api/element/",
-      data: {
-              "name" : "testerS"
-            },
-      dataType: "json",
-      method: "POST",
-      success: function(item) {
-            dt.ajax.reload();
-        }
-  });
-});
-*/
+}
+
+
+$.fn.dataTable.ext.buttons.add = {
+              text: 'Add Element',
+              className: 'btn-style',
+              action: function ( e, dt, node, config ) {
+                $.ajax({
+                  url: "/database/api/element/",
+                  data: JSON.stringify({
+                    message: prompt("Your message:", "Hello World")
+                  }),
+                  contentType: 'application/json; charset=utf-8',
+                  dataType: "json",
+                  method: "POST",
+                  success: function(item) {
+                    dt.ajax.reload();
+                  }
+                });
+              }
+          };
