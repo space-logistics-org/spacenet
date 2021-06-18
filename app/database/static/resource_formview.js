@@ -103,7 +103,7 @@ switch(type){
         type: "continuous",
         units: units,
         unit_mass: mass,
-        unit_vol: vol
+        unit_volume: vol
       });
       break;
     }
@@ -115,7 +115,7 @@ switch(type){
       type: "discrete",
       units: units,
       unit_mass: mass,
-      unit_vol: vol
+      unit_volume: vol
   });
   break;
 }

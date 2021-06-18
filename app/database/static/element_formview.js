@@ -81,6 +81,9 @@ function formSet(){
       $("#components #inputMass").prop("disabled",false);
       $("#components #inputVol").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
+      $("#components #inputCarMass").prop("disabled",false);
+      $("#components #inputCarVol").prop("disabled",false);
+
       break;}
     case 'Human Agent':
       {$("#components #inputName").prop("disabled",false);
@@ -113,6 +116,8 @@ function formSet(){
       $("#components #inputMaxCrew").prop("disabled",false);
       $("#components #inputSpecImp").prop("disabled",false);
       $("#components #inputMaxFuel").prop("disabled",false);
+      $("#components #inputCarMass").prop("disabled",false);
+      $("#components #inputCarVol").prop("disabled",false);
       break;}
     case 'Surface Vehicle':
       {$("#components #inputName").prop("disabled",false);
@@ -125,6 +130,8 @@ function formSet(){
       $("#components #inputMaxCrew").prop("disabled",false);
       $("#components #inputMaxSpeed").prop("disabled",false);
       $("#components #inputMaxFuel").prop("disabled",false);
+      $("#components #inputCarMass").prop("disabled",false);
+      $("#components #inputCarVol").prop("disabled",false);
     break;}
   }
 }
@@ -279,7 +286,7 @@ switch(type){
         mass: mass,
         volume: vol,
         max_cargo_mass: carMass,
-        max_cargo_volume: inputCarVol,
+        max_cargo_volume: carVol,
         cargo_environment: env
     });
     break;
@@ -317,14 +324,14 @@ switch(type){
         name: name,
         description: desc,
         class_of_supply: classOS,
-        type: "PropulsiveVehicle",
+        type: "Propulsive",
         environment: env,
         accommodation_mass: accMass,
         mass: mass,
         volume: vol,
         max_cargo_mass: carMass,
         max_cargo_volume: carVol,
-        max_crew: maxCC,
+        max_crew: parseInt(maxCC),
         isp: specImp,
         max_fuel: maxFuel,
         propellant_id:1
@@ -336,13 +343,14 @@ switch(type){
         name: name,
         description: desc,
         class_of_supply: classOS,
-        type: "SurfaceVehicle",
+        type: "Surface",
         environment: env,
         accommodation_mass: accMass,
         mass: mass,
         volume: vol,
         max_cargo_mass: carMass,
         max_cargo_volume: carVol,
+        max_crew: parseInt(maxCC),
         max_speed: maxSpeed,
         max_fuel: maxFuel,
         fuel_id:1

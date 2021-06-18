@@ -86,7 +86,7 @@ lat = document.getElementById("inputLat").value;
 long = document.getElementById("inputLong").value;
 lpn = document.getElementById("inputlpNum").value;
 apo = document.getElementById("inputApo").value;
-per = document.getElementById("inputPeri").value;
+peri = document.getElementById("inputPeri").value;
 inc = document.getElementById("inputInc").value;
 
 switch(type){
