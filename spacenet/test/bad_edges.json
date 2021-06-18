@@ -39,7 +39,7 @@
     "name": "Test5",
     "origin_id": 5,
     "destination_id": 2,
-    "distance": true,
+    "distance": "truthy",
     "description": "Invalid distance type."
   }
 ]
