@@ -1,3 +1,15 @@
+name = "";
+desc = "";
+classOS = 0;
+type = "";
+body1 = "";
+body2 = "";
+lat = 0;
+long = 0;
+lpn = 0;
+apo = 0;
+per = 0;
+inc = 0;
 
 $("#node #inputName").prop("disabled",true);
 $("#node #inputDesc").prop("disabled",true);
