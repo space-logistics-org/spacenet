@@ -34,7 +34,7 @@ class TestNodeData(unittest.TestCase):
         for node in nodes_data:
 
             if node["type"] == "Orbital":
-                testnode = schemas.OrbitalNodeCreate.parse_obj(node)
+                testnode = schemas.OrbitalNode.parse_obj(node)
                 db_node = models.OrbitalNode(**testnode.dict())
                 self.assertIsNone(db_node.id)
                 self.db.add(db_node)
@@ -51,7 +51,7 @@ class TestNodeData(unittest.TestCase):
                 self.db.commit()
 
             elif node["type"] == "Surface":
-                testnode = schemas.SurfaceNodeCreate.parse_obj(node)
+                testnode = schemas.SurfaceNode.parse_obj(node)
                 db_node = models.SurfaceNode(**testnode.dict())
                 self.assertIsNone(db_node.id)
                 self.db.add(db_node)
@@ -67,7 +67,7 @@ class TestNodeData(unittest.TestCase):
                 self.db.commit()
 
             elif node["type"] == "Lagrange":
-                testnode = schemas.LagrangeNodeCreate.parse_obj(node)
+                testnode = schemas.LagrangeNode.parse_obj(node)
                 db_node = models.LagrangeNode(**testnode.dict())
                 self.assertIsNone(db_node.id)
                 self.db.add(db_node)

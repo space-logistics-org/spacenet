@@ -143,7 +143,6 @@ def test_empty(prefix):
             name,
             marks=[
                 pytest.mark.node,
-                pytest.mark.xfail(reason="node routing not working"),
             ],
         )
         for name in NODE_NAMES
@@ -187,7 +186,6 @@ def test_create(variant_name):
             name,
             marks=[
                 pytest.mark.node,
-                pytest.mark.xfail(reason="node routing not working"),
             ],
         )
         for name in NODE_NAMES
@@ -249,7 +247,6 @@ def test_update(variant_name):
             name,
             marks=[
                 pytest.mark.node,
-                pytest.mark.xfail(reason="node routing not working"),
             ],
         )
         for name in NODE_NAMES
