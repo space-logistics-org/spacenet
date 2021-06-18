@@ -232,6 +232,11 @@ maxSpeed = document.getElementById("inputMaxSpeed").value;
 
 switch(type){
   case "Element":{
+    name = document.getElementById("name").value;
+    desc = document.getElementById("desc").value;
+    classOS = document.getElementById("C")
+    type = document.getElementById("dropPick").value;
+    env = document.getElementById("inputEnv").value;
       message = JSON.stringify({
           name: name,
           description: desc,
@@ -341,12 +346,14 @@ switch(type){
       break;
     }
   }
-
+  var message =  $("components").serializeArray();
+  alert(carMass);
 }
 
 function onSubmit(form){
-  var message = JSON.stringify( $("components").serializeArray());
-  alert(message[1]);
+
+  var message =  $("components").serializeArray();
+  alert(carMass);
 }
 
 /*var message = {};

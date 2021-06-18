@@ -29,7 +29,7 @@
   <div class="text-center" class="dropdown">
   </div>
   <hr></hr>
-    <form id="components" onSubmit = "return onSubmit(this)">
+    <form id="components">
       <label for="dropPick">Element Type</label>
       <select id="dropPick" onChange = "formSet()" class="form-control" class="text-center">
         <option selected id="def">Choose...</option>
@@ -230,7 +230,7 @@
       <!-- Look for Propellant ID? Once schema confirmed determine the correct form view -->
       <div class="form-group col-md-6">
         <label for="inputMaxSpeed">Maximum Speed</label>
-        <input type="number" class="form-control" id="inputMaxSpeed" placeholder="Maximum Speed">
+        <input type="number" step = "0.01" class="form-control" id="inputMaxSpeed" placeholder="Maximum Speed">
       </div>
       <!-- Look for Fuel ID? Once schema confirmed determine the correct form view -->
     </div>
