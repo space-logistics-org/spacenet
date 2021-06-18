@@ -1,5 +1,5 @@
 from typing import List, Union
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -20,6 +20,7 @@ SCHEMA_TO_MODEL = {
     SpaceEdge: models.SpaceEdge,
     FlightEdge: models.FlightEdge,
 }
+NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
 
 # Bind a route to list objects
@@ -28,9 +29,8 @@ def list_edges(skip: int = 0, limit: int = 100, db: Session = Depends(database.g
     db_edges = db.query(models.Edge).offset(skip).limit(limit).all()
     return db_edges
 
-
-# Bind a route to read an object by ID
-@router.get("/{edge_id}", response_model=ReadEdges)
+#Bind a route to read an object by ID
+@router.get("/{edge_id}", response_model = ReadEdges, responses = NOT_FOUND_RESPONSE)
 def read_edge(edge_id: int, db: Session = Depends(database.get_db)):
     db_edge = db.query(models.Edge).get(edge_id)
     if db_edge is None:
@@ -38,7 +38,6 @@ def read_edge(edge_id: int, db: Session = Depends(database.get_db)):
             status_code=404, detail="Edge {:d} not found".format(edge_id)
         )
     return db_edge
-
 
 # Bind a route to create a new object
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ReadEdges)
@@ -49,9 +48,8 @@ def create_edge(edge: Edges, db: Session = Depends(database.get_db)):
     db.refresh(db_edge)
     return db_edge
 
-
 # Bind a route to update an object by ID
-@router.patch("/{edge_id}", response_model=ReadEdges)
+@router.patch("/{edge_id}", response_model=ReadEdges, responses=NOT_FOUND_RESPONSE)
 def update_edge(
     edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)
 ):
