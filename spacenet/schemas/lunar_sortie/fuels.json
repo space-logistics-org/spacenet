@@ -6,7 +6,7 @@
     "units": "kg",
     "unit_mass": 1,
     "unit_volume": 0,
-    "type": "continuous"
+    "type": "Continuous"
   },
   {
     "name": "LH2/LOX",
@@ -15,7 +15,7 @@
     "units": "kg",
     "unit_mass": 1,
     "unit_volume": 0,
-    "type": "continuous"
+    "type": "Continuous"
   },
   {
     "name": "MMH/N2O4",
@@ -24,6 +24,6 @@
     "units": "kg",
     "unit_mass": 1,
     "unit_volume": 0,
-    "type": "continuous"
+    "type": "Continuous"
   }
 ]
