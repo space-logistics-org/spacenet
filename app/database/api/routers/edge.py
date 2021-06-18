@@ -26,7 +26,6 @@ SCHEMA_TO_MODEL = {
 @router.get("/", response_model=List[ReadEdges])
 def list_edges(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
     db_edges = db.query(models.Edge).offset(skip).limit(limit).all()
-
     return db_edges
 
 
@@ -34,12 +33,10 @@ def list_edges(skip: int = 0, limit: int = 100, db: Session = Depends(database.g
 @router.get("/{edge_id}", response_model=ReadEdges)
 def read_edge(edge_id: int, db: Session = Depends(database.get_db)):
     db_edge = db.query(models.Edge).get(edge_id)
-
     if db_edge is None:
         raise HTTPException(
             status_code=404, detail="Edge {:d} not found".format(edge_id)
         )
-
     return db_edge
 
 
@@ -50,7 +47,7 @@ def create_edge(edge: Edges, db: Session = Depends(database.get_db)):
     db.add(db_edge)
     db.commit()
     db.refresh(db_edge)
-    print(dictify_row(db_edge))
+    print("created edge", dictify_row(db_edge))
     return db_edge
 
 
@@ -60,18 +57,20 @@ def update_edge(
     edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)
 ):
     db_edge = db.query(models.Edge).get(edge_id)
-
     if db_edge is None:
         raise HTTPException(
             status_code=404, detail="Edge {:d} not found".format(edge_id)
         )
-
+    if edge.type != db_edge.type:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Edge found with id={edge_id} is of type {db_edge.type}; cannot update "
+                   f"type to {edge.type} ",
+        )
     for field in edge.dict():
         if hasattr(db_edge, field):
             setattr(db_edge, field, edge.dict()[field])
-
     db.commit()
-
     return db_edge
 
 
@@ -79,14 +78,11 @@ def update_edge(
 @router.delete("/{edge_id}", response_model=ReadEdges)
 def delete_edge(edge_id: int, db: Session = Depends(database.get_db)):
     db_edge = db.query(models.Edge).get(edge_id)
-
     if db_edge is None:
         raise HTTPException(
             status_code=404, detail="Edge {:d} not found".format(edge_id)
         )
-
     as_dict = dictify_row(db_edge)
     db.delete(db_edge)
     db.commit()
-
     return as_dict
