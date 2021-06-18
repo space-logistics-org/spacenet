@@ -147,7 +147,7 @@ class Vehicle(CargoCarrier, ABC):
 
 class PropulsiveVehicle(Vehicle):
     """
-    An element representing a vehicle with its own propulsion via OMS.
+    An element representing a vehicle with its own propulsion.
     """
 
     type: Literal[ElementKind.Propulsive] = Field(description="the element's type")
