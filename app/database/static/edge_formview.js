@@ -7,7 +7,6 @@ dist = 0;
 max_crew = 0;
 max_cargo = 0;
 desc = "";
-message = "fail:(";
 
 name = document.getElementById("inputName").value;
 origin_id = document.getElementById("inputOrigin_ID").value;
@@ -130,7 +129,7 @@ function onComplete(){
     dataType: "json",
     method: "POST",
     success: function() {
-      location.href = 'edge_table.html'
+      location.href = 'edges_table.html'
     }
   });
 
