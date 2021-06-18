@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Ares I First Stage",
+    "description": "Ares I Launch Vehicle, First Propulsive Stage",
+    "class_of_supply": 9021,
+    "environment": "Unpressurized",
+    "accommodation_mass": 0,
+    "mass": 105000,
+    "volume": 0,
+    "max_crew": 0,
+    "max_cargo_mass": 0,
+    "max_cargo_volume": 0,
+    "isp": 267,
+    "max_fuel": 620000,
+    "propellant_id": 1,
+    "type": "Propulsive"
+  },
+  {
+    "name": "Ares I Upper Stage",
+    "description": "Ares I Launch Vehicle, Second Propulsive Stage",
+    "class_of_supply": 9021,
+    "environment": "Unpressurized",
+    "accommodation_mass": 0,
+    "mass": 12000,
+    "volume": 0,
+    "max_crew": 0,
+    "max_cargo_mass": 0,
+    "max_cargo_volume": 0,
+    "isp": 448,
+    "max_fuel": 125000,
+    "propellant_id": 1,
+    "type": "Propulsive"
+  }
+]
