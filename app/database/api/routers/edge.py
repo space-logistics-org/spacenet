@@ -47,12 +47,11 @@ def create_edge(edge: Edges, db: Session = Depends(database.get_db)):
     db.add(db_edge)
     db.commit()
     db.refresh(db_edge)
-    print("created edge", dictify_row(db_edge))
     return db_edge
 
 
 # Bind a route to update an object by ID
-@router.put("/{edge_id}", response_model=ReadEdges)
+@router.patch("/{edge_id}", response_model=ReadEdges)
 def update_edge(
     edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)
 ):
@@ -65,11 +64,11 @@ def update_edge(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Edge found with id={edge_id} is of type {db_edge.type}; cannot update "
-                   f"type to {edge.type} ",
+            f"type to {edge.type} ",
         )
-    for field in edge.dict():
-        if hasattr(db_edge, field):
-            setattr(db_edge, field, edge.dict()[field])
+    for field_name, field in edge.dict().items():
+        if field_name != "type" and field is not None:
+            setattr(db_edge, field_name, field)
     db.commit()
     return db_edge
 
