@@ -15,7 +15,7 @@ $("#login_form_submit").click(function (){
 		}
 	})*/
 	$.post("token", $("#login").serialize(), function (response){accesstoken=response["access_token"], window.history.back();})
-	setTimeout(() => { $("#invalid").css("display", "block"); }, 1000);
+	setTimeout(() => { $("#invalid").css("display", "block"); }, 500);
 })
 
 /*
