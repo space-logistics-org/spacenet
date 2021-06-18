@@ -3,9 +3,9 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Database Editor</title>
+  <title>Form Directory</title>
   <meta name="author" content="SpaceNet Team">
-  <meta name="description" content="An editor for SpaceNet database objects.">
+  <meta name="description" content="A form view direcotry">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
@@ -20,52 +20,55 @@
   <div class="container py-4">
     <header class="pb-3 mb-4 border-bottom">
       <a class="d-flex align-items-center text-dark text-decoration-none"></a>
-      <a href = "../../static/index.html">
-        <img src = "SpaceNetLogo.jpg" height="30px">
-      </a>
+        <a href = "index.html">
+          <img src = "SpaceNetLogo.jpg" height="30px">
+        </a>
         <span class="fs-4">SpaceNet</span>
-	<span class="float-right"><a href="../login/" role="button" class="btn btn-outline-secondary" type="button">Login</a></span>
     </header>
 
     <div class="p-5 mb-4 bg-light rounded-3 text-center" class = "bg-image" style="background-image: url('https://images-assets.nasa.gov/image/iss050e066094/iss050e066094~medium.jpg')">
       <div class="container-fluid py-5">
-        <h1 class="text-light" class="display-5">Database Editor</h1>
-        <p  class="text-light" >Construct and manipulate database elements for mission test cases</p>
+        <h1 class="text-light" class="display-5">Forms</h1>
+        <p  class="text-light" >Use the below forms to add, edit, or remove campagin components.</p>
       </div>
     </div>
 
     <div class="row align-items-md-stretchS text-justified">
       <div class="col-md-6">
         <div class="h-100 p-5 text-white bg-dark rounded-3 text-center">
-          <h2>API Docs</h2>
-          <p>Access the API documentation for the database entries</p>
-          <a href="api/docs" role="button" class="btn btn-outline-light" type="button">Edit Now</a>
+          <h2>Elements</h2>
+          <p>Access element form here</p>
+          <a href="element_formview.html" role="button" class="btn btn-outline-light" type="button">Edit Now</a>
         </div>
       </div>
 
       <div class="col-md-6">
         <div class="h-100 p-5 bg-light border rounded-3 text-center">
-          <h2>Table View</h2>
-          <p>View and manipulate components in table view</p>
-          <p><a href="node_table.html">Node Table</a></p>
-          <p><a href="edges_table.html">Edges Table</a></p>
-          <p><a href="elements_table.html">Elements Table</a></p>
-          <p><a href="resources_table.html">Resources Table</a></p>        
-          <a href="/" role="button" class="btn btn-outline-secondary" type="button">Edit Now</a>
+          <h2>Nodes</h2>
+          <p>Access node form here</p>
+          <!--Need to add links to table view-->
+          <a href="node_formview.html" role="button" class="btn btn-outline-secondary" type="button">Edit Now</a>
         </div>
       </div>
 
       <div class="col-md-6">
         <div class="h-100 p-5 text-white bg-dark rounded-3 text-center">
-          <h2>Form View</h2>
-          <p>Add and edit database entries in form view</p>
+          <h2>Resources</h2>
+          <p>Access resource form here</p>
           <!--Need to add links to form view-->
-          <a href="formviewdir.html" role="button" class="btn btn-outline-light" type="button">Edit Now</a>
+          <a href="resource_formview.html" role="button" class="btn btn-outline-light" type="button">Edit Now</a>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="h-100 p-5 bg-light border rounded-3 text-center">
+          <h2>Edges</h2>
+          <p>Access edge form here</p>
+          <!--Need to add links to table view-->
+          <a href="/" role="button" class="btn btn-outline-secondary" type="button">Edit Now</a>
         </div>
       </div>
     </div>
-
-
     <footer class="pt-3 mt-4 text-muted border-top">
       &copy; 2021
     </footer>
