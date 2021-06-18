@@ -127,13 +127,11 @@ class TestFromFile(unittest.TestCase):
 
     def test_BadFlightEdge(self):
         for edge in self.bad_edges:
-            print(edge)
             with self.assertRaises(ValidationError):
                 bad_edge = eos.FlightEdge(**edge)
 
     def test_BadSurfaceEdge(self):
         for edge in self.bad_edges:
-            print(edge)
             with self.assertRaises(ValidationError):
                 bad_edge = eos.SurfaceEdge(**edge)
 

@@ -68,7 +68,6 @@ class TestEdgeData(unittest.TestCase):
                 testedge = schemas.FlightEdgeCreate.parse_obj(edge)
                 db_edge = models.FlightEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
-                print(db_edge.__dict__)
                 self.db.add(db_edge)
                 self.db.commit()
                 self.db.refresh(db_edge)
