@@ -85,7 +85,7 @@ function subSelect9(){
 
 function onComplete(){
 name = document.getElementById("inputName").value;
-desc = document.getElementById("inputDesc").value;
+desc = document.getElementById("inputDescription").value;
 //classOS =
 type = document.getElementById("dropPick").value;
 mass = document.getElementById("inputMass").value;
@@ -131,7 +131,9 @@ switch(type){
     dataType: "json",
     method: "POST",
     success: function() {
-      location.href = 'resources_table.html'
+      document.getElementById("resource").reset();
+      document.getElementById("components").reset();
+      location.href = 'resource_table.html'
     }
   });
 

@@ -359,7 +359,9 @@ switch(type){
     dataType: "json",
     method: "POST",
     success: function() {
-      location.href = 'elements_table.html'
+      document.getElementById("element").reset();
+      document.getElementById("components").reset();
+      location.href = 'element_table.html'
     }
   });
 

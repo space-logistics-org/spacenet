@@ -80,8 +80,8 @@ name = document.getElementById("inputName").value;
 desc = document.getElementById("inputDesc").value;
 //classOS =
 type = document.getElementById("dropPick").value;
-body1 = document.getElementById("inputbody1").value;
-body2 = document.getElementById("inputbody2").value;
+body1 = document.getElementById("body1").value;
+body2 = document.getElementById("body2").value;
 lat = document.getElementById("inputLat").value;
 long = document.getElementById("inputLong").value;
 lpn = document.getElementById("inputlpNum").value;
@@ -134,6 +134,8 @@ switch(type){
     dataType: "json",
     method: "POST",
     success: function() {
+      document.getElementById("selection").reset();
+      document.getElementById("node").reset();
       location.href = 'node_table.html'
     }
   });

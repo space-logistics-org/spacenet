@@ -129,7 +129,7 @@ function onComplete(){
     dataType: "json",
     method: "POST",
     success: function() {
-      location.href = 'edges_table.html'
+      location.href = 'edge_table.html'
     }
   });
 

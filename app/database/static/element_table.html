@@ -246,236 +246,7 @@
           </div>
       </div>
         </div>
-      </div>
-
-      <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="editModal">View or Edit Element</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-            <div class="text-center" class="dropdown">
-              <label for="dropPick">Element Type</label>
-                <form id="element">
-                  <select id="dropPick" onChange = "formSet()" class="form-control" class="text-center">
-                    <option selected id="def">Choose...</option>
-                    <option id="Element">Element</option>
-                    <option id="ResourceContainer">Resource Container</option>
-                    <option id="ElementCarrier">Element Carrier</option>
-                    <option id="HumanAgent">Human Agent</option>
-                    <option id="RoboticAgent">Robotic Agent</option>
-                    <option id="PropulsiveVehicle">Propulsive Vehicle</option>
-                    <option id="SurfaceVehicle">Surface Vehicle</option>
-                  </select>
-                </form>
-              </div>
-              <hr></hr>
-                <form id="components">
-                  <div class="form-row">
-                    <div class="form-group col-md-6">
-                      <label for="inputName">Name</label>
-                      <input type="text" class="form-control" id="inputName" placeholder="Element Name">
-                    </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label for="inputCOS">Class of Supply</label>
-                    <select id="inputCOS" onChange="subclassSet()" class="form-control" >
-                      <option selected>Choose...</option>
-                      <option id="0">None</option>
-                      <option id="1">Propellants and Fuels</option>
-                      <option id="2">Crew Provisions</option>
-                      <option id="3">Crew Operations</option>
-                      <option id="4">Maintenence and Upkeep</option>
-                      <option id="5">Stowage and Restraint</option>
-                      <option id="6">Exploration and Research</option>
-                      <option id="7">Waste and Disposal</option>
-                      <option id="8">Habitation and Infrastructure</option>
-                      <option id="9">Transportation and Carriers</option>
-                      <option id="10">Miscellaneous</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="inputCOSSub1">Class of Supply Subclass</label>
-                    <select id="inputCOSSub1" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="101">Cryogens</option>
-                      <option id="102">Hypergols</option>
-                      <option id="103">Nuclear Fuel</option>
-                      <option id="104">Petroleum Fuels</option>
-                      <option id="105">Other Fuels</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub2" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="201">Water and Support Equipment</option>
-                      <option id="202">Food and Support Equipment</option>
-                      <option id="203">Gases</option>
-                      <option id="204">Hygiene Items</option>
-                      <option id="205">Clothing</option>
-                      <option id="206">Personal Items</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub3" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="301">Office Equipment and Supplies</option>
-                      <option id="302">EVA Equipment and Consumables</option>
-                      <option id="303">Health Equipment and Consumables</option>
-                      <option id="304">Safety Equipment</option>
-                      <option id="305">Communications Equipment</option>
-                      <option id="306">Computers and Support Equipment</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub4" onChange="subSelect4()" class="form-control" >
-                      <option selected>Choose...</option>
-                      <option id="401">Spares and Repair Parts</option>
-                      <option id="402">Maintenance Tools</option>
-                      <option id="403">Lubricants and Bulk Chemicals</option>
-                      <option id="404">Batteries</option>
-                      <option id="405">Cleaning Equipment and Consumables</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub5" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="501">Cargo Containers and Restraints</option>
-                      <option id="502">Inventory Management Equipment</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub6" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="601">Science Payloads and Instruments</option>
-                      <option id="602">Field Equipment</option>
-                      <option id="603">Samples</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub7" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="701">Waste</option>
-                      <option id="702">Waste Management Equipment</option>
-                      <option id="703">Failed Pairs</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub8" onChange="subSelect8()" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="801">Habitation Facilities</option>
-                      <option id="802">Surface Mobility Systems</option>
-                      <option id="803">Power Systems</option>
-                      <option id="804">Robotic Systems</option>
-                      <option id="805">Resource Utilization Systems</option>
-                      <option id="806">Orbiting Service Systems</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub9" onChange="subSelect9()" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="901">Carriers, Non-propulsive Elements</option>
-                      <option id="902">Propulsive Elements</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub4Sub" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="4011">Spares</option>
-                      <option id="4012">Repair Parts</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub8Sub" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="8041">Science Robotics</option>
-                      <option id="8042">Construction/Maintenance Robotics</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <select id="inputCOSSub9Sub" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="9021">Launch Vehicles</option>
-                      <option id="9022">Upper Stages/In-Space Propulsion Systems</option>
-                      <option id="9023">Descent Stages</option>
-                      <option id="9024">Ascent Stages</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-md-4">
-                    <label for="inputEnv">Environment</label>
-                    <select id="inputEnv" class="form-control">
-                      <option selected>Choose...</option>
-                      <option id="pres">Pressurized</option>
-                      <option id="unpres">Unpressurized</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="inputAccMass">Accomodation Mass</label>
-                    <input type="number" class="form-control" id="inputAccMass" placeholder="Accomodation Mass">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="inputMass">Mass</label>
-                    <input type="number" class="form-control" id="inputMass" placeholder="Mass">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="inputVol">Volume</label>
-                    <input type="number" class="form-control" id="inputVol" placeholder="Mass">
-                  </div>
-                </div>
-                <hr></hr>
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label for="inputCarMass">Cargo Mass</label>
-                    <input type="number" class="form-control" id="inputCarMass" placeholder="Cargo Mass">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="inputCarVols">Cargo Volume</label>
-                    <input type="number" class="form-control" id="inputCarVol" placeholder="Cargo Volume">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="inputATF">Active Time Fraction</label>
-                    <input type="text" class="form-control" id="inputATF" placeholder="Active Time Fraction">
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label for="inputMaxCrew">Maximum Crew Count</label>
-                    <input type="number" class="form-control" id="inputMaxCrew" placeholder="Maximum Crew">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="inputSpecImp">Specific Impulse</label>
-                    <input type="number" class="form-control" id="inputSpecImp" placeholder="Specific Impulse">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="inputMaxFuel">Maximum Fuel</label>
-                    <input type="number" class="form-control" id="inputMaxFuel" placeholder="Maximum Fuel">
-                  </div>
-                  <!-- Look for Propellant ID? Once schema confirmed determine the correct form view -->
-                  <div class="form-group col-md-6">
-                    <label for="inputMaxSpeed">Maximum Speed</label>
-                    <input type="number" class="form-control" id="inputMaxSpeed" placeholder="Maximum Speed">
-                  </div>
-                  <!-- Look for Fuel ID? Once schema confirmed determine the correct form view -->
-                </div>
-                <button type="submit" class="btn btn-primary">Submit Element</button>
-              </form>
-  
-            </div>
-        </div>
-          </div>
-        </div>
-  
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-  
+      </div>  
 
 
     <div>
@@ -490,19 +261,6 @@
                 <th>Accomodation Mass</th>
                 <th>Mass</th>
                 <th>Volume</th>
-                <!-- <th>Max Crew</th> -->
-                <!-- <th>Cargo Mass</th>
-                <th>Cargo Volume</th>
-                <th>Cargo Environment</th>
-                <th>Active Fraction</th>
-                <th>OMS ISP</th>
-                <th>Max OMS</th>
-                <th>RCS ISP</th>
-                <th>Mas RCS</th>
-                <th>RCS ID</th>
-                <th>Max Speed</th>
-                <th>Max Fuel</th>
-                <th>Fuel ID</th> -->
                 <th>Description</th>
             </tr>
         </thead>
@@ -518,19 +276,6 @@
             <th>Accomodation Mass</th>
             <th>Mass</th>
             <th>Volume</th>
-            <!-- <th>Max Crew</th>
-            <th>Cargo Mass</th>
-            <th>Cargo Volume</th>
-            <th>Cargo Environment</th>
-            <th>Active Fraction</th>
-            <th>OMS ISP</th>
-            <th>Max OMS</th>
-            <th>RCS ISP</th>
-            <th>Mas RCS</th>
-            <th>RCS ID</th>
-            <th>Max Speed</th>
-            <th>Max Fuel</th>
-            <th>Fuel ID</th> -->
             <th>Description</th>
           </tr>
         </tfoot>
@@ -572,20 +317,20 @@
               }
           };
 
-          $.fn.dataTable.ext.buttons.edit = {
-              extend: 'selectedSingle',
-              text: '<span data-customTooltip="Select 1 row to view/edit">View/Edit</span>',
-              className: 'btn-style',
-              action: function ( e, dt, node, config ) {
-                var record = table.rows( { selected: true } ).data()[0];
-                console.log(record)
-                $("#editModal #element option[id='" + record.type + "']").attr("selected", "true")
-                $('#editModal #inputName').val(record.name)
-                $('#editModal #inputAccMass').val(record.accommodation_mass)
-                $('#editModal #inputMass').val(record.mass)
-                $('#editModal #inputVol').val(record.volume)
-                $("#editModal").change()
-                $('#editModal').modal('show')
+          // $.fn.dataTable.ext.buttons.edit = {
+          //     extend: 'selectedSingle',
+          //     text: '<span data-customTooltip="Select 1 row to view/edit">View/Edit</span>',
+          //     className: 'btn-style',
+          //     action: function ( e, dt, node, config ) {
+          //       var record = table.rows( { selected: true } ).data()[0];
+          //       console.log(record)
+          //       $("#editModal #element option[id='" + record.type + "']").attr("selected", "true")
+          //       $('#editModal #inputName').val(record.name)
+          //       $('#editModal #inputAccMass').val(record.accommodation_mass)
+          //       $('#editModal #inputMass').val(record.mass)
+          //       $('#editModal #inputVol').val(record.volume)
+          //       $("#editModal").change()
+          //       $('#editModal').modal('show')
                 // $.ajax({
                 //   url: "/database/api/element/" + record.id,
                 //   data: JSON.stringify({
@@ -598,8 +343,8 @@
                 //     dt.ajax.reload();
                 //   }
                 // });     
-              }
-          };
+          //     }
+          // };
 
           // $.fn.dataTable.ext.buttons.add = {
           //     text: 'Add Element',
@@ -653,7 +398,7 @@
                 'export',
                 'filter',
                 // 'add',
-                'edit',
+                // 'edit',
                 'delete',
             ],
             language: {
@@ -690,15 +435,15 @@
             console.log("selected something")
               var num_selected = table.rows( { selected: true } ).data().length;
               if (num_selected === 0) {
-                dt.buttons([3]).text('<span data-customTooltip="Select row(s) to delete">Delete</span>')
-                dt.buttons([2]).text('<span data-customTooltip="Select 1 row to view/edit">View/Edit</span>')
+                dt.buttons([2]).text('<span data-customTooltip="Select row(s) to delete">Delete</span>')
+                // dt.buttons([2]).text('<span data-customTooltip="Select 1 row to view/edit">View/Edit</span>')
               } else if (num_selected === 1) {
-                dt.buttons([3]).text('Delete row')
-                dt.buttons([2]).text('View/Edit row')
+                dt.buttons([2]).text('Delete row')
+                // dt.buttons([2]).text('View/Edit row')
               }
               else {
-                dt.buttons([3]).text('Delete ' + num_selected + ' rows')
-                dt.buttons([2]).text('<span data-customTooltip="Select 1 row to view/edit">View/Edit</span>')
+                dt.buttons([2]).text('Delete ' + num_selected + ' rows')
+                // dt.buttons([2]).text('<span data-customTooltip="Select 1 row to view/edit">View/Edit</span>')
               }
           } );
           
