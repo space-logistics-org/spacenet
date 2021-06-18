@@ -5,7 +5,7 @@ from starlette import status
 
 from .. import database
 from ..models import edge as models
-from ..schemas.edge_routing import *
+from ..schemas.edge import *
 from ..models.utilities import dictify_row
 
 # Build a new router
