@@ -153,7 +153,6 @@ def test_empty(prefix):
             name,
             marks=[
                 pytest.mark.edge,
-                pytest.mark.xfail(reason="edge routing not working"),
             ],
         )
         for name in EDGE_NAMES
@@ -198,7 +197,6 @@ def test_create(variant_name):
             name,
             marks=[
                 pytest.mark.edge,
-                pytest.mark.xfail(reason="edge routing not working"),
             ],
         )
         for name in EDGE_NAMES
@@ -261,7 +259,6 @@ def test_update(variant_name):
             name,
             marks=[
                 pytest.mark.edge,
-                pytest.mark.xfail(reason="edge routing not working"),
             ],
         )
         for name in EDGE_NAMES
