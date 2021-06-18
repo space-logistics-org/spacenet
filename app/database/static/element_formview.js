@@ -264,7 +264,7 @@ switch(type){
       mass: mass,
       volume: vol,
       max_cargo_mass: carMass,
-      max_cargo_volume: inputCarVol
+      max_cargo_volume: carVol
   });
   break;
 }

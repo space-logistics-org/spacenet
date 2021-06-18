@@ -100,9 +100,8 @@ switch(type){
         name: name,
         description: desc,
         cos: classOS,
-        type: "discrete",
-        environment: env,
-        accommodation_mass: accMass,
+        type: "continuous",
+        units: units,
         unit_mass: mass,
         unit_vol: vol
       });
@@ -114,8 +113,7 @@ switch(type){
       description: desc,
       cos: classOS,
       type: "discrete",
-      environment: env,
-      accommodation_mass: accMass,
+      units: units,
       unit_mass: mass,
       unit_vol: vol
   });
