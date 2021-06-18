@@ -12,7 +12,7 @@ class Resource(Base):
     type = Column(String)
     name = Column(String)
     description = Column(String)
-    cos = Column(Integer)
+    class_of_supply = Column(Integer)
     units = Column(String)
 
     __mapper_args__ = {"polymorphic_identity": "resource", "polymorphic_on": type}
