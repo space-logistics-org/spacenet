@@ -1,3 +1,11 @@
+name = "";
+desc = "";
+classOS = 0;
+type = "";
+mass = 0;
+vol = 0;
+units = "";
+
 function subclassSet(){
   recCOS = document.getElementById("inputCOS").value;
 
@@ -80,133 +88,39 @@ name = document.getElementById("inputName").value;
 desc = document.getElementById("inputDesc").value;
 //classOS =
 type = document.getElementById("dropPick").value;
-env = document.getElementById("inputEnv").value;
-accMass = document.getElementById("inputAccMass").value;
 mass = document.getElementById("inputMass").value;
 vol = document.getElementById("inputVol").value;
-carMass = document.getElementById("inputCarMass").value;
-carVol = document.getElementById("inputCarVol").value;
-atf = document.getElementById("inputATF").value;
-maxCC = document.getElementById("inputMaxCrew").value;
-specImp = document.getElementById("inputSpecImp").value;
-maxFuel = document.getElementById("inputMaxFuel").value;
-maxSpeed = document.getElementById("inputMaxSpeed").value;
+units = document.getElementById("inputUnits").value;
+
 
 
 switch(type){
-  case "Element":{
-      message = JSON.stringify({
-          name: name,
-          description: desc,
-          class_of_supply: classOS,
-          type: "Element",
-          environment: env,
-          accommodation_mass: accMass,
-          mass: mass,
-          volume: vol,
-          max_cargo_mass: carMass,
-          max_cargo_volume: carVol,
-          cargo_environment: env,
-          accommodation_mass: accMass,
-          active_time_fraction: atf,
-          max_crew: maxCC,
-          isp: specImp,
-          propellant_id:1,
-          max_fuel: maxFuel,
-          max_speed: maxSpeed
-      });
-      break;
-    }
-  case "Resource Container":{
-    message = JSON.stringify({
-      name: name,
-      description: desc,
-      class_of_supply: classOS,
-      type: "ResourceContainer",
-      environment: env,
-      accommodation_mass: accMass,
-      mass: mass,
-      volume: vol,
-      max_cargo_mass: carMass,
-      max_cargo_volume: inputCarVol
-  });
-  break;
-}
-  case "Element Carrier":{
-    message = JSON.stringify({
-        name: name,
-        description: desc,
-        class_of_supply: classOS,
-        type: "ElementCarrier",
-        environment: env,
-        accommodation_mass: accMass,
-        mass: mass,
-        volume: vol,
-        max_cargo_mass: carMass,
-        max_cargo_volume: inputCarVol,
-        cargo_environment: env
-    });
-    break;
-    }
-  case "Human Agent":{
-    message = JSON.stringify({
-      name: name,
-      description: desc,
-      class_of_supply: classOS,
-      type: "HumanAgent",
-      environment: env,
-      accommodation_mass: accMass,
-      mass: mass,
-      volume: vol,
-      active_time_fraction: atf
-  });
-  break;
-}
-  case "Robotic Agent":{
-    message = JSON.stringify({
-      name: name,
-      description: desc,
-      class_of_supply: classOS,
-      type: "RoboticAgent",
-      environment: env,
-      accommodation_mass: accMass,
-      mass: mass,
-      volume: vol,
-      active_time_fraction: atf
-    });
-      break;
-    }
-    case "Propulsive Vehicle":{
+  case "Continuous":{
       message = JSON.stringify({
         name: name,
         description: desc,
-        class_of_supply: classOS,
-        type: "PropulsiveVehicle",
-        environment: env,
-        accommodation_mass: accMass,
-        mass: mass,
-        volume: vol,
-        max_cargo_mass: carMass,
-        max_cargo_volume: carVol,
-        max_crew: maxCC,
-        isp: specImp,
-        max_fuel: maxFuel,
-        propellant_id:1
-      });
-      break;
-    }
-    case "Discrete":{
-      message = JSON.stringify({
-        name: name,
-        description: desc,
-        class_of_supply: classOS,
+        cos: classOS,
         type: "discrete",
-        units: unit,
+        environment: env,
+        accommodation_mass: accMass,
         unit_mass: mass,
-        unit_volume: vol
+        unit_vol: vol
       });
       break;
     }
+  case "Discrete":{
+    message = JSON.stringify({
+      name: name,
+      description: desc,
+      cos: classOS,
+      type: "discrete",
+      environment: env,
+      accommodation_mass: accMass,
+      unit_mass: mass,
+      unit_vol: vol
+  });
+  break;
+}
   }
 
   console.log(message)
