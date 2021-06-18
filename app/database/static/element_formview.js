@@ -352,24 +352,35 @@ switch(type){
     }
   }
 
+  console.log(message)
+  $.ajax({
+    url: "/database/api/element/",
+    data: message,
+    contentType: 'application/json; charset=utf-8',
+    dataType: "json",
+    method: "POST",
+    success: function() {
+      location.href = 'elements_table.html'
+    }
+  });
+
 }
 
+// function submitButton () {
+//   alert('submitted')
+//   console.log('reached on submit function')
+//   alert(message)
+//   console.log(message)
+//   $.ajax({
+//     url: "/database/api/element/",
+//     data: message,
+//     contentType: 'application/json; charset=utf-8',
+//     dataType: "json",
+//     method: "POST",
+//     success: function(item) {
+//       console.log(item)
+//       alert('submitted to database!')
+//     }
+//   });
 
-$.fn.dataTable.ext.buttons.add = {
-              text: 'Add Element',
-              className: 'btn-style',
-              action: function ( e, dt, node, config ) {
-                $.ajax({
-                  url: "/database/api/element/",
-                  data: JSON.stringify({
-                    message: prompt("Your message:", "Hello World")
-                  }),
-                  contentType: 'application/json; charset=utf-8',
-                  dataType: "json",
-                  method: "POST",
-                  success: function(item) {
-                    dt.ajax.reload();
-                  }
-                });
-              }
-          };
+// }
