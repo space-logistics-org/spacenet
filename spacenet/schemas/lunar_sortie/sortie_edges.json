@@ -1,0 +1,42 @@
+[
+  {
+    "name": "KSC-LEO",
+    "description": "Earth Ascent",
+    "origin_id": 1,
+    "destination_id": 4,
+    "duration": 0.25,
+    "type": "Space"
+  },
+  {
+    "name": "LEO-LLPO",
+    "description": "Lunar Orbit Injection",
+    "origin_id": 4,
+    "destination_id": 5,
+    "duration": 4,
+    "type": "Space"
+  },
+  {
+    "name": "LLPO-LSP",
+    "description": "Lunar Descent",
+    "origin_id": 5,
+    "destination_id": 3,
+    "duration": 0.5,
+    "type": "Space"
+  },
+  {
+    "name": "LSP-LLPO",
+    "description": "Lunar Ascent",
+    "origin_id": 3,
+    "destination_id": 5,
+    "duration": 0.5,
+    "type": "Space"
+  },
+  {
+    "name": "LLPO-PAC",
+    "description": "Trans-Earth Injection",
+    "origin_id": 5,
+    "destination_id": 2,
+    "duration": 4,
+    "type": "Space"
+  }
+]
