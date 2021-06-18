@@ -27,8 +27,10 @@
     </header>
   <h1 class= "text-center">Element Form</h1>
   <div class="text-center" class="dropdown">
-  <label for="dropPick">Element Type</label>
-    <form id="element">
+  </div>
+  <hr></hr>
+    <form id="components" onSubmit = "return onSubmit(this)">
+      <label for="dropPick">Element Type</label>
       <select id="dropPick" onChange = "formSet()" class="form-control" class="text-center">
         <option selected id="def">Choose...</option>
         <option id="Element">Element</option>
@@ -39,10 +41,6 @@
         <option id="PropulsiveVehicle">Propulsive Vehicle</option>
         <option id="SurfaceVehicle">Surface Vehicle</option>
       </select>
-    </form>
-  </div>
-  <hr></hr>
-    <form id="components">
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="inputName">Name</label>
@@ -236,7 +234,7 @@
       </div>
       <!-- Look for Fuel ID? Once schema confirmed determine the correct form view -->
     </div>
-    <input type="submit" onClick="submitButton()" class="btn btn-primary">
+    <input id = "subButton" type="submit" onClick="onComplete()" class="btn btn-primary">
   </form>
 </div>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

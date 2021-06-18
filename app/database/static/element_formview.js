@@ -17,8 +17,8 @@ message = "fail:(";
 
 function formSet(){
 
-  $("#components #inputName").prop("disabled",true);
-  $("#components #inputDesc").prop("disabled",true);
+  $("#components #name").prop("disabled",true);
+  $("#components #desc").prop("disabled",true);
   $("#components #inputCOS").prop("disabled",true);
   $("#components #inputEnv").prop("disabled",true);
   $("#components #inputAccMass").prop("disabled",true);
@@ -36,8 +36,8 @@ function formSet(){
 
   switch(elType) {
     case 'def':{
-      $("#components #inputName").prop("disabled",true);
-      $("#components #inputDesc").prop("disabled",true);
+      $("#components #name").prop("disabled",true);
+      $("#components #desc").prop("disabled",true);
       $("#components #inputCOS").prop("disabled",true);
       $("#components #inputEnv").prop("disabled",true);
       $("#components #inputAccMass").prop("disabled",true);
@@ -53,8 +53,8 @@ function formSet(){
       break;
     }
     case 'Element': {
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
+      $("#components #name").prop("disabled",false);
+      $("#components #desc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -63,8 +63,8 @@ function formSet(){
       break;
         }
     case 'Resource Container':{
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
+      $("#components #name").prop("disabled",false);
+      $("#components #desc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -74,8 +74,8 @@ function formSet(){
       $("#components #inputCarVol").prop("disabled",false);
       break;}
     case 'Element Carrier':
-    {  $("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
+    {  $("#components #name").prop("disabled",false);
+      $("#components #desc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -84,8 +84,8 @@ function formSet(){
       $("#components #inputEnv").prop("disabled",false);
       break;}
     case 'Human Agent':
-      {$("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
+      {$("#components #name").prop("disabled",false);
+      $("#components #desc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -94,8 +94,8 @@ function formSet(){
       $("#components #inputATF").prop("disabled",false);
       break;}
     case 'Robotic Agent':
-    {  $("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
+    {  $("#components #name").prop("disabled",false);
+      $("#components #desc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -104,8 +104,8 @@ function formSet(){
       $("#components #inputATF").prop("disabled",false);
       break;}
     case 'Propulsive Vehicle':
-      {$("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
+      {$("#components #name").prop("disabled",false);
+      $("#components #desc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -116,8 +116,8 @@ function formSet(){
       $("#components #inputMaxFuel").prop("disabled",false);
       break;}
     case 'Surface Vehicle':
-      {$("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
+      {$("#components #name").prop("disabled",false);
+      $("#components #desc").prop("disabled",false);
       $("#components #inputCOS").prop("disabled",false);
       $("#components #inputEnv").prop("disabled",false);
       $("#components #inputAccMass").prop("disabled",false);
@@ -213,8 +213,8 @@ function subSelect9(){
 
 
 function onComplete(){
-name = document.getElementById("inputName").value;
-desc = document.getElementById("inputDesc").value;
+name = document.getElementById("name").value;
+desc = document.getElementById("desc").value;
 //classOS =
 type = document.getElementById("dropPick").value;
 env = document.getElementById("inputEnv").value;
@@ -240,17 +240,7 @@ switch(type){
           environment: env,
           accommodation_mass: accMass,
           mass: mass,
-          volume: vol,
-          max_cargo_mass: carMass,
-          max_cargo_volume: carVol,
-          cargo_environment: env,
-          accommodation_mass: accMass,
-          active_time_fraction: atf,
-          max_crew: maxCC,
-          isp: specImp,
-          propellant_id:1,
-          max_fuel: maxFuel,
-          max_speed: maxSpeed
+          volume: vol
       });
       break;
     }
@@ -354,15 +344,22 @@ switch(type){
 
 }
 
+function onSubmit(form){
+  var message = JSON.stringify( $("components").serializeArray());
+  alert(message[1]);
+}
 
-$.fn.dataTable.ext.buttons.add = {
-              text: 'Add Element',
-              className: 'btn-style',
-              action: function ( e, dt, node, config ) {
+/*var message = {};
+formData.forEach(function(value, key){
+    message[key] = value;
+});
+var jsonMessage = JSON.stringify(object);
+
+
+$("#subButton").onClick = function(){
                 $.ajax({
                   url: "/database/api/element/",
-                  data: JSON.stringify({
-                    message: prompt("Your message:", "Hello World")
+                  data: jsonMessage,
                   }),
                   contentType: 'application/json; charset=utf-8',
                   dataType: "json",
@@ -370,6 +367,5 @@ $.fn.dataTable.ext.buttons.add = {
                   success: function(item) {
                     dt.ajax.reload();
                   }
-                });
-              }
-          };
+                }
+*/

@@ -32,7 +32,7 @@ class TestEdgeData(unittest.TestCase):
 
         for edge in edge_data:
             if edge["type"] == "Surface":
-                testedge = schemas.SurfaceEdgeCreate.parse_obj(edge)
+                testedge = schemas.SurfaceEdge.parse_obj(edge)
                 db_edge = models.SurfaceEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
                 self.db.add(db_edge)
@@ -48,7 +48,7 @@ class TestEdgeData(unittest.TestCase):
                 self.db.commit()
 
             elif edge["type"] == "Space":
-                testedge = schemas.SpaceEdgeCreate.parse_obj(edge)
+                testedge = schemas.SpaceEdge.parse_obj(edge)
                 db_edge = models.SpaceEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
                 self.db.add(db_edge)
@@ -65,10 +65,9 @@ class TestEdgeData(unittest.TestCase):
                 self.db.commit()
 
             elif edge["type"] == "Flight":
-                testedge = schemas.FlightEdgeCreate.parse_obj(edge)
+                testedge = schemas.FlightEdge.parse_obj(edge)
                 db_edge = models.FlightEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
-                print(db_edge.__dict__)
                 self.db.add(db_edge)
                 self.db.commit()
                 self.db.refresh(db_edge)

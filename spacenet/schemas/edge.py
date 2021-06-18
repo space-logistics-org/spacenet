@@ -1,6 +1,6 @@
 from typing_extensions import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, conint
 from enum import Enum
 
 
@@ -27,15 +27,15 @@ class Edge(BaseModel):
         title="Description",
         description="short description of the edge",
     )
-    origin_id: int = Field(
+    origin_id: conint(strict=True) = Field(
         ...,
         title="Origin ID",
         description="ID of the origin node"
     )
-    destination_id: int = Field(
+    destination_id: conint(strict=True) = Field(
         ...,
         title="Destination ID",
-        description="ID of the destination node"
+        description="ID of the destination node",
     )
 
 
@@ -87,11 +87,10 @@ class FlightEdge(Edge):
         description="Duration of flight edge",
         ge=0
     )
-    max_crew: float = Field(
+    max_crew: conint(strict=True, ge=0) = Field(
         ...,
         title="Max Crew",
         description="Crew capacity for flight",
-        ge=0
     )
     max_cargo: float = Field(
         ...,
