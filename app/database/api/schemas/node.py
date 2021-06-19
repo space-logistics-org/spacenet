@@ -3,25 +3,25 @@ from spacenet.schemas.node import SurfaceNode, OrbitalNode, LagrangeNode
 from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
 
 
-class UpdateSurfaceNode(SurfaceNode, RequiresOnlyType):
+class SurfaceNodeUpdate(SurfaceNode, RequiresOnlyType):
     pass
 
 
-class ReadSurfaceNode(SurfaceNode, ReadSchema):
+class SurfaceNodeRead(SurfaceNode, ReadSchema):
     pass
 
 
-class UpdateOrbitalNode(OrbitalNode, RequiresOnlyType):
+class OrbitalNodeUpdate(OrbitalNode, RequiresOnlyType):
     pass
 
 
-class ReadOrbitalNode(OrbitalNode, ReadSchema):
+class OrbitalNodeRead(OrbitalNode, ReadSchema):
     pass
 
 
-class UpdateLagrangeNode(LagrangeNode, RequiresOnlyType):
+class LagrangeNodeUpdate(LagrangeNode, RequiresOnlyType):
     pass
 
 
-class ReadLagrangeNode(LagrangeNode, ReadSchema):
+class LagrangeNodeRead(LagrangeNode, ReadSchema):
     pass

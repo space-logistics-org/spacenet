@@ -12,8 +12,8 @@ from ..models.utilities import dictify_row
 router = APIRouter()
 
 Edges = Union[SurfaceEdge, SpaceEdge, FlightEdge]
-UpdateEdges = Union[UpdateSurfaceEdge, UpdateSpaceEdge, UpdateFlightEdge]
-ReadEdges = Union[ReadSurfaceEdge, ReadSpaceEdge, ReadFlightEdge]
+UpdateEdges = Union[SurfaceEdgeUpdate, SpaceEdgeUpdate, FlightEdgeUpdate]
+ReadEdges = Union[SurfaceEdgeRead, SpaceEdgeRead, FlightEdgeRead]
 
 SCHEMA_TO_MODEL = {
     SurfaceEdge: models.SurfaceEdge,

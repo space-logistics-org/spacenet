@@ -15,9 +15,9 @@ router = APIRouter()
 
 Nodes = Union[SurfaceNode, OrbitalNode, LagrangeNode]
 
-UpdateNodes = Union[UpdateSurfaceNode, UpdateOrbitalNode, UpdateLagrangeNode]
+UpdateNodes = Union[SurfaceNodeUpdate, OrbitalNodeUpdate, LagrangeNodeUpdate]
 
-ReadNodes = Union[ReadSurfaceNode, ReadOrbitalNode, ReadLagrangeNode]
+ReadNodes = Union[SurfaceNodeRead, OrbitalNodeRead, LagrangeNodeRead]
 
 SCHEMA_TO_MODEL = {
     SurfaceNode: models.SurfaceNode,

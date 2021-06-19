@@ -13,9 +13,9 @@ router = APIRouter()
 
 Resources = Union[ContinuousResource, DiscreteResource]
 
-UpdateResources = Union[UpdateContinuous, UpdateDiscrete]
+UpdateResources = Union[ContinuousUpdate, DiscreteUpdate]
 
-ReadResources = Union[ReadContinuous, ReadDiscrete]
+ReadResources = Union[ContinuousRead, DiscreteRead]
 
 SCHEMA_TO_MODEL = {
     ContinuousResource: models.ContinuousResource,

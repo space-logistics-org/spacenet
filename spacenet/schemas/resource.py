@@ -12,9 +12,6 @@ class ResourceType(str, Enum):
     discrete = "Discrete"
     continuous = "Continuous"
 
-    class Config:
-        title: "Resource Type"
-
 
 class Resource(BaseModel):
     name: str = Field(..., title="Name", description="Resource name")
@@ -26,9 +23,6 @@ class Resource(BaseModel):
         default=None, title="Description", description="Short description"
     )
 
-    class Config:
-        title = "Resource Data"
-
 
 class DiscreteResource(Resource):
     type: Literal[ResourceType.discrete] = Field(
@@ -38,9 +32,6 @@ class DiscreteResource(Resource):
     unit_volume: NonNegativeInt = Field(
         ..., title="Unit Volume", description="Resource volume"
     )
-
-    class Config:
-        title = "Discrete Resource"
 
 
 class ContinuousResource(Resource):
@@ -53,6 +44,3 @@ class ContinuousResource(Resource):
     unit_volume: NonNegativeFloat = Field(
         ..., title="Unit Volume", description="Resource volume"
     )
-
-    class Config:
-        title = "Continuous Resource"
