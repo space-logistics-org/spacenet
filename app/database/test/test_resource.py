@@ -14,6 +14,13 @@ pytestmark = [pytest.mark.unit, pytest.mark.resource]
 
 
 class TestResource(unittest.TestCase):
+    resource_data = json.loads(
+        pkg_resources.resource_string(
+            test.__name__,
+            'resource_data.json'
+        )
+    )
+
     def setUp(self):
         Base.metadata.create_all(bind=engine)
         self.db = TestingSessionLocal()
@@ -22,14 +29,9 @@ class TestResource(unittest.TestCase):
         self.db.close()
 
     def test_model_good_example_data(self):
-        resource_data = json.loads(
-            pkg_resources.resource_string(
-                test.__name__,
-                'resource_data.json'
-            )
-        )
+
         db = self.db
-        for resource in resource_data:
+        for resource in self.resource_data:
             if resource["type"] == "Continuous":
                 resource = schemas.ContinuousResource.parse_obj(resource)
                 resource_dict = resource.dict()

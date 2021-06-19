@@ -14,6 +14,12 @@ pytestmark = [pytest.mark.unit, pytest.mark.edge]
 
 
 class TestEdgeData(unittest.TestCase):
+    edge_data = json.loads(
+        pkg_resources.resource_string(
+            test.__name__,
+            'good_edges.json'
+        )
+    )
 
     def setUp(self):
         Base.metadata.create_all(bind=engine)
@@ -23,14 +29,8 @@ class TestEdgeData(unittest.TestCase):
         self.db.close()
 
     def test_model_good_edges(self):
-        edge_data = json.loads(
-            pkg_resources.resource_string(
-                test.__name__,
-                'good_edges.json'
-            )
-        )
 
-        for edge in edge_data:
+        for edge in self.edge_data:
             if edge["type"] == "Surface":
                 testedge = schemas.SurfaceEdge.parse_obj(edge)
                 db_edge = models.SurfaceEdge(**testedge.dict())
