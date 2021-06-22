@@ -34,13 +34,12 @@
   {
     "name": "Orion LAS",
     "description": "Orion Launch Abort System",
-    "class_of_supply": 9022,
+    "class_of_supply": 9021,
     "environment": "Unpressurized",
     "accommodation_mass": 0,
-    "mass": 8000,
+    "mass": 6000,
     "volume": 0,
-    "max_crew": 4,
-    "max_cargo_mass": 100,
+    "max_cargo_mass": 0,
     "max_cargo_volume": 0,
     "cargo_environment": "Unpressurized",
     "type": "ElementCarrier"

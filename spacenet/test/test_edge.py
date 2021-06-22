@@ -3,6 +3,7 @@ import unittest
 
 import pkg_resources
 import pytest
+import spacenet.schemas
 from pydantic import ValidationError
 
 from spacenet import test
@@ -13,12 +14,43 @@ pytestmark = [pytest.mark.unit, pytest.mark.edge]
 
 
 class TestEdge(unittest.TestCase):
-
     def testSurEdge(self):
-        goodData = {"name": "FL-GA", "id": 1, "description": "Surface Edge from Florida to Georgia", "type": "Surface", "origin_id": 1, "destination_id": 2, "distance": 100}
-        badTypeData = {"name": "FL-GA", "id": 1, "description": "Surface Edge from Florida to Georgia", "type": "orbital", "origin_id": 1, "destination_id": 2, "distance": 100}
-        badDistanceData = {"name": "FL-GA", "id": 1, "description": "Surface Edge from Florida to Georgia", "type": "Surface", "origin_id": 1, "destination_id": 2, "distance": -100}
-        badIDData = {"name": "FL-GA", "id": 1, "description": "Surface Edge from Florida to Georgia", "type": "Surface", "origin_id": "", "destination_id": 2, "distance": 100}
+        goodData = {
+            "name": "FL-GA",
+            "id": 1,
+            "description": "Surface Edge from Florida to Georgia",
+            "type": "Surface",
+            "origin_id": 1,
+            "destination_id": 2,
+            "distance": 100,
+        }
+        badTypeData = {
+            "name": "FL-GA",
+            "id": 1,
+            "description": "Surface Edge from Florida to Georgia",
+            "type": "orbital",
+            "origin_id": 1,
+            "destination_id": 2,
+            "distance": 100,
+        }
+        badDistanceData = {
+            "name": "FL-GA",
+            "id": 1,
+            "description": "Surface Edge from Florida to Georgia",
+            "type": "Surface",
+            "origin_id": 1,
+            "destination_id": 2,
+            "distance": -100,
+        }
+        badIDData = {
+            "name": "FL-GA",
+            "id": 1,
+            "description": "Surface Edge from Florida to Georgia",
+            "type": "Surface",
+            "origin_id": "",
+            "destination_id": 2,
+            "distance": 100,
+        }
         goodEdge = SurfaceEdge.parse_obj(goodData)
         self.assertEqual(goodEdge.name, goodData.get("name"))
         self.assertEqual(goodEdge.description, goodData.get("description"))
@@ -37,8 +69,24 @@ class TestEdge(unittest.TestCase):
             badIDEdge = SurfaceEdge.parse_obj(badIDData)
 
     def testSpaEdge(self):
-        goodData = {"name": "Earth-Moon", "id": 1, "description": "Space edge from Earth to the moon", "type": "Space", "origin_id": 1, "destination_id": 2, "duration": 100}
-        badDurationData = {"name": "Earth-Moon", "id": 1, "description": "Space edge from Earth to the moon", "type": "Space", "origin_id": 1, "destination_id": 2, "duration": -100}
+        goodData = {
+            "name": "Earth-Moon",
+            "id": 1,
+            "description": "Space edge from Earth to the moon",
+            "type": "Space",
+            "origin_id": 1,
+            "destination_id": 2,
+            "duration": 100,
+        }
+        badDurationData = {
+            "name": "Earth-Moon",
+            "id": 1,
+            "description": "Space edge from Earth to the moon",
+            "type": "Space",
+            "origin_id": 1,
+            "destination_id": 2,
+            "duration": -100,
+        }
         goodEdge = SpaceEdge.parse_obj(goodData)
         self.assertEqual(goodEdge.name, goodData.get("name"))
         self.assertEqual(goodEdge.description, goodData.get("description"))
@@ -51,9 +99,39 @@ class TestEdge(unittest.TestCase):
             badDurationEdge = SurfaceEdge.parse_obj(badDurationData)
 
     def testFltEdge(self):
-        goodData = {"name": "Earth-Moon", "id": 1, "description": "Flight edge from Earth to the moon", "type": "Flight", "origin_id": 1, "destination_id": 2, "duration": 100, "max_crew": 10, "max_cargo": 10}
-        badMax_crewData = {"name": "Earth-Moon", "id": 1, "description": "Flight edge from Earth to the moon", "type": "Flight", "origin_id": 1, "destination_id": 2, "duration": 100, "max_crew": -10, "max_cargo": 10}
-        badMax_cargoData = {"name": "Earth-Moon", "id": 1, "description": "Flight edge from Earth to the moon", "type": "Flight", "origin_id": 1, "destination_id": 2, "duration": 100, "max_crew": 10, "max_cargo": -10}
+        goodData = {
+            "name": "Earth-Moon",
+            "id": 1,
+            "description": "Flight edge from Earth to the moon",
+            "type": "Flight",
+            "origin_id": 1,
+            "destination_id": 2,
+            "duration": 100,
+            "max_crew": 10,
+            "max_cargo": 10,
+        }
+        badMax_crewData = {
+            "name": "Earth-Moon",
+            "id": 1,
+            "description": "Flight edge from Earth to the moon",
+            "type": "Flight",
+            "origin_id": 1,
+            "destination_id": 2,
+            "duration": 100,
+            "max_crew": -10,
+            "max_cargo": 10,
+        }
+        badMax_cargoData = {
+            "name": "Earth-Moon",
+            "id": 1,
+            "description": "Flight edge from Earth to the moon",
+            "type": "Flight",
+            "origin_id": 1,
+            "destination_id": 2,
+            "duration": 100,
+            "max_crew": 10,
+            "max_cargo": -10,
+        }
         goodEdge = FlightEdge.parse_obj(goodData)
         self.assertEqual(goodEdge.name, goodData.get("name"))
         self.assertEqual(goodEdge.description, goodData.get("description"))
@@ -77,13 +155,13 @@ class TestFromFile(unittest.TestCase):
     )
 
     good_surface = list(
-        filter(lambda node: node["type"] == EdgeType.Surface.value, good_edges)
+        filter(lambda edge: edge["type"] == EdgeType.Surface.value, good_edges)
     )
     good_space = list(
-        filter(lambda node: node["type"] == EdgeType.Space.value, good_edges)
+        filter(lambda edge: edge["type"] == EdgeType.Space.value, good_edges)
     )
     good_flight = list(
-        filter(lambda node: node["type"] == EdgeType.Flight.value, good_edges)
+        filter(lambda edge: edge["type"] == EdgeType.Flight.value, good_edges)
     )
 
     bad_edges = json.loads(
@@ -139,3 +217,17 @@ class TestFromFile(unittest.TestCase):
         for edge in self.bad_edges:
             with self.assertRaises(ValidationError):
                 bad_edge = eos.SpaceEdge.parse_obj(edge)
+
+
+LUNAR_SORTIE_EDGES = json.loads(
+        pkg_resources.resource_string(
+            spacenet.schemas.__name__, "lunar_sortie/sortie_edges.json"
+        )
+    )
+
+
+def test_lunar_sortie_edges():
+    for edge_obj in LUNAR_SORTIE_EDGES:
+        edge = SpaceEdge.parse_obj(edge_obj)
+        for attr, value in edge_obj.items():
+            assert value == getattr(edge, attr)
