@@ -2,7 +2,7 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import RemoveElementsEvent
-from spacenet.test.event_utilities import (
+from .event_utilities import (
     INVALID_INTS,
     success_from_kw,
     valid_invalid_from_allowed,
