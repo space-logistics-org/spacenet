@@ -24,10 +24,6 @@ SCHEMA_TO_MODEL = {
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
-# COMMON_FIELDS = {"id", "type", "name", "description", "cos", "units"}
-# CONT_FIELDS = {"unit_mass_f", "unit_volume_f"}
-# DISCRETE_FIELDS = {"unit_mass_i", "unit_volume_i"}
-
 
 def to_db_kwargs(resource: Resources) -> Dict[str, Any]:
     excluded = {"unit_mass", "unit_volume"}
@@ -112,8 +108,7 @@ def patch_resource(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Resource found with id={id_} is of type {db_resource.type}; cannot "
-            f"update "
-            f"type to {resource.type} ",
+            f"update type to {resource.type} ",
         )
     suffix = "_i" if resource.type == ResourceType.discrete else "_f"
     for field_name, field in resource.dict().items():

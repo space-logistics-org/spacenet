@@ -14,6 +14,7 @@ from spacenet.schemas.mixins import OptionalFields, RequiresID
 
 pytestmark = [pytest.mark.unit]
 
+
 class TestOptionalFields(unittest.TestCase):
     """
     Tests for the OptionalFields class.
@@ -27,7 +28,6 @@ class TestOptionalFields(unittest.TestCase):
         b: float = Field(description="test")
         c: conint(ge=0)
 
-    
     def test_all_made_optional(self):
         class OptionalModel(self.Model, OptionalFields):
             pass
@@ -40,7 +40,6 @@ class TestOptionalFields(unittest.TestCase):
             # using repr b/c __eq__ isn't implemented for Field
             self.assertEqual(repr(exp_field), repr(actual_field))
 
-    
     def test_some_made_optional(self):
         class PartialOptionalModel(self.Model, OptionalFields, excluded_fields={"a"}):
             pass
@@ -70,7 +69,6 @@ class TestRequiresID(unittest.TestCase):
     class Model(BaseModel):
         pass
 
-    
     def test_requires_uuid(self):
         class ModelWithID(self.Model, RequiresID):
             pass

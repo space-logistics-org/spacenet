@@ -29,8 +29,9 @@ def list_edges(skip: int = 0, limit: int = 100, db: Session = Depends(database.g
     db_edges = db.query(models.Edge).offset(skip).limit(limit).all()
     return db_edges
 
-#Bind a route to read an object by ID
-@router.get("/{edge_id}", response_model = ReadEdges, responses = NOT_FOUND_RESPONSE)
+
+# Bind a route to read an object by ID
+@router.get("/{edge_id}", response_model=ReadEdges, responses=NOT_FOUND_RESPONSE)
 def read_edge(edge_id: int, db: Session = Depends(database.get_db)):
     db_edge = db.query(models.Edge).get(edge_id)
     if db_edge is None:
@@ -38,6 +39,7 @@ def read_edge(edge_id: int, db: Session = Depends(database.get_db)):
             status_code=404, detail="Edge {:d} not found".format(edge_id)
         )
     return db_edge
+
 
 # Bind a route to create a new object
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ReadEdges)
@@ -48,10 +50,11 @@ def create_edge(edge: Edges, db: Session = Depends(database.get_db)):
     db.refresh(db_edge)
     return db_edge
 
+
 # Bind a route to update an object by ID
 @router.patch("/{edge_id}", response_model=ReadEdges, responses=NOT_FOUND_RESPONSE)
 def update_edge(
-    edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)
+        edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)
 ):
     db_edge = db.query(models.Edge).get(edge_id)
     if db_edge is None:
@@ -62,7 +65,7 @@ def update_edge(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Edge found with id={edge_id} is of type {db_edge.type}; cannot update "
-            f"type to {edge.type} ",
+                   f"type to {edge.type} ",
         )
     for field_name, field in edge.dict().items():
         if field_name != "type" and field is not None:
