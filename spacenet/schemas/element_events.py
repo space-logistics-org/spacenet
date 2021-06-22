@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 from pydantic import BaseModel, Field, StrictInt
 from typing_extensions import Literal
@@ -40,3 +40,14 @@ class RemoveElementsEvent(BaseModel):
     )
     removal_point_kind: NODE_OR_EDGE
     removal_point_id: StrictInt
+
+
+State = Literal["Active", "Decommissioned", "Dormant"]
+
+
+class ReconfigureElementsEvent(BaseModel):
+    to_reconfigure: Dict[StrictInt, State] = Field(
+        ..., description="a mapping from the IDs of elements to their desired new state"
+    )
+    reconfigure_point_kind: NODE_OR_EDGE
+    reconfigure_point_id: StrictInt
