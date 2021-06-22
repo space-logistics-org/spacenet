@@ -2,24 +2,18 @@ from enum import Enum
 from typing import List
 
 from pydantic import BaseModel, Field, StrictInt
+from typing_extensions import Literal
 
 
-class EntryPointKind(Enum):
-    Node = "Node"
-    Edge = "Edge"
-    Carrier = "ElementCarrier"
-
-
-class MoveOriginKind(Enum):
-    Node = "Node"
-    Edge = "Edge"
+NODE_OR_EDGE = Literal["Node", "Edge"]
+NODE_OR_EDGE_OR_CARRIER = Literal["Node", "Edge", "ElementCarrier"]
 
 
 class MakeElementEvent(BaseModel):
     element_id: StrictInt = Field(
         ..., description="the id of the element being added to simulation"
     )
-    entry_point_kind: EntryPointKind = Field(
+    entry_point_kind: NODE_OR_EDGE_OR_CARRIER = Field(
         description="the type of entry point the element is entering at"
     )
     entry_point_id: StrictInt = Field(
@@ -31,11 +25,11 @@ class MoveElementsEvent(BaseModel):
     to_move: List[StrictInt] = Field(
         ..., description="the list of IDs of elements to move"
     )
-    origin_kind: MoveOriginKind
+    origin_kind: NODE_OR_EDGE
     origin_id: StrictInt = Field(
         ...,
         description="the id of the original time and location "
         "which the elements are being moved from",
     )
-    destination_kind: EntryPointKind
+    destination_kind: NODE_OR_EDGE_OR_CARRIER
     destination_id: StrictInt

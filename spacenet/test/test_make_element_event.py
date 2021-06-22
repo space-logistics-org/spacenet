@@ -27,7 +27,7 @@ def test_valid_constructions(ele_id, kind, entry_id):
         element_id=ele_id, entry_point_kind=kind, entry_point_id=entry_id
     )
     assert event.element_id == ele_id
-    assert event.entry_point_kind.value == kind
+    assert event.entry_point_kind == kind
     assert event.entry_point_id == entry_id
 
 
