@@ -1,5 +1,4 @@
 import pytest
-
 from hypothesis import given, strategies as st
 from pydantic import ValidationError
 
@@ -33,7 +32,12 @@ def test_valid_constructions(ele_id, kind, entry_id):
 
 
 def is_integer(s: str) -> bool:
-    return s.startswith("-") and s[1:].isdigit()
+    try:
+        int(s)
+    except ValueError:
+        return False
+    else:
+        return True
 
 
 def xfail_construct(ele_id, kind, entry_id) -> None:
