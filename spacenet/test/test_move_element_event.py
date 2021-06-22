@@ -4,9 +4,9 @@ from hypothesis import given, strategies as st
 from spacenet.schemas.element_events import MoveElementsEvent
 from spacenet.test.event_utilities import (
     INVALID_INTS,
+    success_from_kw,
     valid_invalid_from_allowed,
     xfail_from_kw,
-    success_from_kw,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.event]
@@ -46,13 +46,10 @@ def xfail_construct_move(
     )
 
 
-@given(
-    kw=st.fixed_dictionaries(mapping=VALID_MAP)
-)
+@given(kw=st.fixed_dictionaries(mapping=VALID_MAP))
 def test_valid(kw):
     success_from_kw(
-        MoveElementsEvent,
-        **kw,
+        MoveElementsEvent, **kw,
     )
 
 

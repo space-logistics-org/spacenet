@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import List
 
 from pydantic import BaseModel, Field, StrictInt
@@ -33,3 +32,11 @@ class MoveElementsEvent(BaseModel):
     )
     destination_kind: NODE_OR_EDGE_OR_CARRIER
     destination_id: StrictInt
+
+
+class RemoveElementsEvent(BaseModel):
+    to_remove: List[StrictInt] = Field(
+        ..., description="the list of IDs of elements to remove"
+    )
+    removal_point_kind: NODE_OR_EDGE
+    removal_point_id: StrictInt

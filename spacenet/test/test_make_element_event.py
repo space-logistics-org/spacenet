@@ -3,9 +3,9 @@ from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import MakeElementEvent
 from spacenet.test.event_utilities import (
-    xfail_from_kw,
     INVALID_INTS,
     valid_invalid_from_allowed,
+    xfail_from_kw,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.event]
