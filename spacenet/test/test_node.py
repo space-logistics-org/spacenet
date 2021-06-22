@@ -1,5 +1,6 @@
 import pytest
 
+import spacenet
 from spacenet.schemas.node import LagrangeNode, OrbitalNode, SurfaceNode, NodeType
 
 import unittest
@@ -172,3 +173,25 @@ class TestFromFile(unittest.TestCase):
         for node in self.bad_nodes:
             with self.assertRaises(ValidationError):
                 bad_node = nos.OrbitalNode.parse_obj(node)
+
+
+LUNAR_SORTIE_NODES = json.loads(
+        pkg_resources.resource_string(
+            spacenet.schemas.__name__, "lunar_sortie/sortie_nodes.json"
+        )
+    )
+
+
+KIND_TO_SCHEMA = {
+    NodeType.Surface: SurfaceNode,
+    NodeType.Orbital: OrbitalNode,
+    NodeType.Lagrange: LagrangeNode
+}
+
+
+def test_lunar_sortie_nodes():
+    for node_obj in LUNAR_SORTIE_NODES:
+        constructor = KIND_TO_SCHEMA[node_obj["type"]]
+        node = constructor.parse_obj(node_obj)
+        for attr, value in node_obj.items():
+            assert value == getattr(node, attr)
