@@ -7,7 +7,6 @@ from .. import database
 from ..models import resource as models
 from ..models.utilities import dictify_row
 from ..schemas.resource import *
-from spacenet.schemas.resource import ResourceType
 
 router = APIRouter()
 
@@ -23,31 +22,6 @@ SCHEMA_TO_MODEL = {
 }
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
-
-
-def to_db_kwargs(resource: Resources) -> Dict[str, Any]:
-    excluded = {"unit_mass", "unit_volume"}
-    ret = {k: v for k, v in resource.dict().items() if k not in excluded}
-    suffix = "_i" if isinstance(resource, DiscreteResource) else "_f"
-    ret["unit_mass" + suffix] = resource.unit_mass
-    ret["unit_volume" + suffix] = resource.unit_volume
-    return ret
-
-
-def to_schema_kwargs(
-    db_model: Union[models.DiscreteResource, models.ContinuousResource]
-) -> Dict[str, Any]:
-    suffix = "_i" if isinstance(db_model, models.DiscreteResource) else "_f"
-    return {
-        "id": db_model.id,
-        "type": db_model.type,
-        "name": db_model.name,
-        "description": db_model.description,
-        "class_of_supply": db_model.class_of_supply,
-        "units": db_model.units,
-        "unit_mass": getattr(db_model, "unit_mass" + suffix),
-        "unit_volume": getattr(db_model, "unit_volume" + suffix),
-    }
 
 
 @router.get(
