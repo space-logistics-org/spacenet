@@ -17,6 +17,8 @@ def is_integer(s: str) -> bool:
     False
     >>> is_integer("-5")
     True
+    >>> is_integer("5.1")
+    False
     """
     try:
         int(s)
