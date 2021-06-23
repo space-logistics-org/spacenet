@@ -3,11 +3,18 @@ from enum import Enum
 
 
 class BurnType(Enum):
+    """
+    An enumeration of the two different types
+    of burns.
+    """
     OMS = "OMS"
     RCS = "RCS"
 
 
 class Burn(BaseModel):
+    """
+    Base class for propulsive burns
+    """
     edge_id: int = Field(
         ...,
         description="ID of the edge the burn will occur on",
