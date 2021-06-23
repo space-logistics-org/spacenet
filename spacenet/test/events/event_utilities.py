@@ -1,36 +1,31 @@
 from typing import List, Tuple, Type
+from uuid import UUID
 
 from hypothesis import strategies as st
 from hypothesis.strategies import SearchStrategy
-from pydantic import ValidationError, BaseModel
+from pydantic import BaseModel, ValidationError
 
 
-def is_integer(s: str) -> bool:
+def is_valid_uuid(s: str) -> bool:
     """
-    Return true if s represents an integer, and false otherwise.
+    Return true if s can be converted into a valid UUID, and false otherwise.
 
-    :param s: value to check if represents an integer
-    :return: true if s represents an integer, false otherwise
-    >>> is_integer("5")
-    True
-    >>> is_integer("five")
+    :param s: value to check if can be converted into a valid UUID
+    :return: true if s can be converted into a valid UUID, false otherwise
+    >>> is_valid_uuid("hello")
     False
-    >>> is_integer("-5")
+    >>> is_valid_uuid("123e4567-e89b-12d3-a456-426614174000")
     True
-    >>> is_integer("5.1")
-    False
     """
     try:
-        int(s)
+        UUID(hex=s)
     except ValueError:
         return False
     else:
         return True
 
 
-INVALID_INTS = st.one_of(
-    st.integers().map(lambda x: x + 0.1), st.text().filter(lambda s: not is_integer(s))
-)
+INVALID_UUIDS = st.text().filter(lambda s: not is_valid_uuid(s))
 
 
 def valid_invalid_from_allowed(
