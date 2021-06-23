@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
 from enum import Enum
 from typing import List
-from burn import Burn
-from element import Element
+
+from .burn import Burn
+from .element import Element
 
 
 class BurnStage(Enum):
