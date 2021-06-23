@@ -57,7 +57,7 @@ def to_schema_kwargs(
 )
 def list_resources(db: Session = Depends(database.get_db)):
     db_resources = db.query(models.Resource).all()
-    return [to_schema_kwargs(resource) for resource in db_resources]
+    return db_resources
 
 
 @router.get(
@@ -72,7 +72,7 @@ def read_resource(id_: int, db: Session = Depends(database.get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No resource found with id={id_}",
         )
-    return to_schema_kwargs(db_resource)
+    return db_resource
 
 
 @router.post(
@@ -82,11 +82,11 @@ def read_resource(id_: int, db: Session = Depends(database.get_db)):
     description="Add a new resource to the database.",
 )
 def create_resource(resource: Resources, db: Session = Depends(database.get_db)):
-    db_resource = SCHEMA_TO_MODEL[type(resource)](**to_db_kwargs(resource))
+    db_resource = SCHEMA_TO_MODEL[type(resource)](**resource.dict())
     db.add(db_resource)
     db.commit()
     db.refresh(db_resource)
-    return to_schema_kwargs(db_resource)
+    return db_resource
 
 
 @router.patch(
@@ -110,14 +110,11 @@ def patch_resource(
             detail=f"Resource found with id={id_} is of type {db_resource.type}; cannot "
             f"update type to {resource.type} ",
         )
-    suffix = "_i" if resource.type == ResourceType.discrete else "_f"
     for field_name, field in resource.dict().items():
         if field_name != "type" and field is not None:
-            if field_name == "unit_mass" or field_name == "unit_volume":
-                field_name += suffix
             setattr(db_resource, field_name, field)
     db.commit()
-    return to_schema_kwargs(db_resource)
+    return db_resource
 
 
 @router.delete(
@@ -133,11 +130,7 @@ def delete_resource(id_: int, db: Session = Depends(database.get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No resource found with id={id_}",
         )
-    suffix = "_i" if db_resource.type == ResourceType.discrete else "_f"
     as_dict = dictify_row(db_resource)
     db.delete(db_resource)
     db.commit()
-    for field in ("unit_mass", "unit_volume"):
-        as_dict[field] = as_dict[field + suffix]
-        del as_dict[field + suffix]
     return as_dict
