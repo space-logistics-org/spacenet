@@ -9,7 +9,7 @@ from .event_utilities import (
     xfail_from_kw,
 )
 
-pytestmark = [pytest.mark.unit, pytest.mark.event]
+pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 ALLOWED_REMOVAL_POINTS = ["Node", "Edge"]
 VALID_REMOVALS, INVALID_REMOVALS = valid_invalid_from_allowed(ALLOWED_REMOVAL_POINTS)

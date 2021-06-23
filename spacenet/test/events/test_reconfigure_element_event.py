@@ -9,7 +9,7 @@ from .event_utilities import (
     xfail_from_kw,
 )
 
-pytestmark = [pytest.mark.unit, pytest.mark.event]
+pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 ALLOWED_RECONFIG_POINTS = ["Node", "Edge"]
 VALID_RECONF, INVALID_RECONF = valid_invalid_from_allowed(ALLOWED_RECONFIG_POINTS)

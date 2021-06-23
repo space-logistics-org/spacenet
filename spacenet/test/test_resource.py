@@ -13,7 +13,7 @@ from spacenet.schemas.resource import (
     ClassOfSupply,
 )
 
-pytestmark = [pytest.mark.unit, pytest.mark.resource]
+pytestmark = [pytest.mark.unit, pytest.mark.resource, pytest.mark.schema]
 
 
 class TestDisResource(unittest.TestCase):

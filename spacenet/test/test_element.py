@@ -49,7 +49,7 @@ from spacenet.schemas.element import *
 from spacenet.schemas.element import ElementKind
 from .element_factories import *
 
-pytestmark = [pytest.mark.unit, pytest.mark.element]
+pytestmark = [pytest.mark.unit, pytest.mark.element, pytest.mark.schema]
 NUM_ATTEMPTS = 500
 SEED = "spacenet"
 

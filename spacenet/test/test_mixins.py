@@ -12,7 +12,7 @@ from pydantic.fields import ModelField
 
 from spacenet.schemas.mixins import OptionalFields, RequiresID
 
-pytestmark = [pytest.mark.unit]
+pytestmark = [pytest.mark.unit, pytest.mark.schema]
 
 
 class TestOptionalFields(unittest.TestCase):

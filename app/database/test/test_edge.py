@@ -10,7 +10,7 @@ from app.database.api.schemas import edge as schemas
 from app.database.api.database import Base, engine
 from .utilities import TestingSessionLocal
 
-pytestmark = [pytest.mark.unit, pytest.mark.edge]
+pytestmark = [pytest.mark.unit, pytest.mark.edge, pytest.mark.database]
 
 
 class TestEdgeData(unittest.TestCase):

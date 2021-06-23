@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from spacenet.schemas import node as nos
 from spacenet import test
 
-pytestmark = [pytest.mark.unit, pytest.mark.node]
+pytestmark = [pytest.mark.unit, pytest.mark.node, pytest.mark.schema]
 
 
 class TestNode(unittest.TestCase):

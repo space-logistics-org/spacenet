@@ -9,7 +9,7 @@ from .event_utilities import (
     success_from_kw,
 )
 
-pytestmark = [pytest.mark.unit, pytest.mark.event]
+pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 ALLOWED_KINDS = ["Node", "Edge", "ElementCarrier"]
 VALID_ELE_IDS = st.integers()

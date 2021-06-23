@@ -42,7 +42,7 @@ from spacenet.schemas.element import ElementKind
 from spacenet.test.element_factories import *
 from .utilities import (filter_val_not_none, first_subset_second, make_subset, with_type)
 
-pytestmark = [pytest.mark.integration, pytest.mark.element]
+pytestmark = [pytest.mark.integration, pytest.mark.element, pytest.mark.routing]
 
 client = TestClient(app)
 

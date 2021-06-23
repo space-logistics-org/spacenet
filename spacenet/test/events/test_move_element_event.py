@@ -9,7 +9,7 @@ from .event_utilities import (
     xfail_from_kw,
 )
 
-pytestmark = [pytest.mark.unit, pytest.mark.event]
+pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 ALLOWED_ORIGINS = ["Node", "Edge"]
 ALLOWED_DESTINATIONS = ["Node", "Edge", "ElementCarrier"]

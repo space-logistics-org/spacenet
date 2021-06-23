@@ -26,7 +26,7 @@ from .utilities import (
     make_subset,
 )
 
-pytestmark = [pytest.mark.integration]
+pytestmark = [pytest.mark.integration, pytest.mark.routing]
 
 client = TestClient(app)
 

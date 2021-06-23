@@ -10,7 +10,7 @@ from app.database.api.schemas import resource as schemas
 from app.database.api.database import Base, engine
 from .utilities import TestingSessionLocal
 
-pytestmark = [pytest.mark.unit, pytest.mark.resource]
+pytestmark = [pytest.mark.unit, pytest.mark.resource, pytest.mark.database]
 
 
 class TestResource(unittest.TestCase):
