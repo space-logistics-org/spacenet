@@ -35,8 +35,6 @@ class TestResource(unittest.TestCase):
             if resource["type"] == "Continuous":
                 resource = schemas.ContinuousResource.parse_obj(resource)
                 resource_dict = resource.dict()
-                resource_dict["unit_mass_f"] = resource_dict.pop("unit_mass")
-                resource_dict["unit_volume_f"] = resource_dict.pop("unit_volume")
                 db_resource = models.ContinuousResource(**resource_dict)
                 self.assertIsNone(db_resource.id)
                 db.add(db_resource)
@@ -49,8 +47,6 @@ class TestResource(unittest.TestCase):
             elif resource["type"] == "Discrete":
                 resource = schemas.DiscreteResource.parse_obj(resource)
                 resource_dict = resource.dict()
-                resource_dict["unit_mass_i"] = resource_dict.pop("unit_mass")
-                resource_dict["unit_volume_i"] = resource_dict.pop("unit_volume")
                 db_resource = models.DiscreteResource(**resource_dict)
                 self.assertIsNone(db_resource.id)
                 db.add(db_resource)
