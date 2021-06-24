@@ -67,57 +67,18 @@ def resources():
     )
 
 
-@pytest.mark.element
-def test_lunar_sortie_elements(elements, db):
-    for element_obj in elements:
-        schema_ctor, model_ctor = KIND_TO_CTORS[element_obj["type"]]
-        element = schema_ctor.parse_obj(element_obj)
-        db_element = model_ctor(**element.dict())
-        db.add(db_element)
+@pytest.mark.parametrize(
+    "domain_objects",
+    map(pytest.lazy_fixture, ["elements", "edges", "nodes", "resources"]),
+)
+def test_lunar_sortie(domain_objects, db):
+    for obj in domain_objects:
+        schema_ctor, model_ctor = KIND_TO_CTORS[obj["type"]]
+        domain_object = schema_ctor.parse_obj(obj)
+        db_domain_obj = model_ctor(**domain_object.dict())
+        db.add(db_domain_obj)
         db.commit()
-        for attr, value in element_obj.items():
-            assert value == getattr(db_element, attr)
-        db.delete(db_element)
-        db.commit()
-
-
-@pytest.mark.edge
-def test_lunar_sortie_edges(edges, db):
-    for edge_obj in edges:
-        schema_ctor, model_ctor = KIND_TO_CTORS[edge_obj["type"]]
-        edge = schema_ctor.parse_obj(edge_obj)
-        db_edge = model_ctor(**edge.dict())
-        db.add(db_edge)
-        db.commit()
-        for attr, value in edge_obj.items():
-            assert value == getattr(db_edge, attr)
-        db.delete(db_edge)
-        db.commit()
-
-
-@pytest.mark.node
-def test_lunar_sortie_nodes(nodes, db):
-    for node_obj in nodes:
-        schema_ctor, model_ctor = KIND_TO_CTORS[node_obj["type"]]
-        node = schema_ctor.parse_obj(node_obj)
-        db_node = model_ctor(**node.dict())
-        db.add(db_node)
-        db.commit()
-        for attr, value in node_obj.items():
-            assert value == getattr(db_node, attr)
-        db.delete(db_node)
-        db.commit()
-
-
-@pytest.mark.resource
-def test_lunar_sortie_resources(resources, db):
-    for resource_obj in resources:
-        schema_ctor, model_ctor = KIND_TO_CTORS[resource_obj["type"]]
-        resource = schema_ctor.parse_obj(resource_obj)
-        db_resource = model_ctor(**resource.dict())
-        db.add(db_resource)
-        db.commit()
-        for attr, value in resource_obj.items():
-            assert value == getattr(db_resource, attr)
-        db.delete(db_resource)
+        for attr, value in obj.items():
+            assert value == getattr(db_domain_obj, attr)
+        db.delete(db_domain_obj)
         db.commit()
