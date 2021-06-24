@@ -7,7 +7,7 @@ from pydantic import (
     NonNegativeInt,
     PositiveInt,
     PositiveFloat,
-    Field,
+    Field, confloat,
 )
 from enum import Enum
 
@@ -28,10 +28,10 @@ class Resource(BaseModel):
     description: Optional[str] = Field(
         default=None, title="Description", description="Short description"
     )
-    unit_mass: PositiveFloat = Field(
+    unit_mass: confloat(gt=0, lt=float("inf")) = Field(
         ..., title="Unit Mass", description="Resource mass"
     )
-    unit_volume: NonNegativeFloat = Field(
+    unit_volume: confloat(ge=0, lt=float("inf")) = Field(
         ..., title="Unit Volume", description="Resource volume"
     )
 
