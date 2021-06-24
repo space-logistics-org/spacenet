@@ -43,6 +43,7 @@ class OptionalFields(BaseModel, ABC):
             field.default = None
             field.outer_type_ = Optional
             field.required = False
+            field.allow_none = True
 
 
 class RequiresOnlyType(OptionalFields):
