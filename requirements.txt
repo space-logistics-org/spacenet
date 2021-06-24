@@ -1,3 +1,4 @@
 pytest
 pytest-lazy-fixture
 hypothesis
+flake8
