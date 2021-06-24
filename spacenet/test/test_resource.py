@@ -1,18 +1,14 @@
-import json
 import unittest
 
-import pkg_resources
 import pytest
 from pydantic import ValidationError
 
-import spacenet
 from spacenet.schemas.resource import (
-    DiscreteResource,
-    ContinuousResource,
-    ResourceType,
     ClassOfSupply,
+    ContinuousResource,
+    DiscreteResource,
+    ResourceType,
 )
-from .lunar_sortie_utils import resources
 
 pytestmark = [pytest.mark.unit, pytest.mark.resource, pytest.mark.schema]
 
@@ -110,7 +106,6 @@ class TestDisResource(unittest.TestCase):
 
 
 class TestConResource(unittest.TestCase):
-
     def test_good_data(self):
         name_ = "Fuel"
         type_ = ResourceType("Continuous")
@@ -200,18 +195,3 @@ class TestConResource(unittest.TestCase):
                 unit_mass=unitmass_,
                 unit_volume=unitvolume_,
             )
-
-
-KIND_TO_SCHEMA = {
-    ResourceType.continuous: ContinuousResource,
-    ResourceType.discrete: DiscreteResource
-}
-
-
-@pytest.mark.lunar_sortie
-def test_lunar_sortie_resources(resources):
-    for resource_obj in resources:
-        constructor = KIND_TO_SCHEMA[resource_obj["type"]]
-        resource = constructor.parse_obj(resource_obj)
-        for attr, value in resource_obj.items():
-            assert value == getattr(resource, attr)

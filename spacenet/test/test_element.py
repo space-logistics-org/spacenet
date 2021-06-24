@@ -45,7 +45,6 @@ from pydantic import ValidationError
 from spacenet.schemas.element import *
 from spacenet.schemas.element import ElementKind
 from .element_factories import *
-from .lunar_sortie_utils import elements
 
 pytestmark = [pytest.mark.unit, pytest.mark.element, pytest.mark.schema]
 NUM_ATTEMPTS = 500
@@ -89,7 +88,7 @@ class BaseTester:
                     kw[nonEnumAttr],
                     getattr(element, nonEnumAttr),
                     msg=f"Expected element.{nonEnumAttr} = {kw[nonEnumAttr]},"
-                        f"but was {getattr(element, nonEnumAttr)}",
+                    f"but was {getattr(element, nonEnumAttr)}",
                 )
         for enumAttr in self.enumAttrs:
             if str(enumAttr) in kw:
@@ -97,7 +96,7 @@ class BaseTester:
                     kw[enumAttr],
                     getattr(element, enumAttr).value,
                     msg=f"Expected element.{enumAttr}.value = {kw[enumAttr]},"
-                        f"but was {getattr(element, enumAttr).value}",
+                    f"but was {getattr(element, enumAttr).value}",
                 )
         self.assertEqual(
             self.validType,
@@ -124,7 +123,7 @@ class BaseTester:
             kw["type"] = self.validType
             missing_field, _ = kw.popitem()
             with self.assertRaises(
-                    ValidationError, msg=f"provided keywords are missing {missing_field}"
+                ValidationError, msg=f"provided keywords are missing {missing_field}"
             ):
                 self.elementType.parse_obj(kw)
 
@@ -138,7 +137,7 @@ class BaseTester:
             kw = factory.make_keywords()
             kw["type"] = self.validType
             with self.assertRaises(
-                    ValidationError, msg=f"{kw} should have raised an error"
+                ValidationError, msg=f"{kw} should have raised an error"
             ):
                 self.elementType.parse_obj(kw)
 
@@ -152,8 +151,8 @@ class BaseTester:
         for type_ in self.invalidTypes:
             kw["type"] = type_
             with self.assertRaises(
-                    ValidationError,
-                    msg=f"{kw} should have raised an error for wrong discriminant",
+                ValidationError,
+                msg=f"{kw} should have raised an error for wrong discriminant",
             ):
                 self.elementType.parse_obj(kw)
 
@@ -232,43 +231,3 @@ class TestSurfaceVehicle(SeededTester, VehicleTester):
     invalidFactory = InvalidSurfaceArgsFactory
     nonEnumAttrs = VehicleTester.nonEnumAttrs + ["max_fuel", "max_speed"]
     elementType = SurfaceVehicle
-
-
-def test_altair_elements():
-    pass
-
-
-def test_ares_1_elements():
-    pass
-
-
-def test_ares_5_elements():
-    pass
-
-
-def test_sortie_elements():
-    pass
-
-
-def test_orion_elements():
-    pass
-
-
-KIND_TO_SCHEMA = {
-    ElementKind.Element: Element,
-    ElementKind.ElementCarrier: ElementCarrier,
-    ElementKind.ResourceContainer: ResourceContainer,
-    ElementKind.HumanAgent: HumanAgent,
-    ElementKind.RoboticAgent: RoboticAgent,
-    ElementKind.Propulsive: PropulsiveVehicle,
-    ElementKind.Surface: SurfaceVehicle,
-}
-
-
-@pytest.mark.lunar_sortie
-def test_lunar_sortie_elements(elements):
-    for element_obj in elements:
-        constructor = KIND_TO_SCHEMA[element_obj["type"]]
-        element = constructor.parse_obj(element_obj)
-        for attr, value in element_obj.items():
-            assert value == getattr(element, attr)

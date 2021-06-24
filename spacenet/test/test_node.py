@@ -1,15 +1,13 @@
-import pytest
-
-from spacenet.schemas.node import LagrangeNode, OrbitalNode, SurfaceNode, NodeType
-
-import unittest
 import json
+import unittest
+
 import pkg_resources
+import pytest
 from pydantic import ValidationError
 
-from spacenet.schemas import node as nos
 from spacenet import test
-from .lunar_sortie_utils import nodes
+from spacenet.schemas import node as nos
+from spacenet.schemas.node import LagrangeNode, NodeType, OrbitalNode, SurfaceNode
 
 pytestmark = [pytest.mark.unit, pytest.mark.node, pytest.mark.schema]
 
@@ -173,19 +171,3 @@ class TestFromFile(unittest.TestCase):
         for node in self.bad_nodes:
             with self.assertRaises(ValidationError):
                 bad_node = nos.OrbitalNode.parse_obj(node)
-
-
-KIND_TO_SCHEMA = {
-    NodeType.Surface: SurfaceNode,
-    NodeType.Orbital: OrbitalNode,
-    NodeType.Lagrange: LagrangeNode
-}
-
-
-@pytest.mark.lunar_sortie
-def test_lunar_sortie_nodes(nodes):
-    for node_obj in nodes:
-        constructor = KIND_TO_SCHEMA[node_obj["type"]]
-        node = constructor.parse_obj(node_obj)
-        for attr, value in node_obj.items():
-            assert value == getattr(node, attr)

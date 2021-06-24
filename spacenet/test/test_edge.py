@@ -8,7 +8,6 @@ from pydantic import ValidationError
 from spacenet import test
 from spacenet.schemas import edge as eos
 from spacenet.schemas.edge import EdgeType, FlightEdge, SpaceEdge, SurfaceEdge
-from .lunar_sortie_utils import edges
 
 pytestmark = [pytest.mark.unit, pytest.mark.edge, pytest.mark.schema]
 
@@ -217,11 +216,3 @@ class TestFromFile(unittest.TestCase):
         for edge in self.bad_edges:
             with self.assertRaises(ValidationError):
                 bad_edge = eos.SpaceEdge.parse_obj(edge)
-
-
-@pytest.mark.lunar_sortie
-def test_lunar_sortie_edges(edges):
-    for edge_obj in edges:
-        edge = SpaceEdge.parse_obj(edge_obj)
-        for attr, value in edge_obj.items():
-            assert value == getattr(edge, attr)
