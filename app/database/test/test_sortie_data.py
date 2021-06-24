@@ -69,16 +69,22 @@ def resources():
 
 @pytest.mark.parametrize(
     "domain_objects",
-    map(pytest.lazy_fixture, ["elements", "edges", "nodes", "resources"]),
+    map(
+        lambda obj_type: pytest.param(
+            pytest.lazy_fixture(obj_type + "s"), marks=getattr(pytest.mark, obj_type)
+        ),
+        ["element", "edge", "node", "resource"],
+    ),
 )
 def test_lunar_sortie(domain_objects, db):
     for obj in domain_objects:
-        schema_ctor, model_ctor = KIND_TO_CTORS[obj["type"]]
-        domain_object = schema_ctor.parse_obj(obj)
+        schema_cls, model_ctor = KIND_TO_CTORS[obj["type"]]
+        domain_object = schema_cls.parse_obj(obj)
         db_domain_obj = model_ctor(**domain_object.dict())
         db.add(db_domain_obj)
         db.commit()
         for attr, value in obj.items():
             assert value == getattr(db_domain_obj, attr)
+        assert isinstance(db_domain_obj.id, int)
         db.delete(db_domain_obj)
         db.commit()
