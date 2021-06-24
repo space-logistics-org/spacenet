@@ -69,11 +69,11 @@ def resources():
 
 @pytest.mark.parametrize(
     "domain_objects",
-    map(
-        lambda obj_type: pytest.param(
+    (
+        pytest.param(
             pytest.lazy_fixture(obj_type + "s"), marks=getattr(pytest.mark, obj_type)
-        ),
-        ["element", "edge", "node", "resource"],
+        )
+        for obj_type in ["element", "edge", "node", "resource"]
     ),
 )
 def test_lunar_sortie(domain_objects, db):
