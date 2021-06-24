@@ -268,13 +268,13 @@ KIND_TO_SCHEMA = {
 
 
 @pytest.mark.parametrize(
-    "filename",
-    ["altair.json", "ares_1.json", "ares_5.json", "orion.json", "sortie_elements.json"],
+    "file",
+    ["altair", "ares_1", "ares_5", "orion", "sortie_elements"],
 )
-def test_lunar_sortie_elements(filename):
+def test_lunar_sortie_elements(file):
     elements = json.loads(
         pkg_resources.resource_string(
-            spacenet.schemas.__name__, f"lunar_sortie/{filename}"
+            spacenet.schemas.__name__, f"lunar_sortie/{file}.json"
         )
     )
     for element_obj in elements:
