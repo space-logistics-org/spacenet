@@ -47,7 +47,7 @@ class ResourceRoutes(RuleBasedStateMachine):
         response = self.client.post("/resource/", json=entry)
         assert 201 == response.status_code
         result = response.json()
-        assert {**entry, "id": result.get("id")} == result
+        assert dict(entry, id=result.get("id")) == result
         self.model[result.get("id")] = result
         # Add the ID provided by the database to the bundle of inserted IDs
         return result.get("id")
@@ -78,13 +78,12 @@ class ResourceRoutes(RuleBasedStateMachine):
         ),
     )
     def update(self, id_, update_kwargs):
-        update_kwargs = {**update_kwargs, "type": self.model[id_].get("type")}
+        update_kwargs = dict(update_kwargs, type=self.model[id_].get("type"))
         response = self.client.patch(f"/resource/{id_}", json=update_kwargs)
         assert 200 == response.status_code, response.json()
-        self.model[id_] = {
-            **self.model[id_],
-            **{k: v for k, v in update_kwargs.items() if v is not None},
-        }
+        self.model[id_] = dict(
+            self.model[id_], **{k: v for k, v in update_kwargs.items() if v is not None}
+        )
         assert self.model[id_] == response.json()
 
     @rule(id_=consumes(inserted_ids))
