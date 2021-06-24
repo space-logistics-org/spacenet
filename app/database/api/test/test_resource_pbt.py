@@ -19,7 +19,12 @@ from ..schemas.resource import (
     DiscreteResource,
 )
 
-pytestmark = [pytest.mark.integration, pytest.mark.resource, pytest.mark.routing]
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.resource,
+    pytest.mark.routing,
+    pytest.mark.slow,
+]
 
 app.dependency_overrides[get_db] = get_test_db
 
@@ -35,8 +40,7 @@ class ResourceRoutes(RuleBasedStateMachine):
     @rule(
         target=inserted_ids,
         entry=st.one_of(
-            st.builds(ContinuousResource).map(ContinuousResource.dict),
-            st.builds(DiscreteResource).map(DiscreteResource.dict),
+            *(st.builds(cls).map(cls.dict) for cls in (ContinuousResource, DiscreteResource))
         ),
     )
     def create(self, entry: Union[ContinuousResource, DiscreteResource]):
@@ -59,6 +63,8 @@ class ResourceRoutes(RuleBasedStateMachine):
     def read_all(self):
         response = self.client.get("/resource/")
         assert 200 == response.status_code
+        result = response.json()
+        assert len(self.model) == len(result)
         for resource in response.json():
             assert (
                 resource.get("id") in self.model
@@ -72,7 +78,7 @@ class ResourceRoutes(RuleBasedStateMachine):
         ),
     )
     def update(self, id_, update_kwargs):
-        update_kwargs = {**update_kwargs, "type": self.model.get(id_).get("type")}
+        update_kwargs = {**update_kwargs, "type": self.model[id_].get("type")}
         response = self.client.patch(f"/resource/{id_}", json=update_kwargs)
         assert 200 == response.status_code, response.json()
         self.model[id_] = {
