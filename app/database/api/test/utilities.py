@@ -5,7 +5,7 @@ from typing import Dict
 from app.database.test.utilities import TestingSessionLocal
 
 
-def override_get_db():
+def get_test_db():
     db = TestingSessionLocal()
     try:
         yield db

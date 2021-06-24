@@ -1,32 +1,3 @@
-"""
-Tests for resource routing using rule-based state machines as implemented by Hypothesis.
-Operations exercised:
-- create
-    add a resource which is correctly constructed
-- create_invalid
-    add a resource which is not correctly constructed
-- read
-    read a resource already present
-- read_not_present
-    read a resource not inserted
-- read_all
-    read all resources
-- update
-    update a resource already present
-- update_not_present
-    update a resource at an ID not inserted
-- update_invalid
-    update a resource with invalid schema at an already-inserted ID
-- update_wrong_type
-    update a resource with a valid schema in a way that changes the object's type
-- delete
-    delete a resource already present
-- delete_not_present
-    delete a resource not present
-Bundles:
-- inserted_ids
-    stores inserted ids for use in valid operations
-"""
 from typing import Union
 
 import pytest
@@ -39,7 +10,7 @@ from hypothesis.stateful import (
     Bundle,
 )
 
-from .utilities import override_get_db
+from .utilities import get_test_db
 from app.database.api.database import get_db
 from app.database.api.main import app
 from ..schemas.resource import (
@@ -50,7 +21,7 @@ from ..schemas.resource import (
 
 pytestmark = [pytest.mark.integration, pytest.mark.resource, pytest.mark.routing]
 
-app.dependency_overrides[get_db] = override_get_db
+app.dependency_overrides[get_db] = get_test_db
 
 
 class ResourceRoutes(RuleBasedStateMachine):
@@ -74,6 +45,7 @@ class ResourceRoutes(RuleBasedStateMachine):
         result = response.json()
         assert {**entry, "id": result.get("id")} == result
         self.model[result.get("id")] = result
+        # Add the ID provided by the database to the bundle of inserted IDs
         return result.get("id")
 
     @rule(id_=inserted_ids)

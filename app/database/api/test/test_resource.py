@@ -10,12 +10,12 @@ from fastapi.testclient import TestClient
 from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from app.database.api.models.resource import Resource as ResourceModel
-from app.database.test.utilities import TestingSessionLocal, test_engine
+from app.database.test.utilities import test_engine
 from spacenet.schemas.resource import ResourceType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
-    make_subset,
+    get_test_db, make_subset,
     with_type,
 )
 
@@ -26,15 +26,7 @@ client = TestClient(app)
 Base.metadata.create_all(bind=test_engine)
 
 
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-app.dependency_overrides[get_db] = override_get_db
+app.dependency_overrides[get_db] = get_test_db
 
 VALID_DISCRETE_ARGS = {
     "name": "foo",
