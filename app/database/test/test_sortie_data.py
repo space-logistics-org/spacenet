@@ -2,7 +2,7 @@ import json
 
 import pkg_resources
 import pytest
-from app.database.api import models
+from app.database.api.models import element, edge, node, resource
 from spacenet.schemas.element import *
 from spacenet.schemas.edge import FlightEdge, SpaceEdge, SurfaceEdge, EdgeType
 from spacenet.schemas.node import SurfaceNode, OrbitalNode, LagrangeNode, NodeType
@@ -14,25 +14,22 @@ from spacenet import schemas
 pytestmark = [pytest.mark.unit, pytest.mark.database]
 
 
-KIND_TO_SCHEMA = {
-    ElementKind.Element: (Element, models.element.Element),
-    ElementKind.ElementCarrier: (ElementCarrier, models.element.ElementCarrier),
-    ElementKind.ResourceContainer: (
-        ResourceContainer,
-        models.element.ResourceContainer,
-    ),
-    ElementKind.HumanAgent: (HumanAgent, models.element.HumanAgent),
-    ElementKind.RoboticAgent: (RoboticAgent, models.element.RoboticAgent),
-    ElementKind.Propulsive: (PropulsiveVehicle, models.element.PropulsiveVehicle),
-    ElementKind.Surface: (SurfaceVehicle, models.element.SurfaceVehicle),
-    EdgeType.Surface: (SurfaceEdge, models.edge.SurfaceEdge),
-    EdgeType.Flight: (FlightEdge, models.edge.FlightEdge),
-    EdgeType.Space: (SpaceEdge, models.edge.SpaceEdge),
-    NodeType.Surface: (SurfaceNode, models.node.SurfaceNode),
-    NodeType.Orbital: (OrbitalNode, models.node.OrbitalNode),
-    NodeType.Lagrange: (LagrangeNode, models.node.LagrangeNode),
-    ResourceType.discrete: (DiscreteResource, models.resource.DiscreteResource),
-    ResourceType.continuous: (ContinuousResource, models.resource.ContinuousResource),
+KIND_TO_CTORS = {
+    ElementKind.Element: (Element, element.Element),
+    ElementKind.ElementCarrier: (ElementCarrier, element.ElementCarrier),
+    ElementKind.ResourceContainer: (ResourceContainer, element.ResourceContainer),
+    ElementKind.HumanAgent: (HumanAgent, element.HumanAgent),
+    ElementKind.RoboticAgent: (RoboticAgent, element.RoboticAgent),
+    ElementKind.Propulsive: (PropulsiveVehicle, element.PropulsiveVehicle),
+    ElementKind.Surface: (SurfaceVehicle, element.SurfaceVehicle),
+    EdgeType.Surface: (SurfaceEdge, edge.SurfaceEdge),
+    EdgeType.Flight: (FlightEdge, edge.FlightEdge),
+    EdgeType.Space: (SpaceEdge, edge.SpaceEdge),
+    NodeType.Surface: (SurfaceNode, node.SurfaceNode),
+    NodeType.Orbital: (OrbitalNode, node.OrbitalNode),
+    NodeType.Lagrange: (LagrangeNode, node.LagrangeNode),
+    ResourceType.discrete: (DiscreteResource, resource.DiscreteResource),
+    ResourceType.continuous: (ContinuousResource, resource.ContinuousResource),
 }
 
 
@@ -73,7 +70,7 @@ def resources():
 @pytest.mark.element
 def test_lunar_sortie_elements(elements, db):
     for element_obj in elements:
-        schema_ctor, model_ctor = KIND_TO_SCHEMA[element_obj["type"]]
+        schema_ctor, model_ctor = KIND_TO_CTORS[element_obj["type"]]
         element = schema_ctor.parse_obj(element_obj)
         db_element = model_ctor(**element.dict())
         db.add(db_element)
@@ -87,7 +84,7 @@ def test_lunar_sortie_elements(elements, db):
 @pytest.mark.edge
 def test_lunar_sortie_edges(edges, db):
     for edge_obj in edges:
-        schema_ctor, model_ctor = KIND_TO_SCHEMA[edge_obj["type"]]
+        schema_ctor, model_ctor = KIND_TO_CTORS[edge_obj["type"]]
         edge = schema_ctor.parse_obj(edge_obj)
         db_edge = model_ctor(**edge.dict())
         db.add(db_edge)
@@ -101,7 +98,7 @@ def test_lunar_sortie_edges(edges, db):
 @pytest.mark.node
 def test_lunar_sortie_nodes(nodes, db):
     for node_obj in nodes:
-        schema_ctor, model_ctor = KIND_TO_SCHEMA[node_obj["type"]]
+        schema_ctor, model_ctor = KIND_TO_CTORS[node_obj["type"]]
         node = schema_ctor.parse_obj(node_obj)
         db_node = model_ctor(**node.dict())
         db.add(db_node)
@@ -115,7 +112,7 @@ def test_lunar_sortie_nodes(nodes, db):
 @pytest.mark.resource
 def test_lunar_sortie_resources(resources, db):
     for resource_obj in resources:
-        schema_ctor, model_ctor = KIND_TO_SCHEMA[resource_obj["type"]]
+        schema_ctor, model_ctor = KIND_TO_CTORS[resource_obj["type"]]
         resource = schema_ctor.parse_obj(resource_obj)
         db_resource = model_ctor(**resource.dict())
         db.add(db_resource)
