@@ -35,19 +35,17 @@ keyword argument generation logic. Changing schema attributes constitutes removi
 a tester class (or its superclass)'s attributes, and making the factory no longer assign the
 value in the dictionary.
 """
-import json
 import random
 import unittest
 from typing import Tuple, Type
 
-import pkg_resources
 import pytest
 from pydantic import ValidationError
 
-import spacenet
 from spacenet.schemas.element import *
 from spacenet.schemas.element import ElementKind
 from .element_factories import *
+from .lunar_sortie_utils import elements
 
 pytestmark = [pytest.mark.unit, pytest.mark.element, pytest.mark.schema]
 NUM_ATTEMPTS = 500
@@ -91,7 +89,7 @@ class BaseTester:
                     kw[nonEnumAttr],
                     getattr(element, nonEnumAttr),
                     msg=f"Expected element.{nonEnumAttr} = {kw[nonEnumAttr]},"
-                    f"but was {getattr(element, nonEnumAttr)}",
+                        f"but was {getattr(element, nonEnumAttr)}",
                 )
         for enumAttr in self.enumAttrs:
             if str(enumAttr) in kw:
@@ -99,7 +97,7 @@ class BaseTester:
                     kw[enumAttr],
                     getattr(element, enumAttr).value,
                     msg=f"Expected element.{enumAttr}.value = {kw[enumAttr]},"
-                    f"but was {getattr(element, enumAttr).value}",
+                        f"but was {getattr(element, enumAttr).value}",
                 )
         self.assertEqual(
             self.validType,
@@ -126,7 +124,7 @@ class BaseTester:
             kw["type"] = self.validType
             missing_field, _ = kw.popitem()
             with self.assertRaises(
-                ValidationError, msg=f"provided keywords are missing {missing_field}"
+                    ValidationError, msg=f"provided keywords are missing {missing_field}"
             ):
                 self.elementType.parse_obj(kw)
 
@@ -140,7 +138,7 @@ class BaseTester:
             kw = factory.make_keywords()
             kw["type"] = self.validType
             with self.assertRaises(
-                ValidationError, msg=f"{kw} should have raised an error"
+                    ValidationError, msg=f"{kw} should have raised an error"
             ):
                 self.elementType.parse_obj(kw)
 
@@ -154,8 +152,8 @@ class BaseTester:
         for type_ in self.invalidTypes:
             kw["type"] = type_
             with self.assertRaises(
-                ValidationError,
-                msg=f"{kw} should have raised an error for wrong discriminant",
+                    ValidationError,
+                    msg=f"{kw} should have raised an error for wrong discriminant",
             ):
                 self.elementType.parse_obj(kw)
 
@@ -267,19 +265,10 @@ KIND_TO_SCHEMA = {
 }
 
 
-@pytest.mark.parametrize(
-    "file",
-    ["altair", "ares_1", "ares_5", "orion", "sortie_elements"],
-)
-def test_lunar_sortie_elements(file):
-    elements = json.loads(
-        pkg_resources.resource_string(
-            spacenet.schemas.__name__, f"lunar_sortie/{file}.json"
-        )
-    )
+@pytest.mark.lunar_sortie
+def test_lunar_sortie_elements(elements):
     for element_obj in elements:
         constructor = KIND_TO_SCHEMA[element_obj["type"]]
         element = constructor.parse_obj(element_obj)
         for attr, value in element_obj.items():
             assert value == getattr(element, attr)
-

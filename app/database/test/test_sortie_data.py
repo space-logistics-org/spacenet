@@ -1,15 +1,11 @@
-import json
-
-import pkg_resources
 import pytest
 from app.database.api.models import element, edge, node, resource
 from spacenet.schemas.element import *
 from spacenet.schemas.edge import FlightEdge, SpaceEdge, SurfaceEdge, EdgeType
 from spacenet.schemas.node import SurfaceNode, OrbitalNode, LagrangeNode, NodeType
 from spacenet.schemas.resource import DiscreteResource, ContinuousResource, ResourceType
+from spacenet.test.lunar_sortie_utils import elements, edges, nodes, resources
 from .utilities import db
-
-from spacenet import schemas
 
 pytestmark = [pytest.mark.unit, pytest.mark.database]
 
@@ -33,40 +29,6 @@ KIND_TO_CTORS = {
 }
 
 
-@pytest.fixture(params=["altair", "ares_1", "ares_5", "orion", "sortie_elements"])
-def elements(request):
-    yield json.loads(
-        pkg_resources.resource_string(
-            schemas.__name__, f"lunar_sortie/{request.param}.json"
-        )
-    )
-
-
-@pytest.fixture()
-def edges():
-    yield json.loads(
-        pkg_resources.resource_string(
-            schemas.__name__, "lunar_sortie/sortie_edges.json"
-        )
-    )
-
-
-@pytest.fixture()
-def nodes():
-    yield json.loads(
-        pkg_resources.resource_string(
-            schemas.__name__, "lunar_sortie/sortie_nodes.json"
-        )
-    )
-
-
-@pytest.fixture()
-def resources():
-    yield json.loads(
-        pkg_resources.resource_string(schemas.__name__, "lunar_sortie/fuels.json")
-    )
-
-
 @pytest.mark.parametrize(
     "domain_objects",
     (
@@ -76,6 +38,7 @@ def resources():
         for obj_type in ["element", "edge", "node", "resource"]
     ),
 )
+@pytest.mark.lunar_sortie
 def test_lunar_sortie(domain_objects, db):
     for obj in domain_objects:
         schema_cls, model_ctor = KIND_TO_CTORS[obj["type"]]

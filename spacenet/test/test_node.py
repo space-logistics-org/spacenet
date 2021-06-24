@@ -1,6 +1,5 @@
 import pytest
 
-import spacenet
 from spacenet.schemas.node import LagrangeNode, OrbitalNode, SurfaceNode, NodeType
 
 import unittest
@@ -10,6 +9,7 @@ from pydantic import ValidationError
 
 from spacenet.schemas import node as nos
 from spacenet import test
+from .lunar_sortie_utils import nodes
 
 pytestmark = [pytest.mark.unit, pytest.mark.node, pytest.mark.schema]
 
@@ -175,13 +175,6 @@ class TestFromFile(unittest.TestCase):
                 bad_node = nos.OrbitalNode.parse_obj(node)
 
 
-LUNAR_SORTIE_NODES = json.loads(
-        pkg_resources.resource_string(
-            spacenet.schemas.__name__, "lunar_sortie/sortie_nodes.json"
-        )
-    )
-
-
 KIND_TO_SCHEMA = {
     NodeType.Surface: SurfaceNode,
     NodeType.Orbital: OrbitalNode,
@@ -189,8 +182,9 @@ KIND_TO_SCHEMA = {
 }
 
 
-def test_lunar_sortie_nodes():
-    for node_obj in LUNAR_SORTIE_NODES:
+@pytest.mark.lunar_sortie
+def test_lunar_sortie_nodes(nodes):
+    for node_obj in nodes:
         constructor = KIND_TO_SCHEMA[node_obj["type"]]
         node = constructor.parse_obj(node_obj)
         for attr, value in node_obj.items():

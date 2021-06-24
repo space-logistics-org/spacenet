@@ -12,6 +12,7 @@ from spacenet.schemas.resource import (
     ResourceType,
     ClassOfSupply,
 )
+from .lunar_sortie_utils import resources
 
 pytestmark = [pytest.mark.unit, pytest.mark.resource, pytest.mark.schema]
 
@@ -201,21 +202,15 @@ class TestConResource(unittest.TestCase):
             )
 
 
-LUNAR_SORTIE_RESOURCES = json.loads(
-    pkg_resources.resource_string(
-        spacenet.schemas.__name__, "lunar_sortie/fuels.json"
-    )
-)
-
-
 KIND_TO_SCHEMA = {
     ResourceType.continuous: ContinuousResource,
     ResourceType.discrete: DiscreteResource
 }
 
 
-def test_lunar_sortie_resources():
-    for resource_obj in LUNAR_SORTIE_RESOURCES:
+@pytest.mark.lunar_sortie
+def test_lunar_sortie_resources(resources):
+    for resource_obj in resources:
         constructor = KIND_TO_SCHEMA[resource_obj["type"]]
         resource = constructor.parse_obj(resource_obj)
         for attr, value in resource_obj.items():
