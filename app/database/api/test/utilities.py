@@ -1,7 +1,16 @@
 import doctest
-import pytest
 import random
 from typing import Dict
+
+from app.database.test.utilities import TestingSessionLocal
+
+
+def override_get_db():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 def with_type(d: Dict, kind) -> Dict:
