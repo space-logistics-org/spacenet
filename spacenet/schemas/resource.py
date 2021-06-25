@@ -4,11 +4,14 @@ from typing_extensions import Literal
 
 from pydantic import (
     BaseModel,
-    Field, confloat,
+    Field,
+    confloat,
 )
 from enum import Enum
 
 from ..constants import ClassOfSupply
+
+__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource"]
 
 
 class ResourceType(str, Enum):

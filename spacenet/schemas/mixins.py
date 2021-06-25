@@ -7,12 +7,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-__all__ = [
-    "RequiresID",
-    "RequiresOnlyType",
-    "OptionalFields",
-    "ReadSchema"
-]
+__all__ = ["RequiresID", "RequiresOnlyType", "OptionalFields", "ReadSchema"]
 
 
 class RequiresID(BaseModel, ABC):
