@@ -29,6 +29,14 @@ p{
   border-color: #6c757d !important;
 }
 
+.modal-header {
+  border: 0 none !important;
+}
+
+.modal-footer {
+  border: 0 none !important;
+}
+
 [data-customTooltip]{
   cursor: pointer;
   position: relative;

@@ -19,7 +19,7 @@ from .utilities import (
     with_type,
 )
 
-pytestmark = [pytest.mark.integration, pytest.mark.resource]
+pytestmark = [pytest.mark.integration, pytest.mark.resource, pytest.mark.routing]
 
 client = TestClient(app)
 
@@ -38,10 +38,10 @@ app.dependency_overrides[get_db] = override_get_db
 
 VALID_DISCRETE_ARGS = {
     "name": "foo",
-    "cos": 1,
-    "type": "discrete",
+    "class_of_supply": 1,
+    "type": "Discrete",
     "unit_mass": 10,
-    "unit_volume": 20,
+    "unit_volume": 0,
     "description": "baz",
     "units": "kg",
 }
@@ -50,28 +50,28 @@ OTHER_VALID_DISCRETE_ARGS = {
     **VALID_DISCRETE_ARGS,
     "unit_mass": 20,
     "unit_volume": 30,
-    "cos": 2,
+    "class_of_supply": 2,
 }
 
 VALID_CONT_ARGS = {
     **VALID_DISCRETE_ARGS,
-    "type": "continuous",
+    "type": "Continuous",
     "unit_mass": 10.2,
-    "unit_volume": 24.1,
+    "unit_volume": 0,
 }
 
 OTHER_VALID_CONT_ARGS = {
     **VALID_CONT_ARGS,
     "unit_mass": 20.5,
     "unit_volume": 30.15,
-    "cos": 2,
+    "class_of_supply": 2,
 }
 
-INVALID_DISCRETE_ARGS = {**VALID_DISCRETE_ARGS, "cos": 99999}
+INVALID_DISCRETE_ARGS = {**VALID_DISCRETE_ARGS, "class_of_supply": 99999}
 
 MISTYPED_DISCRETE_ARGS = {**VALID_CONT_ARGS, "unit_mass": 10, "unit_volume": 20}
 
-INVALID_CONT_ARGS = {**VALID_CONT_ARGS, "cos": -10}
+INVALID_CONT_ARGS = {**VALID_CONT_ARGS, "class_of_supply": -10}
 
 MISTYPED_CONT_ARGS = {**VALID_DISCRETE_ARGS, "unit_mass": 10.2, "unit_volume": 24.1}
 
@@ -121,7 +121,7 @@ def test_create(resource_type: ResourceType):
     bad_response = client.post("/resource/", json=invalid)
     assert bad_response.status_code == 422
     post_response = client.post("/resource/", json=first)
-    assert post_response.status_code == 201
+    assert post_response.status_code == 201, post_response.json()
     assert first_subset_second(first, post_response.json())
     assert len(first) == len(post_response.json()) - 1
     id_ = post_response.json()["id"]

@@ -43,12 +43,10 @@ import pytest
 from pydantic import ValidationError
 
 from spacenet.schemas.element import *
-from spacenet.schemas.element import (
-    ElementKind,
-)
+from spacenet.schemas.element import ElementKind
 from .element_factories import *
 
-pytestmark = [pytest.mark.unit, pytest.mark.element]
+pytestmark = [pytest.mark.unit, pytest.mark.element, pytest.mark.schema]
 NUM_ATTEMPTS = 500
 SEED = "spacenet"
 
@@ -127,7 +125,7 @@ class BaseTester:
             with self.assertRaises(
                 ValidationError, msg=f"provided keywords are missing {missing_field}"
             ):
-                self.elementType(**kw)
+                self.elementType.parse_obj(kw)
 
     def test_invalid_values(self) -> None:
         """
@@ -141,7 +139,7 @@ class BaseTester:
             with self.assertRaises(
                 ValidationError, msg=f"{kw} should have raised an error"
             ):
-                self.elementType(**kw)
+                self.elementType.parse_obj(kw)
 
     def test_invalid_type(self) -> None:
         """
@@ -156,7 +154,7 @@ class BaseTester:
                 ValidationError,
                 msg=f"{kw} should have raised an error for wrong discriminant",
             ):
-                self.elementType(**kw)
+                self.elementType.parse_obj(kw)
 
 
 class SeededTester(unittest.TestCase):

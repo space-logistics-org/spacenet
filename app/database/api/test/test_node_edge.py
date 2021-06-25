@@ -1,3 +1,8 @@
+"""
+Contains integration tests where CRUD operations are exercised with nodes and edges,
+methodologically similar to element routing testing. Same restrictions on sequential runs
+only apply.
+"""
 import json
 import random
 from enum import Enum
@@ -21,7 +26,7 @@ from .utilities import (
     make_subset,
 )
 
-pytestmark = [pytest.mark.integration]
+pytestmark = [pytest.mark.integration, pytest.mark.routing]
 
 client = TestClient(app)
 
@@ -143,7 +148,6 @@ def test_empty(prefix):
             name,
             marks=[
                 pytest.mark.node,
-                pytest.mark.xfail(reason="node routing not working"),
             ],
         )
         for name in NODE_NAMES
@@ -187,7 +191,6 @@ def test_create(variant_name):
             name,
             marks=[
                 pytest.mark.node,
-                pytest.mark.xfail(reason="node routing not working"),
             ],
         )
         for name in NODE_NAMES
@@ -249,7 +252,6 @@ def test_update(variant_name):
             name,
             marks=[
                 pytest.mark.node,
-                pytest.mark.xfail(reason="node routing not working"),
             ],
         )
         for name in NODE_NAMES

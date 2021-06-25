@@ -1,1 +1,3 @@
-TODO: add test scripts here
+# Spacenet Schema Test Suite
+
+Contains unit tests for the schemas defined in `schemas`. 

@@ -21,23 +21,23 @@ Elements = Union[
 ]
 
 UpdateElements = Union[
-    UpdateElement,
-    UpdateElementCarrier,
-    UpdateSurfaceVehicle,
-    UpdatePropulsiveVehicle,
-    UpdateRoboticAgent,
-    UpdateHumanAgent,
-    UpdateResourceContainer,
+    ElementUpdate,
+    ElementCarrierUpdate,
+    SurfaceVehicleUpdate,
+    PropulsiveVehicleUpdate,
+    RoboticAgentUpdate,
+    HumanAgentUpdate,
+    ResourceContainerUpdate,
 ]
 
 ReadElements = Union[
-    ReadElement,
-    ReadElementCarrier,
-    ReadSurfaceVehicle,
-    ReadPropulsiveVehicle,
-    ReadRoboticAgent,
-    ReadHumanAgent,
-    ReadResourceContainer,
+    ElementRead,
+    ElementCarrierRead,
+    SurfaceVehicleRead,
+    PropulsiveVehicleRead,
+    RoboticAgentRead,
+    HumanAgentRead,
+    ResourceContainerRead,
 ]
 
 SCHEMA_TO_MODEL = {
