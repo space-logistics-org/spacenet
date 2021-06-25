@@ -94,7 +94,7 @@ class TestElementData(unittest.TestCase):
                 self.db.delete(db_element)
                 self.db.commit()
 
-            elif element["type"] == "PropulsiveVehicle":
+            elif element["type"] == "Propulsive":
                 
                 testelement = schemas.PropulsiveVehicle.parse_obj(element)
                 db_element = models.PropulsiveVehicle(**testelement.dict())
@@ -120,7 +120,7 @@ class TestElementData(unittest.TestCase):
                 self.db.delete(db_element)
                 self.db.commit()
 
-            elif element["type"] == "SurfaceVehicle":
+            elif element["type"] == "Surface":
                 
                 testelement = schemas.SurfaceVehicle.parse_obj(element)
                 db_element = models.SurfaceVehicle(**testelement.dict())
