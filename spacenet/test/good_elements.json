@@ -35,7 +35,7 @@
         "description": "Lunar crew habitat"
     },
     {
-        "type": "PropulsiveVehicle",
+        "type": "Propulsive",
         "name": "Orion CM",
         "class_of_supply": 9022,
         "environment": "Unpressurized",
@@ -51,7 +51,7 @@
         "description": "Orion Crew Module"
     },
     {
-        "type": "SurfaceVehicle",
+        "type": "Surface",
         "name": "Crewed Lander",
         "class_of_supply": 9021,
         "environment": "Unpressurized",
