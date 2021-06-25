@@ -1,12 +1,9 @@
+from math import inf
 from typing import Optional
 from typing_extensions import Literal
 
 from pydantic import (
     BaseModel,
-    NonNegativeFloat,
-    NonNegativeInt,
-    PositiveInt,
-    PositiveFloat,
     Field, confloat,
 )
 from enum import Enum
@@ -28,10 +25,10 @@ class Resource(BaseModel):
     description: Optional[str] = Field(
         default=None, title="Description", description="Short description"
     )
-    unit_mass: confloat(gt=0, lt=float("inf")) = Field(
+    unit_mass: confloat(gt=0, lt=inf) = Field(
         ..., title="Unit Mass", description="Resource mass"
     )
-    unit_volume: confloat(ge=0, lt=float("inf")) = Field(
+    unit_volume: confloat(ge=0, lt=inf) = Field(
         ..., title="Unit Volume", description="Resource volume"
     )
 
