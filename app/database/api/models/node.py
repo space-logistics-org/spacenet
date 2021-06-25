@@ -2,6 +2,15 @@ from sqlalchemy import Column, Integer, String, Float
 from ..database import Base
 from spacenet.schemas.node import NodeType
 
+__all__ = [
+    "Node",
+    "NodeType",
+    "LagrangeNode",
+    "OrbitalNode",
+    "SurfaceNode",
+]
+
+
 class Node(Base):
     __tablename__ = "Nodes"
 

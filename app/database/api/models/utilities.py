@@ -3,6 +3,8 @@ from typing import Any, Dict
 
 from app.database.api.database import Base
 
+__all__ = ["dictify_row"]
+
 
 def dictify_row(row: Base) -> Dict[str, Any]:
     """
