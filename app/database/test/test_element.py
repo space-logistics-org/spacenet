@@ -29,7 +29,7 @@ class TestElementData(unittest.TestCase):
 
         for element in self.element_data:
 
-            if element["type"] == "Generic Element":
+            if element["type"] == "Element":
                 
                 testelement = schemas.Element.parse_obj(element)
                 db_element = models.Element(**testelement.dict())
