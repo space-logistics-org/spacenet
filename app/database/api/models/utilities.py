@@ -2,8 +2,9 @@ import doctest
 from typing import Any, Dict
 
 from app.database.api.database import Base
+from app.database.api import models, schemas
 
-__all__ = ["dictify_row"]
+__all__ = ["dictify_row", "SCHEMA_TO_MODEL"]
 
 
 def dictify_row(row: Base) -> Dict[str, Any]:
@@ -22,10 +23,31 @@ def dictify_row(row: Base) -> Dict[str, Any]:
     >>> expected == dictify_row(row)
     True
     """
-    return {col.name: getattr(row, col.name)
-            for col in row.__table__.columns
-            if hasattr(row, col.name)}
+    return {
+        col.name: getattr(row, col.name)
+        for col in row.__table__.columns
+        if hasattr(row, col.name)
+    }
 
 
-if __name__ == '__main__':
+SCHEMA_TO_MODEL = {
+    schemas.Element: models.Element,
+    schemas.ResourceContainer: models.ResourceContainer,
+    schemas.ElementCarrier: models.ElementCarrier,
+    schemas.HumanAgent: models.HumanAgent,
+    schemas.RoboticAgent: models.RoboticAgent,
+    schemas.PropulsiveVehicle: models.PropulsiveVehicle,
+    schemas.SurfaceVehicle: models.SurfaceVehicle,
+    schemas.FlightEdge: models.FlightEdge,
+    schemas.SpaceEdge: models.SpaceEdge,
+    schemas.SurfaceEdge: models.SurfaceEdge,
+    schemas.LagrangeNode: models.LagrangeNode,
+    schemas.OrbitalNode: models.OrbitalNode,
+    schemas.SurfaceNode: models.SurfaceNode,
+    schemas.ContinuousResource: models.ContinuousResource,
+    schemas.DiscreteResource: models.DiscreteResource,
+}
+
+
+if __name__ == "__main__":
     doctest.testmod()
