@@ -6,7 +6,6 @@ from fastapi.testclient import TestClient
 from hypothesis.stateful import (
     RuleBasedStateMachine,
     consumes,
-    precondition,
     rule,
     Bundle,
 )
@@ -20,6 +19,7 @@ from ..schemas.resource import (
     ContinuousResource,
     ContinuousUpdate,
     DiscreteResource,
+    DiscreteUpdate,
 )
 
 pytestmark = [
@@ -31,6 +31,17 @@ pytestmark = [
 
 app.dependency_overrides[get_db] = get_test_db
 
+CREATE_TO_UPDATE = {
+    ContinuousResource: ContinuousUpdate,
+    DiscreteResource: DiscreteUpdate,
+}
+
+
+def inserted_tup_to_strategy(inserted_tup):
+    id_, type_ = inserted_tup
+    update_type = CREATE_TO_UPDATE[type_]
+    return st.tuples(st.just(id_), st.builds(update_type).map(update_type.dict))
+
 
 class ResourceRoutes(RuleBasedStateMachine):
     def __init__(self):
@@ -38,29 +49,26 @@ class ResourceRoutes(RuleBasedStateMachine):
         self.model = {}
         self.client = TestClient(app)
 
-    inserted_ids = Bundle("inserted_ids")
+    inserted = Bundle("inserted")  # tuples of id and type
 
     @rule(
-        target=inserted_ids,
+        target=inserted,
         entry=st.one_of(
-            *(
-                st.builds(cls).map(cls.dict)
-                for cls in (ContinuousResource, DiscreteResource)
-            )
+            *(st.builds(cls) for cls in (ContinuousResource, DiscreteResource))
         ),
     )
     def create(self, entry: Union[ContinuousResource, DiscreteResource]):
-        response = self.client.post("/resource/", json=entry)
+        response = self.client.post("/resource/", json=entry.dict())
         assert 201 == response.status_code
         result = response.json()
         assert dict(entry, id=result.get("id")) == result
         self.model[result.get("id")] = result
         # Add the ID provided by the database to the bundle of inserted IDs
-        return result.get("id")
+        return result.get("id"), type(entry)
 
-    @rule(id_=inserted_ids)
-    @precondition(lambda self: bool(self.model))
-    def read(self, id_):
+    @rule(id_and_type=inserted)
+    def read(self, id_and_type):
+        id_, _ = id_and_type
         response = self.client.get(f"/resource/{id_}")
         assert 200 == response.status_code
         assert self.model[id_] == response.json()
@@ -77,15 +85,9 @@ class ResourceRoutes(RuleBasedStateMachine):
             ), f"{resource.get('id')} in response but not in model"
             assert self.model[resource.get("id")] == resource
 
-    @rule(
-        id_=inserted_ids,
-        update_kwargs=st.builds(ContinuousUpdate).map(
-            lambda schema: {k: v for k, v in schema.dict().items() if k != "type"}
-        ),
-    )
-    @precondition(lambda self: bool(self.model))
-    def update(self, id_, update_kwargs):
-        update_kwargs = dict(update_kwargs, type=self.model[id_].get("type"))
+    @rule(id_and_kwargs=inserted.flatmap(inserted_tup_to_strategy))
+    def update(self, id_and_kwargs):
+        id_, update_kwargs = id_and_kwargs
         response = self.client.patch(f"/resource/{id_}", json=update_kwargs)
         assert 200 == response.status_code
         self.model[id_] = dict(
@@ -93,9 +95,9 @@ class ResourceRoutes(RuleBasedStateMachine):
         )
         assert self.model[id_] == response.json()
 
-    @rule(id_=consumes(inserted_ids))
-    @precondition(lambda self: bool(self.model))
-    def delete(self, id_):
+    @rule(id_and_type=consumes(inserted))
+    def delete(self, id_and_type):
+        id_, _ = id_and_type
         response = self.client.delete(f"/resource/{id_}")
         assert 200 == response.status_code
         result = response.json()
