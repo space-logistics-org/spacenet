@@ -48,6 +48,34 @@ SCHEMA_TO_MODEL = {
     schemas.DiscreteResource: models.DiscreteResource,
 }
 
+__models = [
+    models.Element,
+    models.ElementCarrier,
+    models.ResourceContainer,
+    models.SurfaceVehicle,
+    models.PropulsiveVehicle,
+    models.HumanAgent,
+    models.RoboticAgent,
+    models.Resource,
+    models.ContinuousResource,
+    models.DiscreteResource,
+    models.Edge,
+    models.SpaceEdge,
+    models.FlightEdge,
+    models.SurfaceEdge,
+    models.Node,
+    models.LagrangeNode,
+    models.OrbitalNode,
+    models.SurfaceNode,
+]
+
+MODEL_TO_PARENT = {
+    child: parent
+    for child in __models
+    for parent in (models.Element, models.Resource, models.Edge, models.Node)
+    if issubclass(child, parent)
+}
+
 
 if __name__ == "__main__":
     doctest.testmod()
