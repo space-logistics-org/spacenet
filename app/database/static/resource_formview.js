@@ -228,7 +228,8 @@ switch(type){
     success: function() {
       document.getElementById("resource").reset();
       document.getElementById("components").reset();
-      location.href = 'resource_table.html'
+      $('#addModal').modal('hide')
+      location.reload()
     }
   });
 

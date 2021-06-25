@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Bat Chart Visualization</title>
+  <meta name="author" content="SpaceNet Team">
+  <meta name="description" content="A bat chart visualization of missions and campaigns.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="style.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<main>
+<div class="container py-4">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.js" integrity="sha512-CAv0l04Voko2LIdaPmkvGjH3jLsH+pmTXKFoyh5TIimAME93KjejeP9j7wSeSRXqXForv73KUZGJMn8/P98Ifg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@1.27.0/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.1"></script>
+    <canvas id="batChart"></canvas>
+
+    <script>
+        var DateTime = luxon.DateTime;
+        const start = DateTime.fromSQL("2020-11-20");
+
+        const data = {
+        labels: [ // Date Objects
+            start.plus({ days: 7}),
+            start.plus({ days: 14}),
+            start.plus({ days: 21}),
+            start.plus({ days: 28}),
+            start.plus({ days: 35}),
+            start.plus({ days: 42}),
+            start.plus({ days: 49})
+        ],
+        datasets: [ {
+            label: 'Mission 1',
+            data: [0, 1, 2, 1, 2, 0, 1],
+            borderColor: 'red',
+            backgroundColor: 'red',
+        },
+        {
+            label: 'Mission 2',
+            data: [,,,2, 1, 0],
+            borderColor: 'blue',
+            backgroundColor: 'blue',
+        }
+        ]
+        };
+
+        var nodes = ['KSC', 'LAC', 'PAC']
+
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Processes'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.dataset.label || '';
+
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += nodes[context.parsed.y];
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            // Luxon format string
+                            tooltipFormat: 'DD'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        },
+                    },
+                    y: {
+                        title: {
+                        display: true,
+                        text: 'Location'
+                        },
+                        ticks: {
+                            callback: function(value, index, values) {
+                                return nodes[value]
+                            }
+                        }
+                    }
+                },
+            }
+        };
+
+        var myChart = new Chart(
+            document.getElementById('batChart'),
+            config
+        );
+
+
+
+
+    </script>
+
+
+
+
+
+  <footer class="pt-3 mt-4 text-muted border-top">
+    &copy; 2021
+  </footer>
+</div>
+</main>
+
+</html>
+
+things to add:
+-point styling (make a function )
+-line segment styling (make a function https://www.chartjs.org/docs/master/samples/line/segments.html)

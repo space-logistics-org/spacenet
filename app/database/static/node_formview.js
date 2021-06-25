@@ -136,7 +136,8 @@ switch(type){
     success: function() {
       document.getElementById("selection").reset();
       document.getElementById("node").reset();
-      location.href = 'node_table.html'
+      $('#addModal').modal('hide');
+      location.reload()
     }
   });
 
