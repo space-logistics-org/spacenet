@@ -19,7 +19,7 @@ from .utilities import (
     with_type,
 )
 
-pytestmark = [pytest.mark.integration, pytest.mark.resource]
+pytestmark = [pytest.mark.integration, pytest.mark.resource, pytest.mark.routing]
 
 client = TestClient(app)
 

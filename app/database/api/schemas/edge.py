@@ -1,30 +1,30 @@
 from spacenet.schemas.edge import SurfaceEdge, SpaceEdge, FlightEdge
 from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
 
-__all__ = ["SurfaceEdge", "ReadSurfaceEdge", "UpdateSurfaceEdge",
-           "SpaceEdge", "ReadSpaceEdge", "UpdateSpaceEdge",
-           "FlightEdge", "ReadFlightEdge", "UpdateFlightEdge"]
+__all__ = ["SurfaceEdge", "SurfaceEdgeRead", "SurfaceEdgeUpdate",
+           "SpaceEdge", "SpaceEdgeRead", "SpaceEdgeUpdate",
+           "FlightEdge", "FlightEdgeRead", "FlightEdgeUpdate"]
 
 
-class ReadSurfaceEdge(SurfaceEdge, ReadSchema):
+class SurfaceEdgeRead(SurfaceEdge, ReadSchema):
     pass
 
 
-class UpdateSurfaceEdge(SurfaceEdge, RequiresOnlyType):
+class SurfaceEdgeUpdate(SurfaceEdge, RequiresOnlyType):
     pass
 
 
-class ReadSpaceEdge(SpaceEdge, ReadSchema):
+class SpaceEdgeRead(SpaceEdge, ReadSchema):
     pass
 
 
-class UpdateSpaceEdge(SpaceEdge, RequiresOnlyType):
+class SpaceEdgeUpdate(SpaceEdge, RequiresOnlyType):
     pass
 
 
-class ReadFlightEdge(FlightEdge, ReadSchema):
+class FlightEdgeRead(FlightEdge, ReadSchema):
     pass
 
 
-class UpdateFlightEdge(FlightEdge, RequiresOnlyType):
+class FlightEdgeUpdate(FlightEdge, RequiresOnlyType):
     pass

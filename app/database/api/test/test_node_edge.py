@@ -1,3 +1,8 @@
+"""
+Contains integration tests where CRUD operations are exercised with nodes and edges,
+methodologically similar to element routing testing. Same restrictions on sequential runs
+only apply.
+"""
 import json
 import random
 from enum import Enum
@@ -21,7 +26,7 @@ from .utilities import (
     make_subset,
 )
 
-pytestmark = [pytest.mark.integration]
+pytestmark = [pytest.mark.integration, pytest.mark.routing]
 
 client = TestClient(app)
 

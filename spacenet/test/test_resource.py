@@ -2,14 +2,15 @@ import unittest
 
 import pytest
 from pydantic import ValidationError
+
 from spacenet.schemas.resource import (
-    DiscreteResource,
-    ContinuousResource,
-    ResourceType,
     ClassOfSupply,
+    ContinuousResource,
+    DiscreteResource,
+    ResourceType,
 )
 
-pytestmark = [pytest.mark.unit, pytest.mark.resource]
+pytestmark = [pytest.mark.unit, pytest.mark.resource, pytest.mark.schema]
 
 
 class TestDisResource(unittest.TestCase):
@@ -105,7 +106,6 @@ class TestDisResource(unittest.TestCase):
 
 
 class TestConResource(unittest.TestCase):
-
     def test_good_data(self):
         name_ = "Fuel"
         type_ = ResourceType("Continuous")

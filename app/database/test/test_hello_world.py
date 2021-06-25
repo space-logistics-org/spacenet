@@ -10,7 +10,7 @@ from app.database.api.schemas import hello_world as schemas
 from app.database.api.database import Base, engine
 from .utilities import TestingSessionLocal
 
-pytestmark = [pytest.mark.unit]
+pytestmark = [pytest.mark.unit, pytest.mark.database]
 
 
 class TestHelloWorld(unittest.TestCase):

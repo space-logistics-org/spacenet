@@ -45,7 +45,7 @@ r20 = ContinuousResource(name="res20", class_of_supply=204, units="kg", type="Co
 
 ResourceList = [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17,
                 r18, r19, r20]
-
-with open('resource_data.json', 'w') as f:
-    json.dump([resource.dict() for resource in ResourceList], f, indent=2)
+if __name__ == '__main__':
+    with open('resource_data.json', 'w') as f:
+        json.dump([resource.dict() for resource in ResourceList], f, indent=2)
 

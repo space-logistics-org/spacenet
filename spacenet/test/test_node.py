@@ -1,16 +1,15 @@
-import pytest
-
-from spacenet.schemas.node import LagrangeNode, OrbitalNode, SurfaceNode, NodeType
-
-import unittest
 import json
+import unittest
+
 import pkg_resources
+import pytest
 from pydantic import ValidationError
 
-from spacenet.schemas import node as nos
 from spacenet import test
+from spacenet.schemas import node as nos
+from spacenet.schemas.node import LagrangeNode, NodeType, OrbitalNode, SurfaceNode
 
-pytestmark = [pytest.mark.unit, pytest.mark.node]
+pytestmark = [pytest.mark.unit, pytest.mark.node, pytest.mark.schema]
 
 
 class TestNode(unittest.TestCase):
@@ -31,7 +30,7 @@ class TestNode(unittest.TestCase):
             "latitude": 28.57,
             "longitude": -80.65,
         }
-        goodNode = SurfaceNode(**goodData)
+        goodNode = SurfaceNode.parse_obj(goodData)
         self.assertEqual(goodNode.name, goodData.get("name"))
         self.assertEqual(goodNode.description, goodData.get("description"))
         self.assertEqual(goodNode.type, goodData.get("type"))
@@ -40,7 +39,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(goodNode.longitude, goodData.get("longitude"))
 
         with self.assertRaises(ValidationError):
-            badNode = SurfaceNode(**badData)
+            badNode = SurfaceNode.parse_obj(badData)
 
     def testOrbNode(self):
         goodData = {
@@ -61,7 +60,7 @@ class TestNode(unittest.TestCase):
             "inclination": -100,
             "type": "Orbital",
         }
-        goodNode = OrbitalNode(**goodData)
+        goodNode = OrbitalNode.parse_obj(goodData)
         self.assertEqual(goodNode.name, goodData.get("name"))
         self.assertEqual(goodNode.description, goodData.get("description"))
         self.assertEqual(goodNode.body_1, goodData.get("body_1"))
@@ -70,7 +69,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(goodNode.inclination, goodData.get("inclination"))
 
         with self.assertRaises(ValidationError):
-            badNode = OrbitalNode(**badData)
+            badNode = OrbitalNode.parse_obj(badData)
 
     def testLagNode(self):
         goodData = {
@@ -91,7 +90,7 @@ class TestNode(unittest.TestCase):
             "lp_number": 6,
             "type": "Lagrange",
         }
-        goodNode = LagrangeNode(**goodData)
+        goodNode = LagrangeNode.parse_obj(goodData)
         self.assertEqual(goodNode.name, goodData.get("name"))
         self.assertEqual(goodNode.description, goodData.get("description"))
         self.assertEqual(goodNode.body_1, goodData.get("body_1"))
@@ -99,7 +98,7 @@ class TestNode(unittest.TestCase):
         self.assertEqual(goodNode.lp_number, goodData.get("lp_number"))
 
         with self.assertRaises(ValidationError):
-            badNode = LagrangeNode(**badData)
+            badNode = LagrangeNode.parse_obj(badData)
 
 
 class TestFromFile(unittest.TestCase):
@@ -125,7 +124,7 @@ class TestFromFile(unittest.TestCase):
 
         for node in self.good_orbital:
 
-            testnode = nos.OrbitalNode(**node)
+            testnode = nos.OrbitalNode.parse_obj(node)
             self.assertEqual(testnode.name, node.get("name"))
             self.assertEqual(testnode.description, node.get("description"))
             self.assertEqual(testnode.body_1, node.get("body_1"))
@@ -138,7 +137,7 @@ class TestFromFile(unittest.TestCase):
 
         for node in self.good_surface:
 
-            testnode = nos.SurfaceNode(**node)
+            testnode = nos.SurfaceNode.parse_obj(node)
             self.assertEqual(testnode.name, node.get("name"))
             self.assertEqual(testnode.description, node.get("description"))
             self.assertEqual(testnode.body_1, node.get("body_1"))
@@ -150,7 +149,7 @@ class TestFromFile(unittest.TestCase):
 
         for node in self.good_lagrange:
 
-            testnode = nos.LagrangeNode(**node)
+            testnode = nos.LagrangeNode.parse_obj(node)
             self.assertEqual(testnode.name, node.get("name"))
             self.assertEqual(testnode.description, node.get("description"))
             self.assertEqual(testnode.body_1, node.get("body_1"))
@@ -161,14 +160,14 @@ class TestFromFile(unittest.TestCase):
     def test_BadOrbitalNode(self):
         for node in self.bad_nodes:
             with self.assertRaises(ValidationError):
-                bad_node = nos.OrbitalNode(**node)
+                bad_node = nos.OrbitalNode.parse_obj(node)
 
     def test_BadSurfaceNode(self):
         for node in self.bad_nodes:
             with self.assertRaises(ValidationError):
-                bad_node = nos.OrbitalNode(**node)
+                bad_node = nos.OrbitalNode.parse_obj(node)
 
     def test_BadLagrangeNode(self):
         for node in self.bad_nodes:
             with self.assertRaises(ValidationError):
-                bad_node = nos.OrbitalNode(**node)
+                bad_node = nos.OrbitalNode.parse_obj(node)
