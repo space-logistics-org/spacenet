@@ -49,7 +49,7 @@ class TestElementData(unittest.TestCase):
                 self.db.delete(db_element)
                 self.db.commit()
 
-            elif element["type"] == "Resource Container":
+            elif element["type"] == "ResourceContainer":
                 
                 testelement = schemas.ResourceContainer.parse_obj(element)
                 db_element = models.ResourceContainer(**testelement.dict())
@@ -71,7 +71,7 @@ class TestElementData(unittest.TestCase):
                 self.db.delete(db_element)
                 self.db.commit()
 
-            elif element["type"] == "Element Carrier":
+            elif element["type"] == "ElementCarrier":
                 
                 testelement = schemas.ElementCarrier.parse_obj(element)
                 db_element = models.ElementCarrier(**testelement.dict())
@@ -94,7 +94,7 @@ class TestElementData(unittest.TestCase):
                 self.db.delete(db_element)
                 self.db.commit()
 
-            elif element["type"] == "Propulsive Vehicle":
+            elif element["type"] == "PropulsiveVehicle":
                 
                 testelement = schemas.PropulsiveVehicle.parse_obj(element)
                 db_element = models.PropulsiveVehicle(**testelement.dict())
@@ -120,7 +120,7 @@ class TestElementData(unittest.TestCase):
                 self.db.delete(db_element)
                 self.db.commit()
 
-            elif element["type"] == "Surface Vehicle":
+            elif element["type"] == "SurfaceVehicle":
                 
                 testelement = schemas.SurfaceVehicle.parse_obj(element)
                 db_element = models.SurfaceVehicle(**testelement.dict())
@@ -146,7 +146,7 @@ class TestElementData(unittest.TestCase):
                 self.db.delete(db_element)
                 self.db.commit()
 
-            elif element["type"] == "Human Agent":
+            elif element["type"] == "HumanAgent":
                 
                 testelement = schemas.HumanAgent.parse_obj(element)
                 db_element = models.HumanAgent(**testelement.dict())
@@ -167,7 +167,7 @@ class TestElementData(unittest.TestCase):
                 self.db.delete(db_element)
                 self.db.commit()
 
-            elif element["type"] == "Robotic Agent":
+            elif element["type"] == "RoboticAgent":
                 
                 testelement = schemas.RoboticAgent.parse_obj(element)
                 db_element = models.RoboticAgent(**testelement.dict())
