@@ -1,0 +1,91 @@
+[
+    {
+        "type": "Generic Element",
+        "name": "Power Supply Unit",
+        "class_of_supply": 803,
+        "environment": "Unpressurized",
+        "accommodation_mass": 0.0,
+        "mass": 2500.0,
+        "volume": 0.0,
+        "description": "An element to provide the habitat with power"
+    },
+    {
+        "type": "Resource Container",
+        "name": "Cargo Lander",
+        "class_of_supply": 9021,
+        "environment": "Unpressurized",
+        "accommodation_mass": 0.0,
+        "mass": 1000.0,
+        "volume": 0.0,
+        "max_cargo_mass": 12000.0,
+        "max_cargo_volume": 0.0,
+        "description": "Lander for delivering cargo to the lunar surface"
+    },
+    {
+        "type": "Element Carrier",
+        "name": "Crew Habitat",
+        "class_of_supply": 801,
+        "environment": "Unpressurized",
+        "accommodation_mass": 0.0,
+        "mass": 7500.0,
+        "volume": 0.0,
+        "max_cargo_mass": 1500.0,
+        "max_cargo_volume": 0.0,
+        "cargo_environment": "Unpressurized",
+        "description": "Lunar crew habitat"
+    },
+    {
+        "type": "Propulsive Vehicle",
+        "name": "Orion CM",
+        "class_of_supply": 9022,
+        "environment": "Unpressurized",
+        "accommodation_mass": 0.0,
+        "mass": 8000.0,
+        "volume": 0.0,
+        "max_cargo_mass": 100.0,
+        "max_cargo_volume": 0.0,
+        "max_crew": 4,
+        "max_fuel": 0.0,
+        "isp": 301.0,
+        "propellant_id": 0,
+        "description": "Orion Crew Module"
+    },
+    {
+        "type": "Surface Vehicle",
+        "name": "Crewed Lander",
+        "class_of_supply": 9021,
+        "environment": "Unpressurized",
+        "accommodation_mass": 0.0,
+        "mass": 12000.0,
+        "volume": 0.0,
+        "max_cargo_mass": 400.0,
+        "max_cargo_volume": 0.0,
+        "max_crew": 4,
+        "max_fuel": 0.0,
+        "max_speed": 0.0,
+        "fuel_id": 0,
+        "description": "Lander for delivering crew to the lunar surface"
+    },
+    {
+        "type": "Human Agent",
+        "name": "Crew Member",
+        "class_of_supply": 0,
+        "environment": "Unpressurized",
+        "accommodation_mass": 0.0,
+        "mass": 100.0,
+        "volume": 0.0,
+        "active_time_fraction": 0.66,
+        "description": "Crew member"
+    },
+    {
+        "type": "Robotic Agent",
+        "name": "Crew Member",
+        "class_of_supply": 0,
+        "environment": "Unpressurized",
+        "accommodation_mass": 0.0,
+        "mass": 100.0,
+        "volume": 0.0,
+        "active_time_fraction": 0.66,
+        "description": "Crew member"
+    }
+]
