@@ -10,7 +10,7 @@
         "description": "An element to provide the habitat with power"
     },
     {
-        "type": "Resource Container",
+        "type": "ResourceContainer",
         "name": "Cargo Lander",
         "class_of_supply": 9021,
         "environment": "Unpressurized",
@@ -22,7 +22,7 @@
         "description": "Lander for delivering cargo to the lunar surface"
     },
     {
-        "type": "Element Carrier",
+        "type": "ElementCarrier",
         "name": "Crew Habitat",
         "class_of_supply": 801,
         "environment": "Unpressurized",
@@ -35,7 +35,7 @@
         "description": "Lunar crew habitat"
     },
     {
-        "type": "Propulsive Vehicle",
+        "type": "PropulsiveVehicle",
         "name": "Orion CM",
         "class_of_supply": 9022,
         "environment": "Unpressurized",
@@ -51,7 +51,7 @@
         "description": "Orion Crew Module"
     },
     {
-        "type": "Surface Vehicle",
+        "type": "SurfaceVehicle",
         "name": "Crewed Lander",
         "class_of_supply": 9021,
         "environment": "Unpressurized",
@@ -67,7 +67,7 @@
         "description": "Lander for delivering crew to the lunar surface"
     },
     {
-        "type": "Human Agent",
+        "type": "HumanAgent",
         "name": "Crew Member",
         "class_of_supply": 0,
         "environment": "Unpressurized",
@@ -78,7 +78,7 @@
         "description": "Crew member"
     },
     {
-        "type": "Robotic Agent",
+        "type": "RoboticAgent",
         "name": "Crew Member",
         "class_of_supply": 0,
         "environment": "Unpressurized",
