@@ -1,6 +1,6 @@
 [
     {
-        "type": "Generic Element",
+        "type": "Element",
         "name": "Power Supply Unit",
         "class_of_supply": 803,
         "environment": "Unpressurized",
