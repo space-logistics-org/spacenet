@@ -6,12 +6,15 @@ from fastapi.testclient import TestClient
 from hypothesis.stateful import (
     RuleBasedStateMachine,
     consumes,
+    precondition,
     rule,
     Bundle,
 )
 
 from .utilities import get_test_db
 from app.database.api.database import get_db
+from app.database.api.models.resource import Resource as ResourceModel
+from app.database.test.utilities import test_engine
 from app.database.api.main import app
 from ..schemas.resource import (
     ContinuousResource,
@@ -40,7 +43,10 @@ class ResourceRoutes(RuleBasedStateMachine):
     @rule(
         target=inserted_ids,
         entry=st.one_of(
-            *(st.builds(cls).map(cls.dict) for cls in (ContinuousResource, DiscreteResource))
+            *(
+                st.builds(cls).map(cls.dict)
+                for cls in (ContinuousResource, DiscreteResource)
+            )
         ),
     )
     def create(self, entry: Union[ContinuousResource, DiscreteResource]):
@@ -53,11 +59,11 @@ class ResourceRoutes(RuleBasedStateMachine):
         return result.get("id")
 
     @rule(id_=inserted_ids)
+    @precondition(lambda self: bool(self.model))
     def read(self, id_):
         response = self.client.get(f"/resource/{id_}")
         assert 200 == response.status_code
-        result = response.json()
-        assert self.model[id_] == result
+        assert self.model[id_] == response.json()
 
     @rule()
     def read_all(self):
@@ -65,7 +71,7 @@ class ResourceRoutes(RuleBasedStateMachine):
         assert 200 == response.status_code
         result = response.json()
         assert len(self.model) == len(result)
-        for resource in response.json():
+        for resource in result:
             assert (
                 resource.get("id") in self.model
             ), f"{resource.get('id')} in response but not in model"
@@ -77,16 +83,18 @@ class ResourceRoutes(RuleBasedStateMachine):
             lambda schema: {k: v for k, v in schema.dict().items() if k != "type"}
         ),
     )
+    @precondition(lambda self: bool(self.model))
     def update(self, id_, update_kwargs):
         update_kwargs = dict(update_kwargs, type=self.model[id_].get("type"))
         response = self.client.patch(f"/resource/{id_}", json=update_kwargs)
-        assert 200 == response.status_code, response.json()
+        assert 200 == response.status_code
         self.model[id_] = dict(
             self.model[id_], **{k: v for k, v in update_kwargs.items() if v is not None}
         )
         assert self.model[id_] == response.json()
 
     @rule(id_=consumes(inserted_ids))
+    @precondition(lambda self: bool(self.model))
     def delete(self, id_):
         response = self.client.delete(f"/resource/{id_}")
         assert 200 == response.status_code
@@ -94,10 +102,8 @@ class ResourceRoutes(RuleBasedStateMachine):
         assert self.model.pop(result.get("id")) == result
 
     def teardown(self):
-        for id_, expected in self.model.items():
-            response = self.client.delete(f"/resource/{id_}")
-            assert 200 == response.status_code
-            assert expected == response.json()
+        ResourceModel.__table__.drop(test_engine, checkfirst=True)
+        ResourceModel.__table__.create(test_engine, checkfirst=False)
 
 
 TestResourceRoutes = ResourceRoutes.TestCase
