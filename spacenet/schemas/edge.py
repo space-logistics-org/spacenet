@@ -5,6 +5,8 @@ from enum import Enum
 
 __all__ = ["Edge", "EdgeType", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
 
+from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+
 
 class EdgeType(str, Enum):
     """
@@ -27,10 +29,10 @@ class Edge(BaseModel):
     description: str = Field(
         ..., title="Description", description="short description of the edge",
     )
-    origin_id: conint(strict=True) = Field(
+    origin_id: conint(strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT) = Field(
         ..., title="Origin ID", description="ID of the origin node"
     )
-    destination_id: conint(strict=True) = Field(
+    destination_id: conint(strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT) = Field(
         ..., title="Destination ID", description="ID of the destination node",
     )
 
@@ -73,7 +75,7 @@ class FlightEdge(Edge):
     duration: float = Field(
         ..., title="duration", description="Duration of flight edge", ge=0
     )
-    max_crew: conint(strict=True, ge=0) = Field(
+    max_crew: conint(strict=True, ge=0, le=SQLITE_MAX_INT) = Field(
         ..., title="Max Crew", description="Crew capacity for flight",
     )
     max_cargo: float = Field(
