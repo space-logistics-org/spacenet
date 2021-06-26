@@ -1,44 +1,17 @@
-from typing import List, Union
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from .utilities import create_read_update_unions
 from .. import database
 from ..models import element as models
-from ..schemas.element import *
-from ..models.utilities import dictify_row, SCHEMA_TO_MODEL
+from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
+from ..schemas.constants import ELEMENT_SCHEMAS
 
 router = APIRouter()
 
-Elements = Union[
-    Element,
-    ElementCarrier,
-    SurfaceVehicle,
-    PropulsiveVehicle,
-    RoboticAgent,
-    HumanAgent,
-    ResourceContainer,
-]
-
-UpdateElements = Union[
-    ElementUpdate,
-    ElementCarrierUpdate,
-    SurfaceVehicleUpdate,
-    PropulsiveVehicleUpdate,
-    RoboticAgentUpdate,
-    HumanAgentUpdate,
-    ResourceContainerUpdate,
-]
-
-ReadElements = Union[
-    ElementRead,
-    ElementCarrierRead,
-    SurfaceVehicleRead,
-    PropulsiveVehicleRead,
-    RoboticAgentRead,
-    HumanAgentRead,
-    ResourceContainerRead,
-]
+Elements, ReadElements, UpdateElements = create_read_update_unions(ELEMENT_SCHEMAS)
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 

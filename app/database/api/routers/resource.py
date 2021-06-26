@@ -1,20 +1,17 @@
-from typing import Any, Dict, List, Union
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from .utilities import create_read_update_unions
 from .. import database
 from ..models import resource as models
-from ..models.utilities import dictify_row, SCHEMA_TO_MODEL
-from ..schemas.resource import *
+from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
+from ..schemas.constants import RESOURCE_SCHEMAS
 
 router = APIRouter()
 
-Resources = Union[ContinuousResource, DiscreteResource]
-
-UpdateResources = Union[ContinuousUpdate, DiscreteUpdate]
-
-ReadResources = Union[ContinuousRead, DiscreteRead]
+Resources, ReadResources, UpdateResources = create_read_update_unions(RESOURCE_SCHEMAS)
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 

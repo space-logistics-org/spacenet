@@ -1,19 +1,19 @@
-from typing import List, Union
-from fastapi import Depends, APIRouter, HTTPException, status
+from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
+from .utilities import create_read_update_unions
 from .. import database
 from ..models import edge as models
-from ..schemas.edge import *
-from ..models.utilities import dictify_row, SCHEMA_TO_MODEL
+from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
+from ..schemas.constants import EDGE_SCHEMAS
 
 # Build a new router
 router = APIRouter()
 
-Edges = Union[SurfaceEdge, SpaceEdge, FlightEdge]
-UpdateEdges = Union[SurfaceEdgeUpdate, SpaceEdgeUpdate, FlightEdgeUpdate]
-ReadEdges = Union[SurfaceEdgeRead, SpaceEdgeRead, FlightEdgeRead]
+Edges, ReadEdges, UpdateEdges = create_read_update_unions(EDGE_SCHEMAS)
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
 
