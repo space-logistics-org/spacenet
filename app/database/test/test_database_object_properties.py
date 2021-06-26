@@ -64,6 +64,14 @@ class DatabaseOperations(RuleBasedStateMachine):
         from_db = self.db.query(table).get(id_)
         assert from_db is None
 
+    def read_all(self, table: Type):
+        from_db = self.db.query(table).all()
+        assert table in self.model
+        model_table = self.model[table]
+        for row in from_db:
+            assert row.id in model_table
+            assert model_table[row.id] == dictify_row(row)
+
     @rule(id_and_table=consumes(inserted))
     def delete(self, id_and_table: Tuple[int, Type]):
         id_, table = id_and_table
