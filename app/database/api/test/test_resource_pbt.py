@@ -17,11 +17,10 @@ from app.database.api.database import get_db
 from app.database.api.models.resource import Resource as ResourceModel
 from app.database.test.utilities import test_engine
 from app.database.api.main import app
+from ..schemas.constants import CREATE_TO_UPDATE
 from ..schemas.resource import (
     ContinuousResource,
-    ContinuousUpdate,
     DiscreteResource,
-    DiscreteUpdate,
 )
 
 pytestmark = [
@@ -32,11 +31,6 @@ pytestmark = [
 ]
 
 app.dependency_overrides[get_db] = get_test_db
-
-CREATE_TO_UPDATE = {
-    ContinuousResource: ContinuousUpdate,
-    DiscreteResource: DiscreteUpdate,
-}
 
 
 def inserted_tup_to_strategy(inserted_tup):
