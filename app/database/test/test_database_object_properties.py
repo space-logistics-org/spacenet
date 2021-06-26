@@ -5,6 +5,7 @@ import pytest
 from hypothesis import assume, strategies as st
 from hypothesis.stateful import RuleBasedStateMachine, rule, consumes, Bundle
 
+from spacenet.constants import SQLITE_MIN_INT, SQLITE_MAX_INT
 from app.database.api.models import utilities as model_utils
 from .utilities import TestingSessionLocal, test_engine
 from ..api.models.utilities import MODEL_TO_PARENT, SCHEMA_TO_MODEL, dictify_row
@@ -55,10 +56,10 @@ class DatabaseOperations(RuleBasedStateMachine):
             assert value == getattr(from_db, attr)
 
     @rule(
-        id_=st.integers(min_value=-1 * 2 ** 63, max_value=2 ** 63 - 1),
+        id_=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
         table=st.one_of(*(st.just(parent) for parent in MODEL_TO_PARENT.values())),
     )
-    def read_invalid(self, id_, table):
+    def read_invalid_id(self, id_, table):
         assume(id_ not in self.model[table])
         from_db = self.db.query(table).get(id_)
         assert from_db is None

@@ -3,7 +3,9 @@ from enum import Enum
 __all__ = [
     "Environment",
     "ClassOfSupply",
-    "COS_TO_NAME"
+    "COS_TO_NAME",
+    "SQLITE_MIN_INT",
+    "SQLITE_MAX_INT",
 ]
 
 
@@ -146,5 +148,5 @@ COS_TO_NAME = {
     ClassOfSupply.CoS9024: "Ascent Stages",
 }
 
-SQLITE_MIN_INT = -1 * 2**63
-SQLITE_MAX_INT = 2**63 - 1
+SQLITE_MIN_INT = -1 * 2 ** 63
+SQLITE_MAX_INT = 2 ** 63 - 1

@@ -3,6 +3,7 @@ from typing import Union
 import pytest
 import hypothesis.strategies as st
 from fastapi.testclient import TestClient
+from hypothesis import assume
 from hypothesis.stateful import (
     RuleBasedStateMachine,
     consumes,
@@ -10,6 +11,7 @@ from hypothesis.stateful import (
     Bundle,
 )
 
+from spacenet.constants import SQLITE_MIN_INT, SQLITE_MAX_INT
 from .utilities import get_test_db
 from app.database.api.database import get_db
 from app.database.api.models.resource import Resource as ResourceModel
@@ -73,6 +75,12 @@ class ResourceRoutes(RuleBasedStateMachine):
         assert 200 == response.status_code
         assert self.model[id_] == response.json()
 
+    @rule(id_=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT))
+    def read_invalid_id(self, id_):
+        assume(id_ not in self.model)
+        response = self.client.get(f"/resource/{id_}")
+        assert 404 == response.status_code
+
     @rule()
     def read_all(self):
         response = self.client.get("/resource/")
@@ -95,6 +103,15 @@ class ResourceRoutes(RuleBasedStateMachine):
         )
         assert self.model[id_] == response.json()
 
+    @rule(
+        id_=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+        kwargs=inserted.flatmap(inserted_tup_to_strategy).map(lambda t: t[1]),
+    )
+    def update_invalid_id(self, id_, kwargs):
+        assume(id_ not in self.model)
+        response = self.client.patch(f"/resource/{id_}", json=kwargs)
+        assert 404 == response.status_code
+
     @rule(id_and_type=consumes(inserted))
     def delete(self, id_and_type):
         id_, _ = id_and_type
@@ -102,6 +119,12 @@ class ResourceRoutes(RuleBasedStateMachine):
         assert 200 == response.status_code
         result = response.json()
         assert self.model.pop(result.get("id")) == result
+
+    @rule(id_=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT))
+    def delete_invalid_id(self, id_):
+        assume(id_ not in self.model)
+        response = self.client.delete(f"/resource/{id_}")
+        assert 404 == response.status_code
 
     def teardown(self):
         ResourceModel.__table__.drop(test_engine, checkfirst=True)
