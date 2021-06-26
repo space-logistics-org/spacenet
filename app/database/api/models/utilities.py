@@ -4,7 +4,7 @@ from typing import Any, Dict
 from app.database.api.database import Base
 from app.database.api import models, schemas
 
-__all__ = ["dictify_row", "SCHEMA_TO_MODEL"]
+__all__ = ["dictify_row", "SCHEMA_TO_MODEL", "MODEL_TO_PARENT"]
 
 
 def dictify_row(row: Base) -> Dict[str, Any]:
