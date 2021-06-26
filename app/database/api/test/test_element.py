@@ -40,8 +40,13 @@ from app.database.api.models.element import Element as ElementModel
 from app.database.test.utilities import test_engine
 from spacenet.schemas.element import ElementKind
 from spacenet.test.element_factories import *
-from .utilities import (filter_val_not_none, first_subset_second, get_test_db, make_subset,
-                        with_type)
+from .utilities import (
+    filter_val_not_none,
+    first_subset_second,
+    get_test_db,
+    make_subset,
+    with_type,
+)
 
 pytestmark = [pytest.mark.integration, pytest.mark.element, pytest.mark.routing]
 
@@ -121,7 +126,7 @@ def test_create(element_type: ElementKind):
     read_all_response = client.get(f"/element/")
     assert read_all_response.status_code == 200
     assert (
-            len(read_all_response.json()) == 1
+        len(read_all_response.json()) == 1
     ), "expected length-1 list of existing elements"
     assert read_response.json() == read_all_response.json()[0]
 

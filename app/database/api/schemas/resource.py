@@ -1,5 +1,5 @@
-from spacenet.schemas.resource import DiscreteResource, ContinuousResource
 from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
+from spacenet.schemas.resource import ContinuousResource, DiscreteResource
 
 __all__ = [
     "DiscreteResource",

@@ -15,7 +15,8 @@ from spacenet.schemas.resource import ResourceType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
-    get_test_db, make_subset,
+    get_test_db,
+    make_subset,
     with_type,
 )
 

@@ -23,8 +23,8 @@ from spacenet.schemas.node import NodeType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
+    get_test_db,
     make_subset,
-    get_test_db
 )
 
 pytestmark = [pytest.mark.integration, pytest.mark.routing]
@@ -139,24 +139,8 @@ def test_empty(prefix):
 
 @pytest.mark.parametrize(
     "variant_name",
-    [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.node,
-            ],
-        )
-        for name in NODE_NAMES
-    ]
-    + [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.edge,
-            ],
-        )
-        for name in EDGE_NAMES
-    ],
+    [pytest.param(name, marks=[pytest.mark.node,],) for name in NODE_NAMES]
+    + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_create(variant_name):
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
@@ -182,24 +166,8 @@ def test_create(variant_name):
 
 @pytest.mark.parametrize(
     "variant_name",
-    [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.node,
-            ],
-        )
-        for name in NODE_NAMES
-    ]
-    + [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.edge,
-            ],
-        )
-        for name in EDGE_NAMES
-    ],
+    [pytest.param(name, marks=[pytest.mark.node,],) for name in NODE_NAMES]
+    + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_update(variant_name):
     def check_get():
@@ -243,24 +211,8 @@ def test_update(variant_name):
 
 @pytest.mark.parametrize(
     "variant_name",
-    [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.node,
-            ],
-        )
-        for name in NODE_NAMES
-    ]
-    + [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.edge,
-            ],
-        )
-        for name in EDGE_NAMES
-    ],
+    [pytest.param(name, marks=[pytest.mark.node,],) for name in NODE_NAMES]
+    + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_delete(variant_name):
     def check_get_all():

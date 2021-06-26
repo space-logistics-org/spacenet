@@ -1,7 +1,5 @@
-from spacenet.schemas.node import SurfaceNode, OrbitalNode, LagrangeNode
-
 from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
-
+from spacenet.schemas.node import LagrangeNode, OrbitalNode, SurfaceNode
 
 __all__ = [
     "LagrangeNode",

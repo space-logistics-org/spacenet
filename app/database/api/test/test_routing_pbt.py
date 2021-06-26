@@ -1,31 +1,18 @@
 from collections import defaultdict
-from typing import Union
 
-import pytest
 import hypothesis.strategies as st
+import pytest
 from fastapi.testclient import TestClient
 from hypothesis import assume
-from hypothesis.stateful import (
-    RuleBasedStateMachine,
-    consumes,
-    rule,
-    Bundle,
-)
+from hypothesis.stateful import Bundle, RuleBasedStateMachine, consumes, rule
 
-from spacenet.constants import SQLITE_MIN_INT, SQLITE_MAX_INT
-from .utilities import get_test_db
 from app.database.api import models
 from app.database.api.database import get_db
 from app.database.api.main import app
-from ..schemas import *
-from ..schemas.constants import (
-    CREATE_TO_UPDATE,
-    EDGE_SCHEMAS,
-    ELEMENT_SCHEMAS,
-    NODE_SCHEMAS,
-    RESOURCE_SCHEMAS,
-)
+from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from .utilities import get_test_db
 from ..models import utilities as model_utils
+from ..schemas.constants import CREATE_SCHEMAS, CREATE_TO_UPDATE
 from ...test.utilities import test_engine
 
 pytestmark = [
@@ -38,13 +25,28 @@ pytestmark = [
     pytest.mark.slow,
 ]
 
-app.dependency_overrid_es[get_db] = get_test_db
+app.dependency_overrides[get_db] = get_test_db
 
-TYPE_TO_PREFIX = {
-    **{schema: "/edge" for schema in EDGE_SCHEMAS},
-    **{schema: "/element" for schema in ELEMENT_SCHEMAS},
-    **{schema: "/node" for schema in NODE_SCHEMAS},
-    **{schema: "/resource" for schema in RESOURCE_SCHEMAS},
+PARENT_TO_PREFIX = {
+    models.Edge: "/edge",
+    models.Element: "/element",
+    models.Node: "/node",
+    models.Resource: "/resource",
+}
+
+
+def type_to_table(schema_cls):
+    child_model = model_utils.SCHEMA_TO_MODEL[schema_cls]
+    return model_utils.MODEL_TO_PARENT[child_model]
+
+
+# Mapping from a given schema to the set of schemas in the same table as that schema,
+# including the original provided schema
+SCHEMAS_IN_SAME_TABLE = {
+    first: second
+    for first in model_utils.SCHEMA_TO_MODEL
+    for second in model_utils.SCHEMA_TO_MODEL
+    if type_to_table(first) == type_to_table(second)
 }
 
 
@@ -63,33 +65,45 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
 
     inserted = Bundle("inserted")
 
+    @rule(
+        target=inserted,
+        create_schema=st.one_of(*(st.builds(cls) for cls in CREATE_SCHEMAS)),
+    )
     def create(self, create_schema):
-        prefix = TYPE_TO_PREFIX[type(create_schema)]
-        response = self.client.post(f"{prefix}/", json=create_schema.dict())
+        type_ = type(create_schema)
+        table = type_to_table(type_)
+        prefix = PARENT_TO_PREFIX[table]
+        schema_dict = create_schema.dict()
+        response = self.client.post(f"{prefix}/", json=schema_dict)
         assert 201 == response.status_code
         result = response.json()
-        assert dict(create_schema.dict, id=result.get("id")) == result
-        self.model[type(create_schema)][result.get("id")] = result
-        # TODO: what should this return? The entire thing?
+        id_ = result.get("id")
+        assert dict(schema_dict, id=id_) == result
+        self.model[table][id_] = result
+        return id_, type(create_schema)
 
+    @rule(id_and_type=inserted)
     def read(self, id_and_type):
         id_, type_ = id_and_type
-        prefix = TYPE_TO_PREFIX[type_]
-        response = self.client.get("/".join((prefix, id_)))
+        table = type_to_table(type_)
+        prefix = PARENT_TO_PREFIX[table]
+        response = self.client.get("/".join((prefix, str(id_))))
         assert 200 == response.status_code
-        assert id_ in self.model[type_]
-        assert self.model[type_][id_] == response.json()
+        assert id_ in self.model[table]
+        assert self.model[table][id_] == response.json()
 
+    @rule(id_and_type=inserted)
     def read_invalid_id(self, id_and_type):
         id_, type_ = id_and_type
-        assume(id_ not in self.model[type_])
-        prefix = TYPE_TO_PREFIX[type_]
-        response = self.client.get("/".join((prefix, id_)))
+        table = type_to_table(type_)
+        assume(id_ not in self.model[table])
+        prefix = PARENT_TO_PREFIX[table]
+        response = self.client.get("/".join((prefix, str(id_))))
         assert 404 == response.status_code
 
     def read_all(self):
-        for type_, entries in self.model.items():
-            prefix = TYPE_TO_PREFIX[type_]
+        for table, entries in self.model.items():
+            prefix = PARENT_TO_PREFIX[table]
             response = self.client.get(f"{prefix}/")
             assert 200 == response.status_code
             result = response.json()
@@ -99,38 +113,88 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
                 assert id_ in entries
                 assert entries[id_] == entry
 
+    @rule(
+        id_type_and_schema=inserted.flatmap(
+            lambda t: st.tuples(
+                st.just(t[0]), st.just(t[1]), st.builds(CREATE_TO_UPDATE[t[1]])
+            )
+        )
+    )
     def update(self, id_type_and_schema):
         id_, type_, update_schema = id_type_and_schema
-        prefix = TYPE_TO_PREFIX[type_]
-        response = self.client.patch("/".join((prefix, id_)), json=update_schema.dict())
+        table = type_to_table(type_)
+        prefix = PARENT_TO_PREFIX[table]
+        update_dict = update_schema.dict()
+        response = self.client.patch("/".join((prefix, str(id_))), json=update_dict)
         assert 200 == response.status_code
-        # TODO: if storing entire objects on bundle, this has to consume
+        self.model[table][id_] = dict(
+            self.model[table][id_],
+            **{k: v for k, v in update_dict.items() if v is not None},
+        )
+        assert self.model[table][id_] == response.json()
 
+    @rule(
+        id_type_and_schema=inserted.flatmap(
+            lambda t: st.tuples(
+                st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+                st.just(t[1]),
+                st.builds(CREATE_TO_UPDATE[t[1]]),
+            )
+        )
+    )
     def update_invalid_id(self, id_type_and_schema):
         id_, type_, update_schema = id_type_and_schema
-        prefix = TYPE_TO_PREFIX[type_]
-        response = self.client.patch("/".join((prefix, id_)), json=update_schema.dict())
+        table = type_to_table(type_)
+        assume(id_ not in self.model[table])
+        prefix = PARENT_TO_PREFIX[table]
+        response = self.client.patch("/".join((prefix, str(id_))), json=update_schema.dict())
         assert 404 == response.status_code
 
-    def update_type_mismatch(self, id_type_and_schema):
-        id_, type_, update_schema = id_type_and_schema
-        prefix = TYPE_TO_PREFIX[type_]
-        response = self.client.patch("/".join((prefix, id_)), json=update_schema.dict())
+    @rule(
+        id_type_and_schema=inserted.flatmap(
+            lambda t: st.tuples(
+                st.just(t[0]),
+                st.just(type_to_table(t[0])),
+                st.one_of(
+                    *(
+                        st.builds(cls)
+                        for cls in SCHEMAS_IN_SAME_TABLE[t[1]]
+                        if cls != t[1]
+                    )
+                ),
+            )
+        )
+    )
+    def update_type_mismatch(self, id_table_and_schema):
+        id_, table, update_schema = id_table_and_schema
+        prefix = PARENT_TO_PREFIX[table]
+        response = self.client.patch("/".join((prefix, str(id_))), json=update_schema.dict())
         assert 409 == response.status_code
 
+    @rule(id_and_type=consumes(inserted))
     def delete(self, id_and_type):
         id_, type_ = id_and_type
-        prefix = TYPE_TO_PREFIX[type_]
-        response = self.client.delete("/".join((prefix, id_)))
+        table = type_to_table(type_)
+        prefix = PARENT_TO_PREFIX[table]
+        response = self.client.delete("/".join((prefix, str(id_))))
         assert 200 == response.status_code
         result = response.json()
-        assert self.model[type_].pop(result.get("id")) == result
+        assert self.model[table].pop(result.get("id")) == result
 
+    @rule(
+        id_and_type=inserted.flatmap(
+            lambda t: st.tuples(
+                st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+                st.just(t[1]),
+            )
+        )
+    )
     def delete_invalid_id(self, id_and_type):
         id_, type_ = id_and_type
-        assume(id_ not in self.model[type_])
-        prefix = TYPE_TO_PREFIX[type_]
-        response = self.client.delete("/".join((prefix, id_)))
+        table = type_to_table(type_)
+        assume(id_ not in self.model[table])
+        prefix = PARENT_TO_PREFIX[table]
+        response = self.client.delete("/".join((prefix, str(id_))))
         assert 404 == response.status_code
 
     def teardown(self):
