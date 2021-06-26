@@ -8,10 +8,17 @@ from .node import *
 from .resource import *
 
 __all__ = [
+    "CREATE_SCHEMAS",
+    "UPDATE_SCHEMAS",
+    "READ_SCHEMAS",
     "CREATE_TO_UPDATE",
     "CREATE_TO_READ",
     "READ_TO_CREATE",
     "UPDATE_TO_CREATE",
+    "EDGE_SCHEMAS",
+    "ELEMENT_SCHEMAS",
+    "NODE_SCHEMAS",
+    "RESOURCE_SCHEMAS"
 ]
 
 K = TypeVar("K")
@@ -69,7 +76,11 @@ CREATE_TO_UPDATE = {
     DiscreteResource: DiscreteUpdate,
 }
 
+CREATE_SCHEMAS = set(CREATE_TO_UPDATE.keys())
+
 UPDATE_TO_CREATE = __invert_injective_map(CREATE_TO_UPDATE)
+
+UPDATE_SCHEMAS = set(UPDATE_TO_CREATE.keys())
 
 CREATE_TO_READ = {
     FlightEdge: FlightEdgeRead,
@@ -91,6 +102,64 @@ CREATE_TO_READ = {
 
 READ_TO_CREATE = __invert_injective_map(CREATE_TO_READ)
 
+READ_SCHEMAS = set(READ_TO_CREATE.keys())
+
+EDGE_SCHEMAS = {
+    FlightEdge,
+    FlightEdgeUpdate,
+    FlightEdgeRead,
+    SpaceEdge,
+    SpaceEdgeUpdate,
+    SpaceEdgeRead,
+    SurfaceEdge,
+    SurfaceEdgeUpdate,
+    SurfaceEdgeRead,
+}
+
+ELEMENT_SCHEMAS = {
+    Element,
+    ElementUpdate,
+    ElementRead,
+    ElementCarrier,
+    ElementCarrierUpdate,
+    ElementCarrierRead,
+    ResourceContainer,
+    ResourceContainerUpdate,
+    ResourceContainerRead,
+    SurfaceVehicle,
+    SurfaceVehicleUpdate,
+    SurfaceVehicleRead,
+    PropulsiveVehicle,
+    PropulsiveVehicleUpdate,
+    PropulsiveVehicleRead,
+    HumanAgent,
+    HumanAgentUpdate,
+    HumanAgentRead,
+    RoboticAgent,
+    RoboticAgentUpdate,
+    RoboticAgentRead,
+}
+
+NODE_SCHEMAS = {
+    LagrangeNode,
+    LagrangeNodeUpdate,
+    LagrangeNodeRead,
+    OrbitalNode,
+    OrbitalNodeUpdate,
+    OrbitalNodeRead,
+    SurfaceNode,
+    SurfaceNodeUpdate,
+    SurfaceNodeRead,
+}
+
+RESOURCE_SCHEMAS = {
+    ContinuousResource,
+    ContinuousUpdate,
+    ContinuousRead,
+    DiscreteResource,
+    DiscreteUpdate,
+    DiscreteRead,
+}
 
 if __name__ == "__main__":
     doctest.testmod()
