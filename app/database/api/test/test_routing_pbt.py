@@ -154,7 +154,7 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         id_type_and_schema=inserted.flatmap(
             lambda t: st.tuples(
                 st.just(t[0]),
-                st.just(type_to_table(t[0])),
+                st.just(type_to_table(t[1])),
                 st.one_of(
                     *(
                         st.builds(cls)
