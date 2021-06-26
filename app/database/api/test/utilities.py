@@ -91,5 +91,5 @@ def filter_val_not_none(d: Dict) -> Dict:
     return {k: v for k, v in d.items() if v is not None}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     doctest.testmod()

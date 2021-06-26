@@ -1,27 +1,21 @@
 from typing import Union
 
-import pytest
 import hypothesis.strategies as st
+import pytest
 from fastapi.testclient import TestClient
 from hypothesis import assume
-from hypothesis.stateful import (
-    RuleBasedStateMachine,
-    consumes,
-    rule,
-    Bundle,
-)
+from hypothesis.stateful import Bundle, RuleBasedStateMachine, consumes, rule
 
-from spacenet.constants import SQLITE_MIN_INT, SQLITE_MAX_INT
-from .utilities import get_test_db
 from app.database.api.database import get_db
+from app.database.api.main import app
 from app.database.api.models.resource import Resource as ResourceModel
 from app.database.test.utilities import test_engine
-from app.database.api.main import app
+from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from .utilities import get_test_db
+from ..schemas.constants import CREATE_TO_UPDATE
 from ..schemas.resource import (
     ContinuousResource,
-    ContinuousUpdate,
     DiscreteResource,
-    DiscreteUpdate,
 )
 
 pytestmark = [
@@ -32,11 +26,6 @@ pytestmark = [
 ]
 
 app.dependency_overrides[get_db] = get_test_db
-
-CREATE_TO_UPDATE = {
-    ContinuousResource: ContinuousUpdate,
-    DiscreteResource: DiscreteUpdate,
-}
 
 
 def inserted_tup_to_strategy(inserted_tup):
