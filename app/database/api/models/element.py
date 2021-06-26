@@ -4,6 +4,17 @@ from ..database import Base
 
 from spacenet.schemas.element import ElementKind
 
+__all__ = [
+    "ElementKind",
+    "Element",
+    "ElementCarrier",
+    "ResourceContainer",
+    "PropulsiveVehicle",
+    "SurfaceVehicle",
+    "HumanAgent",
+    "RoboticAgent",
+]
+
 
 class Element(Base):
     __tablename__ = "Elements"

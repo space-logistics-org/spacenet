@@ -4,6 +4,8 @@ from sqlalchemy.orm import declared_attr
 from ..database import Base
 from spacenet.schemas.edge import EdgeType
 
+__all__ = ["EdgeType", "Edge", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
+
 
 class Edge(Base):
     __tablename__ = "Edges"

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from .. import database
 from ..models import resource as models
-from ..models.utilities import dictify_row
+from ..models.utilities import dictify_row, SCHEMA_TO_MODEL
 from ..schemas.resource import *
 
 router = APIRouter()
@@ -15,11 +15,6 @@ Resources = Union[ContinuousResource, DiscreteResource]
 UpdateResources = Union[ContinuousUpdate, DiscreteUpdate]
 
 ReadResources = Union[ContinuousRead, DiscreteRead]
-
-SCHEMA_TO_MODEL = {
-    ContinuousResource: models.ContinuousResource,
-    DiscreteResource: models.DiscreteResource,
-}
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 

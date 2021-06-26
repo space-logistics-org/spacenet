@@ -4,6 +4,9 @@ from ..database import Base
 from spacenet.schemas.resource import ResourceType
 
 
+__all__ = ["Resource", "ResourceType", "ContinuousResource", "DiscreteResource"]
+
+
 class Resource(Base):
     __tablename__ = "Resources"
 

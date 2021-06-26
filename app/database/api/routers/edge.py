@@ -6,7 +6,7 @@ from starlette import status
 from .. import database
 from ..models import edge as models
 from ..schemas.edge import *
-from ..models.utilities import dictify_row
+from ..models.utilities import dictify_row, SCHEMA_TO_MODEL
 
 # Build a new router
 router = APIRouter()
@@ -14,12 +14,6 @@ router = APIRouter()
 Edges = Union[SurfaceEdge, SpaceEdge, FlightEdge]
 UpdateEdges = Union[SurfaceEdgeUpdate, SpaceEdgeUpdate, FlightEdgeUpdate]
 ReadEdges = Union[SurfaceEdgeRead, SpaceEdgeRead, FlightEdgeRead]
-
-SCHEMA_TO_MODEL = {
-    SurfaceEdge: models.SurfaceEdge,
-    SpaceEdge: models.SpaceEdge,
-    FlightEdge: models.FlightEdge,
-}
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
 
@@ -54,7 +48,7 @@ def create_edge(edge: Edges, db: Session = Depends(database.get_db)):
 # Bind a route to update an object by ID
 @router.patch("/{edge_id}", response_model=ReadEdges, responses=NOT_FOUND_RESPONSE)
 def update_edge(
-        edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)
+    edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)
 ):
     db_edge = db.query(models.Edge).get(edge_id)
     if db_edge is None:
@@ -65,7 +59,7 @@ def update_edge(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Edge found with id={edge_id} is of type {db_edge.type}; cannot update "
-                   f"type to {edge.type} ",
+            f"type to {edge.type} ",
         )
     for field_name, field in edge.dict().items():
         if field_name != "type" and field is not None:

@@ -5,10 +5,10 @@ from abc import ABC
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field, conint, NonNegativeFloat, NonNegativeInt
+from pydantic import BaseModel, Field, conint, NonNegativeFloat
 from typing_extensions import Literal
 
-from ..constants import Environment, ClassOfSupply
+from ..constants import Environment, ClassOfSupply, SQLITE_MAX_INT, SQLITE_MIN_INT
 
 __all__ = [
     "Element",
@@ -140,7 +140,7 @@ class Vehicle(CargoCarrier, ABC):
     An abstract base class representing a generic Vehicle, surface or propulsive.
     """
 
-    max_crew: conint(strict=True, ge=0) = Field(
+    max_crew: conint(strict=True, ge=0, le=SQLITE_MAX_INT) = Field(
         ..., title="Maximum Crew Count", description="crew capacity constraint"
     )
 
@@ -157,7 +157,9 @@ class PropulsiveVehicle(Vehicle):
     max_fuel: NonNegativeFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant_id: conint(strict=True)  # TODO: this needs constraints or to be an enum
+    propellant_id: conint(
+        strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT
+    )  # TODO: this needs constraints or to be an enum
 
 
 class SurfaceVehicle(Vehicle):
@@ -172,4 +174,6 @@ class SurfaceVehicle(Vehicle):
     max_fuel: NonNegativeFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    fuel_id: conint(strict=True)  # TODO: this needs constraints or to be an enum
+    fuel_id: conint(
+        strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT
+    )  # TODO: this needs constraints or to be an enum

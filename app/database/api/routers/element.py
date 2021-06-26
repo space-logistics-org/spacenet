@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from .. import database
 from ..models import element as models
 from ..schemas.element import *
-from ..models.utilities import dictify_row
+from ..models.utilities import dictify_row, SCHEMA_TO_MODEL
 
 router = APIRouter()
 
@@ -39,16 +39,6 @@ ReadElements = Union[
     HumanAgentRead,
     ResourceContainerRead,
 ]
-
-SCHEMA_TO_MODEL = {
-    Element: models.Element,
-    ElementCarrier: models.ElementCarrier,
-    ResourceContainer: models.ResourceContainer,
-    HumanAgent: models.HumanAgent,
-    RoboticAgent: models.RoboticAgent,
-    PropulsiveVehicle: models.PropulsiveVehicle,
-    SurfaceVehicle: models.SurfaceVehicle,
-}
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 

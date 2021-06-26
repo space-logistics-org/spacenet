@@ -4,6 +4,13 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
 
+__all__ = [
+    "MakeElementsEvent",
+    "MoveElementsEvent",
+    "ReconfigureElementsEvent",
+    "RemoveElementsEvent",
+]
+
 
 class MakeElementsEvent(BaseModel):
     """
@@ -61,6 +68,5 @@ class ReconfigureElementsEvent(BaseModel):
         ..., description="a mapping from the IDs of elements to their desired new state"
     )
     reconfigure_point_id: UUID = Field(
-        ...,
-        description="the ID of the node or edge to reconfigure elements at",
+        ..., description="the ID of the node or edge to reconfigure elements at",
     )

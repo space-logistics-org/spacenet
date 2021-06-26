@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from .. import database
 from ..models import node as models
-from ..models.utilities import dictify_row
+from ..models.utilities import dictify_row, SCHEMA_TO_MODEL
 from ..schemas.node import *
 
 # from ..auth import oauth2_scheme
@@ -18,12 +18,6 @@ Nodes = Union[SurfaceNode, OrbitalNode, LagrangeNode]
 UpdateNodes = Union[SurfaceNodeUpdate, OrbitalNodeUpdate, LagrangeNodeUpdate]
 
 ReadNodes = Union[SurfaceNodeRead, OrbitalNodeRead, LagrangeNodeRead]
-
-SCHEMA_TO_MODEL = {
-    SurfaceNode: models.SurfaceNode,
-    OrbitalNode: models.OrbitalNode,
-    LagrangeNode: models.LagrangeNode,
-}
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
