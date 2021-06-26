@@ -19,6 +19,8 @@ from app.database.api.database import get_db
 from app.database.api.main import app
 from ..schemas import *
 from ..schemas.constants import CREATE_TO_UPDATE
+from ..models import utilities as model_utils
+from ...test.utilities import test_engine
 
 pytestmark = [
     pytest.mark.integration,
@@ -38,6 +40,13 @@ class TestRouting(RuleBasedStateMachine):
         super().__init__()
         self.model = defaultdict(set)
         self.client = TestClient(app)
+        self.clear_tables()
+
+    @classmethod
+    def clear_tables(cls):
+        for model in model_utils.MODEL_TO_PARENT.values():
+            model.__table__.drop(test_engine, checkfirst=True)
+            model.__table__.create(test_engine, checkfirst=False)
 
     inserted = Bundle("inserted")
 
@@ -53,10 +62,13 @@ class TestRouting(RuleBasedStateMachine):
     def read_all(self):
         pass
 
-    def update(self, id_, update_schema):
+    def update(self, id_type_and_schema):
         pass
 
-    def update_invalid_id(self, id_, update_schema):
+    def update_invalid_id(self, id_and_type):
+        pass
+
+    def update_type_mismatch(self, id_type_and_schema):
         pass
 
     def delete(self, id_and_type):
@@ -64,3 +76,6 @@ class TestRouting(RuleBasedStateMachine):
 
     def delete_invalid_id(self, id_and_type):
         pass
+
+    def teardown(self):
+        self.clear_tables()
