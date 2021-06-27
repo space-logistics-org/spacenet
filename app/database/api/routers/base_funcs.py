@@ -1,4 +1,3 @@
-
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -14,13 +13,13 @@ def list_all(table):
     return route
 
 
-def read_item(table, item_name: str):
+def read_item(table, item_name_lower: str):
     def route(item_id: int, db: Session = Depends(database.get_db)):
         db_item = db.query(table).get(item_id)
         if db_item is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"No {item_name} found with id={item_id}",
+                detail=f"No {item_name_lower} found with id={item_id}",
             )
         return db_item
 
@@ -38,7 +37,7 @@ def create_item(create_schema):
     return route
 
 
-def update_item(table, item_name, update_schema):
+def update_item(table, item_name_capitalized, update_schema):
     def route(
         item_id: int, item: update_schema, db: Session = Depends(database.get_db)
     ):
@@ -51,7 +50,7 @@ def update_item(table, item_name, update_schema):
         if item.type != db_item.type:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=f"{item_name} found with id={item_id} is of type {db_item.type}; "
+                detail=f"{item_name_capitalized} found with id={item_id} is of type {db_item.type}; "
                 f"cannot update type to {item.type} ",
             )
         for field_name, field in item.dict().items():
@@ -63,13 +62,13 @@ def update_item(table, item_name, update_schema):
     return route
 
 
-def delete_item(table, item_name):
+def delete_item(table, item_name_lower):
     def route(item_id: int, db: Session = Depends(database.get_db)):
         db_item = db.query(table).get(item_id)
         if db_item is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"No {item_name} found with id={item_id}",
+                detail=f"No {item_name_lower} found with id={item_id}",
             )
         as_dict = dictify_row(db_item)
         db.delete(db_item)
