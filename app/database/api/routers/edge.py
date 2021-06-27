@@ -1,10 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from starlette import status
 
 from .utilities import create_read_update_unions
+from .base_funcs import list_all, read_item, create_item, update_item, delete_item
 from .. import database
 from ..models import edge as models
 from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
@@ -19,64 +19,53 @@ NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
 # Bind a route to list objects
 @router.get("/", response_model=List[ReadEdges])
-def list_edges(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
-    db_edges = db.query(models.Edge).offset(skip).limit(limit).all()
-    return db_edges
+def list_edges(db: Session = Depends(database.get_db)):
+    return list_all(
+        table=models.Edge,
+        db=db
+    )
 
 
 # Bind a route to read an object by ID
 @router.get("/{edge_id}", response_model=ReadEdges, responses=NOT_FOUND_RESPONSE)
 def read_edge(edge_id: int, db: Session = Depends(database.get_db)):
-    db_edge = db.query(models.Edge).get(edge_id)
-    if db_edge is None:
-        raise HTTPException(
-            status_code=404, detail="Edge {:d} not found".format(edge_id)
-        )
-    return db_edge
+    return read_item(
+        table=models.Edge,
+        item_name="Edge",
+        item_id=edge_id,
+        db=db
+    )
 
 
 # Bind a route to create a new object
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ReadEdges)
 def create_edge(edge: Edges, db: Session = Depends(database.get_db)):
-    db_edge = SCHEMA_TO_MODEL[type(edge)](**edge.dict())
-    db.add(db_edge)
-    db.commit()
-    db.refresh(db_edge)
-    return db_edge
+    return create_item(
+        item=edge,
+        db=db,
+    )
 
 
 # Bind a route to update an object by ID
 @router.patch("/{edge_id}", response_model=ReadEdges, responses=NOT_FOUND_RESPONSE)
 def update_edge(
-    edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)
+        edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)
 ):
-    db_edge = db.query(models.Edge).get(edge_id)
-    if db_edge is None:
-        raise HTTPException(
-            status_code=404, detail="Edge {:d} not found".format(edge_id)
-        )
-    if edge.type != db_edge.type:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=f"Edge found with id={edge_id} is of type {db_edge.type}; cannot update "
-            f"type to {edge.type} ",
-        )
-    for field_name, field in edge.dict().items():
-        if field_name != "type" and field is not None:
-            setattr(db_edge, field_name, field)
-    db.commit()
-    return db_edge
+    return update_item(
+        table=models.Edge,
+        item_name="Edge",
+        item_id=edge_id,
+        item=edge,
+        db=db
+    )
 
 
 # Bind a route to delete an object by ID
 @router.delete("/{edge_id}", response_model=ReadEdges)
 def delete_edge(edge_id: int, db: Session = Depends(database.get_db)):
-    db_edge = db.query(models.Edge).get(edge_id)
-    if db_edge is None:
-        raise HTTPException(
-            status_code=404, detail="Edge {:d} not found".format(edge_id)
-        )
-    as_dict = dictify_row(db_edge)
-    db.delete(db_edge)
-    db.commit()
-    return as_dict
+    return delete_item(
+        table=models.Edge,
+        item_name="Edge",
+        item_id=edge_id,
+        db=db
+    )
