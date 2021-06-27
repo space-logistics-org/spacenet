@@ -1,16 +1,14 @@
-from typing import Union
 
 from fastapi import Depends, HTTPException, status
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.database.api import database, models
+from app.database.api import database
 from app.database.api.models.utilities import SCHEMA_TO_MODEL, dictify_row
 
 
 def list_all(table):
     def route(db: Session = Depends(database.get_db)):
-        db_items = db.query(table)
+        db_items = db.query(table).all()
         return db_items
 
     return route
