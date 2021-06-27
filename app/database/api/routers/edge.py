@@ -8,7 +8,5 @@ router = CRUDRouter(
     table=models.Edge,
     name_lower="edge",
     name_capitalized="Edge",
-    create_schema=Edges,
-    read_schema=ReadEdges,
-    update_schema=UpdateEdges,
+    schemas=EDGE_SCHEMAS,
 )

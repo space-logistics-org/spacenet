@@ -2,10 +2,10 @@ from enum import Enum, auto
 from typing import List, Set
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing_extensions import Type
 
+from .utilities import create_read_update_unions
 from .. import database
 from ..database import Base
 from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
@@ -27,9 +27,7 @@ class CRUDRouter(APIRouter):
         table: Base,
         name_lower: str,
         name_capitalized: str,
-        create_schema: Type[BaseModel],
-        read_schema: Type[BaseModel],
-        update_schema: Type[BaseModel],
+        schemas: Set[Type],
         generated_routes: Set[Route] = None,
         prefix: str = "",
     ):
@@ -37,9 +35,11 @@ class CRUDRouter(APIRouter):
         self.table = table
         self.name_lower = name_lower
         self.name_capitalized = name_capitalized
-        self.create_schema = create_schema
-        self.read_schema = read_schema
-        self.update_schema = update_schema
+        (
+            self.create_schema,
+            self.read_schema,
+            self.update_schema,
+        ) = create_read_update_unions(schemas)
         if generated_routes is None:
             generated_routes = {variant for variant in Route}
         if Route.GetAll in generated_routes:
@@ -47,7 +47,7 @@ class CRUDRouter(APIRouter):
                 path="/",
                 endpoint=self._read_all_items(),
                 methods=["GET"],
-                response_model=List[read_schema],
+                response_model=List[self.read_schema],
                 summary=f"List {name_capitalized}s",
                 description=f"List {name_lower}s currently in the database.",
             )
@@ -56,7 +56,7 @@ class CRUDRouter(APIRouter):
                 path="/{item_id}",
                 endpoint=self._read_item(),
                 methods=["GET"],
-                response_model=read_schema,
+                response_model=self.read_schema,
                 responses=NOT_FOUND_RESPONSE,
                 summary=f"Read {name_capitalized}",
                 description=f"Find a specific {name_lower} in the database.",
@@ -66,7 +66,7 @@ class CRUDRouter(APIRouter):
                 path="/",
                 endpoint=self._create_item(),
                 methods=["POST"],
-                response_model=read_schema,
+                response_model=self.read_schema,
                 status_code=status.HTTP_201_CREATED,
                 summary=f"Create {name_capitalized}",
                 description=f"Add a new {name_lower} to the database.",
@@ -76,7 +76,7 @@ class CRUDRouter(APIRouter):
                 path="/{item_id}",
                 endpoint=self._update_item(),
                 methods=["PATCH"],
-                response_model=read_schema,
+                response_model=self.read_schema,
                 responses={
                     **NOT_FOUND_RESPONSE,
                     status.HTTP_409_CONFLICT: {"msg": str},
@@ -89,7 +89,7 @@ class CRUDRouter(APIRouter):
                 path="/{item_id}",
                 endpoint=self._delete_item(),
                 methods=["DELETE"],
-                response_model=read_schema,
+                response_model=self.read_schema,
                 responses=NOT_FOUND_RESPONSE,
                 summary=f"Delete {name_capitalized}",
                 description=f"Delete an existing {name_lower} from the database.",
