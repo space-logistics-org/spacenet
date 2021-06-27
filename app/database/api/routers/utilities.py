@@ -1,15 +1,13 @@
 import doctest
 from functools import reduce
-from typing import Iterable, Set, Tuple, Union
-
-from typing_extensions import Type
+from typing import Iterable, Set, Union
 
 from ..schemas.constants import CREATE_SCHEMAS, READ_SCHEMAS, UPDATE_SCHEMAS
 
 __all__ = ["union_from_iterable", "create_read_update_unions"]
 
 
-def union_from_iterable(it: Iterable[Type]) -> Union[Type]:
+def union_from_iterable(it: Iterable):
     """
     Provide a union over all of the types provided in the iterable "it".
 
@@ -38,8 +36,8 @@ def union_from_iterable(it: Iterable[Type]) -> Union[Type]:
 
 
 def create_read_update_unions(
-    schema_variants: Set[Type],
-) -> Tuple[Union[Type], Union[Type], Union[Type]]:
+        schema_variants: Set,
+):
     return (
         union_from_iterable(schema_variants & CREATE_SCHEMAS),
         union_from_iterable(schema_variants & READ_SCHEMAS),
