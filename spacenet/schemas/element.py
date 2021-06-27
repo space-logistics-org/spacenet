@@ -3,9 +3,10 @@ This module defines the schemas for Elements, and exports them explicitly.
 """
 from abc import ABC
 from enum import Enum
+from math import inf
 from typing import Optional
 
-from pydantic import BaseModel, Field, conint, NonNegativeFloat
+from pydantic import BaseModel, Field, confloat, conint
 from typing_extensions import Literal
 
 from ..constants import Environment, ClassOfSupply, SQLITE_MAX_INT, SQLITE_MIN_INT
@@ -52,16 +53,15 @@ class Element(BaseModel):
     environment: Environment = Field(
         ..., title="Environment", description="the element's environment"
     )
-    accommodation_mass: float = Field(
+    accommodation_mass: confloat(ge=0, lt=inf) = Field(
         ...,
-        ge=0,
         title="Accommodation Mass",
         description="the amount of additional COS5 "
         "required to pack the element inside a"
         " carrier.",
     )
-    mass: NonNegativeFloat = Field(..., title="Mass", description="mass in kg")
-    volume: NonNegativeFloat = Field(..., title="Volume", description="volume in m^3")
+    mass: confloat(ge=0, lt=inf) = Field(..., title="Mass", description="mass in kg")
+    volume: confloat(ge=0, lt=inf) = Field(..., title="Volume", description="volume in m^3")
 
 
 class CargoCarrier(Element, ABC):
@@ -69,10 +69,10 @@ class CargoCarrier(Element, ABC):
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
     """
 
-    max_cargo_mass: Optional[NonNegativeFloat] = Field(
+    max_cargo_mass: Optional[confloat(ge=0, lt=inf)] = Field(
         ..., title="Max Cargo Mass", description="cargo capacity constraint (kg)"
     )
-    max_cargo_volume: Optional[NonNegativeFloat] = Field(
+    max_cargo_volume: Optional[confloat(ge=0, lt=inf)] = Field(
         ...,
         title="Maximum Cargo Volume",
         description="cargo capacity constraint (m^3)",
@@ -110,12 +110,10 @@ class Agent(Element, ABC):
     An abstract base class representing a generic Agent element.
     """
 
-    active_time_fraction: float = Field(
+    active_time_fraction: confloat(ge=0, le=1) = Field(
         ...,
         title="Active Time Fraction",
         description="the fraction of the day that an agent is active (available)",
-        ge=0,
-        le=1,
     )
 
 
@@ -151,10 +149,10 @@ class PropulsiveVehicle(Vehicle):
     """
 
     type: Literal[ElementKind.Propulsive] = Field(description="the element's type")
-    isp: NonNegativeFloat = Field(
+    isp: confloat(ge=0, lt=inf) = Field(
         ..., title="Specific Impulse", description="specific impulse (s)"
     )
-    max_fuel: NonNegativeFloat = Field(
+    max_fuel: confloat(ge=0, lt=inf) = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
     propellant_id: conint(
@@ -168,10 +166,10 @@ class SurfaceVehicle(Vehicle):
     """
 
     type: Literal[ElementKind.Surface] = Field(description="the element's type")
-    max_speed: NonNegativeFloat = Field(
+    max_speed: confloat(ge=0, lt=inf) = Field(
         ..., title="Maximum Speed", description="maximum speed (kph)"
     )
-    max_fuel: NonNegativeFloat = Field(
+    max_fuel: confloat(ge=0, lt=inf) = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
     fuel_id: conint(

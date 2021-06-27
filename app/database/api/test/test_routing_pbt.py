@@ -43,7 +43,7 @@ def type_to_table(schema_cls):
 # Mapping from a given schema to the set of schemas in the same table as that schema,
 # including the original provided schema
 SCHEMAS_IN_SAME_TABLE = {
-    first: second
+    first: {second}
     for first in model_utils.SCHEMA_TO_MODEL
     for second in model_utils.SCHEMA_TO_MODEL
     if type_to_table(first) == type_to_table(second)
@@ -151,7 +151,7 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         assert 404 == response.status_code
 
     @rule(
-        id_type_and_schema=inserted.flatmap(
+        id_table_and_schema=inserted.flatmap(
             lambda t: st.tuples(
                 st.just(t[0]),
                 st.just(type_to_table(t[1])),

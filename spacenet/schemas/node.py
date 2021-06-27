@@ -1,6 +1,8 @@
+from math import inf
+
 from typing_extensions import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, confloat
 from enum import Enum
 
 __all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode"]
@@ -51,15 +53,13 @@ class SurfaceNode(Node):
     type: Literal[NodeType.Surface] = Field(
         ..., title="Type", description="Type of node (surface, orbital, or lagrange)",
     )
-    latitude: float = Field(
-        ..., title="Latitude", description="Latitude (decimal degrees)", ge=-90, le=90
+    latitude: confloat(ge=-90, le=90) = Field(
+        ..., title="Latitude", description="Latitude (decimal degrees)"
     )
-    longitude: float = Field(
+    longitude: confloat(ge=-180, le=180) = Field(
         ...,
         title="Longitude",
         description="Longitude (decimal degrees)",
-        ge=-180,
-        le=180,
     )
 
 
@@ -71,14 +71,14 @@ class OrbitalNode(Node):
     type: Literal[NodeType.Orbital] = Field(
         ..., title="Type", description="Type of node (surface, orbital, or lagrange)",
     )
-    apoapsis: float = Field(
-        ..., title="Apoapsis", description="Major radius of orbit", ge=0
+    apoapsis: confloat(ge=0, lt=inf) = Field(
+        ..., title="Apoapsis", description="Major radius of orbit"
     )
-    periapsis: float = Field(
-        ..., title="Periapsis", description="Minor radius of orbit", ge=0
+    periapsis: confloat(ge=0, lt=inf) = Field(
+        ..., title="Periapsis", description="Minor radius of orbit"
     )
-    inclination: float = Field(
-        ..., title="Inclination", description="Inclination of orbit", ge=0, le=90
+    inclination: confloat(ge=0, le=90) = Field(
+        ..., title="Inclination", description="Inclination of orbit"
     )
 
 
