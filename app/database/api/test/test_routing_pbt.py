@@ -101,6 +101,7 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         response = self.client.get("/".join((prefix, str(id_))))
         assert 404 == response.status_code
 
+    @rule()
     def read_all(self):
         for table, entries in self.model.items():
             prefix = PARENT_TO_PREFIX[table]
