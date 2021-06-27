@@ -1,6 +1,8 @@
+from math import inf
+
 from typing_extensions import Literal
 
-from pydantic import BaseModel, Field, conint
+from pydantic import BaseModel, Field, confloat, conint
 from enum import Enum
 
 __all__ = ["Edge", "EdgeType", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
@@ -45,8 +47,8 @@ class SurfaceEdge(Edge):
     type: Literal[EdgeType.Surface] = Field(
         title="Type", description="Type of edge",
     )
-    distance: float = Field(
-        ..., title="Distance", description="Distance of surface edge", ge=0
+    distance: confloat(ge=0, lt=inf) = Field(
+        ..., title="Distance", description="Distance of surface edge"
     )
 
 
@@ -58,8 +60,8 @@ class SpaceEdge(Edge):
     type: Literal[EdgeType.Space] = Field(
         title="Type", description="Type of edge",
     )
-    duration: float = Field(
-        ..., title="Duration", description="Duration of space edge", ge=0
+    duration: confloat(ge=0, lt=inf) = Field(
+        ..., title="Duration", description="Duration of space edge"
     )
 
 
@@ -72,12 +74,12 @@ class FlightEdge(Edge):
     type: Literal[EdgeType.Flight] = Field(
         ..., title="Type", description="Type of edge",
     )
-    duration: float = Field(
-        ..., title="duration", description="Duration of flight edge", ge=0
+    duration: confloat(ge=0, lt=inf) = Field(
+        ..., title="duration", description="Duration of flight edge"
     )
     max_crew: conint(strict=True, ge=0, le=SQLITE_MAX_INT) = Field(
         ..., title="Max Crew", description="Crew capacity for flight",
     )
-    max_cargo: float = Field(
-        ..., title="Max Cargo", description="Cargo capacity for flight", ge=0
+    max_cargo: confloat(ge=0, lt=inf) = Field(
+        ..., title="Max Cargo", description="Cargo capacity for flight"
     )
