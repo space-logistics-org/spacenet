@@ -14,8 +14,9 @@ $("#login_form_submit").click(function (){
 			alert(response)
 		}
 	})*/
-	$.post("token", $("#login").serialize(), function (response){accesstoken=response["access_token"], window.history.back();})
-	setTimeout(() => { $("#invalid").css("display", "block"); }, 500);
+	$.post("token", $("#login").serialize(), function (response){accesstoken=response["access_token"], document.cookie = `auth_token=${response["access_token"]}; max-age=3600; SameSite=lax`})
+	
+	/*setTimeout(() => { $("#invalid").css("display", "block"); }, 500);*/
 })
 
 /*

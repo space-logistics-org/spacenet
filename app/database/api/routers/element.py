@@ -7,6 +7,7 @@ from .. import database
 from ..models import element as models
 from ..schemas.element import *
 from ..models.utilities import dictify_row
+from .auth import get_current_user
 
 router = APIRouter()
 
@@ -85,12 +86,20 @@ def read_element(id_: int, db: Session = Depends(database.get_db)):
     status_code=status.HTTP_201_CREATED,
     description="Add a new element to the database.",
 )
-def create_element(element: Elements, db: Session = Depends(database.get_db)):
-    db_element = SCHEMA_TO_MODEL[type(element)](**element.dict())
-    db.add(db_element)
-    db.commit()
-    db.refresh(db_element)
-    return db_element
+def create_element(element: Elements, db: Session = Depends(database.get_db), auth: bool = Depends(get_current_user())):
+    if auth:
+        db_element = SCHEMA_TO_MODEL[type(element)](**element.dict())
+        db.add(db_element)
+        db.commit()
+        db.refresh(db_element)
+        return db_element
+    else:
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        raise credentials_exception
 
 
 @router.patch(
