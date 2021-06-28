@@ -13,6 +13,11 @@ from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
+__all__ = [
+    "Route",
+    "CRUDRouter"
+]
+
 
 class Route(Enum):
     GetAll = auto()
@@ -24,8 +29,9 @@ class Route(Enum):
 
 class CRUDRouter(APIRouter):
     """
-
+    A router which, once instantiated, supports some routes by default.
     """
+
     def __init__(
         self,
         table: Base,
