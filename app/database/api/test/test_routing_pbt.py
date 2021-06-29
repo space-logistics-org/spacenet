@@ -187,7 +187,7 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         assert 200 == response.status_code
         result = response.json()
         assert self.model[table].pop(result.get("id")) == result
-        if type_.issubclass(Element):  # on element delete, also delete associated states
+        if issubclass(type_, Element):  # on element delete, also delete associated states
             self.model[models.State] = {
                 id_: state
                 for id_, state in self.model[models.State].items()
