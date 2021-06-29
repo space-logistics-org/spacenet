@@ -2,55 +2,46 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import ReconfigureElementsEvent
-from .event_utilities import (
-    INVALID_INTS,
+from ..utilities import (
+    INVALID_UUIDS,
     success_from_kw,
-    valid_invalid_from_allowed,
     xfail_from_kw,
 )
 
-pytestmark = [pytest.mark.unit, pytest.mark.event]
+pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
-ALLOWED_RECONFIG_POINTS = ["Node", "Edge"]
-VALID_RECONF, INVALID_RECONF = valid_invalid_from_allowed(ALLOWED_RECONFIG_POINTS)
-STATES = ("Active", "Dormant", "Decommissioned")
-VALID_TO_RECONFIGURE = st.dictionaries(
-    keys=st.integers(), values=st.sampled_from(STATES)
-)
+VALID_TO_RECONFIGURE = st.dictionaries(keys=st.uuids(), values=st.uuids())
 INVALID_TO_RECONFIGURE = st.one_of(
-    st.dictionaries(keys=INVALID_INTS, values=st.sampled_from(STATES), min_size=1),
+    st.dictionaries(keys=INVALID_UUIDS, values=st.uuids(), min_size=1),
     st.dictionaries(
-        keys=st.integers(),
-        values=st.text().filter(lambda s: s not in STATES),
+        keys=st.uuids(),
+        values=INVALID_UUIDS,
         min_size=1,
     ),
     st.dictionaries(
-        keys=INVALID_INTS,
-        values=st.text().filter(lambda s: s not in STATES),
+        keys=INVALID_UUIDS,
+        values=INVALID_UUIDS,
         min_size=1,
     ),
 )
 
 VALID_MAP = {
     "to_reconfigure": VALID_TO_RECONFIGURE,
-    "reconfigure_point_kind": VALID_RECONF,
-    "reconfigure_point_id": st.integers(),
+    "reconfigure_point_id": st.uuids(),
 }
 
 INVALID_MAP = {
     "to_reconfigure": INVALID_TO_RECONFIGURE,
-    "reconfigure_point_kind": INVALID_RECONF,
-    "reconfigure_point_id": INVALID_INTS,
+    "reconfigure_point_id": INVALID_UUIDS,
 }
 
 
 def xfail_construct_reconfigure(
-    to_reconfigure, reconfigure_point_kind, reconfigure_point_id
+    to_reconfigure, reconfigure_point_id
 ):
     xfail_from_kw(
         ReconfigureElementsEvent,
         to_reconfigure=to_reconfigure,
-        reconfigure_point_kind=reconfigure_point_kind,
         reconfigure_point_id=reconfigure_point_id,
     )
 
@@ -66,18 +57,6 @@ def test_valid(kw):
     )
 )
 def test_invalid_to_reconfigure(kw):
-    xfail_construct_reconfigure(**kw)
-
-
-@given(
-    kw=st.fixed_dictionaries(
-        mapping={
-            **VALID_MAP,
-            "reconfigure_point_kind": INVALID_MAP["reconfigure_point_kind"],
-        }
-    )
-)
-def test_invalid_reconfigure_point_kind(kw):
     xfail_construct_reconfigure(**kw)
 
 

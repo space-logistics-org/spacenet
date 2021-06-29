@@ -288,7 +288,9 @@ switch(type){
     success: function() {
       document.getElementById("element").reset();
       document.getElementById("components").reset();
-      location.href = 'element_table.html'
+      // location.href = 'element_table.html'
+      $('#addModal').modal('hide');
+      location.reload()
     }
   });
 

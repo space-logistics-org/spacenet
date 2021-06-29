@@ -35,21 +35,18 @@ keyword argument generation logic. Changing schema attributes constitutes removi
 a tester class (or its superclass)'s attributes, and making the factory no longer assign the
 value in the dictionary.
 """
-import json
 import random
 import unittest
 from typing import Tuple, Type
 
-import pkg_resources
 import pytest
 from pydantic import ValidationError
 
-import spacenet
 from spacenet.schemas.element import *
 from spacenet.schemas.element import ElementKind
 from .element_factories import *
 
-pytestmark = [pytest.mark.unit, pytest.mark.element]
+pytestmark = [pytest.mark.unit, pytest.mark.element, pytest.mark.schema]
 NUM_ATTEMPTS = 500
 SEED = "spacenet"
 
@@ -234,52 +231,3 @@ class TestSurfaceVehicle(SeededTester, VehicleTester):
     invalidFactory = InvalidSurfaceArgsFactory
     nonEnumAttrs = VehicleTester.nonEnumAttrs + ["max_fuel", "max_speed"]
     elementType = SurfaceVehicle
-
-
-def test_altair_elements():
-    pass
-
-
-def test_ares_1_elements():
-    pass
-
-
-def test_ares_5_elements():
-    pass
-
-
-def test_sortie_elements():
-    pass
-
-
-def test_orion_elements():
-    pass
-
-
-KIND_TO_SCHEMA = {
-    ElementKind.Element: Element,
-    ElementKind.ElementCarrier: ElementCarrier,
-    ElementKind.ResourceContainer: ResourceContainer,
-    ElementKind.HumanAgent: HumanAgent,
-    ElementKind.RoboticAgent: RoboticAgent,
-    ElementKind.Propulsive: PropulsiveVehicle,
-    ElementKind.Surface: SurfaceVehicle,
-}
-
-
-@pytest.mark.parametrize(
-    "filename",
-    ["altair.json", "ares_1.json", "ares_5.json", "orion.json", "sortie_elements.json"],
-)
-def test_lunar_sortie_elements(filename):
-    elements = json.loads(
-        pkg_resources.resource_string(
-            spacenet.schemas.__name__, f"lunar_sortie/{filename}"
-        )
-    )
-    for element_obj in elements:
-        constructor = KIND_TO_SCHEMA[element_obj["type"]]
-        element = constructor.parse_obj(element_obj)
-        for attr, value in element_obj.items():
-            assert value == getattr(element, attr)
-

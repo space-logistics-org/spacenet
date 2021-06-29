@@ -10,7 +10,7 @@ from app.database.api.models import node as models
 from app.database.api.schemas import node as schemas
 from app.database.api.database import Base, engine
 
-pytestmark = [pytest.mark.unit, pytest.mark.node]
+pytestmark = [pytest.mark.unit, pytest.mark.node, pytest.mark.database]
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

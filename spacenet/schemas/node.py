@@ -1,7 +1,11 @@
+from math import inf
+
 from typing_extensions import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, confloat
 from enum import Enum
+
+__all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode"]
 
 
 class Body(str, Enum):
@@ -25,25 +29,19 @@ class NodeType(str, Enum):
     Lagrange = "Lagrange"
 
 
-
 class Node(BaseModel):
     """
     Base class for all nodes.
     """
-    name: str = Field(
-        ...,
-        title="Name",
-        description="name of the node"
-    )
+
+    name: str = Field(..., title="Name", description="name of the node")
     description: str = Field(
-        ...,
-        title="Description",
-        description="short description of the node"
+        ..., title="Description", description="short description of the node"
     )
     body_1: Body = Field(
         ...,
         title="Body 1",
-        description="Body of surface location, body of orbit, or body of major Lagrange point"
+        description="Body of surface location, body of orbit, or body of major Lagrange point",
     )
 
 
@@ -51,24 +49,17 @@ class SurfaceNode(Node):
     """
     A node on the surface of a body.
     """
+
     type: Literal[NodeType.Surface] = Field(
-        ...,
-        title="Type",
-        description="Type of node (surface, orbital, or lagrange)",
+        ..., title="Type", description="Type of node (surface, orbital, or lagrange)",
     )
-    latitude: float = Field(
-        ...,
-        title="Latitude",
-        description="Latitude (decimal degrees)",
-        ge=-90,
-        le=90
+    latitude: confloat(ge=-90, le=90) = Field(
+        ..., title="Latitude", description="Latitude (decimal degrees)"
     )
-    longitude: float = Field(
+    longitude: confloat(ge=-180, le=180) = Field(
         ...,
         title="Longitude",
         description="Longitude (decimal degrees)",
-        ge=-180,
-        le=180
     )
 
 
@@ -76,29 +67,18 @@ class OrbitalNode(Node):
     """
     A node orbiting a body.
     """
+
     type: Literal[NodeType.Orbital] = Field(
-        ...,
-        title="Type",
-        description="Type of node (surface, orbital, or lagrange)",
+        ..., title="Type", description="Type of node (surface, orbital, or lagrange)",
     )
-    apoapsis: float = Field(
-        ...,
-        title="Apoapsis",
-        description="Major radius of orbit",
-        ge=0
+    apoapsis: confloat(ge=0, lt=inf) = Field(
+        ..., title="Apoapsis", description="Major radius of orbit"
     )
-    periapsis: float = Field(
-        ...,
-        title="Periapsis",
-        description="Minor radius of orbit",
-        ge=0
+    periapsis: confloat(ge=0, lt=inf) = Field(
+        ..., title="Periapsis", description="Minor radius of orbit"
     )
-    inclination: float = Field(
-        ...,
-        title="Inclination",
-        description="Inclination of orbit",
-        ge=0,
-        le=90
+    inclination: confloat(ge=0, le=90) = Field(
+        ..., title="Inclination", description="Inclination of orbit"
     )
 
 
@@ -106,20 +86,13 @@ class LagrangeNode(Node):
     """
     A node at a Lagrange point of two bodies.
     """
+
     type: Literal[NodeType.Lagrange] = Field(
-        ...,
-        title="Type",
-        description="Type of node (surface, orbital, or lagrange)",
+        ..., title="Type", description="Type of node (surface, orbital, or lagrange)",
     )
     body_2: Body = Field(
-        ...,
-        title="Body 2",
-        description="Minor body of Lagrange node",
+        ..., title="Body 2", description="Minor body of Lagrange node",
     )
     lp_number: int = Field(
-        ...,
-        title="LP Number",
-        description="Number of Lagrange point",
-        ge=1,
-        le=5
+        ..., title="LP Number", description="Number of Lagrange point", ge=1, le=5
     )

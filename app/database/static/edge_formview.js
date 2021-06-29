@@ -123,9 +123,11 @@ function onComplete(){
     success: function() {
       document.getElementById("edge").reset()
       document.getElementById("components").reset()
-      location.href = 'edge_table.html'
+      $('#addModal').modal('hide');
+      location.reload()
     }
   });
 
 
-}
+};
+

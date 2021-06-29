@@ -3,14 +3,13 @@ import unittest
 
 import pkg_resources
 import pytest
-import spacenet.schemas
 from pydantic import ValidationError
 
 from spacenet import test
 from spacenet.schemas import edge as eos
 from spacenet.schemas.edge import EdgeType, FlightEdge, SpaceEdge, SurfaceEdge
 
-pytestmark = [pytest.mark.unit, pytest.mark.edge]
+pytestmark = [pytest.mark.unit, pytest.mark.edge, pytest.mark.schema]
 
 
 class TestEdge(unittest.TestCase):
@@ -217,17 +216,3 @@ class TestFromFile(unittest.TestCase):
         for edge in self.bad_edges:
             with self.assertRaises(ValidationError):
                 bad_edge = eos.SpaceEdge.parse_obj(edge)
-
-
-LUNAR_SORTIE_EDGES = json.loads(
-        pkg_resources.resource_string(
-            spacenet.schemas.__name__, "lunar_sortie/sortie_edges.json"
-        )
-    )
-
-
-def test_lunar_sortie_edges():
-    for edge_obj in LUNAR_SORTIE_EDGES:
-        edge = SpaceEdge.parse_obj(edge_obj)
-        for attr, value in edge_obj.items():
-            assert value == getattr(edge, attr)
