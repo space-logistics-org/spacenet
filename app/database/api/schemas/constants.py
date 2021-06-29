@@ -19,6 +19,7 @@ __all__ = [
     "ELEMENT_SCHEMAS",
     "NODE_SCHEMAS",
     "RESOURCE_SCHEMAS",
+    "STATE_SCHEMAS"
 ]
 
 
