@@ -4,6 +4,7 @@ from .edge import *
 from .element import *
 from .node import *
 from .resource import *
+from .state import *
 from .utilities import invert_injective_map
 
 __all__ = [
@@ -18,6 +19,7 @@ __all__ = [
     "ELEMENT_SCHEMAS",
     "NODE_SCHEMAS",
     "RESOURCE_SCHEMAS",
+    "STATE_SCHEMAS"
 ]
 
 
@@ -37,6 +39,7 @@ CREATE_TO_UPDATE = {
     SurfaceNode: SurfaceNodeUpdate,
     ContinuousResource: ContinuousUpdate,
     DiscreteResource: DiscreteUpdate,
+    State: StateUpdate,
 }
 
 CREATE_SCHEMAS = set(CREATE_TO_UPDATE.keys())
@@ -61,6 +64,7 @@ CREATE_TO_READ = {
     SurfaceNode: SurfaceNodeRead,
     ContinuousResource: ContinuousRead,
     DiscreteResource: DiscreteRead,
+    State: StateRead
 }
 
 READ_TO_CREATE = invert_injective_map(CREATE_TO_READ)
@@ -122,6 +126,12 @@ RESOURCE_SCHEMAS = {
     DiscreteResource,
     DiscreteUpdate,
     DiscreteRead,
+}
+
+STATE_SCHEMAS = {
+    State,
+    StateUpdate,
+    StateRead
 }
 
 if __name__ == "__main__":

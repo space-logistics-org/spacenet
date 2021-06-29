@@ -2,6 +2,7 @@ from enum import Enum, auto
 from typing import List, Set
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing_extensions import Type
 
@@ -11,6 +12,11 @@ from ..database import Base
 from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
+
+__all__ = [
+    "Route",
+    "CRUDRouter"
+]
 
 
 class Route(Enum):
@@ -22,15 +28,38 @@ class Route(Enum):
 
 
 class CRUDRouter(APIRouter):
+    """
+    A router which, once instantiated, supports some routes by default.
+    """
+
     def __init__(
         self,
         table: Base,
         name_lower: str,
         name_capitalized: str,
-        schemas: Set[Type],
+        schemas: Set[Type[BaseModel]],
         generated_routes: Set[Route] = None,
         prefix: str = "",
     ):
+        """
+        Construct a new router which automatically generates and provides CRUD routes.
+
+        :param table: database table which are used to store the created values
+        :param name_lower: lowercase name of the items being stored
+        :param name_capitalized: capitalized name of the items being stored
+        :param schemas: all the schemas corresponding to the items being stored
+        :param generated_routes: set of routes the constructed router is to support;
+                if not provided, all routes enumerated by Route will be generated
+        :param prefix: the prefix all routes for this router are to be accessed with;
+                defaults to no prefix
+
+        The provided router accesses and inserts into ``table``, concerning items
+        with a lower-case name of ``name_lower``, and an upper-case name of
+        ``name_capitalized``. The provided schemas in ``schemas`` correspond to all,
+        and exclusively, the items, with a Create, Read, and Update schema, all of which must
+        exist in ``CREATE_SCHEMA``, ``UPDATE_SCHEMA``, and ``READ_SCHEMA``, which are defined
+        in the ``constants`` module of ``database/api``.
+        """
         super().__init__(prefix=prefix)
         self.table = table
         self.name_lower = name_lower
@@ -138,13 +167,14 @@ class CRUDRouter(APIRouter):
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail=f"No item found with id={item_id}",
                 )
-            if item.type != db_item.type:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail=f"{self.name_capitalized} found with id={item_id} is of type "
-                    f"{db_item.type}; "
-                    f"cannot update type to {item.type} ",
-                )
+            if hasattr(item, "type"):
+                if item.type != db_item.type:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail=f"{self.name_capitalized} found with id={item_id} is of type "
+                        f"{db_item.type}; "
+                        f"cannot update type to {item.type} ",
+                    )
             for field_name, field in item.dict().items():
                 if field_name != "type" and field is not None:
                     setattr(db_item, field_name, field)

@@ -2,7 +2,7 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import ReconfigureElementsEvent
-from .event_utilities import (
+from ..utilities import (
     INVALID_UUIDS,
     success_from_kw,
     xfail_from_kw,
@@ -10,18 +10,17 @@ from .event_utilities import (
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
-STATES = ("Active", "Dormant", "Decommissioned")
-VALID_TO_RECONFIGURE = st.dictionaries(keys=st.uuids(), values=st.sampled_from(STATES))
+VALID_TO_RECONFIGURE = st.dictionaries(keys=st.uuids(), values=st.uuids())
 INVALID_TO_RECONFIGURE = st.one_of(
-    st.dictionaries(keys=INVALID_UUIDS, values=st.sampled_from(STATES), min_size=1),
+    st.dictionaries(keys=INVALID_UUIDS, values=st.uuids(), min_size=1),
     st.dictionaries(
         keys=st.uuids(),
-        values=st.text().filter(lambda s: s not in STATES),
+        values=INVALID_UUIDS,
         min_size=1,
     ),
     st.dictionaries(
         keys=INVALID_UUIDS,
-        values=st.text().filter(lambda s: s not in STATES),
+        values=INVALID_UUIDS,
         min_size=1,
     ),
 )

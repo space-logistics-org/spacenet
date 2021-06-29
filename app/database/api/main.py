@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from .database import Base, engine
-from .routers import edge, element, hello_world, node, resource
+from .routers import edge, element, hello_world, node, resource, state
 
 # create the database if it does not yet exist
 Base.metadata.create_all(bind=engine)
@@ -37,4 +37,9 @@ app.include_router(
 app.include_router(
     edge.router,
     prefix="/edge"
+)
+
+app.include_router(
+    state.router,
+    prefix="/state"
 )

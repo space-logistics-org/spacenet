@@ -46,6 +46,7 @@ SCHEMA_TO_MODEL = {
     schemas.SurfaceNode: models.SurfaceNode,
     schemas.ContinuousResource: models.ContinuousResource,
     schemas.DiscreteResource: models.DiscreteResource,
+    schemas.State: models.State
 }
 
 __models = [
@@ -67,12 +68,13 @@ __models = [
     models.LagrangeNode,
     models.OrbitalNode,
     models.SurfaceNode,
+    models.State
 ]
 
 MODEL_TO_PARENT = {
     child: parent
     for child in __models
-    for parent in (models.Element, models.Resource, models.Edge, models.Node)
+    for parent in (models.Element, models.Resource, models.Edge, models.Node, models.State)
     if issubclass(child, parent)
 }
 
