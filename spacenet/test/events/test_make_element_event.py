@@ -2,7 +2,7 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import MakeElementsEvent
-from .event_utilities import INVALID_UUIDS, success_from_kw, xfail_from_kw
+from ..utilities import INVALID_UUIDS, success_from_kw, xfail_from_kw
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 

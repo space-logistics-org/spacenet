@@ -64,8 +64,10 @@ class ReconfigureElementsEvent(BaseModel):
     at a specific time and location (node or edge).
     """
 
-    to_reconfigure: Dict[UUID, State] = Field(
-        ..., description="a mapping from the IDs of elements to their desired new state"
+    to_reconfigure: Dict[UUID, UUID] = Field(
+        ...,
+        description="a mapping from the IDs of elements to the IDs of their desired "
+        "new state",
     )
     reconfigure_point_id: UUID = Field(
         ..., description="the ID of the node or edge to reconfigure elements at",

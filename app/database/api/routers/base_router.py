@@ -167,13 +167,14 @@ class CRUDRouter(APIRouter):
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail=f"No item found with id={item_id}",
                 )
-            if item.type != db_item.type:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail=f"{self.name_capitalized} found with id={item_id} is of type "
-                    f"{db_item.type}; "
-                    f"cannot update type to {item.type} ",
-                )
+            if hasattr(item, "type"):
+                if item.type != db_item.type:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail=f"{self.name_capitalized} found with id={item_id} is of type "
+                        f"{db_item.type}; "
+                        f"cannot update type to {item.type} ",
+                    )
             for field_name, field in item.dict().items():
                 if field_name != "type" and field is not None:
                     setattr(db_item, field_name, field)

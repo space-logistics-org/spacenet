@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import declared_attr
+from sqlalchemy.orm import declared_attr, relationship
 from ..database import Base
 
 from spacenet.schemas.element import ElementKind
@@ -28,6 +28,11 @@ class Element(Base):
     accommodation_mass = Column(Float)
     mass = Column(Float)
     volume = Column(Float)
+    associated_states = relationship(
+        "State", back_populates="parent_element",
+        cascade="all, delete",
+        passive_deletes=True
+    )
 
     __mapper_args__ = {
         "polymorphic_on": type,

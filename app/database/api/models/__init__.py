@@ -11,3 +11,4 @@ from .element import (
 )
 from .node import NodeType, Node, SurfaceNode, OrbitalNode, LagrangeNode
 from .resource import ResourceType, Resource, ContinuousResource, DiscreteResource
+from .state import State
