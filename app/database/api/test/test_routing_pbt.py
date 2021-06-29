@@ -10,6 +10,7 @@ from app.database.api import models
 from app.database.api.database import get_db
 from app.database.api.main import app
 from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from spacenet.schemas import Element
 from .utilities import get_test_db
 from ..models import utilities as model_utils
 from ..schemas.constants import CREATE_SCHEMAS, CREATE_TO_UPDATE
@@ -32,6 +33,7 @@ PARENT_TO_PREFIX = {
     models.Element: "/element",
     models.Node: "/node",
     models.Resource: "/resource",
+    models.State: "/state",
 }
 
 
@@ -148,7 +150,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         table = type_to_table(type_)
         assume(id_ not in self.model[table])
         prefix = PARENT_TO_PREFIX[table]
-        response = self.client.patch("/".join((prefix, str(id_))), json=update_schema.dict())
+        response = self.client.patch(
+            "/".join((prefix, str(id_))), json=update_schema.dict()
+        )
         assert 404 == response.status_code
 
     @rule(
@@ -169,7 +173,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
     def update_type_mismatch(self, id_table_and_schema):
         id_, table, update_schema = id_table_and_schema
         prefix = PARENT_TO_PREFIX[table]
-        response = self.client.patch("/".join((prefix, str(id_))), json=update_schema.dict())
+        response = self.client.patch(
+            "/".join((prefix, str(id_))), json=update_schema.dict()
+        )
         assert 409 == response.status_code
 
     @rule(id_and_type=consumes(inserted))
@@ -181,6 +187,12 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         assert 200 == response.status_code
         result = response.json()
         assert self.model[table].pop(result.get("id")) == result
+        if type_.issubclass(Element):  # on element delete, also delete associated states
+            self.model[models.State] = {
+                id_: state
+                for id_, state in self.model[models.State].items()
+                if state.element_id != id_
+            }
 
     @rule(
         id_and_type=inserted.flatmap(
