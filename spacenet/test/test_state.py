@@ -1,6 +1,7 @@
 import pytest
 from hypothesis import given, strategies as st
 from .utilities import INVALID_INTS, success_from_kw, xfail_from_kw
+from ..constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from ..schemas.state import State
 
 pytestmark = [pytest.mark.unit, pytest.mark.state, pytest.mark.schema]
@@ -12,14 +13,18 @@ BOOL_ALTS = (
 )
 
 VALID_MAP = {
-    "element_id": st.integers(),
+    "element_id": st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
     "name": st.text(),
     "state_type": st.sampled_from(LEGAL_STATES),
     "is_initial_state": st.booleans(),
 }
 
 INVALID_MAP = {
-    "element_id": INVALID_INTS,
+    "element_id": st.one_of(
+        INVALID_INTS,
+        st.integers(max_value=SQLITE_MIN_INT - 1),
+        st.integers(min_value=SQLITE_MAX_INT + 1),
+    ),
     "state_type": st.text().filter(lambda s: s not in LEGAL_STATES),
     "is_initial_state": st.one_of(st.text(), st.sampled_from(BOOL_ALTS)),
 }
