@@ -2,7 +2,7 @@
 Property-based tests for the interactions between states and elements, namely that the foreign
 key relation works correctly.
 """
-from typing import TYPE_CHECKING
+from typing import Union
 
 import pytest
 from hypothesis import strategies as st
@@ -12,10 +12,7 @@ from .utilities import TestingSessionLocal, test_engine
 from ..api import models
 from ..api.schemas.constants import CREATE_SCHEMAS, ELEMENT_SCHEMAS, STATE_SCHEMAS
 from ..api.models.utilities import SCHEMA_TO_MODEL, dictify_row
-
-if TYPE_CHECKING:
-    from typing import Union
-    from spacenet.schemas import Element, State
+from spacenet.schemas import Element, State
 
 pytestmark = [
     pytest.mark.unit,
@@ -62,7 +59,7 @@ class ElementStateInteraction(RuleBasedStateMachine):
         ),
     )
     def create_element(self, element: Element):
-        self._create(element)
+        return self._create(element)
 
     # element id must reference an element which exists in the database, hence the complex
     # flatmap
@@ -80,9 +77,9 @@ class ElementStateInteraction(RuleBasedStateMachine):
         ),
     )
     def create_state(self, state: State):
-        self._create(state)
+        return self._create(state)
 
-    @rule(element=consumes(inserted_elements))
+    @rule(element_id=consumes(inserted_elements))
     def delete_element(self, element_id):
         # Associated states should be deleted too
         from_db = self.db.query(models.Element).get(element_id)
@@ -91,14 +88,15 @@ class ElementStateInteraction(RuleBasedStateMachine):
         states_to_delete = []
         for state_id, state in self.states.items():
             if state["element_id"] == element_id:
+                query_result = self.db.query(models.State).get(state_id)
                 assert (
-                    self.db.query(models.State).get(state_id) is None
-                ), "expected cascading delete"
+                    query_result is None
+                ), f"Expected cascading delete but got {dictify_row(query_result)}"
                 states_to_delete.append(state_id)
         for state_id in states_to_delete:
             del self.states[state_id]
 
-    @rule(state=consumes(inserted_states))
+    @rule(state_id=consumes(inserted_states))
     def delete_state(self, state_id):
         from_db = self.db.query(models.State).get(state_id)
         assert self.states.pop(state_id) == dictify_row(from_db)
@@ -108,3 +106,7 @@ class ElementStateInteraction(RuleBasedStateMachine):
         for table in (models.State, models.Element):
             table.__table__.drop(test_engine, checkfirst=True)
             table.__table__.create(test_engine, checkfirst=False)
+
+
+TestElementStateInteraction = ElementStateInteraction.TestCase
+pytest.mark.xfail(TestElementStateInteraction)

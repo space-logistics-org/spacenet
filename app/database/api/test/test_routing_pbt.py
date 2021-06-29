@@ -187,12 +187,17 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         assert 200 == response.status_code
         result = response.json()
         assert self.model[table].pop(result.get("id")) == result
-        if issubclass(type_, Element):  # on element delete, also delete associated states
-            self.model[models.State] = {
-                id_: state
+        if issubclass(
+            type_, Element
+        ):  # on element delete, also delete associated states
+            states_to_delete = [
+                id_
                 for id_, state in self.model[models.State].items()
-                if state["element_id"] != id_
-            }
+                if state["element_id"] == id_
+            ]
+            for state_id in states_to_delete:
+                assert 404 == self.client.get(f"/state/{state_id}").status_code
+                del self.model[models.State][state_id]
 
     @rule(
         id_and_type=inserted.flatmap(
