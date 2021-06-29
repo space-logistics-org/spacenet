@@ -89,9 +89,10 @@ class ElementStateInteraction(RuleBasedStateMachine):
         for state_id, state in self.states.items():
             if state["element_id"] == element_id:
                 query_result = self.db.query(models.State).get(state_id)
-                assert (
-                    query_result is None
-                ), f"Expected cascading delete but got {dictify_row(query_result)}"
+                assert query_result is None, (
+                    f"Expected cascading delete but row was still present: "
+                    f"{dictify_row(query_result)}"
+                )
                 states_to_delete.append(state_id)
         for state_id in states_to_delete:
             del self.states[state_id]
@@ -109,4 +110,3 @@ class ElementStateInteraction(RuleBasedStateMachine):
 
 
 TestElementStateInteraction = ElementStateInteraction.TestCase
-pytest.mark.xfail(TestElementStateInteraction)

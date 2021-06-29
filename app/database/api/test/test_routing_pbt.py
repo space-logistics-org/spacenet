@@ -220,4 +220,3 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
 
 
 TestRouting = DatabaseEditorCRUDRoutes.TestCase
-pytest.mark.xfail(TestRouting)
