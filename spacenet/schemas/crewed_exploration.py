@@ -23,7 +23,7 @@ class CrewedExploration(BaseModel):
         description="The execution time, relative to the start of the mission. "
     )
 
-    priority: PositiveInt = Field(
+    priority: int = Field(
         ...,
         title="Priority",
         description="Importance of mission event",
