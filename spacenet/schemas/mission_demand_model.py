@@ -42,10 +42,11 @@ class RatedModel(MissionDemand):
     A demand for a set of resources based on daily rates and the
     mission duration.
     """
-    daily_rate: PositiveFloat = Field(
+    daily_rate: float = Field(
         ...,
         title="Daily Rate",
-        description="Amount of resources to be demanded per day"
+        description="Amount of resources to be demanded per day",
+        ge=0
     )
 
 
@@ -71,10 +72,11 @@ class ConsumablesModel(BaseModel):
         title="Habitat Pressure",
         description="Pressure inside the habitat in absolute psi"
     )
-    habitat_leak_rate: PositiveFloat = Field(
+    habitat_leak_rate: float = Field(
         ...,
         title="Habitat Leak Rate",
         description="Rate of leakage in the habitat in % / day",
+        ge=0,
         le=100
     )
     airlock_volume: PositiveFloat = Field(
@@ -82,22 +84,25 @@ class ConsumablesModel(BaseModel):
         title="Airlock Volume",
         description="Volume of the airlock in cubic meters"
     )
-    airlock_efficiency: PositiveFloat = Field(
+    airlock_efficiency: float = Field(
         ...,
         title="Airlock Efficiency",
         description="Efficiency of the airlock expressed as a percentage",
+        ge=0,
         le=100
     )
-    waste_water_recovered: PositiveFloat = Field(
+    waste_water_recovered: float = Field(
         ...,
         title="Waste Water Recovered",
         description="Percentage of waste water that is recovered",
+        ge=0,
         le=100
     )
-    solid_water_recovered: PositiveFloat = Field(
+    solid_water_recovered: float = Field(
         ...,
         title="Solid Water Recovered",
         description="Percentage of solid water that is recovered",
+        ge=0,
         le=100
     )
     brine_recycled: bool = Field(
@@ -105,10 +110,11 @@ class ConsumablesModel(BaseModel):
         title="Brine Recycled",
         description="A boolean expressing whether or not brine water is recycled"
     )
-    brine_recycled_percentage: PositiveFloat = Field(
+    brine_recycled_percentage: float = Field(
         ...,
         title="Brine Recycled Percentage",
         description="Percentage of brine that is recycled",
+        ge=0,
         le=100
     )
     include_electrolysis: bool = Field(
