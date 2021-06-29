@@ -8,7 +8,7 @@ __all__ = ["Resource", "ResourceType", "ContinuousResource", "DiscreteResource"]
 
 
 class Resource(Base):
-    __tablename__ = "Resources"
+    __tablename__ = "resource"
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)

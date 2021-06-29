@@ -8,7 +8,7 @@ __all__ = ["EdgeType", "Edge", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
 
 
 class Edge(Base):
-    __tablename__ = "Edges"
+    __tablename__ = "edge"
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
