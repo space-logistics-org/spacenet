@@ -24,9 +24,15 @@ class BurnStageItem(BaseModel):
     Class for items in the burn-stage sequence
     """
 
-    element: Element = Field(..., description="Element to be burned or staged.")
+    element: Element = Field(
+        ...,
+        title="Element",
+        description="Element to be burned or staged."
+    )
     burnStage: BurnStage = Field(
-        ..., description="Whether the target element will be burned or staged."
+        ...,
+        title="Burn/Stage",
+        description="Whether the target element will be burned or staged."
     )
 
 
@@ -37,9 +43,17 @@ class PropulsiveBurn(BaseModel):
     """
 
     elements: List[Element] = Field(
-        ..., description="List of the elements to be included in the burn event."
+        ...,
+        title="Elements List",
+        description="List of the elements to be included in the burn event."
     )
-    burn: Burn = Field(..., description="Burn item")
+    burn: Burn = Field(
+        ...,
+        title="Burn",
+        description="Burn item"
+    )
     burn_stage_sequence: List[BurnStageItem] = Field(
-        ..., description="List of the burns and stages to be performed in the event."
+        ...,
+        title="Burn/Stage Sequence",
+        description="List of the burns and stages to be performed in the event."
     )
