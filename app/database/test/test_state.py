@@ -86,6 +86,7 @@ class ElementStateInteraction(RuleBasedStateMachine):
         from_db = self.db.query(models.Element).get(element_id)
         assert self.elements.pop(element_id) == dictify_row(from_db)
         self.db.delete(from_db)
+        self.db.commit()
         states_to_delete = []
         for state_id, state in self.states.items():
             if state["element_id"] == element_id:
@@ -103,6 +104,7 @@ class ElementStateInteraction(RuleBasedStateMachine):
         from_db = self.db.query(models.State).get(state_id)
         assert self.states.pop(state_id) == dictify_row(from_db)
         self.db.delete(from_db)
+        self.db.commit()
 
     def teardown(self):
         for table in (models.State, models.Element):
