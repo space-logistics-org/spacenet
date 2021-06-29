@@ -13,7 +13,6 @@ __all__ = [
 
 
 class StateUpdate(State):
-    element_id: int
     name: Optional[str]
     state_type: Optional[StateType]
     is_initial_state: Optional[StrictBool]
