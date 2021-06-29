@@ -191,7 +191,7 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
             self.model[models.State] = {
                 id_: state
                 for id_, state in self.model[models.State].items()
-                if state.element_id != id_
+                if state["element_id"] != id_
             }
 
     @rule(
