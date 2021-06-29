@@ -16,6 +16,7 @@ from spacenet.schemas import Element, State
 
 pytestmark = [
     pytest.mark.unit,
+    pytest.mark.database,
     pytest.mark.element,
     pytest.mark.state,
     pytest.mark.slow,
