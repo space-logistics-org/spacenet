@@ -1,5 +1,14 @@
 from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
+from typing import List
 
+from .propulsive_burn import BurnStageItem
+
+class BurnStageSequence(BaseModel):
+    burn_stage_sequence: List[BurnStageItem] = Field(
+        ...,
+        description="List of the burns and stages to be performed in the event"
+    )
+    
 class SpaceTransport(BaseModel):
     """
     Schema for Space Transport
@@ -17,9 +26,9 @@ class SpaceTransport(BaseModel):
     )
     
     time: PositiveFloat = Field(
-        ...,
+        ...,                                    
         title="Time",
-        description="The execution time, relative to the start of the mission. "
+        description="The execution time, relative to the start of the mission"
     )
     
     priority: PositiveInt = Field(
@@ -39,13 +48,13 @@ class SpaceTransport(BaseModel):
     elements: str = Field(
         ...,
         title="Elements",
-        description="The elements  " ################
+        description="The possible elements to be used in the Burn-Stage Sequence"
     )
     
-    burn_sequence: dict = Field(
+    burn_sequence: List[BurnStageSequence] = Field(
         ...,
         title="Burn Sequence",
-        description="The execution time, relative to the start of the mission. " ###########
+        description="List of seperate Burn-Stage Sequences" 
     )
 
 
