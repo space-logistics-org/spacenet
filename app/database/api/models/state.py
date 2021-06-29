@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
+from sqlalchemy.orm import relationship
 
 from app.database.api.database import Base
+from .element import Element
 
 __all__ = [
     "State"
@@ -11,7 +13,8 @@ class State(Base):
     __tablename__ = "State"
 
     id = Column(Integer, primary_key=True, index=True)
-    # element_id =
+    element_id = Column(Integer, ForeignKey("Elements.id", ondelete="CASCADE"))
     name = Column(String)
     state_type = Column(String)
     is_initial_state = Column(Boolean)
+    parent_element = relationship("Element", back_populates="associated_states")
