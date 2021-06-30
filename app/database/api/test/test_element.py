@@ -71,8 +71,8 @@ KIND_TO_FACTORIES: Dict[
     ),
     ElementKind.RoboticAgent: (ValidAgentArgsFactory, InvalidAgentArgsFactory),
     ElementKind.HumanAgent: (ValidAgentArgsFactory, InvalidAgentArgsFactory),
-    ElementKind.Propulsive: (ValidPropulsiveArgsFactory, InvalidPropulsiveArgsFactory),
-    ElementKind.Surface: (ValidSurfaceArgsFactory, InvalidSurfaceArgsFactory),
+    ElementKind.PropulsiveVehicle: (ValidPropulsiveArgsFactory, InvalidPropulsiveArgsFactory),
+    ElementKind.SurfaceVehicle: (ValidSurfaceArgsFactory, InvalidSurfaceArgsFactory),
 }
 
 TESTED_VARIANTS: List[ElementKind] = [variant for variant in ElementKind]
