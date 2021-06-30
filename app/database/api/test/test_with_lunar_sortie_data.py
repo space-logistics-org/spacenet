@@ -38,6 +38,7 @@ def object_to_prefix(obj: dict) -> str:
         except ValueError:
             pass
         else:
+            print(obj.type)
             return TYPE_TO_PREFIX[type(obj.type)]
 
 
@@ -55,8 +56,6 @@ def test_routers_with_lunar_sortie_data(domain_objects):
     for obj in domain_objects:
         prefix = object_to_prefix(obj)
         post_response = client.post(f"/{prefix}/", json=obj)
-        print(prefix)
-        print(obj["type"])
         assert 201 == post_response.status_code
         result = post_response.json()
         id_ = result.get("id")
