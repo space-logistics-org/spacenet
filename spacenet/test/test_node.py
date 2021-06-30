@@ -17,7 +17,7 @@ class TestNode(unittest.TestCase):
         goodData = {
             "name": "KSC",
             "description": "Kennedy Space Center",
-            "type": "Surface",
+            "type": "SurfaceNode",
             "body_1": "Earth",
             "latitude": 28.57,
             "longitude": -80.65,
@@ -25,7 +25,7 @@ class TestNode(unittest.TestCase):
         badData = {
             "name": "KSC",
             "description": "Kennedy Space Center",
-            "type": "Orbital",
+            "type": "OrbitalNode",
             "body_1": "Earth",
             "latitude": 28.57,
             "longitude": -80.65,
@@ -49,7 +49,7 @@ class TestNode(unittest.TestCase):
             "apoapsis": 296,
             "periapsis": 296,
             "inclination": 28.5,
-            "type": "Orbital",
+            "type": "OrbitalNode",
         }
         badData = {
             "name": "LEO",
@@ -58,7 +58,7 @@ class TestNode(unittest.TestCase):
             "apoapsis": -100,
             "periapsis": -100,
             "inclination": -100,
-            "type": "Orbital",
+            "type": "OrbitalNode",
         }
         goodNode = OrbitalNode.parse_obj(goodData)
         self.assertEqual(goodNode.name, goodData.get("name"))
@@ -78,7 +78,7 @@ class TestNode(unittest.TestCase):
             "body_1": "Earth",
             "body_2": "Moon",
             "lp_number": 5,
-            "type": "Lagrange",
+            "type": "LagrangeNode",
         }
         badData = {
             "name": "LEO",
@@ -88,7 +88,7 @@ class TestNode(unittest.TestCase):
             "periapsis": -100,
             "body_2": "Titan",
             "lp_number": 6,
-            "type": "Lagrange",
+            "type": "LagrangeNode",
         }
         goodNode = LagrangeNode.parse_obj(goodData)
         self.assertEqual(goodNode.name, goodData.get("name"))
