@@ -76,8 +76,8 @@ KIND_TO_SCHEMA = {
     NodeType.Surface: SurfaceNode,
     NodeType.Orbital: OrbitalNode,
     NodeType.Lagrange: LagrangeNode,
-    ResourceType.discrete: DiscreteResource,
-    ResourceType.continuous: ContinuousResource,
+    ResourceType.Discrete: DiscreteResource,
+    ResourceType.Continuous: ContinuousResource,
 }
 
 

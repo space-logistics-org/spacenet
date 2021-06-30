@@ -69,13 +69,13 @@ INVALID_CONT_ARGS = {**VALID_CONT_ARGS, "class_of_supply": -10}
 MISTYPED_CONT_ARGS = {**VALID_DISCRETE_ARGS, "unit_mass": 10.2, "unit_volume": 24.1}
 
 KIND_TO_ARGS: Dict[ResourceType, Tuple[Dict, Dict, Dict, Dict]] = {
-    ResourceType.discrete: (
+    ResourceType.Discrete: (
         VALID_DISCRETE_ARGS,
         OTHER_VALID_DISCRETE_ARGS,
         INVALID_DISCRETE_ARGS,
         MISTYPED_DISCRETE_ARGS,
     ),
-    ResourceType.continuous: (
+    ResourceType.Continuous: (
         VALID_CONT_ARGS,
         OTHER_VALID_CONT_ARGS,
         INVALID_CONT_ARGS,
@@ -83,7 +83,7 @@ KIND_TO_ARGS: Dict[ResourceType, Tuple[Dict, Dict, Dict, Dict]] = {
     ),
 }
 
-TESTED_VARIANTS: List[ResourceType] = [ResourceType.discrete, ResourceType.continuous]
+TESTED_VARIANTS: List[ResourceType] = [ResourceType.Discrete, ResourceType.Continuous]
 
 
 @pytest.fixture(scope="module")
@@ -150,9 +150,9 @@ def test_update(resource_type: ResourceType):
     assert bad_patch.status_code == 404
     check_get()
     other_type = (
-        ResourceType.discrete
-        if resource_type == ResourceType.continuous
-        else ResourceType.continuous
+        ResourceType.Discrete
+        if resource_type == ResourceType.Continuous
+        else ResourceType.Continuous
     )
     non_matching_kw = with_type(mistyped, other_type)
     bad_patch = client.patch(f"/resource/{id_}", json=non_matching_kw)

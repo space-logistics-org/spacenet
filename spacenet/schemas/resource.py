@@ -15,8 +15,8 @@ __all__ = ["ResourceType", "ContinuousResource", "DiscreteResource"]
 
 
 class ResourceType(str, Enum):
-    discrete = "Discrete"
-    continuous = "Continuous"
+    Discrete = "Discrete"
+    Continuous = "Continuous"
 
 
 class Resource(BaseModel):
@@ -37,12 +37,12 @@ class Resource(BaseModel):
 
 
 class DiscreteResource(Resource):
-    type: Literal[ResourceType.discrete] = Field(
+    type: Literal[ResourceType.Discrete] = Field(
         ..., title="Type", description="Resource type"
     )
 
 
 class ContinuousResource(Resource):
-    type: Literal[ResourceType.continuous] = Field(
+    type: Literal[ResourceType.Continuous] = Field(
         ..., title="Type", description="Resource type"
     )
