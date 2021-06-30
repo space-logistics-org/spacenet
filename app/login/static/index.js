@@ -1,11 +1,13 @@
+
 var accesstoken="";
 
 $("#login_form_submit").click(function (){
-	/*$.ajax({
-		url:"token",
+	/*
+	$.ajax({
+		url:"/auth/cookie/login",
 		data:JSON.stringify({
-			username:$("#username_field").val(),
-			password:$("#password_field").val()
+			username:$("#username").val(),
+			password:$("#password").val()
 		}),
 		contentType:"application/json",
 		dataType:"json",
@@ -14,9 +16,12 @@ $("#login_form_submit").click(function (){
 			alert(response)
 		}
 	})*/
-	$.post("token", $("#login").serialize(), function (response){accesstoken=response["access_token"], document.cookie = `auth_token=${response["access_token"]}; max-age=3600; SameSite=lax`})
+
 	
-	/*setTimeout(() => { $("#invalid").css("display", "block"); }, 500);*/
+	$.post("/auth/cookie/login", $("#login").serialize(), function (response){accesstoken=response["access_token"]})
+	/*
+	setTimeout(() => { $("#invalid").css("display", "block"); }, 500);*/
+
 })
 
 /*

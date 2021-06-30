@@ -1,0 +1,4 @@
+aiofiles
+fastapi
+fastapi-users
+databases[sqlite]
