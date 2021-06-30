@@ -10,7 +10,7 @@ from app.database.api import models
 from app.database.api.database import get_db
 from app.database.api.main import app
 from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
-from spacenet.schemas import Element
+from spacenet.schemas import Element, State
 from .utilities import get_test_db
 from ..models import utilities as model_utils
 from ..schemas.constants import CREATE_SCHEMAS, CREATE_TO_UPDATE
@@ -23,6 +23,7 @@ pytestmark = [
     pytest.mark.element,
     pytest.mark.node,
     pytest.mark.resource,
+    pytest.mark.state,
     pytest.mark.slow,
 ]
 
@@ -73,6 +74,8 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
     )
     def create(self, create_schema):
         type_ = type(create_schema)
+        if issubclass(type_, State):
+            assume(create_schema.element_id in self.model[models.Element])
         table = type_to_table(type_)
         prefix = PARENT_TO_PREFIX[table]
         schema_dict = create_schema.dict()
@@ -220,4 +223,3 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
 
 
 TestRouting = DatabaseEditorCRUDRoutes.TestCase
-pytest.mark.xfail(TestRouting)

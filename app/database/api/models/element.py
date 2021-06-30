@@ -17,7 +17,7 @@ __all__ = [
 
 
 class Element(Base):
-    __tablename__ = "Elements"
+    __tablename__ = "element"
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
@@ -28,10 +28,8 @@ class Element(Base):
     accommodation_mass = Column(Float)
     mass = Column(Float)
     volume = Column(Float)
-    associated_states = relationship(
-        "State", back_populates="parent_element",
-        cascade="all, delete",
-        passive_deletes=True
+    states = relationship(
+        "State", back_populates="element", cascade="all, delete-orphan"
     )
 
     __mapper_args__ = {
