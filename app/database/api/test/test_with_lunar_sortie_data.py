@@ -38,7 +38,7 @@ def object_to_prefix(obj: dict) -> str:
         except ValueError:
             pass
         else:
-            print(obj.type)
+            pprint.pprint(obj)
             return TYPE_TO_PREFIX[type(obj.type)]
 
 
