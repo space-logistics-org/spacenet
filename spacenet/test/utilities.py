@@ -68,16 +68,16 @@ KIND_TO_SCHEMA = {
     ElementKind.ResourceContainer: ResourceContainer,
     ElementKind.HumanAgent: HumanAgent,
     ElementKind.RoboticAgent: RoboticAgent,
-    ElementKind.Propulsive: PropulsiveVehicle,
-    ElementKind.Surface: SurfaceVehicle,
+    ElementKind.PropulsiveVehicle: PropulsiveVehicle,
+    ElementKind.SurfaceVehicle: SurfaceVehicle,
     EdgeType.Surface: SurfaceEdge,
     EdgeType.Flight: FlightEdge,
     EdgeType.Space: SpaceEdge,
     NodeType.Surface: SurfaceNode,
     NodeType.Orbital: OrbitalNode,
     NodeType.Lagrange: LagrangeNode,
-    ResourceType.discrete: DiscreteResource,
-    ResourceType.continuous: ContinuousResource,
+    ResourceType.Discrete: DiscreteResource,
+    ResourceType.Continuous: ContinuousResource,
 }
 
 

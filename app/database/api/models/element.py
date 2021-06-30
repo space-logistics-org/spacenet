@@ -97,11 +97,11 @@ class PropulsiveVehicle(Vehicle):
     isp = Column(Float)
     propellant_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": ElementKind.Propulsive.value}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.PropulsiveVehicle.value}
 
 
 class SurfaceVehicle(Vehicle):
     max_speed = Column(Float)
     fuel_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": ElementKind.Surface.value}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.SurfaceVehicle.value}

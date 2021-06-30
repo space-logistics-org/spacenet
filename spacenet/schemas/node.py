@@ -24,9 +24,9 @@ class NodeType(str, Enum):
     An ennumeration of the three types of nodes.
     """
 
-    Surface = "Surface"
-    Orbital = "Orbital"
-    Lagrange = "Lagrange"
+    Surface = "SurfaceNode"
+    Orbital = "OrbitalNode"
+    Lagrange = "LagrangeNode"
 
 
 class Node(BaseModel):

@@ -13,7 +13,7 @@
     "isp": 267,
     "max_fuel": 620000,
     "propellant_id": 1,
-    "type": "Propulsive"
+    "type": "PropulsiveVehicle"
   },
   {
     "name": "Ares I Upper Stage",
@@ -29,6 +29,6 @@
     "isp": 448,
     "max_fuel": 125000,
     "propellant_id": 1,
-    "type": "Propulsive"
+    "type": "PropulsiveVehicle"
   }
 ]

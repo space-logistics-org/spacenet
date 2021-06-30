@@ -33,8 +33,8 @@ class ElementKind(str, Enum):
     ElementCarrier = "ElementCarrier"
     HumanAgent = "HumanAgent"
     RoboticAgent = "RoboticAgent"
-    Propulsive = "Propulsive"
-    Surface = "Surface"
+    PropulsiveVehicle = "PropulsiveVehicle"
+    SurfaceVehicle = "SurfaceVehicle"
 
 
 class Element(BaseModel):
@@ -150,7 +150,7 @@ class PropulsiveVehicle(Vehicle):
     An element representing a vehicle with its own propulsion.
     """
 
-    type: Literal[ElementKind.Propulsive] = Field(description="the element's type")
+    type: Literal[ElementKind.PropulsiveVehicle] = Field(description="the element's type")
     isp: confloat(ge=0, lt=inf) = Field(
         ..., title="Specific Impulse", description="specific impulse (s)"
     )
@@ -168,7 +168,7 @@ class SurfaceVehicle(Vehicle):
     An element representing a surface vehicle.
     """
 
-    type: Literal[ElementKind.Surface] = Field(description="the element's type")
+    type: Literal[ElementKind.SurfaceVehicle] = Field(description="the element's type")
     max_speed: confloat(ge=0, lt=inf) = Field(
         ..., title="Maximum Speed", description="maximum speed (kph)"
     )

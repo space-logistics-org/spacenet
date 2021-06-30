@@ -15,9 +15,9 @@ class EdgeType(str, Enum):
     An enumeration for the types of edges.
     """
 
-    Surface = "Surface"
-    Space = "Space"
-    Flight = "Flight"
+    Surface = "SurfaceEdge"
+    Space = "SpaceEdge"
+    Flight = "FlightEdge"
 
 
 class Edge(BaseModel):
