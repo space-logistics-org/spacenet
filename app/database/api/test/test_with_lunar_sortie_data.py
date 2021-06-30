@@ -1,6 +1,3 @@
-import pprint
-from typing import Union
-
 import pytest
 from fastapi.testclient import TestClient
 
@@ -17,7 +14,6 @@ from spacenet.test.utilities import (
     lunar_sortie_edges,
     lunar_sortie_nodes,
     lunar_sortie_resources,
-    KIND_TO_SCHEMA,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.database, pytest.mark.lunar_sortie]
