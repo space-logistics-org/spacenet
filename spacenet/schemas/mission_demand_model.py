@@ -1,3 +1,5 @@
+from math import inf
+
 from pydantic import BaseModel, Field, PositiveFloat
 from .resource import ResourceType, Resource
 
@@ -32,7 +34,9 @@ class TimedModel(MissionDemand):
     amount: float = Field(
         ...,
         title="Amount",
-        description="Amount of resource to be demanded."
+        description="Amount of resource to be demanded.",
+        gt=-inf,
+        lt=inf,
     )
 
 
@@ -46,7 +50,8 @@ class RatedModel(MissionDemand):
         ...,
         title="Daily Rate",
         description="Amount of resources to be demanded per day",
-        ge=0
+        ge=0,
+        lt=inf,
     )
 
 
@@ -57,20 +62,26 @@ class ConsumablesModel(BaseModel):
     """
     # TODO: Add mission field that takes a mission object schema to import certain fields
 
-    reserves_duration: PositiveFloat = Field(
+    reserves_duration: float = Field(
         ...,
         title="Reserves Duration",
-        description=""
+        description="",
+        gt=0,
+        lt=inf,
     )
-    habitat_volume: PositiveFloat = Field(
+    habitat_volume: float = Field(
         ...,
         title="Habitat Volume",
-        description="Volume of the habitat in cubic meters"
+        description="Volume of the habitat in cubic meters",
+        gt=0,
+        lt=inf,
     )
-    habitat_pressure: PositiveFloat = Field(
+    habitat_pressure: float = Field(
         ...,
         title="Habitat Pressure",
-        description="Pressure inside the habitat in absolute psi"
+        description="Pressure inside the habitat in absolute psi",
+        gt=0,
+        lt=inf,
     )
     habitat_leak_rate: float = Field(
         ...,
@@ -79,10 +90,12 @@ class ConsumablesModel(BaseModel):
         ge=0,
         le=100
     )
-    airlock_volume: PositiveFloat = Field(
+    airlock_volume: float = Field(
         ...,
         title="Airlock Volume",
-        description="Volume of the airlock in cubic meters"
+        description="Volume of the airlock in cubic meters",
+        gt=0,
+        lt=inf,
     )
     airlock_efficiency: float = Field(
         ...,
@@ -137,25 +150,33 @@ class ConsumablesModel(BaseModel):
         title="Include Laundry Machine",
         description="a boolean expressing whether or not a laundry machine is included"
     )
-    isru_o2_production: PositiveFloat = Field(
+    isru_o2_production: float = Field(
         ...,
         title="ISRU O2 Production",
-        description="Amount of ISRU O2 Production in kg / year"
+        description="Amount of ISRU O2 Production in kg / year",
+        gt=0,
+        lt=inf,
     )
-    clothes_lifetime: PositiveFloat = Field(
+    clothes_lifetime: float = Field(
         ...,
         title="Clothes Lifetime",
-        description="Number of days a piece of clothing is expected to last"
+        description="Number of days a piece of clothing is expected to last",
+        gt=0,
+        lt=inf,
     )
-    press_science: PositiveFloat = Field(
+    press_science: float = Field(
         ...,
         title="Pressurized Science",
-        description="Amount of pressurized scientific equipment in kg"
+        description="Amount of pressurized scientific equipment in kg",
+        gt=0,
+        lt=inf,
     )
-    unpress_science: PositiveFloat = Field(
+    unpress_science: float = Field(
         ...,
         title="Unpressurized Science",
-        description="Amount of unpressurized scientific equipment in kg"
+        description="Amount of unpressurized scientific equipment in kg",
+        gt=0,
+        lt=inf,
     )
     transit_demands: bool = Field(
         ...,
