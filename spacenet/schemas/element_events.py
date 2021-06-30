@@ -2,7 +2,6 @@ from typing import Dict, List
 from uuid import UUID
 
 from pydantic import BaseModel, Field
-from typing_extensions import Literal
 
 __all__ = [
     "MakeElementsEvent",
@@ -38,7 +37,10 @@ class MoveElementsEvent(BaseModel):
         description="the ID of the original time and location "
         "which the elements are being moved from",
     )
-    destination_id: UUID
+    destination_id: UUID = Field(
+        ...,
+        description="the ID of the new location which the elements are being moved to",
+    )
 
 
 class RemoveElementsEvent(BaseModel):
@@ -53,9 +55,6 @@ class RemoveElementsEvent(BaseModel):
     removal_point_id: UUID = Field(
         ..., description="the ID of the node or edge to remove elements from"
     )
-
-
-State = Literal["Active", "Decommissioned", "Dormant"]
 
 
 class ReconfigureElementsEvent(BaseModel):

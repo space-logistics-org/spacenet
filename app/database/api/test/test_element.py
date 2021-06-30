@@ -221,7 +221,5 @@ def test_delete(element_type: ElementKind):
     assert len(read_all_r.json()) == 0
 
 
-# TODO: tests for heterogeneous types
-
 if __name__ == "__main__":
     pytest.main()
