@@ -33,7 +33,7 @@ def schema_superclass(type_):
             return super_
 
 
-TYPE_TO_PREFIX = {schema_superclass(cls) for cls in CREATE_SCHEMAS}
+TYPE_TO_PREFIX = {cls: schema_superclass(cls) for cls in CREATE_SCHEMAS}
 
 
 def object_to_prefix(obj: dict) -> str:
