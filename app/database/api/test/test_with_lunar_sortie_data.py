@@ -8,7 +8,10 @@ from app.database.api.database import get_db
 from app.database.api.main import app
 from ..schemas.constants import CREATE_SCHEMAS
 from app.database.api.test.utilities import get_test_db
-from spacenet.schemas import EdgeType, ElementKind, NodeType, ResourceType
+from spacenet.schemas.element import Element
+from spacenet.schemas.node import Node
+from spacenet.schemas.edge import Edge
+from spacenet.schemas.resource import Resource
 from spacenet.test.utilities import (
     lunar_sortie_elements,
     lunar_sortie_edges,
@@ -23,12 +26,17 @@ app.dependency_overrides[get_db] = get_test_db
 
 client = TestClient(app)
 
-TYPE_TO_PREFIX = {
-    ElementKind: "element",
-    EdgeType: "edge",
-    NodeType: "node",
-    ResourceType: "resource",
-}
+
+def schema_superclass(type_):
+    for super_ in (Element, Node, Edge, Resource):
+        if issubclass(type_, super_):
+            return super_
+
+
+TYPE_TO_SUPER = {cls: schema_superclass(cls) for cls in CREATE_SCHEMAS}
+
+
+SUPER_TO_PREFIX = {Element: "element", Edge: "edge", Node: "node", Resource: "resource"}
 
 
 def object_to_prefix(obj: dict) -> str:
@@ -38,23 +46,26 @@ def object_to_prefix(obj: dict) -> str:
         except ValueError:
             pass
         else:
-            print(obj.type)
-            return TYPE_TO_PREFIX[type(obj.type)]
+            super_ = TYPE_TO_SUPER[schema]
+            return SUPER_TO_PREFIX[super_]
+    else:
+        raise ValueError(f"Could not find prefix mapping to {obj}")
 
 
 @pytest.mark.parametrize(
     "domain_objects",
     (
-            pytest.param(
-                pytest.lazy_fixture("lunar_sortie_" + obj_type + "s"),
-                marks=getattr(pytest.mark, obj_type),
-            )
-            for obj_type in ["element", "edge", "node", "resource"]
+        pytest.param(
+            pytest.lazy_fixture("lunar_sortie_" + obj_type + "s"),
+            marks=getattr(pytest.mark, obj_type),
+        )
+        for obj_type in ["element", "edge", "node", "resource"]
     ),
 )
 def test_routers_with_lunar_sortie_data(domain_objects):
     for obj in domain_objects:
         prefix = object_to_prefix(obj)
+        print(prefix)
         post_response = client.post(f"/{prefix}/", json=obj)
         assert 201 == post_response.status_code
         result = post_response.json()
