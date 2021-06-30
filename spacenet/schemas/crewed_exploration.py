@@ -1,4 +1,8 @@
-from pydantic import BaseModel, Field, PositiveFloat, PositiveInt
+from math import inf
+
+from pydantic import BaseModel, Field
+
+from spacenet.constants import SQLITE_MAX_INT
 
 
 class CrewedExploration(BaseModel):
@@ -17,10 +21,12 @@ class CrewedExploration(BaseModel):
         description="The location of the Crewed EVA"
     )
 
-    time: PositiveFloat = Field(
+    time: float = Field(
         ...,
         title="Time",
-        description="The execution time, relative to the start of the mission. "
+        description="The execution time, relative to the start of the mission. ",
+        gt=0,
+        lt=inf,
     )
 
     priority: int = Field(
@@ -31,10 +37,12 @@ class CrewedExploration(BaseModel):
         le=5
     )
 
-    eva_duration: PositiveFloat = Field(
+    eva_duration: float = Field(
         ...,
         title="EVA Duration",
-        description="The duration of the EVA"
+        description="The duration of the EVA",
+        gt=0,
+        lt=inf
     )
 
     crew_location: str = Field(
@@ -48,13 +56,17 @@ class CrewedExploration(BaseModel):
         title="Crew",
         description="List of the crew selected for the EVA"
     )
-    duration: PositiveFloat = Field(
+    duration: float = Field(
         ...,
         title="Exploration Duration",
-        description="The duration of the exploration"
+        description="The duration of the exploration",
+        gt=0,
+        lt=inf
     )
-    eva_per_week: PositiveInt = Field(
+    eva_per_week: int = Field(
         ...,
         title="EVAs per week",
-        description="Number of EVAs to be performed a week"
+        description="Number of EVAs to be performed a week",
+        gt=0,
+        le=SQLITE_MAX_INT
     )

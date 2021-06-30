@@ -7,10 +7,10 @@ from hypothesis import assume
 from hypothesis.stateful import Bundle, RuleBasedStateMachine, consumes, rule
 
 from app.database.api import models
-from app.database.api.database import get_db
+from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
-from spacenet.schemas import Element
+from spacenet.schemas import Element, State
 from .utilities import get_test_db
 from ..models import utilities as model_utils
 from ..schemas.constants import CREATE_SCHEMAS, CREATE_TO_UPDATE
@@ -23,6 +23,7 @@ pytestmark = [
     pytest.mark.element,
     pytest.mark.node,
     pytest.mark.resource,
+    pytest.mark.state,
     pytest.mark.slow,
 ]
 
@@ -61,9 +62,8 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
 
     @classmethod
     def clear_tables(cls):
-        for model in model_utils.MODEL_TO_PARENT.values():
-            model.__table__.drop(test_engine, checkfirst=True)
-            model.__table__.create(test_engine, checkfirst=False)
+        Base.metadata.drop_all(test_engine, checkfirst=True)
+        Base.metadata.create_all(test_engine, checkfirst=False)
 
     inserted = Bundle("inserted")
 
@@ -73,6 +73,8 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
     )
     def create(self, create_schema):
         type_ = type(create_schema)
+        if issubclass(type_, State):
+            assume(create_schema.element_id in self.model[models.Element])
         table = type_to_table(type_)
         prefix = PARENT_TO_PREFIX[table]
         schema_dict = create_schema.dict()
@@ -162,9 +164,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
                 st.just(type_to_table(t[1])),
                 st.one_of(
                     *(
-                        st.builds(cls)
-                        for cls in SCHEMAS_IN_SAME_TABLE[t[1]]
-                        if cls != t[1]
+                            st.builds(cls)
+                            for cls in SCHEMAS_IN_SAME_TABLE[t[1]]
+                            if cls != t[1]
                     )
                 ),
             )
@@ -187,12 +189,17 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         assert 200 == response.status_code
         result = response.json()
         assert self.model[table].pop(result.get("id")) == result
-        if issubclass(type_, Element):  # on element delete, also delete associated states
-            self.model[models.State] = {
-                id_: state
+        if issubclass(
+                type_, Element
+        ):  # on element delete, also delete associated states
+            states_to_delete = [
+                id_
                 for id_, state in self.model[models.State].items()
-                if state["element_id"] != id_
-            }
+                if state["element_id"] == id_
+            ]
+            for state_id in states_to_delete:
+                assert 404 == self.client.get(f"/state/{state_id}").status_code
+                del self.model[models.State][state_id]
 
     @rule(
         id_and_type=inserted.flatmap(

@@ -12,7 +12,7 @@ __all__ = [
 
 
 class Node(Base):
-    __tablename__ = "Nodes"
+    __tablename__ = "node"
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
