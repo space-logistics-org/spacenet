@@ -6,7 +6,7 @@ from typing import Union
 
 import pytest
 from hypothesis import assume, strategies as st
-from hypothesis.stateful import Bundle, RuleBasedStateMachine, consumes, rule
+from hypothesis.stateful import Bundle, RuleBasedStateMachine, rule
 
 from .utilities import TestingSessionLocal, test_engine
 from ..api import models
@@ -43,10 +43,8 @@ class ElementStateInteraction(RuleBasedStateMachine):
         self.db.commit()
         self.db.refresh(db_entry)
         as_dict = dictify_row(db_entry)
-        if isinstance(entry, State):
-            self.states[db_entry.id] = as_dict
-        else:
-            self.elements[db_entry.id] = as_dict
+        table = self.states if isinstance(entry, State) else self.elements
+        table[db_entry.id] = as_dict
         return db_entry.id
 
     @rule(
@@ -105,6 +103,21 @@ class ElementStateInteraction(RuleBasedStateMachine):
         assert self.states.pop(state_id) == dictify_row(from_db)
         self.db.delete(from_db)
         self.db.commit()
+
+    @rule()
+    def read_all_elements(self):
+        self.read_all(models.Element, self.elements)
+
+    @rule()
+    def read_all_states(self):
+        self.read_all(models.State, self.states)
+
+    def read_all(self, table, mapping):
+        from_db = self.db.query(table).all()
+        assert len(mapping) == len(from_db)
+        for row in from_db:
+            assert row.id in mapping
+            assert mapping[row.id] == dictify_row(row)
 
     def teardown(self):
         for table in (models.State, models.Element):

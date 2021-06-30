@@ -7,7 +7,7 @@ from hypothesis import assume
 from hypothesis.stateful import Bundle, RuleBasedStateMachine, consumes, rule
 
 from app.database.api import models
-from app.database.api.database import get_db
+from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from spacenet.schemas import Element, State
@@ -62,9 +62,8 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
 
     @classmethod
     def clear_tables(cls):
-        for model in model_utils.MODEL_TO_PARENT.values():
-            model.__table__.drop(test_engine, checkfirst=True)
-            model.__table__.create(test_engine, checkfirst=False)
+        Base.metadata.drop_all(test_engine, checkfirst=True)
+        Base.metadata.create_all(test_engine, checkfirst=False)
 
     inserted = Bundle("inserted")
 
@@ -165,9 +164,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
                 st.just(type_to_table(t[1])),
                 st.one_of(
                     *(
-                        st.builds(cls)
-                        for cls in SCHEMAS_IN_SAME_TABLE[t[1]]
-                        if cls != t[1]
+                            st.builds(cls)
+                            for cls in SCHEMAS_IN_SAME_TABLE[t[1]]
+                            if cls != t[1]
                     )
                 ),
             )
@@ -191,7 +190,7 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         result = response.json()
         assert self.model[table].pop(result.get("id")) == result
         if issubclass(
-            type_, Element
+                type_, Element
         ):  # on element delete, also delete associated states
             states_to_delete = [
                 id_
