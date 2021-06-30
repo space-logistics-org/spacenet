@@ -33,8 +33,8 @@ class ElementKind(str, Enum):
     ElementCarrier = "ElementCarrier"
     HumanAgent = "HumanAgent"
     RoboticAgent = "RoboticAgent"
-    Propulsive = "Propulsive"
-    Surface = "Surface"
+    Propulsive = "PropulsiveVehicle"
+    Surface = "SurfaceVehicle"
 
 
 class Element(BaseModel):
