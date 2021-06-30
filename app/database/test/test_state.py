@@ -5,7 +5,7 @@ key relation works correctly.
 from typing import Union
 
 import pytest
-from hypothesis import strategies as st
+from hypothesis import assume, strategies as st
 from hypothesis.stateful import Bundle, RuleBasedStateMachine, consumes, rule
 
 from .utilities import TestingSessionLocal, test_engine
@@ -35,7 +35,6 @@ class ElementStateInteraction(RuleBasedStateMachine):
         self.states = {}
 
     inserted_elements = Bundle("elements")
-    inserted_states = Bundle("states")
 
     def _create(self, entry: Union[Element, State]):
         model_cls = SCHEMA_TO_MODEL[type(entry)]
@@ -65,7 +64,6 @@ class ElementStateInteraction(RuleBasedStateMachine):
     # element id must reference an element which exists in the database, hence the complex
     # flatmap
     @rule(
-        target=inserted_states,
         state=inserted_elements.flatmap(
             lambda element_id: st.one_of(
                 *(
@@ -80,8 +78,9 @@ class ElementStateInteraction(RuleBasedStateMachine):
     def create_state(self, state: State):
         return self._create(state)
 
-    @rule(element_id=consumes(inserted_elements))
+    @rule(element_id=st.integers())
     def delete_element(self, element_id):
+        assume(element_id in self.elements)
         # Associated states should be deleted too
         from_db = self.db.query(models.Element).get(element_id)
         assert self.elements.pop(element_id) == dictify_row(from_db)
@@ -99,8 +98,9 @@ class ElementStateInteraction(RuleBasedStateMachine):
         for state_id in states_to_delete:
             del self.states[state_id]
 
-    @rule(state_id=consumes(inserted_states))
+    @rule(state_id=st.integers())
     def delete_state(self, state_id):
+        assume(state_id in self.states)
         from_db = self.db.query(models.State).get(state_id)
         assert self.states.pop(state_id) == dictify_row(from_db)
         self.db.delete(from_db)

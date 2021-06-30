@@ -8,6 +8,7 @@ from hypothesis.stateful import RuleBasedStateMachine, rule, consumes, Bundle
 from spacenet.constants import SQLITE_MIN_INT, SQLITE_MAX_INT
 from app.database.api.models import utilities as model_utils
 from .utilities import TestingSessionLocal, test_engine
+from ..api import models
 from ..api.models.utilities import MODEL_TO_PARENT, SCHEMA_TO_MODEL, dictify_row
 
 pytestmark = [
@@ -16,6 +17,7 @@ pytestmark = [
     pytest.mark.element,
     pytest.mark.node,
     pytest.mark.resource,
+    pytest.mark.state,
     pytest.mark.slow,
 ]
 
@@ -35,6 +37,8 @@ class DatabaseOperations(RuleBasedStateMachine):
     )
     def create(self, entry):
         model_cls = SCHEMA_TO_MODEL[type(entry)]
+        if issubclass(model_cls, models.State):
+            assume(entry.element_id in self.model[models.Element])
         db_object = model_cls(**entry.dict())
         self.db.add(db_object)
         self.db.commit()
