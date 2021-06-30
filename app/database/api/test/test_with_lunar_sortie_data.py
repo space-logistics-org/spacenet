@@ -33,7 +33,10 @@ def schema_superclass(type_):
             return super_
 
 
-TYPE_TO_PREFIX = {cls: schema_superclass(cls) for cls in CREATE_SCHEMAS}
+TYPE_TO_SUPER = {cls: schema_superclass(cls) for cls in CREATE_SCHEMAS}
+
+
+SUPER_TO_PREFIX = {Element: "element", Edge: "edge", Node: "node", Resource: "resource"}
 
 
 def object_to_prefix(obj: dict) -> str:
@@ -43,7 +46,8 @@ def object_to_prefix(obj: dict) -> str:
         except ValueError:
             pass
         else:
-            return TYPE_TO_PREFIX[type(obj)]
+            super_ = TYPE_TO_SUPER[schema]
+            return SUPER_TO_PREFIX[super_]
     else:
         raise ValueError(f"Could not find prefix mapping to {obj}")
 
@@ -61,6 +65,7 @@ def object_to_prefix(obj: dict) -> str:
 def test_routers_with_lunar_sortie_data(domain_objects):
     for obj in domain_objects:
         prefix = object_to_prefix(obj)
+        print(prefix)
         post_response = client.post(f"/{prefix}/", json=obj)
         assert 201 == post_response.status_code
         result = post_response.json()
