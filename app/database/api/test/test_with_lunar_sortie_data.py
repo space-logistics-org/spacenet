@@ -40,6 +40,8 @@ def object_to_prefix(obj: dict) -> str:
         else:
             pprint.pprint(obj)
             return TYPE_TO_PREFIX[type(obj.type)]
+    else:
+        raise ValueError(f"Could not find prefix mapping to {obj}")
 
 
 @pytest.mark.parametrize(
