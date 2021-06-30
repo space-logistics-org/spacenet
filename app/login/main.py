@@ -18,7 +18,7 @@ app = FastAPI(
 )
 
 
-DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = "sqlite:///./userbase.db"
 SECRET = "SECRET"
 
 class User(models.BaseUser):
@@ -62,7 +62,7 @@ jwt_authentication = JWTAuthentication(
     secret=SECRET, lifetime_seconds=7200, tokenUrl="auth/jwt/login"
 )
 cookie_authentication = CookieAuthentication(
-    secret=SECRET, lifetime_seconds=7200
+    secret=SECRET, lifetime_seconds=7200, cookie_secure=False
 )
 
 app = FastAPI()

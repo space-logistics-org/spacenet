@@ -16,8 +16,8 @@ app.mount('/database', database.app)
 from .campaign import main as campaign
 app.mount('/campaign', campaign.app)
 
-from .login import main as login
-app.mount('/login', login.app)
+from .login import main as login_
+app.mount('/login_', login_.app)
 
 # mount the static directory
 app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
