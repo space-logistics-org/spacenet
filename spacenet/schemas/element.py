@@ -61,7 +61,9 @@ class Element(BaseModel):
         " carrier.",
     )
     mass: confloat(ge=0, lt=inf) = Field(..., title="Mass", description="mass in kg")
-    volume: confloat(ge=0, lt=inf) = Field(..., title="Volume", description="volume in m^3")
+    volume: confloat(ge=0, lt=inf) = Field(
+        ..., title="Volume", description="volume in m^3"
+    )
 
 
 class CargoCarrier(Element, ABC):
@@ -157,7 +159,8 @@ class PropulsiveVehicle(Vehicle):
     )
     propellant_id: conint(
         strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT
-    )  # TODO: this needs constraints or to be an enum
+    )  # TODO: this needs constraints or to be an enum;
+    #  perhaps a foreign key constraint in model?
 
 
 class SurfaceVehicle(Vehicle):
@@ -174,4 +177,5 @@ class SurfaceVehicle(Vehicle):
     )
     fuel_id: conint(
         strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT
-    )  # TODO: this needs constraints or to be an enum
+    )  # TODO: this needs constraints or to be an enum;
+    #  perhaps a foreign key constraint in model?
