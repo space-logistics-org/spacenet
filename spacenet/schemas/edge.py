@@ -1,7 +1,7 @@
-from typing_extensions import Literal
+from enum import Enum
 
 from pydantic import BaseModel, Field
-from enum import Enum
+from typing_extensions import Literal
 
 __all__ = ["Edge", "EdgeType", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
 

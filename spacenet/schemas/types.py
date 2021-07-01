@@ -10,9 +10,10 @@ __all__ = [
     "SafeNonNegInt",
     "SafeFloat",
     "SafePosFloat",
-    "SafeNonNegFloat"
+    "SafeNonNegFloat",
 ]
-
+# Safe here refers to the ability to serialize types for transmission and store them in the
+# database.
 SafeInt = conint(ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT, strict=True)
 SafePosInt = conint(gt=0, le=SQLITE_MAX_INT, strict=True)
 SafeNonNegInt = conint(ge=0, le=SQLITE_MAX_INT, strict=True)

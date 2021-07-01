@@ -1,7 +1,7 @@
-from typing_extensions import Literal
+from enum import Enum
 
 from pydantic import BaseModel, Field, confloat, conint
-from enum import Enum
+from typing_extensions import Literal
 
 from .types import SafeNonNegFloat
 
@@ -57,9 +57,7 @@ class SurfaceNode(Node):
         ..., title="Latitude", description="Latitude (decimal degrees)"
     )
     longitude: confloat(ge=-180, le=180) = Field(
-        ...,
-        title="Longitude",
-        description="Longitude (decimal degrees)",
+        ..., title="Longitude", description="Longitude (decimal degrees)",
     )
 
 
