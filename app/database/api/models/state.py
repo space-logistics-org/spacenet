@@ -10,7 +10,7 @@ class State(Base):
     __tablename__ = "state"
 
     id = Column(Integer, primary_key=True, index=True)
-    element_id = Column(Integer, ForeignKey("element.id"), nullable=False)
+    element_id = Column(Integer, ForeignKey("element.id", ondelete="CASCADE"), nullable=False)
     name = Column(String)
     state_type = Column(String)
     is_initial_state = Column(Boolean)

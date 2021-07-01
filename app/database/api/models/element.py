@@ -30,7 +30,7 @@ class Element(Base):
     mass = Column(Float)
     volume = Column(Float)
     states = relationship(
-        "State", back_populates="element", cascade="all, delete-orphan"
+        "State", back_populates="element", passive_deletes=True
     )
 
     __mapper_args__ = {
