@@ -60,3 +60,6 @@ class Scenario(BaseModel):
 
     detailedEva: bool = Field(..., title="Detailed EVA")
     detailedExploration: bool = Field(..., title="Detailed Exploration")
+
+    class Config:
+        title: "Scenario"
