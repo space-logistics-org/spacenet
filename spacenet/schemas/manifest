@@ -1,8 +1,7 @@
 from pydantic import BaseModel, Field
 from sortedcontainers import SortedSet, SortedDict
 
-import spacenet.domain.ClassOfSupply
-import spacenet.domain.Environment
+from ..constants import ClassOfSupply, Environment
 import spacenet.domain.element.I_Carrier
 import spacenet.domain.element.I_Element
 import spacenet.domain.element.I_ResourceContainer
