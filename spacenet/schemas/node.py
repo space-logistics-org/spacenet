@@ -1,9 +1,9 @@
-from math import inf
-
 from typing_extensions import Literal
 
-from pydantic import BaseModel, Field, confloat
+from pydantic import BaseModel, Field, confloat, conint
 from enum import Enum
+
+from .types import SafeNonNegFloat
 
 __all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode"]
 
@@ -71,10 +71,10 @@ class OrbitalNode(Node):
     type: Literal[NodeType.Orbital] = Field(
         ..., title="Type", description="Type of node (surface, orbital, or lagrange)",
     )
-    apoapsis: confloat(ge=0, lt=inf) = Field(
+    apoapsis: SafeNonNegFloat = Field(
         ..., title="Apoapsis", description="Major radius of orbit"
     )
-    periapsis: confloat(ge=0, lt=inf) = Field(
+    periapsis: SafeNonNegFloat = Field(
         ..., title="Periapsis", description="Minor radius of orbit"
     )
     inclination: confloat(ge=0, le=90) = Field(
@@ -93,6 +93,6 @@ class LagrangeNode(Node):
     body_2: Body = Field(
         ..., title="Body 2", description="Minor body of Lagrange node",
     )
-    lp_number: int = Field(
-        ..., title="LP Number", description="Number of Lagrange point", ge=1, le=5
+    lp_number: conint(ge=1, le=5, strict=True) = Field(
+        ..., title="LP Number", description="Number of Lagrange point"
     )

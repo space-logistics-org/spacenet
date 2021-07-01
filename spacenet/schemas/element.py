@@ -3,13 +3,17 @@ This module defines the schemas for Elements, and exports them explicitly.
 """
 from abc import ABC
 from enum import Enum
-from math import inf
 from typing import Optional
 
-from pydantic import BaseModel, Field, confloat, conint
+from pydantic import BaseModel, Field, confloat
 from typing_extensions import Literal
 
-from ..constants import Environment, ClassOfSupply, SQLITE_MAX_INT, SQLITE_MIN_INT
+from .types import (
+    SafeInt,
+    SafeNonNegInt,
+    SafeNonNegFloat,
+)
+from ..constants import Environment, ClassOfSupply
 
 __all__ = [
     "Element",
@@ -53,17 +57,15 @@ class Element(BaseModel):
     environment: Environment = Field(
         ..., title="Environment", description="the element's environment"
     )
-    accommodation_mass: confloat(ge=0, lt=inf) = Field(
+    accommodation_mass: SafeNonNegFloat = Field(
         ...,
         title="Accommodation Mass",
         description="the amount of additional COS5 "
         "required to pack the element inside a"
         " carrier.",
     )
-    mass: confloat(ge=0, lt=inf) = Field(..., title="Mass", description="mass in kg")
-    volume: confloat(ge=0, lt=inf) = Field(
-        ..., title="Volume", description="volume in m^3"
-    )
+    mass: SafeNonNegFloat = Field(..., title="Mass", description="mass in kg")
+    volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
 
 
 class CargoCarrier(Element, ABC):
@@ -71,10 +73,10 @@ class CargoCarrier(Element, ABC):
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
     """
 
-    max_cargo_mass: Optional[confloat(ge=0, lt=inf)] = Field(
+    max_cargo_mass: Optional[SafeNonNegFloat] = Field(
         ..., title="Max Cargo Mass", description="cargo capacity constraint (kg)"
     )
-    max_cargo_volume: Optional[confloat(ge=0, lt=inf)] = Field(
+    max_cargo_volume: Optional[SafeNonNegFloat] = Field(
         ...,
         title="Maximum Cargo Volume",
         description="cargo capacity constraint (m^3)",
@@ -140,7 +142,7 @@ class Vehicle(CargoCarrier, ABC):
     An abstract base class representing a generic Vehicle, surface or propulsive.
     """
 
-    max_crew: conint(strict=True, ge=0, le=SQLITE_MAX_INT) = Field(
+    max_crew: SafeNonNegInt = Field(
         ..., title="Maximum Crew Count", description="crew capacity constraint"
     )
 
@@ -150,16 +152,16 @@ class PropulsiveVehicle(Vehicle):
     An element representing a vehicle with its own propulsion.
     """
 
-    type: Literal[ElementKind.PropulsiveVehicle] = Field(description="the element's type")
-    isp: confloat(ge=0, lt=inf) = Field(
+    type: Literal[ElementKind.PropulsiveVehicle] = Field(
+        description="the element's type"
+    )
+    isp: SafeNonNegFloat = Field(
         ..., title="Specific Impulse", description="specific impulse (s)"
     )
-    max_fuel: confloat(ge=0, lt=inf) = Field(
+    max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant_id: conint(
-        strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT
-    )  # TODO: this needs constraints or to be an enum;
+    propellant_id: SafeInt  # TODO: this needs constraints or to be an enum;
     #  perhaps a foreign key constraint in model?
 
 
@@ -169,13 +171,11 @@ class SurfaceVehicle(Vehicle):
     """
 
     type: Literal[ElementKind.SurfaceVehicle] = Field(description="the element's type")
-    max_speed: confloat(ge=0, lt=inf) = Field(
+    max_speed: SafeNonNegFloat = Field(
         ..., title="Maximum Speed", description="maximum speed (kph)"
     )
-    max_fuel: confloat(ge=0, lt=inf) = Field(
+    max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    fuel_id: conint(
-        strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT
-    )  # TODO: this needs constraints or to be an enum;
+    fuel_id: SafeInt  # TODO: this needs constraints or to be an enum;
     #  perhaps a foreign key constraint in model?
