@@ -61,16 +61,16 @@ class DatabaseOperations(RuleBasedStateMachine):
 
     @rule(
         id_=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
-        table=st.one_of(*(st.just(parent) for parent in MODEL_TO_PARENT.values())),
+        table=st.sampled_from(list(MODEL_TO_PARENT.values())),
     )
     def read_invalid_id(self, id_, table):
         assume(id_ not in self.model[table])
         from_db = self.db.query(table).get(id_)
         assert from_db is None
 
+    @rule(table=st.sampled_from(list(MODEL_TO_PARENT.values())))
     def read_all(self, table: Type):
         from_db = self.db.query(table).all()
-        assert table in self.model
         model_table = self.model[table]
         assert len(model_table) == len(from_db)
         for row in from_db:
