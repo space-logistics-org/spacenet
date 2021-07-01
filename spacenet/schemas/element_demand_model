@@ -1,10 +1,10 @@
 from pydantic import BaseModel, Field
 from enum import Enum
 
-import spacenet.domain.ClassOfSupply
+from ..constants import ClassOfSupply
 import spacenet.domain.resource.Demand
 import spacenet.domain.resource.DemandSet
-import spacenet.scenario.Mission
+from spacenet.schemas.Mission import *
 import spacenet.simulator.I_Simulator
 
 class DemandModelType(str, Enum):
