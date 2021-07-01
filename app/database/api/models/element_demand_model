@@ -1,7 +1,9 @@
 from sqlalchemy import Column, String, Float, Boolean
 
 from ..database import Base
-from  spacenet.schemas.demand_model import DemandModelType
+from  spacenet.schemas.element_demand_model import DemandModelType
+from  spacenet.schemas.element import *
+from  spacenet.schemas.mission import *
 
 __all__ = ["DemandModelType", "DemandModel", "CrewConsumablesDemandModel", "TimedImpulseDemandModel", "RatedDemandModel", "SparingByMassDemandModel"]
 
