@@ -1,5 +1,4 @@
 from typing import Dict, List
-from uuid import UUID
 
 from pydantic import BaseModel, Field
 
@@ -17,10 +16,10 @@ class MakeElementsEvent(BaseModel):
     at a specific time and location (node, edge, or inside an element carrier).
     """
 
-    element_id: List[UUID] = Field(
+    element_id: List[int] = Field(
         ..., description="the IDs of the elements being added to simulation"
     )
-    entry_point_id: UUID = Field(
+    entry_point_id: int = Field(
         ..., description="the ID of the entry point the element is being added at"
     )
 
@@ -31,13 +30,13 @@ class MoveElementsEvent(BaseModel):
     to a new location (node, edge, or element carrier).
     """
 
-    to_move: List[UUID] = Field(..., description="the list of IDs of elements to move")
-    origin_id: UUID = Field(
+    to_move: List[int] = Field(..., description="the list of IDs of elements to move")
+    origin_id: int = Field(
         ...,
         description="the ID of the original time and location "
         "which the elements are being moved from",
     )
-    destination_id: UUID = Field(
+    destination_id: int = Field(
         ...,
         description="the ID of the new location which the elements are being moved to",
     )
@@ -49,10 +48,10 @@ class RemoveElementsEvent(BaseModel):
     at a specific time and location (node or edge).
     """
 
-    to_remove: List[UUID] = Field(
+    to_remove: List[int] = Field(
         ..., description="the list of IDs of elements to remove"
     )
-    removal_point_id: UUID = Field(
+    removal_point_id: int = Field(
         ..., description="the ID of the node or edge to remove elements from"
     )
 
@@ -63,11 +62,11 @@ class ReconfigureElementsEvent(BaseModel):
     at a specific time and location (node or edge).
     """
 
-    to_reconfigure: Dict[UUID, UUID] = Field(
+    to_reconfigure: Dict[int, int] = Field(
         ...,
         description="a mapping from the IDs of elements to the IDs of their desired "
         "new state",
     )
-    reconfigure_point_id: UUID = Field(
+    reconfigure_point_id: int = Field(
         ..., description="the ID of the node or edge to reconfigure elements at",
     )

@@ -3,7 +3,7 @@ from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import MoveElementsEvent
 from ..utilities import (
-    INVALID_UUIDS,
+    INVALID_INTS,
     success_from_kw,
     xfail_from_kw,
 )
@@ -11,15 +11,15 @@ from ..utilities import (
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 VALID_MAP = {
-    "to_move": st.lists(st.uuids()),
-    "origin_id": st.uuids(),
-    "destination_id": st.uuids(),
+    "to_move": st.lists(st.integers()),
+    "origin_id": st.integers(),
+    "destination_id": st.integers(),
 }
 
 INVALID_MAP = {
-    "to_move": st.lists(INVALID_UUIDS, min_size=1),
-    "origin_id": INVALID_UUIDS,
-    "destination_id": INVALID_UUIDS,
+    "to_move": st.lists(INVALID_INTS, min_size=1),
+    "origin_id": INVALID_INTS,
+    "destination_id": INVALID_INTS,
 }
 
 

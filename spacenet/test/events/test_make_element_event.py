@@ -2,19 +2,19 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import MakeElementsEvent
-from ..utilities import INVALID_UUIDS, success_from_kw, xfail_from_kw
+from ..utilities import INVALID_INTS, success_from_kw, xfail_from_kw
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 
 VALID_MAP = {
-    "element_id": st.lists(st.uuids()),
-    "entry_point_id": st.uuids(),
+    "element_id": st.lists(st.integers()),
+    "entry_point_id": st.integers(),
 }
 
 INVALID_MAP = {
-    "element_id": st.lists(INVALID_UUIDS, min_size=1),
-    "entry_point_id": INVALID_UUIDS,
+    "element_id": st.lists(INVALID_INTS, min_size=1),
+    "entry_point_id": INVALID_INTS,
 }
 
 

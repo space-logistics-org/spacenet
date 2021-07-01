@@ -3,36 +3,36 @@ from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import ReconfigureElementsEvent
 from ..utilities import (
-    INVALID_UUIDS,
+    INVALID_INTS,
     success_from_kw,
     xfail_from_kw,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
-VALID_TO_RECONFIGURE = st.dictionaries(keys=st.uuids(), values=st.uuids())
+VALID_TO_RECONFIGURE = st.dictionaries(keys=st.integers(), values=st.integers())
 INVALID_TO_RECONFIGURE = st.one_of(
-    st.dictionaries(keys=INVALID_UUIDS, values=st.uuids(), min_size=1),
+    st.dictionaries(keys=INVALID_INTS, values=st.integers(), min_size=1),
     st.dictionaries(
-        keys=st.uuids(),
-        values=INVALID_UUIDS,
+        keys=st.integers(),
+        values=INVALID_INTS,
         min_size=1,
     ),
     st.dictionaries(
-        keys=INVALID_UUIDS,
-        values=INVALID_UUIDS,
+        keys=INVALID_INTS,
+        values=INVALID_INTS,
         min_size=1,
     ),
 )
 
 VALID_MAP = {
     "to_reconfigure": VALID_TO_RECONFIGURE,
-    "reconfigure_point_id": st.uuids(),
+    "reconfigure_point_id": st.integers(),
 }
 
 INVALID_MAP = {
     "to_reconfigure": INVALID_TO_RECONFIGURE,
-    "reconfigure_point_id": INVALID_UUIDS,
+    "reconfigure_point_id": INVALID_INTS,
 }
 
 

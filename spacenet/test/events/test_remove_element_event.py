@@ -3,7 +3,7 @@ from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import RemoveElementsEvent
 from ..utilities import (
-    INVALID_UUIDS,
+    INVALID_INTS,
     success_from_kw,
     valid_invalid_from_allowed,
     xfail_from_kw,
@@ -15,13 +15,13 @@ ALLOWED_REMOVAL_POINTS = ["Node", "Edge"]
 VALID_REMOVALS, INVALID_REMOVALS = valid_invalid_from_allowed(ALLOWED_REMOVAL_POINTS)
 
 VALID_MAP = {
-    "to_remove": st.lists(st.uuids()),
-    "removal_point_id": st.uuids(),
+    "to_remove": st.lists(st.integers()),
+    "removal_point_id": st.integers(),
 }
 
 INVALID_MAP = {
-    "to_remove": st.lists(INVALID_UUIDS, min_size=1),
-    "removal_point_id": INVALID_UUIDS,
+    "to_remove": st.lists(INVALID_INTS, min_size=1),
+    "removal_point_id": INVALID_INTS,
 }
 
 
