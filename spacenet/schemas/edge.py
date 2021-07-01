@@ -1,13 +1,11 @@
-from math import inf
-
-from typing_extensions import Literal
-
-from pydantic import BaseModel, Field, confloat, conint
 from enum import Enum
+
+from pydantic import BaseModel, Field
+from typing_extensions import Literal
 
 __all__ = ["Edge", "EdgeType", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
 
-from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from spacenet.schemas.types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 
 
 class EdgeType(str, Enum):
@@ -31,10 +29,10 @@ class Edge(BaseModel):
     description: str = Field(
         ..., title="Description", description="short description of the edge",
     )
-    origin_id: conint(strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT) = Field(
+    origin_id: SafeInt = Field(
         ..., title="Origin ID", description="ID of the origin node"
     )
-    destination_id: conint(strict=True, ge=SQLITE_MIN_INT, le=SQLITE_MAX_INT) = Field(
+    destination_id: SafeInt = Field(
         ..., title="Destination ID", description="ID of the destination node",
     )
 
@@ -47,7 +45,7 @@ class SurfaceEdge(Edge):
     type: Literal[EdgeType.Surface] = Field(
         title="Type", description="Type of edge",
     )
-    distance: confloat(ge=0, lt=inf) = Field(
+    distance: SafeNonNegFloat = Field(
         ..., title="Distance", description="Distance of surface edge"
     )
 
@@ -60,7 +58,7 @@ class SpaceEdge(Edge):
     type: Literal[EdgeType.Space] = Field(
         title="Type", description="Type of edge",
     )
-    duration: confloat(ge=0, lt=inf) = Field(
+    duration: SafeNonNegFloat = Field(
         ..., title="Duration", description="Duration of space edge"
     )
 
@@ -74,12 +72,12 @@ class FlightEdge(Edge):
     type: Literal[EdgeType.Flight] = Field(
         ..., title="Type", description="Type of edge",
     )
-    duration: confloat(ge=0, lt=inf) = Field(
+    duration: SafeNonNegFloat = Field(
         ..., title="duration", description="Duration of flight edge"
     )
-    max_crew: conint(strict=True, ge=0, le=SQLITE_MAX_INT) = Field(
+    max_crew: SafeNonNegInt = Field(
         ..., title="Max Crew", description="Crew capacity for flight",
     )
-    max_cargo: confloat(ge=0, lt=inf) = Field(
+    max_cargo: SafeNonNegFloat = Field(
         ..., title="Max Cargo", description="Cargo capacity for flight"
     )

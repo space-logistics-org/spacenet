@@ -1,14 +1,13 @@
-from math import inf
+from enum import Enum
 from typing import Optional
-from typing_extensions import Literal
 
 from pydantic import (
     BaseModel,
     Field,
-    confloat,
 )
-from enum import Enum
+from typing_extensions import Literal
 
+from .types import SafeNonNegFloat, SafePosFloat
 from ..constants import ClassOfSupply
 
 __all__ = ["ResourceType", "ContinuousResource", "DiscreteResource"]
@@ -28,10 +27,8 @@ class Resource(BaseModel):
     description: Optional[str] = Field(
         default=None, title="Description", description="Short description"
     )
-    unit_mass: confloat(gt=0, lt=inf) = Field(
-        ..., title="Unit Mass", description="Resource mass"
-    )
-    unit_volume: confloat(ge=0, lt=inf) = Field(
+    unit_mass: SafePosFloat = Field(..., title="Unit Mass", description="Resource mass")
+    unit_volume: SafeNonNegFloat = Field(
         ..., title="Unit Volume", description="Resource volume"
     )
 
