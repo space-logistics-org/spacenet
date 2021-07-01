@@ -9,6 +9,7 @@ from hypothesis.strategies import SearchStrategy
 from pydantic import BaseModel, ValidationError
 
 from spacenet import schemas
+from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from spacenet.schemas.element import *
 from spacenet.schemas.edge import FlightEdge, SpaceEdge, SurfaceEdge, EdgeType
 from spacenet.schemas.node import SurfaceNode, OrbitalNode, LagrangeNode, NodeType
@@ -24,6 +25,7 @@ __all__ = [
     "KIND_TO_SCHEMA",
     "INVALID_UUIDS",
     "INVALID_INTS",
+    "UNSERIALIZABLE_INTS",
     "valid_invalid_from_allowed",
 ]
 
@@ -121,6 +123,10 @@ def is_valid_int(s: str) -> bool:
 
 INVALID_UUIDS = st.text().filter(lambda s: not is_valid_uuid(s))
 INVALID_INTS = st.text().filter(lambda s: not is_valid_int(s))
+UNSERIALIZABLE_INTS = st.one_of(
+    st.integers(max_value=SQLITE_MIN_INT - 1),
+    st.integers(min_value=SQLITE_MAX_INT + 1),
+)
 
 
 def valid_invalid_from_allowed(

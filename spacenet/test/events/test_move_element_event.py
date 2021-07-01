@@ -4,22 +4,26 @@ from hypothesis import given, strategies as st
 from spacenet.schemas.element_events import MoveElementsEvent
 from ..utilities import (
     INVALID_INTS,
+    UNSERIALIZABLE_INTS,
     success_from_kw,
     xfail_from_kw,
 )
+from ...constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 VALID_MAP = {
-    "to_move": st.lists(st.integers()),
-    "origin_id": st.integers(),
-    "destination_id": st.integers(),
+    "to_move": st.lists(
+        st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT)
+    ),
+    "origin_id": st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+    "destination_id": st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
 }
 
 INVALID_MAP = {
-    "to_move": st.lists(INVALID_INTS, min_size=1),
-    "origin_id": INVALID_INTS,
-    "destination_id": INVALID_INTS,
+    "to_move": st.lists(st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS), min_size=1),
+    "origin_id": st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
+    "destination_id": st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
 }
 
 
@@ -35,8 +39,7 @@ def xfail_construct_move(to_move, origin_id, destination_id):
 @given(kw=st.fixed_dictionaries(mapping=VALID_MAP))
 def test_valid(kw):
     success_from_kw(
-        MoveElementsEvent,
-        **kw,
+        MoveElementsEvent, **kw,
     )
 
 
