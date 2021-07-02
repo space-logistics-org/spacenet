@@ -29,9 +29,7 @@ class Element(Base):
     accommodation_mass = Column(Float)
     mass = Column(Float)
     volume = Column(Float)
-    states = relationship(
-        "State", back_populates="element", passive_deletes=True
-    )
+    states = relationship("State", back_populates="element", passive_deletes=True)
 
     __mapper_args__ = {
         "polymorphic_on": type,
