@@ -1,23 +1,13 @@
 from pydantic import BaseModel, Field, PositiveFloat
 from typing import List
-from enum import Enum
 
+from .missions_demand_model import MissionDemand
+from .element import HumanAgent
 
-class ResourceType(str, Enum):
-    """
-    An enumeration for the types of edges.
-    """
-    generic = "Generic"
-    discrete = "Discrete"
-    continuous = "Continuous"
-
-
-class Crew(BaseModel): 
+class EVACrew(HumanAgent): 
     """
     Schema for a Crew Member
     """
-    
-    name = "Crew Member"
     
     eva_active: bool = Field(
         ...,
@@ -29,33 +19,6 @@ class Crew(BaseModel):
         ..., 
         title= "EVA State", 
         description= "The state of the EVA"
-    )
-    
-class Demand(BaseModel): 
-    """
-    Schema for Space Transport
-    """
-    type: ResourceType = Field(
-        ...,
-        title="type",
-        description="Type of Resource"
-    )
-    
-    resource: str = Field(
-        ...,
-        title="Resource",
-        description="The object that is needed"
-    )
-    
-    amount: PositiveFloat = Field(
-        ...,
-        title="Amount",
-        description="The amount that is needed of the resource"
-    )
-    units: str = Field(
-        ...,
-        title="Units",
-        description="The unit that the amount is expressed in"
     )
     
 class CrewedEVA(BaseModel):
@@ -100,12 +63,12 @@ class CrewedEVA(BaseModel):
         description="The location of the crew that will be used for the EVA"
     )
     
-    crew : List[Crew] = Field(
+    crew : List[EVACrew] = Field(
         ..., 
         title="Crew",
         description="List of the crew selected for the EVA"
     )
-    additional_demand: List[Demand] = Field( 
+    additional_demand: List[MissionDemand] = Field( 
         ..., 
         title= "Additional Demands", 
         description = "List of demands needed for EVA"

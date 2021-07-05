@@ -19,11 +19,17 @@ class SpaceTransport(BaseModel):
         description="Space Transport name"
     )
     
-    node: str = Field(
+    origin_node: str = Field(
         ...,
-        title="Node",
-        description="The origin of the Space Transport"
+        title="Origin Node",
+        description="The origin node of the Space Transport"
     )
+    
+    destination_node: str = Field(
+        ...,
+        title="Destination Node",
+        description="The destination node of the Space Transport"
+    ) 
     
     time: PositiveFloat = Field(
         ...,                                    
@@ -39,22 +45,14 @@ class SpaceTransport(BaseModel):
         le = 5
     )
     
-    trajectory: str = Field(
-        ...,
-        title="Trajectory",
-        description="The nodes that the vehicle will travel to and from"
-    )
-    
     elements: str = Field(
         ...,
         title="Elements",
         description="The possible elements to be used in the Burn-Stage Sequence"
     )
     
-    burn_sequence: List[BurnStageSequence] = Field(
+    burnStageProfile: List[BurnStageSequence] = Field(
         ...,
         title="Burn Sequence",
         description="List of seperate Burn-Stage Sequences" 
     )
-
-
