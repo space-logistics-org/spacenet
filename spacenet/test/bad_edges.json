@@ -1,6 +1,6 @@
 [
   {
-    "type": "Flight",
+    "type": "FlightEdge",
     "name": "Test1",
     "origin_id": 1,
     "destination_id": 2,
@@ -10,7 +10,7 @@
     "description": "Invalid max_crew input."
   },
   {
-    "type": "Flight",
+    "type": "FlightEdge",
     "name": "Test2",
     "origin_id": "Yes",
     "destination_id": 3,
@@ -20,7 +20,7 @@
     "description": "Invalid origin_id type."
   },
   {
-    "type": "Space",
+    "type": "SpaceEdge",
     "name": "Test3",
     "origin_id": 3,
     "destination_id": 2.5,
@@ -28,18 +28,18 @@
     "description": "Invalid destination_id input."
   },
   {
-    "type": "Space",
+    "type": "SpaceEdge",
     "name": "Test4",
     "origin_id": 1,
     "destination_id": 3,
     "description": "Invalid duration type."
   },
   {
-    "type": "Surface",
+    "type": "SurfaceEdge",
     "name": "Test5",
     "origin_id": 5,
     "destination_id": 2,
-    "distance": true,
+    "distance": "truthy",
     "description": "Invalid distance type."
   }
 ]

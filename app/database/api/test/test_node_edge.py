@@ -1,5 +1,9 @@
+"""
+Contains integration tests where CRUD operations are exercised with nodes and edges,
+methodologically similar to element routing testing. Same restrictions on sequential runs
+only apply.
+"""
 import json
-import pprint
 import random
 from enum import Enum
 from typing import List, Type
@@ -9,22 +13,26 @@ import pytest
 from fastapi.testclient import TestClient
 
 import spacenet
-from app.database.api.database import Base
+from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from app.database.api.models.edge import Edge as EdgeModel
 from app.database.api.models.node import Node as NodeModel
-from app.database.test.utilities import TestingSessionLocal, test_engine
+from app.database.test.utilities import test_engine
 from spacenet.schemas.edge import EdgeType
 from spacenet.schemas.node import NodeType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
+    get_test_db,
     make_subset,
 )
 
-pytestmark = [pytest.mark.integration]
+pytestmark = [pytest.mark.integration, pytest.mark.routing]
 
 client = TestClient(app)
+
+app.dependency_overrides[get_db] = get_test_db
+
 
 Base.metadata.create_all(bind=test_engine)
 
@@ -49,25 +57,6 @@ def get_other_variants(to_exclude, enum: Type[Enum]) -> List[Enum]:
     return [variant.value for variant in enum if variant != to_exclude]
 
 
-MISTYPED_NODES = [
-    {**good_node, "type": get_other_variants(good_node["type"], NodeType)[0]}
-    for good_node in GOOD_NODE_LIST
-]
-
-MISTYPED_EDGES = [
-    {**good_edge, "type": get_other_variants(good_edge["type"], EdgeType)[0]}
-    for good_edge in GOOD_EDGE_LIST
-]
-
-
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 NODE_PREFIX = "/node"
 EDGE_PREFIX = "/edge"
 
@@ -78,6 +67,10 @@ EDGE_NAMES = list(map(str, EDGE_VARIANTS))
 NAMES_TO_VALUES = {
     **{str(variant): variant.value for variant in NODE_VARIANTS},
     **{str(variant): variant.value for variant in EDGE_VARIANTS},
+}
+NAMES_TO_VARIANTS = {
+    **{str(variant): variant for variant in NODE_VARIANTS},
+    **{str(variant): variant for variant in EDGE_VARIANTS},
 }
 
 GOOD_NODES = {
@@ -90,18 +83,18 @@ GOOD_EDGES = {
 }
 
 
-def value_to_obj(value):
-    assert value in GOOD_NODES or value in GOOD_EDGES
+def name_to_obj(name):
+    assert name in NODE_NAMES or name in EDGE_NAMES
     return (
-        (GOOD_NODES, BAD_NODE_LIST, MISTYPED_NODES)
-        if value in GOOD_NODES
-        else (GOOD_EDGES, BAD_EDGE_LIST, MISTYPED_EDGES)
+        (GOOD_NODES, BAD_NODE_LIST)
+        if name in NODE_NAMES
+        else (GOOD_EDGES, BAD_EDGE_LIST)
     )
 
 
-VALUE_TO_OBJECTS = {
-    value: value_to_obj(value)
-    for value in [variant.value for variant in NODE_VARIANTS + EDGE_VARIANTS]
+NAMES_TO_OBJECTS = {
+    name: name_to_obj(name)
+    for name in [str(variant) for variant in NODE_VARIANTS + EDGE_VARIANTS]
 }
 
 VARIANT_NAME_TO_PREFIX = {
@@ -146,37 +139,19 @@ def test_empty(prefix):
 
 @pytest.mark.parametrize(
     "variant_name",
-    [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.node,
-                pytest.mark.xfail(reason="node routing not working"),
-            ],
-        )
-        for name in NODE_NAMES
-    ]
-    + [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.edge,
-                pytest.mark.xfail(reason="edge routing not working"),
-            ],
-        )
-        for name in EDGE_NAMES
-    ],
+    [pytest.param(name, marks=[pytest.mark.node,],) for name in NODE_NAMES]
+    + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_create(variant_name):
-    value = NAMES_TO_VALUES[variant_name]
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
-    good_values, bad_values, mistyped_values = VALUE_TO_OBJECTS[value]
-    good_values = good_values[value]
+    all_good_values, bad_values = NAMES_TO_OBJECTS[variant_name]
+    value = NAMES_TO_VALUES[variant_name]
+    good_values = all_good_values[value]
     bad_response = client.post(f"{prefix}/", json=random.choice(bad_values))
     assert bad_response.status_code == 422
     good_val = random.choice(good_values)
     post_response = client.post(f"{prefix}/", json=good_val)
-    assert post_response.status_code == 201
+    assert post_response.status_code == 201, f"failed for {good_val}"
     assert first_subset_second(good_val, post_response.json())
     assert len(good_val) == len(post_response.json()) - 1
     id_ = post_response.json()["id"]
@@ -191,26 +166,8 @@ def test_create(variant_name):
 
 @pytest.mark.parametrize(
     "variant_name",
-    [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.node,
-                pytest.mark.xfail(reason="node routing not working"),
-            ],
-        )
-        for name in NODE_NAMES
-    ]
-    + [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.edge,
-                pytest.mark.xfail(reason="edge routing not working"),
-            ],
-        )
-        for name in EDGE_NAMES
-    ],
+    [pytest.param(name, marks=[pytest.mark.node,],) for name in NODE_NAMES]
+    + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_update(variant_name):
     def check_get():
@@ -218,10 +175,10 @@ def test_update(variant_name):
         assert get_r.status_code == 200
         assert expected_fields == get_r.json()
 
-    value = NAMES_TO_VALUES[variant_name]
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
-    good_values, bad_values, mistyped_values = VALUE_TO_OBJECTS[value]
-    good_values = good_values[value]
+    all_good_values, bad_values = NAMES_TO_OBJECTS[variant_name]
+    value = NAMES_TO_VALUES[variant_name]
+    good_values = all_good_values[value]
     first_good = good_values[0]
     second_good = random.choice(good_values[1:])
     kw = first_good
@@ -238,7 +195,11 @@ def test_update(variant_name):
     bad_patch = client.patch(f"{prefix}/{not_present_id}", json=patch_kw)
     assert bad_patch.status_code == 404
     check_get()
-    mistyped = random.choice(MISTYPED_EDGES)
+    variant = NAMES_TO_VARIANTS[variant_name]
+    parent_enum = NodeType if variant_name in NODE_NAMES else EdgeType
+    other_variant = random.choice(get_other_variants(variant, parent_enum))
+    mistyped = random.choice(all_good_values[other_variant])
+    # variant to all other
     bad_patch = client.patch(f"{prefix}/{id_}", json=mistyped)
     assert bad_patch.status_code == 409
     check_get()
@@ -250,47 +211,28 @@ def test_update(variant_name):
 
 @pytest.mark.parametrize(
     "variant_name",
-    [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.node,
-                pytest.mark.xfail(reason="node routing not working"),
-            ],
-        )
-        for name in NODE_NAMES
-    ]
-    + [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.edge,
-                pytest.mark.xfail(reason="edge routing not working"),
-            ],
-        )
-        for name in EDGE_NAMES
-    ],
+    [pytest.param(name, marks=[pytest.mark.node,],) for name in NODE_NAMES]
+    + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_delete(variant_name):
     def check_get_all():
-        read_all_r = client.get(f"/{prefix}")
+        read_all_r = client.get(f"{prefix}/")
         assert read_all_r.status_code == 200
         for v in read_all_r.json():
             assert v in posted_values
         for v in posted_values:
             assert v in read_all_r.json()
 
-    value = NAMES_TO_VALUES[variant_name]
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
-    good_values, bad_values, mistyped_values = VALUE_TO_OBJECTS[value]
-    good_values = good_values[value]
+    all_good_values, bad_values = NAMES_TO_OBJECTS[variant_name]
+    value = NAMES_TO_VALUES[variant_name]
+    good_values = all_good_values[value]
     posted_values = []
     first_good, second_good = good_values[0], random.choice(good_values[1:])
     for i in range(2):
         valid_kw = first_good if i == 0 else second_good
-        pprint.pprint(valid_kw)
         post_r = client.post(f"{prefix}/", json=valid_kw)
-        assert post_r.status_code == 201, post_r.json()
+        assert post_r.status_code == 201
         assert first_subset_second(valid_kw, post_r.json())
         posted_values.append({**valid_kw, "id": post_r.json()["id"]})
     check_get_all()

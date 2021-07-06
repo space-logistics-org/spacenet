@@ -4,3 +4,5 @@ sql_app.db
 test.db
 uvicorn.exe
 uvicorn-script.py
+.hypothesis/**
+.coverage

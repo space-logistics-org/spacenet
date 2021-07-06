@@ -8,12 +8,19 @@ from spacenet import test
 from app.database.api.models import edge as models
 from app.database.api.schemas import edge as schemas
 from app.database.api.database import Base, engine
+from spacenet.schemas import EdgeType
 from .utilities import TestingSessionLocal
 
-pytestmark = [pytest.mark.unit, pytest.mark.edge]
+pytestmark = [pytest.mark.unit, pytest.mark.edge, pytest.mark.database]
 
 
 class TestEdgeData(unittest.TestCase):
+    edge_data = json.loads(
+        pkg_resources.resource_string(
+            test.__name__,
+            'good_edges.json'
+        )
+    )
 
     def setUp(self):
         Base.metadata.create_all(bind=engine)
@@ -23,16 +30,10 @@ class TestEdgeData(unittest.TestCase):
         self.db.close()
 
     def test_model_good_edges(self):
-        edge_data = json.loads(
-            pkg_resources.resource_string(
-                test.__name__,
-                'good_edges.json'
-            )
-        )
 
-        for edge in edge_data:
-            if edge["type"] == "Surface":
-                testedge = schemas.SurfaceEdgeCreate.parse_obj(edge)
+        for edge in self.edge_data:
+            if edge["type"] == EdgeType.Surface.value:
+                testedge = schemas.SurfaceEdge.parse_obj(edge)
                 db_edge = models.SurfaceEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
                 self.db.add(db_edge)
@@ -47,8 +48,8 @@ class TestEdgeData(unittest.TestCase):
                 self.db.delete(db_edge)
                 self.db.commit()
 
-            elif edge["type"] == "Space":
-                testedge = schemas.SpaceEdgeCreate.parse_obj(edge)
+            elif edge["type"] == EdgeType.Space.value:
+                testedge = schemas.SpaceEdge.parse_obj(edge)
                 db_edge = models.SpaceEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
                 self.db.add(db_edge)
@@ -64,11 +65,10 @@ class TestEdgeData(unittest.TestCase):
                 self.db.delete(db_edge)
                 self.db.commit()
 
-            elif edge["type"] == "Flight":
-                testedge = schemas.FlightEdgeCreate.parse_obj(edge)
+            elif edge["type"] == EdgeType.Flight.value:
+                testedge = schemas.FlightEdge.parse_obj(edge)
                 db_edge = models.FlightEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
-                print(db_edge.__dict__)
                 self.db.add(db_edge)
                 self.db.commit()
                 self.db.refresh(db_edge)

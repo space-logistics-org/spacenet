@@ -1,14 +1,6 @@
 [
   {
     "type": "Surface",
-    "name": "Test1",
-    "body_1": "Earth",
-    "latitude": true,
-    "longitude": true,
-    "description": "True is not valid Long/Lat"
-  },
-  {
-    "type": "Surface",
     "name": "Test2",
     "body_1": "Moon",
     "latitude": 91,
@@ -20,7 +12,7 @@
     "name": "Test3",
     "body_1": "Mars",
     "apoapsis": 10000,
-    "periapsis": "3000",
+    "periapsis": "Three thousand",
     "inclination": 70,
     "description": "String is not valid periapsis"
   },

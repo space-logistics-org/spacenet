@@ -10,38 +10,31 @@ from fastapi.testclient import TestClient
 from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from app.database.api.models.resource import Resource as ResourceModel
-from app.database.test.utilities import TestingSessionLocal, test_engine
+from app.database.test.utilities import test_engine
 from spacenet.schemas.resource import ResourceType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
+    get_test_db,
     make_subset,
     with_type,
 )
 
-pytestmark = [pytest.mark.integration, pytest.mark.resource]
+pytestmark = [pytest.mark.integration, pytest.mark.resource, pytest.mark.routing]
 
 client = TestClient(app)
 
 Base.metadata.create_all(bind=test_engine)
 
 
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-app.dependency_overrides[get_db] = override_get_db
+app.dependency_overrides[get_db] = get_test_db
 
 VALID_DISCRETE_ARGS = {
     "name": "foo",
-    "cos": 1,
-    "type": "discrete",
+    "class_of_supply": 1,
+    "type": "Discrete",
     "unit_mass": 10,
-    "unit_volume": 20,
+    "unit_volume": 0,
     "description": "baz",
     "units": "kg",
 }
@@ -50,39 +43,39 @@ OTHER_VALID_DISCRETE_ARGS = {
     **VALID_DISCRETE_ARGS,
     "unit_mass": 20,
     "unit_volume": 30,
-    "cos": 2,
+    "class_of_supply": 2,
 }
 
 VALID_CONT_ARGS = {
     **VALID_DISCRETE_ARGS,
-    "type": "continuous",
+    "type": "Continuous",
     "unit_mass": 10.2,
-    "unit_volume": 24.1,
+    "unit_volume": 0,
 }
 
 OTHER_VALID_CONT_ARGS = {
     **VALID_CONT_ARGS,
     "unit_mass": 20.5,
     "unit_volume": 30.15,
-    "cos": 2,
+    "class_of_supply": 2,
 }
 
-INVALID_DISCRETE_ARGS = {**VALID_DISCRETE_ARGS, "cos": 99999}
+INVALID_DISCRETE_ARGS = {**VALID_DISCRETE_ARGS, "class_of_supply": 99999}
 
 MISTYPED_DISCRETE_ARGS = {**VALID_CONT_ARGS, "unit_mass": 10, "unit_volume": 20}
 
-INVALID_CONT_ARGS = {**VALID_CONT_ARGS, "cos": -10}
+INVALID_CONT_ARGS = {**VALID_CONT_ARGS, "class_of_supply": -10}
 
 MISTYPED_CONT_ARGS = {**VALID_DISCRETE_ARGS, "unit_mass": 10.2, "unit_volume": 24.1}
 
 KIND_TO_ARGS: Dict[ResourceType, Tuple[Dict, Dict, Dict, Dict]] = {
-    ResourceType.discrete: (
+    ResourceType.Discrete: (
         VALID_DISCRETE_ARGS,
         OTHER_VALID_DISCRETE_ARGS,
         INVALID_DISCRETE_ARGS,
         MISTYPED_DISCRETE_ARGS,
     ),
-    ResourceType.continuous: (
+    ResourceType.Continuous: (
         VALID_CONT_ARGS,
         OTHER_VALID_CONT_ARGS,
         INVALID_CONT_ARGS,
@@ -90,7 +83,7 @@ KIND_TO_ARGS: Dict[ResourceType, Tuple[Dict, Dict, Dict, Dict]] = {
     ),
 }
 
-TESTED_VARIANTS: List[ResourceType] = [ResourceType.discrete, ResourceType.continuous]
+TESTED_VARIANTS: List[ResourceType] = [ResourceType.Discrete, ResourceType.Continuous]
 
 
 @pytest.fixture(scope="module")
@@ -121,7 +114,7 @@ def test_create(resource_type: ResourceType):
     bad_response = client.post("/resource/", json=invalid)
     assert bad_response.status_code == 422
     post_response = client.post("/resource/", json=first)
-    assert post_response.status_code == 201
+    assert post_response.status_code == 201, post_response.json()
     assert first_subset_second(first, post_response.json())
     assert len(first) == len(post_response.json()) - 1
     id_ = post_response.json()["id"]
@@ -157,9 +150,9 @@ def test_update(resource_type: ResourceType):
     assert bad_patch.status_code == 404
     check_get()
     other_type = (
-        ResourceType.discrete
-        if resource_type == ResourceType.continuous
-        else ResourceType.continuous
+        ResourceType.Discrete
+        if resource_type == ResourceType.Continuous
+        else ResourceType.Continuous
     )
     non_matching_kw = with_type(mistyped, other_type)
     bad_patch = client.patch(f"/resource/{id_}", json=non_matching_kw)

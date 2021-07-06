@@ -5,9 +5,20 @@ from ..database import Base
 
 from spacenet.schemas.element import ElementKind
 
+__all__ = [
+    "ElementKind",
+    "Element",
+    "ElementCarrier",
+    "ResourceContainer",
+    "PropulsiveVehicle",
+    "SurfaceVehicle",
+    "HumanAgent",
+    "RoboticAgent",
+]
+
 
 class Element(Base):
-    __tablename__ = "Elements"
+    __tablename__ = "element"
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
@@ -18,6 +29,7 @@ class Element(Base):
     accommodation_mass = Column(Float)
     mass = Column(Float)
     volume = Column(Float)
+    states = relationship("State", back_populates="element", passive_deletes=True)
 
     __mapper_args__ = {
         "polymorphic_on": type,
@@ -84,11 +96,11 @@ class PropulsiveVehicle(Vehicle):
     isp = Column(Float)
     propellant_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": ElementKind.Propulsive.value}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.PropulsiveVehicle.value}
 
 
 class SurfaceVehicle(Vehicle):
     max_speed = Column(Float)
     fuel_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": ElementKind.Surface.value}
+    __mapper_args__ = {"polymorphic_identity": ElementKind.SurfaceVehicle.value}
