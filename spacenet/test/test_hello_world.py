@@ -6,7 +6,7 @@ import pytest
 from spacenet.schemas.hello_world import HelloWorld
 from pydantic import ValidationError
 
-pytestmark = [pytest.mark.unit]
+pytestmark = [pytest.mark.unit, pytest.mark.schema]
 
 
 class TestHelloWorld(unittest.TestCase):

@@ -8,3 +8,7 @@ p{
   font-weight: lighter;
   font-style: italic;
 }
+
+.invalid {
+	display: none;
+}

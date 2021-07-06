@@ -1,0 +1,45 @@
+[
+  {
+    "type": "FlightEdge",
+    "name": "Test1",
+    "origin_id": 1,
+    "destination_id": 2,
+    "duration": 25,
+    "max_crew": 6.5,
+    "max_cargo": 100,
+    "description": "Invalid max_crew input."
+  },
+  {
+    "type": "FlightEdge",
+    "name": "Test2",
+    "origin_id": "Yes",
+    "destination_id": 3,
+    "duration": 25,
+    "max_crew": 6,
+    "max_cargo": 100,
+    "description": "Invalid origin_id type."
+  },
+  {
+    "type": "SpaceEdge",
+    "name": "Test3",
+    "origin_id": 3,
+    "destination_id": 2.5,
+    "duration": 25,
+    "description": "Invalid destination_id input."
+  },
+  {
+    "type": "SpaceEdge",
+    "name": "Test4",
+    "origin_id": 1,
+    "destination_id": 3,
+    "description": "Invalid duration type."
+  },
+  {
+    "type": "SurfaceEdge",
+    "name": "Test5",
+    "origin_id": 5,
+    "destination_id": 2,
+    "distance": "truthy",
+    "description": "Invalid distance type."
+  }
+]

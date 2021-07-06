@@ -23,80 +23,80 @@ from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
 
 __all__ = [
     "Element",
-    "UpdateElement",
-    "ReadElement",
+    "ElementUpdate",
+    "ElementRead",
     "ElementCarrier",
-    "UpdateElementCarrier",
-    "ReadElementCarrier",
+    "ElementCarrierUpdate",
+    "ElementCarrierRead",
     "ResourceContainer",
-    "UpdateResourceContainer",
-    "ReadResourceContainer",
+    "ResourceContainerUpdate",
+    "ResourceContainerRead",
     "SurfaceVehicle",
-    "UpdateSurfaceVehicle",
-    "ReadSurfaceVehicle",
+    "SurfaceVehicleUpdate",
+    "SurfaceVehicleRead",
     "PropulsiveVehicle",
-    "UpdatePropulsiveVehicle",
-    "ReadPropulsiveVehicle",
+    "PropulsiveVehicleUpdate",
+    "PropulsiveVehicleRead",
     "HumanAgent",
-    "ReadHumanAgent",
-    "UpdateHumanAgent",
+    "HumanAgentRead",
+    "HumanAgentUpdate",
     "RoboticAgent",
-    "ReadRoboticAgent",
-    "UpdateRoboticAgent",
+    "RoboticAgentRead",
+    "RoboticAgentUpdate",
 ]
 
 
-class UpdateElement(Element, RequiresOnlyType):
+class ElementUpdate(Element, RequiresOnlyType):
     pass
 
 
-class ReadElement(Element, ReadSchema):
+class ElementRead(Element, ReadSchema):
     pass
 
 
-class UpdateElementCarrier(ElementCarrier, RequiresOnlyType):
+class ElementCarrierUpdate(ElementCarrier, RequiresOnlyType):
     pass
 
 
-class ReadElementCarrier(ElementCarrier, ReadSchema):
+class ElementCarrierRead(ElementCarrier, ReadSchema):
     pass
 
 
-class UpdateResourceContainer(ResourceContainer, RequiresOnlyType):
+class ResourceContainerUpdate(ResourceContainer, RequiresOnlyType):
     pass
 
 
-class ReadResourceContainer(ResourceContainer, ReadSchema):
+class ResourceContainerRead(ResourceContainer, ReadSchema):
     pass
 
 
-class UpdateSurfaceVehicle(SurfaceVehicle, RequiresOnlyType):
+class SurfaceVehicleUpdate(SurfaceVehicle, RequiresOnlyType):
     pass
 
 
-class ReadSurfaceVehicle(SurfaceVehicle, ReadSchema):
+class SurfaceVehicleRead(SurfaceVehicle, ReadSchema):
     pass
 
 
-class UpdatePropulsiveVehicle(PropulsiveVehicle, RequiresOnlyType):
+class PropulsiveVehicleUpdate(PropulsiveVehicle, RequiresOnlyType):
     pass
 
 
-class ReadPropulsiveVehicle(PropulsiveVehicle, ReadSchema):
+class PropulsiveVehicleRead(PropulsiveVehicle, ReadSchema):
     pass
 
 
-class UpdateHumanAgent(HumanAgent, RequiresOnlyType):
+class HumanAgentUpdate(HumanAgent, RequiresOnlyType):
     pass
 
 
-class ReadHumanAgent(HumanAgent, ReadSchema):
+class HumanAgentRead(HumanAgent, ReadSchema):
     pass
 
 
-class UpdateRoboticAgent(RoboticAgent, RequiresOnlyType):
+class RoboticAgentUpdate(RoboticAgent, RequiresOnlyType):
     pass
 
 
-class ReadRoboticAgent(RoboticAgent, ReadSchema):
+class RoboticAgentRead(RoboticAgent, ReadSchema):
     pass

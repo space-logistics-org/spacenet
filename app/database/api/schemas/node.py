@@ -1,47 +1,38 @@
-from spacenet.schemas import node as schemas
-from pydantic import Field
+from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
+from spacenet.schemas.node import LagrangeNode, OrbitalNode, SurfaceNode
+
+__all__ = [
+    "LagrangeNode",
+    "LagrangeNodeRead",
+    "LagrangeNodeUpdate",
+    "OrbitalNode",
+    "OrbitalNodeRead",
+    "OrbitalNodeUpdate",
+    "SurfaceNode",
+    "SurfaceNodeRead",
+    "SurfaceNodeUpdate",
+]
 
 
-class SurfaceNodeCreate(schemas.SurfaceNode):
+class SurfaceNodeUpdate(SurfaceNode, RequiresOnlyType):
     pass
 
 
-class SurfaceNode(schemas.SurfaceNode):
-    id: int = Field(
-        ...,
-        title="ID",
-        description="Unique Identifier"
-    )
-
-    class Config:
-        orm_mode = True
-
-
-class OrbitalNodeCreate(schemas.OrbitalNode):
+class SurfaceNodeRead(SurfaceNode, ReadSchema):
     pass
 
 
-class OrbitalNode(schemas.OrbitalNode):
-    id: int = Field(
-        ...,
-        title="ID",
-        description="Unique identifier"
-    )
-
-    class Config:
-        orm_mode = True
-
-
-class LagrangeNodeCreate(schemas.LagrangeNode):
+class OrbitalNodeUpdate(OrbitalNode, RequiresOnlyType):
     pass
 
 
-class LagrangeNode(schemas.LagrangeNode):
-    id: int = Field(
-        ...,
-        title="ID",
-        description="Unique identifier"
-    )
+class OrbitalNodeRead(OrbitalNode, ReadSchema):
+    pass
 
-    class Config:
-        orm_mode = True
+
+class LagrangeNodeUpdate(LagrangeNode, RequiresOnlyType):
+    pass
+
+
+class LagrangeNodeRead(LagrangeNode, ReadSchema):
+    pass

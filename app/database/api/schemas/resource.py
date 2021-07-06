@@ -1,27 +1,27 @@
-from spacenet.schemas.resource import DiscreteResource, ContinuousResource
 from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
+from spacenet.schemas.resource import ContinuousResource, DiscreteResource
 
 __all__ = [
     "DiscreteResource",
-    "ReadDiscrete",
-    "UpdateDiscrete",
+    "DiscreteRead",
+    "DiscreteUpdate",
     "ContinuousResource",
-    "ReadContinuous",
-    "UpdateContinuous",
+    "ContinuousRead",
+    "ContinuousUpdate",
 ]
 
 
-class ReadDiscrete(DiscreteResource, ReadSchema):
+class DiscreteRead(DiscreteResource, ReadSchema):
     pass
 
 
-class UpdateDiscrete(DiscreteResource, RequiresOnlyType):
+class DiscreteUpdate(DiscreteResource, RequiresOnlyType):
     pass
 
 
-class ReadContinuous(ContinuousResource, ReadSchema):
+class ContinuousRead(ContinuousResource, ReadSchema):
     pass
 
 
-class UpdateContinuous(ContinuousResource, RequiresOnlyType):
+class ContinuousUpdate(ContinuousResource, RequiresOnlyType):
     pass

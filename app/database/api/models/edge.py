@@ -1,9 +1,14 @@
 from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declared_attr
+
 from ..database import Base
+from spacenet.schemas.edge import EdgeType
+
+__all__ = ["EdgeType", "Edge", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
 
 
 class Edge(Base):
-    __tablename__ = "Edges"
+    __tablename__ = "edge"
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
@@ -18,18 +23,24 @@ class Edge(Base):
 class SurfaceEdge(Edge):
     distance = Column(Float)
 
-    __mapper_args__ = {"polymorphic_identity": "surface"}
+    __mapper_args__ = {"polymorphic_identity": EdgeType.Surface.value}
 
 
-class SpaceEdge(Edge):
-    duration = Column(Float)
+class EdgeWithDuration(Edge):
+    __abstract__ = True
 
-    __mapper_args__ = {"polymorphic_identity": "space"}
+    @declared_attr
+    def duration(cls):
+        return Edge.__table__.c.get("duration", Column(Float))
 
 
-class FlightEdge(Edge):
-    duration = Column(Float)
-    max_crew = Column(Float)
+class SpaceEdge(EdgeWithDuration):
+
+    __mapper_args__ = {"polymorphic_identity": EdgeType.Space.value}
+
+
+class FlightEdge(EdgeWithDuration):
+    max_crew = Column(Integer)
     max_cargo = Column(Float)
 
-    __mapper_args__ = {"polymorphic_identity": "flight"}
+    __mapper_args__ = {"polymorphic_identity": EdgeType.Flight.value}

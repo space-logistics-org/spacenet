@@ -1,57 +1,45 @@
+from enum import Enum
 from typing import Optional
+
+from pydantic import (
+    BaseModel,
+    Field,
+)
 from typing_extensions import Literal
 
-from pydantic import BaseModel, PositiveInt, PositiveFloat, Field
-from enum import Enum
-
+from .types import SafeNonNegFloat, SafePosFloat
 from ..constants import ClassOfSupply
+
+__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource"]
 
 
 class ResourceType(str, Enum):
-    discrete = "discrete"
-    continuous = "continuous"
-
-    class Config:
-        title: "Resource Type"
+    Discrete = "Discrete"
+    Continuous = "Continuous"
 
 
 class Resource(BaseModel):
     name: str = Field(..., title="Name", description="Resource name")
-    cos: ClassOfSupply = Field(
+    class_of_supply: ClassOfSupply = Field(
         ..., title="Class of Supply", description="Class of supply number"
     )
     units: str = Field(default="kg", title="Units")
     description: Optional[str] = Field(
         default=None, title="Description", description="Short description"
     )
-
-    class Config:
-        title = "Resource Data"
+    unit_mass: SafePosFloat = Field(..., title="Unit Mass", description="Resource mass")
+    unit_volume: SafeNonNegFloat = Field(
+        ..., title="Unit Volume", description="Resource volume"
+    )
 
 
 class DiscreteResource(Resource):
-    type: Literal[ResourceType.discrete] = Field(
+    type: Literal[ResourceType.Discrete] = Field(
         ..., title="Type", description="Resource type"
     )
-    unit_mass: PositiveInt = Field(..., title="Unit Mass", description="Resource mass")
-    unit_volume: PositiveInt = Field(
-        ..., title="Unit Volume", description="Resource volume"
-    )
-
-    class Config:
-        title = "Discrete Resource"
 
 
 class ContinuousResource(Resource):
-    type: Literal[ResourceType.continuous] = Field(
+    type: Literal[ResourceType.Continuous] = Field(
         ..., title="Type", description="Resource type"
     )
-    unit_mass: PositiveFloat = Field(
-        ..., title="Unit Mass", description="Resource mass"
-    )
-    unit_volume: PositiveFloat = Field(
-        ..., title="Unit Volume", description="Resource volume"
-    )
-
-    class Config:
-        title = "Continuous Resource"
