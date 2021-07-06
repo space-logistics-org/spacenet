@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 from typing import List, Union
 
 from .. import database
-# from ..auth import oauth2_scheme
 
 from ..models import node as models
 from ..schemas.node import *
+from ....dependencies import User, fastapi_users
 
 
 router = APIRouter()
@@ -40,7 +40,8 @@ SCHEMA_TO_MODEL = {
 def create_node(
         node: Nodes,
         # token: str = Depends(oauth2_scheme),
-        db: Session = Depends(database.get_db)
+        db: Session = Depends(database.get_db),
+        user: User = Depends(fastapi_users.current_user(active=True))
         ):
     db_node = SCHEMA_TO_MODEL[type(node)](**node.dict())
     db.add(db_node)
@@ -73,8 +74,8 @@ def read_node(
 def update_node(
         node_id: int,
         node: Nodes,
-        # token: str = Depends(oauth2_scheme),
-        db: Session = Depends(database.get_db)
+        db: Session = Depends(database.get_db),
+        user: User = Depends(fastapi_users.current_user(active=True)),
         ):
     db_node = db.query(models.Node).get(node_id)
     if db_node is None:
@@ -92,7 +93,7 @@ def update_node(
     response_model=ReadNodes
 )
 def patch_node(
-    id_: int, element: UpdateNodes, db: Session = Depends(database.get_db)
+    id_: int, element: UpdateNodes, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))
 ):
     db_node = db.query(models.node).get(id_)
     if db_node is None:
@@ -117,7 +118,8 @@ def patch_node(
 def delete_node(
         node_id: int,
         # token: str = Depends(oauth2_scheme),
-        db: Session = Depends(database.get_db)
+        db: Session = Depends(database.get_db),
+        user: User = Depends(fastapi_users.current_user(active=True))
         ):
     db_node = db.query(models.Node).get(node_id)
     if db_node is None:

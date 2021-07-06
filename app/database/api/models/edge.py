@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import declared_attr
+from sqlalchemy.ext.declarative import declared_attr
 
 from ..database import Base
 from spacenet.schemas.edge import EdgeType

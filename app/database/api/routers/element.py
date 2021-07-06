@@ -7,6 +7,7 @@ from .. import database
 from ..models import element as models
 from ..schemas.element import *
 from ..models.utilities import dictify_row
+from ....dependencies import User, fastapi_users
 
 router = APIRouter()
 
@@ -85,7 +86,7 @@ def read_element(id_: int, db: Session = Depends(database.get_db)):
     status_code=status.HTTP_201_CREATED,
     description="Add a new element to the database.",
 )
-def create_element(element: Elements, db: Session = Depends(database.get_db)):
+def create_element(element: Elements, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))):
     db_element = SCHEMA_TO_MODEL[type(element)](**element.dict())
     db.add(db_element)
     db.commit()
@@ -100,7 +101,7 @@ def create_element(element: Elements, db: Session = Depends(database.get_db)):
     description="Update an existing element in the database.",
 )
 def patch_element(
-    id_: int, element: UpdateElements, db: Session = Depends(database.get_db)
+    id_: int, element: UpdateElements, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))
 ):
     db_element = db.query(models.Element).get(id_)
     if db_element is None:
@@ -127,7 +128,7 @@ def patch_element(
     responses=NOT_FOUND_RESPONSE,
     description="Delete an element from the database.",
 )
-def delete_element(id_: int, db: Session = Depends(database.get_db)):
+def delete_element(id_: int, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))):
     db_element = db.query(models.Element).get(id_)
     if db_element is None:
         raise HTTPException(

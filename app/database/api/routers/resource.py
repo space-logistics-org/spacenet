@@ -8,6 +8,7 @@ from ..models import resource as models
 from ..models.utilities import dictify_row
 from ..schemas.resource import *
 from spacenet.schemas.resource import ResourceType
+from ....dependencies import User, fastapi_users
 
 router = APIRouter()
 
@@ -100,7 +101,7 @@ def create_resource(resource: Resources, db: Session = Depends(database.get_db))
     description="Update an existing resource in the database.",
 )
 def patch_resource(
-    id_: int, resource: UpdateResources, db: Session = Depends(database.get_db)
+    id_: int, resource: UpdateResources, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))
 ):
     db_resource = db.query(models.Resource).get(id_)
     if db_resource is None:
@@ -131,7 +132,7 @@ def patch_resource(
     responses=NOT_FOUND_RESPONSE,
     description="Delete a resource from the database.",
 )
-def delete_resource(id_: int, db: Session = Depends(database.get_db)):
+def delete_resource(id_: int, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))):
     db_resource = db.query(models.Resource).get(id_)
     if db_resource is None:
         raise HTTPException(

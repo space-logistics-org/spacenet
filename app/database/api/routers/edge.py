@@ -1,10 +1,12 @@
 from typing import List, Union
 from fastapi import Depends, APIRouter, HTTPException
 from sqlalchemy.orm import Session
+from fastapi_users import FastAPIUsers
 
 from .. import database
 from ..models import edge as models
 from ..schemas.edge import *
+from ....dependencies import User, fastapi_users
 
 #Build a new router
 router = APIRouter()
@@ -17,6 +19,8 @@ UpdateEdges = Union[UpdateSurfaceEdge, UpdateSpaceEdge, UpdateFlightEdge]
 ReadEdges = Union[ReadSurfaceEdge, ReadSpaceEdge, ReadFlightEdge]
 
 SCHEMA_TO_MODEL = {SurfaceEdge: models.SurfaceEdge, SpaceEdge: models.SpaceEdge, FlightEdge: models.FlightEdge}
+
+
 
 #Bind a route to list objects
 @router.get("/", response_model = List[ReadEdges])
@@ -39,7 +43,7 @@ def read_edge(edge_id: int, db: Session = Depends(database.get_db)):
 
 #Bind a route to create a new object
 @router.post("/", response_model = ReadEdges)
-def create_edge(edge: Edges, db: Session = Depends(database.get_db)): 
+def create_edge(edge: Edges, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))): 
 
     db_edge = SCHEMA_TO_MODEL[type(edge)](**edge.dict())
 
@@ -53,7 +57,7 @@ def create_edge(edge: Edges, db: Session = Depends(database.get_db)):
 
 #Bind a route to update an object by ID
 @router.put("/{edge_id}", response_model = ReadEdges)
-def update_edge(edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db)):
+def update_edge(edge_id: int, edge: UpdateEdges, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))):
 
     db_edge = db.query(models.Edge).get(edge_id)
 
@@ -70,7 +74,7 @@ def update_edge(edge_id: int, edge: UpdateEdges, db: Session = Depends(database.
 
 #Bind a route to delete an object by ID
 @router.delete("/{edge_id}", response_model = ReadEdges) #no response model??
-def delete_edge(edge_id: int, db: Session = Depends(database.get_db)):
+def delete_edge(edge_id: int, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))):
 
     db_edge = db.query(models.Edge).get(edge_id)
 
