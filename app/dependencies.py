@@ -12,7 +12,7 @@ from pydantic import BaseModel
 
 
 DATABASE_URL = "sqlite:///./userbase.db"
-SECRET = "SECRET"
+SECRET = "spacenet2021"
 
 
 class User(models.BaseUser):
