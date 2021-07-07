@@ -1,7 +1,16 @@
 import doctest
-import pytest
 import random
 from typing import Dict
+
+from app.database.test.utilities import TestingSessionLocal
+
+
+def get_test_db():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 def with_type(d: Dict, kind) -> Dict:
@@ -82,5 +91,5 @@ def filter_val_not_none(d: Dict) -> Dict:
     return {k: v for k, v in d.items() if v is not None}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     doctest.testmod()

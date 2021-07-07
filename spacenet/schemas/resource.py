@@ -1,22 +1,21 @@
+from enum import Enum
 from typing import Optional
-from typing_extensions import Literal
 
 from pydantic import (
     BaseModel,
-    NonNegativeFloat,
-    NonNegativeInt,
-    PositiveInt,
-    PositiveFloat,
     Field,
 )
-from enum import Enum
+from typing_extensions import Literal
 
+from .types import SafeNonNegFloat, SafePosFloat
 from ..constants import ClassOfSupply
+
+__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource"]
 
 
 class ResourceType(str, Enum):
-    discrete = "Discrete"
-    continuous = "Continuous"
+    Discrete = "Discrete"
+    Continuous = "Continuous"
 
 
 class Resource(BaseModel):
@@ -28,21 +27,19 @@ class Resource(BaseModel):
     description: Optional[str] = Field(
         default=None, title="Description", description="Short description"
     )
-    unit_mass: PositiveFloat = Field(
-        ..., title="Unit Mass", description="Resource mass"
-    )
-    unit_volume: NonNegativeFloat = Field(
+    unit_mass: SafePosFloat = Field(..., title="Unit Mass", description="Resource mass")
+    unit_volume: SafeNonNegFloat = Field(
         ..., title="Unit Volume", description="Resource volume"
     )
 
 
 class DiscreteResource(Resource):
-    type: Literal[ResourceType.discrete] = Field(
+    type: Literal[ResourceType.Discrete] = Field(
         ..., title="Type", description="Resource type"
     )
 
 
 class ContinuousResource(Resource):
-    type: Literal[ResourceType.continuous] = Field(
+    type: Literal[ResourceType.Continuous] = Field(
         ..., title="Type", description="Resource type"
     )

@@ -4,8 +4,11 @@ from ..database import Base
 from spacenet.schemas.resource import ResourceType
 
 
+__all__ = ["Resource", "ResourceType", "ContinuousResource", "DiscreteResource"]
+
+
 class Resource(Base):
-    __tablename__ = "Resources"
+    __tablename__ = "resource"
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
@@ -21,9 +24,9 @@ class Resource(Base):
 
 class DiscreteResource(Resource):
 
-    __mapper_args__ = {"polymorphic_identity": ResourceType.discrete.value}
+    __mapper_args__ = {"polymorphic_identity": ResourceType.Discrete.value}
 
 
 class ContinuousResource(Resource):
 
-    __mapper_args__ = {"polymorphic_identity": ResourceType.continuous.value}
+    __mapper_args__ = {"polymorphic_identity": ResourceType.Continuous.value}

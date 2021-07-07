@@ -2,44 +2,52 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import ReconfigureElementsEvent
-from .event_utilities import (
-    INVALID_UUIDS,
+from ..utilities import (
+    INVALID_INTS,
+    UNSERIALIZABLE_INTS,
     success_from_kw,
     xfail_from_kw,
 )
+from ...constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
-STATES = ("Active", "Dormant", "Decommissioned")
-VALID_TO_RECONFIGURE = st.dictionaries(keys=st.uuids(), values=st.sampled_from(STATES))
+VALID_TO_RECONFIGURE = st.dictionaries(
+    keys=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+    values=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+)
 INVALID_TO_RECONFIGURE = st.one_of(
-    st.dictionaries(keys=INVALID_UUIDS, values=st.sampled_from(STATES), min_size=1),
     st.dictionaries(
-        keys=st.uuids(),
-        values=st.text().filter(lambda s: s not in STATES),
+        keys=st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
+        values=st.integers(),
         min_size=1,
     ),
     st.dictionaries(
-        keys=INVALID_UUIDS,
-        values=st.text().filter(lambda s: s not in STATES),
+        keys=st.integers(),
+        values=st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
+        min_size=1,
+    ),
+    st.dictionaries(
+        keys=st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
+        values=st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
         min_size=1,
     ),
 )
 
 VALID_MAP = {
     "to_reconfigure": VALID_TO_RECONFIGURE,
-    "reconfigure_point_id": st.uuids(),
+    "reconfigure_point_id": st.integers(
+        min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT
+    ),
 }
 
 INVALID_MAP = {
     "to_reconfigure": INVALID_TO_RECONFIGURE,
-    "reconfigure_point_id": INVALID_UUIDS,
+    "reconfigure_point_id": st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
 }
 
 
-def xfail_construct_reconfigure(
-    to_reconfigure, reconfigure_point_id
-):
+def xfail_construct_reconfigure(to_reconfigure, reconfigure_point_id):
     xfail_from_kw(
         ReconfigureElementsEvent,
         to_reconfigure=to_reconfigure,

@@ -5,7 +5,7 @@
     "origin_id": 1,
     "destination_id": 4,
     "duration": 0.25,
-    "type": "Space"
+    "type": "SpaceEdge"
   },
   {
     "name": "LEO-LLPO",
@@ -13,7 +13,7 @@
     "origin_id": 4,
     "destination_id": 5,
     "duration": 4,
-    "type": "Space"
+    "type": "SpaceEdge"
   },
   {
     "name": "LLPO-LSP",
@@ -21,7 +21,7 @@
     "origin_id": 5,
     "destination_id": 3,
     "duration": 0.5,
-    "type": "Space"
+    "type": "SpaceEdge"
   },
   {
     "name": "LSP-LLPO",
@@ -29,7 +29,7 @@
     "origin_id": 3,
     "destination_id": 5,
     "duration": 0.5,
-    "type": "Space"
+    "type": "SpaceEdge"
   },
   {
     "name": "LLPO-PAC",
@@ -37,6 +37,6 @@
     "origin_id": 5,
     "destination_id": 2,
     "duration": 4,
-    "type": "Space"
+    "type": "SpaceEdge"
   }
 ]

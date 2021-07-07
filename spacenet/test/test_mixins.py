@@ -36,6 +36,7 @@ class TestOptionalFields(unittest.TestCase):
             exp_field = copy.deepcopy(field)
             exp_field.required = False
             exp_field.default = None
+            exp_field.allow_none = True
             actual_field = OptionalModel.__fields__[field_name]
             # using repr b/c __eq__ isn't implemented for Field
             self.assertEqual(repr(exp_field), repr(actual_field))
@@ -53,6 +54,7 @@ class TestOptionalFields(unittest.TestCase):
             exp_field = copy.deepcopy(field)
             exp_field.required = False
             exp_field.default = None
+            exp_field.allow_none = True
             actual_field = PartialOptionalModel.__fields__[field_name]
             self.assertEqual(repr(exp_field), repr(actual_field))
         self.assertEqual(
