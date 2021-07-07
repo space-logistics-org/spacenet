@@ -8,126 +8,188 @@ max_cargo = 0;
 desc = "";
 
 
+function formSet(modalType) {
 
+  $("#" + modalType + "InputName").hide();
+  $("#" + modalType + "InputNameLabel").hide();
+  $("#" + modalType + "InputOrigin_ID").hide();
+  $("#" + modalType + "InputOrigin_IDLabel").hide();
+  $("#" + modalType + "InputDestination_ID").hide();
+  $("#" + modalType + "InputDestination_IDLabel").hide();
+  $("#" + modalType + "InputDuration").hide();
+  $("#" + modalType + "InputDurationLabel").hide();
+  $("#" + modalType + "InputDistance").hide();
+  $("#" + modalType + "InputDistanceLabel").hide();
+  $("#" + modalType + "InputMax_Crew").hide();
+  $("#" + modalType + "InputMax_CrewLabel").hide();
+  $("#" + modalType + "InputMax_Cargo").hide();
+  $("#" + modalType + "InputMax_CargoLabel").hide();
+  $("#" + modalType + "InputDescription").hide();
+  $("#" + modalType + "InputDescriptionLabel").hide();
 
-function formSet(){
-
-  $("#components #inputName").prop("disabled",true);
-  $("#components #inputOrigin_ID").prop("disabled",true);
-  $("#components #inputDestination_ID").prop("disabled",true);
-  $("#components #inputDuration").prop("disabled",true);
-  $("#components #inputDistance").prop("disabled",true);
-  $("#components #inputMax_Crew").prop("disabled",true);
-  $("#components #inputMax_Cargo").prop("disabled",true);
-  $("#components #inputDescription").prop("disabled",true);
-
-  var edgeType = document.getElementById('dropPick').value;
+  var edgeType = $('#' + modalType + 'DropPick').val();
 
   switch(edgeType) {
     case 'def':{
-      $("#components #inputName").prop("disabled",true);
-      $("#components #inputOrigin_ID").prop("disabled",true);
-      $("#components #inputDestination_ID").prop("disabled",true);
-      $("#components #inputDuration").prop("disabled",true);
-      $("#components #inputDistance").prop("disabled",true);
-      $("#components #inputMax_Crew").prop("disabled",true);
-      $("#components #inputMax_Cargo").prop("disabled",true);
-      $("#components #inputDescription").prop("disabled",true);
+      $("#" + modalType + "InputName").hide();
+      $("#" + modalType + "InputNameLabel").hide();
+      $("#" + modalType + "InputOrigin_ID").hide();
+      $("#" + modalType + "InputOrigin_IDLabel").hide();
+      $("#" + modalType + "InputDestination_ID").hide();
+      $("#" + modalType + "InputDestination_IDLabel").hide();
+      $("#" + modalType + "InputDuration").hide();
+      $("#" + modalType + "InputDurationLabel").hide();
+      $("#" + modalType + "InputDistance").hide();
+      $("#" + modalType + "InputDistanceLabel").hide();
+      $("#" + modalType + "InputMax_Crew").hide();
+      $("#" + modalType + "InputMax_CrewLabel").hide();
+      $("#" + modalType + "InputMax_Cargo").hide();
+      $("#" + modalType + "InputMax_CargoLabel").hide();
+      $("#" + modalType + "InputDescription").hide();
+      $("#" + modalType + "InputDescriptionLabel").hide();
       break;
     }
     case 'Flight': {
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputOrigin_ID").prop("disabled",false);
-      $("#components #inputDestination_ID").prop("disabled",false);
-      $("#components #inputDuration").prop("disabled",false);
-      $("#components #inputMax_Crew").prop("disabled",false);
-      $("#components #inputMax_Cargo").prop("disabled",false);
-      $("#components #inputDescription").prop("disabled",false);
+      $("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputNameLabel").show();
+
+      $("#" + modalType + "InputOrigin_ID").show();
+      $("#" + modalType + "InputOrigin_IDLabel").show();
+
+      $("#" + modalType + "InputDestination_ID").show();
+      $("#" + modalType + "InputDestination_IDLabel").show();
+
+      $("#" + modalType + "InputDuration").show();
+      $("#" + modalType + "InputDurationLabel").show();
+
+      $("#" + modalType + "InputMax_Crew").show();
+      $("#" + modalType + "InputMax_CrewLabel").show();
+
+      $("#" + modalType + "InputMax_Cargo").show();
+      $("#" + modalType + "InputMax_CargoLabel").show();
+
+      $("#" + modalType + "InputDescription").show();
+      $("#" + modalType + "InputDescriptionLabel").show();
+
       break;
         }
     case 'Space':{
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputOrigin_ID").prop("disabled",false);
-      $("#components #inputDestination_ID").prop("disabled",false);
-      $("#components #inputDuration").prop("disabled",false);
-      $("#components #inputDescription").prop("disabled",false);
-      break;}
+      $("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputNameLabel").show();
+
+      $("#" + modalType + "InputOrigin_ID").show();
+      $("#" + modalType + "InputOrigin_IDLabel").show();
+
+      $("#" + modalType + "InputDestination_ID").show();
+      $("#" + modalType + "InputDestination_IDLabel").show();
+
+      $("#" + modalType + "InputDuration").show();
+      $("#" + modalType + "InputDurationLabel").show();
+
+      $("#" + modalType + "InputDescription").show();
+      $("#" + modalType + "InputDescriptionLabel").show();
+
+      break;
+    }
+
     case 'Surface':{
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputOrigin_ID").prop("disabled",false);
-      $("#components #inputDestination_ID").prop("disabled",false);
-      $("#components #inputDistance").prop("disabled",false);
-      $("#components #inputDescription").prop("disabled",false);
+      $("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputNameLabel").show();
+
+      $("#" + modalType + "InputOrigin_ID").show();
+      $("#" + modalType + "InputOrigin_IDLabel").show();
+
+      $("#" + modalType + "InputDestination_ID").show();
+      $("#" + modalType + "InputDestination_IDLabel").show();
+
+      $("#" + modalType + "InputDistance").show();
+      $("#" + modalType + "InputDistanceLabel").show();
+
+      $("#" + modalType + "InputDescription").show();
+      $("#" + modalType + "InputDescriptionLabel").show();
       break;}
   }
 }
 
-function onComplete(){
 
-    name = document.getElementById("inputName").value;
-    type = document.getElementById("dropPick").value;
-    origin_id = document.getElementById("inputOrigin_ID").value;
-    dest_id = document.getElementById("inputDestination_ID").value;
-    dur = document.getElementById("inputDuration").value;
-    dist = document.getElementById("inputDistance").value;
-    max_crew = document.getElementById("inputMax_Crew").value;
-    max_cargo = document.getElementById("inputMax_Cargo").value;
-    desc = document.getElementById("inputDescription").value;
+function getMessage(modalType) {
 
-    switch(type){
+  name = $("#" + modalType + "InputName").val();
+  type = $("#" + modalType + "DropPick").val();
+  origin_id = $("#" + modalType + "InputOrigin_ID").val();
+  dest_id = $("#" + modalType + "InputDestination_ID").val();
+  dur = $("#" + modalType + "InputDuration").val();
+  dist = $("#" + modalType + "InputDistance").val();
+  max_crew = $("#" + modalType + "InputMax_Crew").val();
+  max_cargo = $("#" + modalType + "InputMax_Cargo").val();
+  desc = $("#" + modalType + "InputDescription").val();
 
-      case "Flight":{
-          message = JSON.stringify({
-          type : "Flight",
-          name : name,
-          origin_id :  parseInt(origin_id),
-          destination_id : parseInt(dest_id),
-          duration : parseInt(dur),
-          max_crew : parseInt(max_crew),
-          max_cargo : parseInt(max_cargo),
-          description : desc,
-          });
-          break;
-        }
-      case "Space":{
+  switch(type){
+
+    case "Flight":{
         message = JSON.stringify({
-          type : "Space",
-          name : name,
-          origin_id :  parseInt(origin_id),
-          destination_id : parseInt(dest_id),
-          duration : parseInt(dur),
-          description : desc,
-      });
-      break;
-    }
-      case "Surface":{
-        message = JSON.stringify({
-          type : "Surface",
-          name : name,
-          origin_id :  parseInt(origin_id),
-          destination_id : parseInt(dest_id),
-          distance : parseInt(dist),
-          description : desc,
+        type : "Flight",
+        name : name,
+        origin_id :  parseInt(origin_id),
+        destination_id : parseInt(dest_id),
+        duration : parseInt(dur),
+        max_crew : parseInt(max_crew),
+        max_cargo : parseInt(max_cargo),
+        description : desc,
         });
         break;
+      }
+    case "Space":{
+      message = JSON.stringify({
+        type : "Space",
+        name : name,
+        origin_id :  parseInt(origin_id),
+        destination_id : parseInt(dest_id),
+        duration : parseInt(dur),
+        description : desc,
+    });
+    break;
+  }
+    case "Surface":{
+      message = JSON.stringify({
+        type : "Surface",
+        name : name,
+        origin_id :  parseInt(origin_id),
+        destination_id : parseInt(dest_id),
+        distance : parseInt(dist),
+        description : desc,
+      });
+      break;
+  }
+}
+
+return message;
+}
+
+
+
+function formFill(data) {
+  console.log(data)
+  var edgeType = data.type
+  $('#editDropPick').val(edgeType).trigger('change')
+  $("#editInputName").val(data.name)
+  $("#editInputOrigin_ID").val(data.origin_id)
+  $("#editInputDestination_ID").val(data.destination_id)
+  $("#editInputDescription").val(data.description)
+
+  if (edgeType === 'Flight') 
+    {
+      $("#editInputMax_Crew").val(data.max_crew);
+      $("#editInputMax_Cargo").val(data.max_cargo);
+      $("#editInputDuration").val(data.duration);
+
+    }
+  else if (edgeType === 'Space')
+    {
+      $("#editInputDuration").val(data.duration);
+    }
+  else if (edgeType === 'Surface')
+    {
+      $("#editInputDistance").val(data.distance);
     }
   }
-
-  console.log(message)
-  $.ajax({
-    url: "/database/api/edge/",
-    data: message,
-    contentType: 'application/json; charset=utf-8',
-    dataType: "json",
-    method: "POST",
-    success: function() {
-      document.getElementById("edge").reset()
-      document.getElementById("components").reset()
-      $('#addModal').modal('hide');
-      location.reload()
-    }
-  });
-
-
-};
-

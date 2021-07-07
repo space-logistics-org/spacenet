@@ -42,9 +42,9 @@
           </div>
           <div class="modal-body">
             <div class="text-center" class="dropdown">
-              <label for="dropPick">Edge Type</label>
-                <form id="edge">
-                  <select id="dropPick" onChange = "formSet()" class="form-control" class="text-center">
+              <label for="addDropPick">Edge Type</label>
+                <form id="addType">
+                  <select id="addDropPick" onChange="formSet('add')" class="form-control" class="text-center">
                     <option selected id="def">Choose...</option>
                     <option id="Flight">Flight</option>
                     <option id="Space">Space</option>
@@ -53,51 +53,121 @@
                 </form>
               </div>
               <hr></hr>
-                <form id="components">
+                <form id="addComponents">
                   <div class="form-row">
                     <div class="form-group col-md-6">
-                      <label for="inputName">Name</label>
-                      <input type="text" class="form-control" id="inputName" placeholder="Name">
+                      <label id="addInputNameLabel" for="addInputName">Name</label>
+                      <input type="text" class="form-control" id="addInputName" placeholder="Name">
                     </div>
                 </div>
                 <div class="form-row">
                   <div class="form-group col-md-6">
-                    <label for="inputOrigin_ID">Origin ID</label>
-                    <input type="number" class="form-control" id="inputOrigin_ID" placeholder="Origin ID">
+                    <label id="addInputOriginLabel" for="addInputOrigin_ID">Origin ID</label>
+                    <input type="number" class="form-control" id="addInputOrigin_ID" placeholder="Origin ID">
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="inputDestination_ID">Destination ID</label>
-                    <input type="number" class="form-control" id="inputDestination_ID" placeholder="Destination ID">
+                    <label id="addInputDestination_IDLabel" for="addInputDestination_ID">Destination ID</label>
+                    <input type="number" class="form-control" id="addInputDestination_ID" placeholder="Destination ID">
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="inputDuration">Duration</label>
-                    <input type="number" class="form-control" id="inputDuration" placeholder="Duration">
+                    <label id="addInputDurationLabel" for="addInputDuration">Duration</label>
+                    <input type="number" class="form-control" id="addInputDuration" placeholder="Duration">
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="inputDistance">Distance</label>
-                    <input type="number" class="form-control" id="inputDistance" placeholder="Distance">
+                    <label id="addInputDistanceLabel" for="addInputDistance">Distance</label>
+                    <input type="number" class="form-control" id="addInputDistance" placeholder="Distance">
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="inputMax_Crew">Max Crew</label>
-                    <input type="number" class="form-control" id="inputMax_Crew" placeholder="Max Crew">
+                    <label id="addInputMax_CrewLabel" for="addInputMax_Crew">Max Crew</label>
+                    <input type="number" class="form-control" id="addInputMax_Crew" placeholder="Max Crew">
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="inputMax_Cargo">Max Cargo</label>
-                    <input type="number" class="form-control" id="inputMax_Cargo" placeholder="Max Cargo">
+                    <label id="addInputMax_CargoLabel" for="addInputMax_Cargo">Max Cargo</label>
+                    <input type="number" class="form-control" id="addInputMax_Cargo" placeholder="Max Cargo">
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="inputDescription">Description</label>
-                    <input type="text" class="form-control" id="inputDescription" placeholder="Description">
+                    <label id="addInputDescriptionLabel" for="addInputDescription">Description</label>
+                    <input type="text" class="form-control" id="addInputDescription" placeholder="Description">
                   </div>
             
                 </div>
-                <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
+                <input type="button" value="Submit" id="addButton" class="btn btn-primary">
               </form>
 
           </div>
       </div>
         </div>
       </div>  
+    
+      <!-- modal for viewing or editting an edge -->
+      <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editModal">View/Edit Edge</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="text-center" class="dropdown">
+                <label for="editDropPick">Edge Type</label>
+                  <form id="editType">
+                    <select id="editDropPick" onChange = "formSet('edit')" class="form-control" class="text-center">
+                      <option selected id="def">Choose...</option>
+                      <option value="Flight" id="Flight">Flight</option>
+                      <option value="Space" id="Space">Space</option>
+                      <option value="Surface" id="Surface">Surface</option>
+                    </select>
+                  </form>
+                </div>
+                <hr></hr>
+                  <form id="editComponents">
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label id="editInputNameLabel" for="editInputName">Name</label>
+                        <input type="text" class="form-control" id="editInputName" placeholder="Name">
+                      </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label id="editInputOrigin_IDLabel" for="editInputOrigin_ID">Origin ID</label>
+                      <input type="number" class="form-control" id="editInputOrigin_ID" placeholder="Origin ID">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label id="editInputDestination_IDLabel" for="editInputDestination_ID">Destination ID</label>
+                      <input type="number" class="form-control" id="editInputDestination_ID" placeholder="Destination ID">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label id="editInputDurationLabel" for="editInputDuration">Duration</label>
+                      <input type="number" class="form-control" id="editInputDuration" placeholder="Duration">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label id="editInputDistanceLabel" for="editInputDistance">Distance</label>
+                      <input type="number" class="form-control" id="editInputDistance" placeholder="Distance">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label id="editInputMax_CrewLabel" for="editInputMax_Crew">Max Crew</label>
+                      <input type="number" class="form-control" id="editInputMax_Crew" placeholder="Max Crew">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label id="editInputMax_CargoLabel" for="editInputMax_Cargo">Max Cargo</label>
+                      <input type="number" class="form-control" id="editInputMax_Cargo" placeholder="Max Cargo">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label id="editInputDescriptionLabel" for="editInputDescription">Description</label>
+                      <input type="text" class="form-control" id="editInputDescription" placeholder="Description">
+                    </div>
+              
+                  </div>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <input type="button" value="Update" id="updateButton" class="btn btn-primary">
+                </form>
+  
+            </div>
+        </div>
+          </div>
+        </div>  
 
     <!-- modal for deleting an edge -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
