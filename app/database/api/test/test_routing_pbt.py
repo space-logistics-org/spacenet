@@ -9,9 +9,10 @@ from hypothesis.stateful import Bundle, RuleBasedStateMachine, consumes, rule
 from app.database.api import models
 from app.database.api.database import Base, get_db
 from app.database.api.main import app
+from app.dependencies import current_user
 from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from spacenet.schemas import Element, State
-from .utilities import get_test_db
+from .utilities import get_current_user, get_test_db
 from ..models import utilities as model_utils
 from ..schemas.constants import CREATE_SCHEMAS, CREATE_TO_UPDATE
 from ...test.utilities import test_engine
@@ -28,6 +29,7 @@ pytestmark = [
 ]
 
 app.dependency_overrides[get_db] = get_test_db
+app.dependency_overrides[current_user] = get_current_user
 
 PARENT_TO_PREFIX = {
     models.Edge: "/edge",
@@ -164,9 +166,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
                 st.just(type_to_table(t[1])),
                 st.one_of(
                     *(
-                            st.builds(cls)
-                            for cls in SCHEMAS_IN_SAME_TABLE[t[1]]
-                            if cls != t[1]
+                        st.builds(cls)
+                        for cls in SCHEMAS_IN_SAME_TABLE[t[1]]
+                        if cls != t[1]
                     )
                 ),
             )
@@ -190,7 +192,7 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         result = response.json()
         assert self.model[table].pop(result.get("id")) == result
         if issubclass(
-                type_, Element
+            type_, Element
         ):  # on element delete, also delete associated states
             states_to_delete = [
                 id_

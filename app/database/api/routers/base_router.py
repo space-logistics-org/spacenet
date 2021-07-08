@@ -10,15 +10,11 @@ from .utilities import create_read_update_unions
 from .. import database
 from ..database import Base
 from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
-from fastapi_users import FastAPIUsers
-from ....dependencies import User, fastapi_users
+from ....dependencies import User, current_user
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
-__all__ = [
-    "Route",
-    "CRUDRouter"
-]
+__all__ = ["Route", "CRUDRouter"]
 
 
 class Route(Enum):
@@ -148,7 +144,11 @@ class CRUDRouter(APIRouter):
     def _create_item(self):
         create_schema = self.create_schema
 
-        def route(item: create_schema, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))):
+        def route(
+            item: create_schema,
+            db: Session = Depends(database.get_db),
+            _user: User = Depends(current_user),
+        ):
             db_item = SCHEMA_TO_MODEL[type(item)](**item.dict())
             db.add(db_item)
             db.commit()
@@ -161,7 +161,10 @@ class CRUDRouter(APIRouter):
         update_schema = self.update_schema
 
         def route(
-            item_id: int, item: update_schema, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))
+            item_id: int,
+            item: update_schema,
+            db: Session = Depends(database.get_db),
+            _user: User = Depends(current_user),
         ):
             db_item = db.query(self.table).get(item_id)
             if db_item is None:
@@ -186,7 +189,11 @@ class CRUDRouter(APIRouter):
         return route
 
     def _delete_item(self):
-        def route(item_id: int, db: Session = Depends(database.get_db), user: User = Depends(fastapi_users.current_user(active=True))):
+        def route(
+            item_id: int,
+            db: Session = Depends(database.get_db),
+            _user: User = Depends(current_user),
+        ):
             db_item = db.query(self.table).get(item_id)
             if db_item is None:
                 raise HTTPException(
