@@ -9,62 +9,74 @@ units = "";
 function subclassSet(modalType) {
     recCOS = $("#" + modalType + "InputCOS").val();
 
-    $("#" + modalType + "InputCOSSub1").hide();
-    $("#" + modalType + "InputCOSSub2").hide();
-    $("#" + modalType + "InputCOSSub3").hide();
-    $("#" + modalType + "InputCOSSub4").hide();
-    $("#" + modalType + "InputCOSSub5").hide();
-    $("#" + modalType + "InputCOSSub6").hide();
-    $("#" + modalType + "InputCOSSub7").hide();
-    $("#" + modalType + "InputCOSSub8").hide();
-    $("#" + modalType + "InputCOSSub9").hide();
-    $("#" + modalType + "InputCOSSub4Sub").hide();
-    $("#" + modalType + "InputCOSSub8Sub").hide();
-    $("#" + modalType + "InputCOSSub9Sub").hide();
+    let inputCOSSub1 = $("#" + modalType + "InputCOSSub1");
+	inputCOSSub1.hide();
+    let inputCOSSub2 = $("#" + modalType + "InputCOSSub2");
+	inputCOSSub2.hide();
+    let inputCOSSub3 = $("#" + modalType + "InputCOSSub3");
+	inputCOSSub3.hide();
+    let inputCOSSub4 = $("#" + modalType + "InputCOSSub4");
+	inputCOSSub4.hide();
+    let inputCOSSub5 = $("#" + modalType + "InputCOSSub5");
+	inputCOSSub5.hide();
+    let inputCOSSub6 = $("#" + modalType + "InputCOSSub6");
+	inputCOSSub6.hide();
+    let inputCOSSub7 = $("#" + modalType + "InputCOSSub7");
+	inputCOSSub7.hide();
+    let inputCOSSub8 = $("#" + modalType + "InputCOSSub8");
+	inputCOSSub8.hide();
+    let inputCOSSub9 = $("#" + modalType + "InputCOSSub9");
+	inputCOSSub9.hide();
+    let inputCOSSub4Sub = $("#" + modalType + "InputCOSSub4Sub");
+	inputCOSSub4Sub.hide();
+    let inputCOSSub8Sub = $("#" + modalType + "InputCOSSub8Sub");
+	inputCOSSub8Sub.hide();
+    let inputCOSSub9Sub = $("#" + modalType + "InputCOSSub9Sub");
+	inputCOSSub9Sub.hide();
 
     switch (recCOS) {
         case 'Propellants and Fuels': {
-            $("#" + modalType + "InputCOSSub1").show();
+            inputCOSSub1.show();
             classOS = 1;
             break;
         }
         case 'Crew Provisions': {
-            $("#" + modalType + "InputCOSSub2").show();
+            inputCOSSub2.show();
             classOS = 2;
             break;
         }
         case 'Crew Operations': {
-            $("#" + modalType + "InputCOSSub3").show();
+            inputCOSSub3.show();
             classOS = 3;
             break;
         }
         case 'Maintenence and Upkeep': {
-            $("#" + modalType + "InputCOSSub4").show();
+            inputCOSSub4.show();
             classOS = 4;
             break;
         }
         case 'Stowage and Restraint': {
-            $("#" + modalType + "InputCOSSub5").show();
+            inputCOSSub5.show();
             classOS = 5;
             break;
         }
         case 'Exploration and Research': {
-            $("#" + modalType + "InputCOSSub6").show();
+            inputCOSSub6.show();
             classOS = 6;
             break;
         }
         case 'Waste and Disposal': {
-            $("#" + modalType + "InputCOSSub7").show();
+            inputCOSSub7.show();
             classOS = 7;
             break;
         }
         case 'Habitation and Infrastructure': {
-            $("#" + modalType + "InputCOSSub8").show();
+            inputCOSSub8.show();
             classOS = 8;
             break;
         }
         case 'Transportation and Carriers': {
-            $("#" + modalType + "InputCOSSub9").show();
+            inputCOSSub9.show();
             classOS = 9;
             break;
         }
@@ -72,21 +84,21 @@ function subclassSet(modalType) {
 }
 
 function subSelect4(modalType) {
-    sub4 = $("#" + modalType + "InputCOSSub4").val();
+    let sub4 = $("#" + modalType + "InputCOSSub4").val();
     if (sub4 === "Spares and Repair Parts") {
         $("#" + modalType + "InputCOSSub4Sub").show();
     }
 }
 
 function subSelect8(modalType) {
-    sub8 = $("#" + modalType + "InputCOSSub8").val();
+    let sub8 = $("#" + modalType + "InputCOSSub8").val();
     if (sub8 === "Robotic Systems") {
         $("#" + modalType + "InputCOSSub8Sub").show();
     }
 }
 
 function subSelect9(modalType) {
-    sub9 = $("#" + modalType + "InputCOSSub9").val();
+    let sub9 = $("#" + modalType + "InputCOSSub9").val();
     if (sub9 === "Propulsive Elements") {
         $("#" + modalType + "InputCOSSub9Sub").show();
     }
@@ -388,7 +400,6 @@ function formFill(data) {
     $("#editInputName").val(data.name)
     $("#editInputDescription").val(data.description)
     $("#editInputMass").val(data.unit_mass)
-    $("#editInputDescription").val(data.description)
     $("#editInputVol").val(data.unit_volume)
     $("#editInputUnits").val(data.units)
 }
