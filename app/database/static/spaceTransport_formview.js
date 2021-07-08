@@ -53,7 +53,7 @@ function BurnsStages() {
     $('#seqAdd').click(function () {
         itxtCnt = itxtCnt + 1;
 
-        $(container).append('<input type="text"' +'placeholder="[element1, burn/stage], [element2, burn/stage], ..." class="burnstage" id=tb' + itxtCnt + ' value="" />');
+        $(container).append('<input type="text"' +'placeholder="[element= element1, burnstage = burn/stage], [element = element2, burnstage = burn/stage], ..." class="burnstage" id=tb' + itxtCnt + ' value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
         $('#burnstagemain').after(container);
