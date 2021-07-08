@@ -10,29 +10,29 @@ function subclassSet(modalType) {
     recCOS = $("#" + modalType + "InputCOS").val();
 
     let inputCOSSub1 = $("#" + modalType + "InputCOSSub1");
-	inputCOSSub1.hide();
+    inputCOSSub1.hide();
     let inputCOSSub2 = $("#" + modalType + "InputCOSSub2");
-	inputCOSSub2.hide();
+    inputCOSSub2.hide();
     let inputCOSSub3 = $("#" + modalType + "InputCOSSub3");
-	inputCOSSub3.hide();
+    inputCOSSub3.hide();
     let inputCOSSub4 = $("#" + modalType + "InputCOSSub4");
-	inputCOSSub4.hide();
+    inputCOSSub4.hide();
     let inputCOSSub5 = $("#" + modalType + "InputCOSSub5");
-	inputCOSSub5.hide();
+    inputCOSSub5.hide();
     let inputCOSSub6 = $("#" + modalType + "InputCOSSub6");
-	inputCOSSub6.hide();
+    inputCOSSub6.hide();
     let inputCOSSub7 = $("#" + modalType + "InputCOSSub7");
-	inputCOSSub7.hide();
+    inputCOSSub7.hide();
     let inputCOSSub8 = $("#" + modalType + "InputCOSSub8");
-	inputCOSSub8.hide();
+    inputCOSSub8.hide();
     let inputCOSSub9 = $("#" + modalType + "InputCOSSub9");
-	inputCOSSub9.hide();
+    inputCOSSub9.hide();
     let inputCOSSub4Sub = $("#" + modalType + "InputCOSSub4Sub");
-	inputCOSSub4Sub.hide();
+    inputCOSSub4Sub.hide();
     let inputCOSSub8Sub = $("#" + modalType + "InputCOSSub8Sub");
-	inputCOSSub8Sub.hide();
+    inputCOSSub8Sub.hide();
     let inputCOSSub9Sub = $("#" + modalType + "InputCOSSub9Sub");
-	inputCOSSub9Sub.hide();
+    inputCOSSub9Sub.hide();
 
     switch (recCOS) {
         case 'Propellants and Fuels': {

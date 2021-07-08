@@ -22,46 +22,46 @@ function formSet(modalType) {
 
 
     let inputName = $("#" + modalType + "InputName").hide();
-	inputName.hide()
+    inputName.hide()
     let inputDesc = $("#" + modalType + "InputDesc").hide();
-	inputDesc.hide()
+    inputDesc.hide()
     let body1 = $("#" + modalType + "Body1").hide();
-	body1.hide()
+    body1.hide()
     let body2 = $("#" + modalType + "Body2").hide();
-	body2.hide()
+    body2.hide()
     let inputLat = $("#" + modalType + "InputLat").hide();
-	inputLat.hide()
+    inputLat.hide()
     let inputLong = $("#" + modalType + "InputLong").hide();
-	inputLong.hide()
+    inputLong.hide()
     let inputApo = $("#" + modalType + "InputApo").hide();
-	inputApo.hide()
+    inputApo.hide()
     let inputPeri = $("#" + modalType + "InputPeri").hide();
-	inputPeri.hide()
+    inputPeri.hide()
     let inputInc = $("#" + modalType + "InputInc").hide();
-	inputInc.hide()
+    inputInc.hide()
     let inputlpNum = $("#" + modalType + "InputlpNum").hide();
-	inputlpNum.hide()
+    inputlpNum.hide()
 
     let inputNameLabel = $("#" + modalType + "InputNameLabel").hide();
-	inputNameLabel.hide()
+    inputNameLabel.hide()
     let inputDescLabel = $("#" + modalType + "InputDescLabel").hide();
-	inputDescLabel.hide()
+    inputDescLabel.hide()
     let body1Label = $("#" + modalType + "Body1Label").hide();
-	body1Label.hide()
+    body1Label.hide()
     let body2Label = $("#" + modalType + "Body2Label").hide();
-	body2Label.hide()
+    body2Label.hide()
     let inputLatLabel = $("#" + modalType + "InputLatLabel").hide();
-	inputLatLabel.hide()
+    inputLatLabel.hide()
     let inputLongLabel = $("#" + modalType + "InputLongLabel").hide();
-	inputLongLabel.hide()
+    inputLongLabel.hide()
     let inputApoLabel = $("#" + modalType + "InputApoLabel").hide();
-	inputApoLabel.hide()
+    inputApoLabel.hide()
     let inputPeriLabel = $("#" + modalType + "InputPeriLabel").hide();
-	inputPeriLabel.hide()
+    inputPeriLabel.hide()
     let inputIncLabel = $("#" + modalType + "InputIncLabel").hide();
-	inputIncLabel.hide()
+    inputIncLabel.hide()
     let inputlpNumLabel = $("#" + modalType + "InputlpNumLabel").hide();
-	inputlpNumLabel.hide()
+    inputlpNumLabel.hide()
 
     nType = TYPES[$("#" + modalType + "DropPick").val()];
     console.log(nType)
