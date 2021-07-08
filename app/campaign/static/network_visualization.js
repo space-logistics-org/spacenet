@@ -1,6 +1,6 @@
 const PLANET_IMAGES = {
     'Sun': 'sun.jpeg',
-    'Earth': 'earth_august_next.jpg',
+    'Earth': 'earth.jpg',
     'Moon': 'moon_topo.jpeg',
     'Mars': 'mars_large.jpeg'
 }
