@@ -4,9 +4,9 @@ from enum import Enum
 import datetime
 
 from spacenet.data.I_DataSource import *
-from spacenet.domain.element.I_Element import *
-from spacenet.domain.network.Network import *
-from spacenet.domain.network.node.Node import *
+from spacenet.schemas.element. import *
+from spacenet.schemas.network import *
+from spacenet.schemas.node import *
 from spacenet.simulator.event.I_Event import *
 from spacenet.util.GlobalParameters import *
 from spacenet.schemas.manifest import *
