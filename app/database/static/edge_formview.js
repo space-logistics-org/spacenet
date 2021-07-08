@@ -10,22 +10,38 @@ desc = "";
 
 function formSet(modalType) {
 
-    $("#" + modalType + "InputName").hide();
-    $("#" + modalType + "InputNameLabel").hide();
-    $("#" + modalType + "InputOrigin_ID").hide();
-    $("#" + modalType + "InputOrigin_IDLabel").hide();
-    $("#" + modalType + "InputDestination_ID").hide();
-    $("#" + modalType + "InputDestination_IDLabel").hide();
-    $("#" + modalType + "InputDuration").hide();
-    $("#" + modalType + "InputDurationLabel").hide();
-    $("#" + modalType + "InputDistance").hide();
-    $("#" + modalType + "InputDistanceLabel").hide();
-    $("#" + modalType + "InputMax_Crew").hide();
-    $("#" + modalType + "InputMax_CrewLabel").hide();
-    $("#" + modalType + "InputMax_Cargo").hide();
-    $("#" + modalType + "InputMax_CargoLabel").hide();
-    $("#" + modalType + "InputDescription").hide();
-    $("#" + modalType + "InputDescriptionLabel").hide();
+    let inputName = $("#" + modalType + "InputName");
+    let inputNameLabel = $("#" + modalType + "InputNameLabel");
+    let inputOrigin_ID = $("#" + modalType + "InputOrigin_ID");
+    let inputOrigin_IDLabel = $("#" + modalType + "InputOrigin_IDLabel");
+    let inputDestination_ID = $("#" + modalType + "InputDestination_ID");
+    let inputDestination_IDLabel = $("#" + modalType + "InputDestination_IDLabel");
+    let inputDuration = $("#" + modalType + "InputDuration");
+    let inputDurationLabel = $("#" + modalType + "InputDurationLabel");
+    let inputDistance = $("#" + modalType + "InputDistance");
+    let inputDistanceLabel = $("#" + modalType + "InputDistanceLabel");
+    let inputMax_Crew = $("#" + modalType + "InputMax_Crew");
+    let inputMax_CrewLabel = $("#" + modalType + "InputMax_CrewLabel");
+    let inputMax_Cargo = $("#" + modalType + "InputMax_Cargo");
+    let inputMax_CargoLabel = $("#" + modalType + "InputMax_CargoLabel");
+    let inputDescription = $("#" + modalType + "InputDescription");
+    let inputDescriptionLabel = $("#" + modalType + "InputDescriptionLabel");
+    inputName.hide();
+    inputNameLabel.hide();
+    inputOrigin_ID.hide();
+    inputOrigin_IDLabel.hide();
+    inputDestination_ID.hide();
+    inputDestination_IDLabel.hide();
+    inputDuration.hide();
+    inputDurationLabel.hide();
+    inputDistance.hide();
+    inputDistanceLabel.hide();
+    inputMax_Crew.hide();
+    inputMax_CrewLabel.hide();
+    inputMax_Cargo.hide();
+    inputMax_CargoLabel.hide();
+    inputDescription.hide();
+    inputDescriptionLabel.hide();
 
     const edgeType = $('#' + modalType + 'DropPick').val();
     console.log('in formset')
@@ -33,85 +49,85 @@ function formSet(modalType) {
 
     switch (edgeType) {
         case 'def': {
-            $("#" + modalType + "InputName").hide();
-            $("#" + modalType + "InputNameLabel").hide();
-            $("#" + modalType + "InputOrigin_ID").hide();
-            $("#" + modalType + "InputOrigin_IDLabel").hide();
-            $("#" + modalType + "InputDestination_ID").hide();
-            $("#" + modalType + "InputDestination_IDLabel").hide();
-            $("#" + modalType + "InputDuration").hide();
-            $("#" + modalType + "InputDurationLabel").hide();
-            $("#" + modalType + "InputDistance").hide();
-            $("#" + modalType + "InputDistanceLabel").hide();
-            $("#" + modalType + "InputMax_Crew").hide();
-            $("#" + modalType + "InputMax_CrewLabel").hide();
-            $("#" + modalType + "InputMax_Cargo").hide();
-            $("#" + modalType + "InputMax_CargoLabel").hide();
-            $("#" + modalType + "InputDescription").hide();
-            $("#" + modalType + "InputDescriptionLabel").hide();
+            inputName.hide();
+            inputNameLabel.hide();
+            inputOrigin_ID.hide();
+            inputOrigin_IDLabel.hide();
+            inputDestination_ID.hide();
+            inputDestination_IDLabel.hide();
+            inputDuration.hide();
+            inputDurationLabel.hide();
+            inputDistance.hide();
+            inputDistanceLabel.hide();
+            inputMax_Crew.hide();
+            inputMax_CrewLabel.hide();
+            inputMax_Cargo.hide();
+            inputMax_CargoLabel.hide();
+            inputDescription.hide();
+            inputDescriptionLabel.hide();
             break;
         }
         case 'FlightEdge':
         case 'Flight': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputNameLabel").show();
+            inputName.show();
+            inputNameLabel.show();
 
-            $("#" + modalType + "InputOrigin_ID").show();
-            $("#" + modalType + "InputOrigin_IDLabel").show();
+            inputOrigin_ID.show();
+            inputOrigin_IDLabel.show();
 
-            $("#" + modalType + "InputDestination_ID").show();
-            $("#" + modalType + "InputDestination_IDLabel").show();
+            inputDestination_ID.show();
+            inputDestination_IDLabel.show();
 
-            $("#" + modalType + "InputDuration").show();
-            $("#" + modalType + "InputDurationLabel").show();
+            inputDuration.show();
+            inputDurationLabel.show();
 
-            $("#" + modalType + "InputMax_Crew").show();
-            $("#" + modalType + "InputMax_CrewLabel").show();
+            inputMax_Crew.show();
+            inputMax_CrewLabel.show();
 
-            $("#" + modalType + "InputMax_Cargo").show();
-            $("#" + modalType + "InputMax_CargoLabel").show();
+            inputMax_Cargo.show();
+            inputMax_CargoLabel.show();
 
-            $("#" + modalType + "InputDescription").show();
-            $("#" + modalType + "InputDescriptionLabel").show();
+            inputDescription.show();
+            inputDescriptionLabel.show();
 
             break;
         }
         case 'SpaceEdge':
         case 'Space': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputNameLabel").show();
+            inputName.show();
+            inputNameLabel.show();
 
-            $("#" + modalType + "InputOrigin_ID").show();
-            $("#" + modalType + "InputOrigin_IDLabel").show();
+            inputOrigin_ID.show();
+            inputOrigin_IDLabel.show();
 
-            $("#" + modalType + "InputDestination_ID").show();
-            $("#" + modalType + "InputDestination_IDLabel").show();
+            inputDestination_ID.show();
+            inputDestination_IDLabel.show();
 
-            $("#" + modalType + "InputDuration").show();
-            $("#" + modalType + "InputDurationLabel").show();
+            inputDuration.show();
+            inputDurationLabel.show();
 
-            $("#" + modalType + "InputDescription").show();
-            $("#" + modalType + "InputDescriptionLabel").show();
+            inputDescription.show();
+            inputDescriptionLabel.show();
 
             break;
         }
 
         case 'SurfaceEdge':
         case 'Surface': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputNameLabel").show();
+            inputName.show();
+            inputNameLabel.show();
 
-            $("#" + modalType + "InputOrigin_ID").show();
-            $("#" + modalType + "InputOrigin_IDLabel").show();
+            inputOrigin_ID.show();
+            inputOrigin_IDLabel.show();
 
-            $("#" + modalType + "InputDestination_ID").show();
-            $("#" + modalType + "InputDestination_IDLabel").show();
+            inputDestination_ID.show();
+            inputDestination_IDLabel.show();
 
-            $("#" + modalType + "InputDistance").show();
-            $("#" + modalType + "InputDistanceLabel").show();
+            inputDistance.show();
+            inputDistanceLabel.show();
 
-            $("#" + modalType + "InputDescription").show();
-            $("#" + modalType + "InputDescriptionLabel").show();
+            inputDescription.show();
+            inputDescriptionLabel.show();
             break;
         }
     }
@@ -120,16 +136,16 @@ function formSet(modalType) {
 
 function getMessage(modalType) {
 
-    name = $("#" + modalType + "InputName").val();
-    type = $("#" + modalType + "DropPick").val();
-    origin_id = $("#" + modalType + "InputOrigin_ID").val();
-    dest_id = $("#" + modalType + "InputDestination_ID").val();
-    dur = $("#" + modalType + "InputDuration").val();
-    dist = $("#" + modalType + "InputDistance").val();
-    max_crew = $("#" + modalType + "InputMax_Crew").val();
-    max_cargo = $("#" + modalType + "InputMax_Cargo").val();
-    desc = $("#" + modalType + "InputDescription").val();
-
+    let name = $("#" + modalType + "InputName").val();
+    let type = $("#" + modalType + "DropPick").val();
+    let origin_id = $("#" + modalType + "InputOrigin_ID").val();
+    let dest_id = $("#" + modalType + "InputDestination_ID").val();
+    let dur = $("#" + modalType + "InputDuration").val();
+    let dist = $("#" + modalType + "InputDistance").val();
+    let max_crew = $("#" + modalType + "InputMax_Crew").val();
+    let max_cargo = $("#" + modalType + "InputMax_Cargo").val();
+    let desc = $("#" + modalType + "InputDescription").val();
+    let message;
     switch (type) {
 
         case "FlightEdge":
