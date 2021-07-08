@@ -216,7 +216,7 @@ class VehicleTester(BaseTester):
 
 
 class TestPropulsiveVehicle(SeededTester, VehicleTester):
-    validType = ElementKind.Propulsive
+    validType = ElementKind.PropulsiveVehicle
     invalidTypes = get_invalid_types(my_type=validType)
     validFactory = ValidPropulsiveArgsFactory
     invalidFactory = InvalidPropulsiveArgsFactory
@@ -225,7 +225,7 @@ class TestPropulsiveVehicle(SeededTester, VehicleTester):
 
 
 class TestSurfaceVehicle(SeededTester, VehicleTester):
-    validType = ElementKind.Surface
+    validType = ElementKind.SurfaceVehicle
     invalidTypes = get_invalid_types(my_type=validType)
     validFactory = ValidSurfaceArgsFactory
     invalidFactory = InvalidSurfaceArgsFactory

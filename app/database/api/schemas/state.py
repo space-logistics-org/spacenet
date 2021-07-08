@@ -1,22 +1,20 @@
-from typing import Optional
-
-from pydantic import StrictBool
-
-from spacenet.schemas import ReadSchema, State, StateType
+from spacenet.schemas import ReadSchema, State, OptionalFields
 
 
-__all__ = [
-    "State",
-    "StateUpdate",
-    "StateRead"
-]
+__all__ = ["State", "StateUpdate", "StateRead"]
 
 
-class StateUpdate(State):
-    name: Optional[str]
-    state_type: Optional[StateType]
-    is_initial_state: Optional[StrictBool]
+class StateUpdate(State, OptionalFields):
+    """
+    A variant of the State schema which is used for Update queries.
+    """
+
+    pass
 
 
 class StateRead(State, ReadSchema):
+    """
+    The variant of the State schema returned from queries; includes an ID.
+    """
+
     pass

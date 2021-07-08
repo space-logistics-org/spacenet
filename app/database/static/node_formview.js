@@ -94,7 +94,7 @@ switch(type){
       message = JSON.stringify({
           name: name,
           description: desc,
-          type: "Surface",
+          type: "SurfaceNode",
           body_1: body1,
           latitude: lat,
           longitude: long
@@ -105,7 +105,7 @@ switch(type){
     message = JSON.stringify({
       name: name,
       description: desc,
-      type: "Orbital",
+      type: "OrbitalNode",
       body_1: body1,
       apoapsis: apo,
       periapsis: peri,
@@ -117,7 +117,7 @@ switch(type){
     message = JSON.stringify({
         name: name,
         description: desc,
-        type: "Lagrange",
+        type: "LagrangeNode",
         body_1: body1,
         body_2: body2,
         lp_number: lpn
