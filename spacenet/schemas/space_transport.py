@@ -45,7 +45,7 @@ class SpaceTransport(BaseModel):
         le = 5
     )
     
-    elements: str = Field(
+    elements: List[str] = Field(
         ...,
         title="Elements",
         description="The possible elements to be used in the Burn-Stage Sequence"
