@@ -26,233 +26,261 @@ const TYPES = {
 
 function formSet(modalType) {
 
-    $("#" + modalType + "InputName").hide();
-    $("#" + modalType + "InputDesc").hide();
-    $("#" + modalType + "InputCOS").hide();
-    $("#" + modalType + "InputEnv").hide();
-    $("#" + modalType + "InputAccMass").hide();
-    $("#" + modalType + "InputMass").hide();
-    $("#" + modalType + "InputVol").hide();
-    $("#" + modalType + "InputCarMass").hide();
-    $("#" + modalType + "InputCarVol").hide();
-    $("#" + modalType + "InputATF").hide();
-    $("#" + modalType + "InputMaxCrew").hide();
-    $("#" + modalType + "InputSpecImp").hide();
-    $("#" + modalType + "InputMaxFuel").hide();
-    $("#" + modalType + "InputMaxSpeed").hide();
+    let inputName = $("#" + modalType + "InputName");
+	inputName.hide();
+    let inputDesc = $("#" + modalType + "InputDesc");
+	inputDesc.hide();
+    let inputCOS = $("#" + modalType + "InputCOS");
+	inputCOS.hide();
+    let inputEnv = $("#" + modalType + "InputEnv");
+	inputEnv.hide();
+    let inputAccMass = $("#" + modalType + "InputAccMass");
+	inputAccMass.hide();
+    let inputMass = $("#" + modalType + "InputMass");
+	inputMass.hide();
+    let inputVol = $("#" + modalType + "InputVol");
+	inputVol.hide();
+    let inputCarMass = $("#" + modalType + "InputCarMass");
+	inputCarMass.hide();
+    let inputCarVol = $("#" + modalType + "InputCarVol");
+	inputCarVol.hide();
+    let inputATF = $("#" + modalType + "InputATF");
+	inputATF.hide();
+    let inputMaxCrew = $("#" + modalType + "InputMaxCrew");
+	inputMaxCrew.hide();
+    let inputSpecImp = $("#" + modalType + "InputSpecImp");
+	inputSpecImp.hide();
+    let inputMaxFuel = $("#" + modalType + "InputMaxFuel");
+	inputMaxFuel.hide();
+    let inputMaxSpeed = $("#" + modalType + "InputMaxSpeed");
+	inputMaxSpeed.hide();
 
-    $("#" + modalType + "InputNameLabel").hide();
-    $("#" + modalType + "InputDescLabel").hide();
-    $("#" + modalType + "InputCOSLabel").hide();
-    $("#" + modalType + "InputEnvLabel").hide();
-    $("#" + modalType + "InputAccMassLabel").hide();
-    $("#" + modalType + "InputMassLabel").hide();
-    $("#" + modalType + "InputVolLabel").hide();
-    $("#" + modalType + "InputCarMassLabel").hide();
-    $("#" + modalType + "InputCarVolLabel").hide();
-    $("#" + modalType + "InputATFLabel").hide();
-    $("#" + modalType + "InputMaxCrewLabel").hide();
-    $("#" + modalType + "InputSpecImpLabel").hide();
-    $("#" + modalType + "InputMaxFuelLabel").hide();
-    $("#" + modalType + "InputMaxSpeedLabel").hide();
+    let inputNameLabel = $("#" + modalType + "InputNameLabel");
+	inputNameLabel.hide();
+    let inputDescLabel = $("#" + modalType + "InputDescLabel");
+	inputDescLabel.hide();
+    let inputCOSLabel = $("#" + modalType + "InputCOSLabel");
+	inputCOSLabel.hide();
+    let inputEnvLabel = $("#" + modalType + "InputEnvLabel");
+	inputEnvLabel.hide();
+    let inputAccMassLabel = $("#" + modalType + "InputAccMassLabel");
+	inputAccMassLabel.hide();
+    let inputMassLabel = $("#" + modalType + "InputMassLabel");
+	inputMassLabel.hide();
+    let inputVolLabel = $("#" + modalType + "InputVolLabel");
+	inputVolLabel.hide();
+    let inputCarMassLabel = $("#" + modalType + "InputCarMassLabel");
+	inputCarMassLabel.hide();
+    let inputCarVolLabel = $("#" + modalType + "InputCarVolLabel");
+	inputCarVolLabel.hide();
+    let inputATFLabel = $("#" + modalType + "InputATFLabel");
+	inputATFLabel.hide();
+    let inputMaxCrewLabel = $("#" + modalType + "InputMaxCrewLabel");
+	inputMaxCrewLabel.hide();
+    let inputSpecImpLabel = $("#" + modalType + "InputSpecImpLabel");
+	inputSpecImpLabel.hide();
+    let inputMaxFuelLabel = $("#" + modalType + "InputMaxFuelLabel");
+	inputMaxFuelLabel.hide();
+    let inputMaxSpeedLabel = $("#" + modalType + "InputMaxSpeedLabel");
+	inputMaxSpeedLabel.hide();
 
     const elType = $('#' + modalType + 'DropPick').val();
 
     switch (elType) {
         case 'def': {
-            $("#" + modalType + "InputName").hide();
-            $("#" + modalType + "InputDesc").hide();
-            $("#" + modalType + "InputCOS").hide();
-            $("#" + modalType + "InputEnv").hide();
-            $("#" + modalType + "InputAccMass").hide();
-            $("#" + modalType + "InputMass").hide();
-            $("#" + modalType + "InputVol").hide();
-            $("#" + modalType + "InputCarMass").hide();
-            $("#" + modalType + "InputCarVol").hide();
-            $("#" + modalType + "InputATF").hide();
-            $("#" + modalType + "InputMaxCrew").hide();
-            $("#" + modalType + "InputSpecImp").hide();
-            $("#" + modalType + "InputMaxFuel").hide();
-            $("#" + modalType + "InputMaxSpeed").hide();
+            inputName.hide();
+            inputDesc.hide();
+            inputCOS.hide();
+            inputEnv.hide();
+            inputAccMass.hide();
+            inputMass.hide();
+            inputVol.hide();
+            inputCarMass.hide();
+            inputCarVol.hide();
+            inputATF.hide();
+            inputMaxCrew.hide();
+            inputSpecImp.hide();
+            inputMaxFuel.hide();
+            inputMaxSpeed.hide();
 
-            $("#" + modalType + "InputNameLabel").hide();
-            $("#" + modalType + "InputDescLabel").hide();
-            $("#" + modalType + "InputCOSLabel").hide();
-            $("#" + modalType + "InputEnvLabel").hide();
-            $("#" + modalType + "InputAccMassLabel").hide();
-            $("#" + modalType + "InputMassLabel").hide();
-            $("#" + modalType + "InputVolLabel").hide();
-            $("#" + modalType + "InputCarMassLabel").hide();
-            $("#" + modalType + "InputCarVolLabel").hide();
-            $("#" + modalType + "InputATFLabel").hide();
-            $("#" + modalType + "InputMaxCrewLabel").hide();
-            $("#" + modalType + "InputSpecImpLabel").hide();
-            $("#" + modalType + "InputMaxFuelLabel").hide();
-            $("#" + modalType + "InputMaxSpeedLabel").hide();
+            inputNameLabel.hide();
+            inputDescLabel.hide();
+            inputCOSLabel.hide();
+            inputEnvLabel.hide();
+            inputAccMassLabel.hide();
+            inputMassLabel.hide();
+            inputVolLabel.hide();
+            inputCarMassLabel.hide();
+            inputCarVolLabel.hide();
+            inputATFLabel.hide();
+            inputMaxCrewLabel.hide();
+            inputSpecImpLabel.hide();
+            inputMaxFuelLabel.hide();
+            inputMaxSpeedLabel.hide();
             break;
         }
         case 'Element': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputDesc").show();
-            $("#" + modalType + "InputCOS").show();
-            $("#" + modalType + "InputEnv").show();
-            $("#" + modalType + "InputAccMass").show();
-            $("#" + modalType + "InputMass").show();
-            $("#" + modalType + "InputVol").show();
+            inputName.show();
+            inputDesc.show();
+            inputCOS.show();
+            inputEnv.show();
+            inputAccMass.show();
+            inputMass.show();
+            inputVol.show();
 
-            $("#" + modalType + "InputNameLabel").show();
-            $("#" + modalType + "InputDescLabel").show();
-            $("#" + modalType + "InputCOSLabel").show();
-            $("#" + modalType + "InputEnvLabel").show();
-            $("#" + modalType + "InputAccMassLabel").show();
-            $("#" + modalType + "InputMassLabel").show();
-            $("#" + modalType + "InputVolLabel").show();
+            inputNameLabel.show();
+            inputDescLabel.show();
+            inputCOSLabel.show();
+            inputEnvLabel.show();
+            inputAccMassLabel.show();
+            inputMassLabel.show();
+            inputVolLabel.show();
             break;
         }
         case 'Resource Container': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputDesc").show();
-            $("#" + modalType + "InputCOS").show();
-            $("#" + modalType + "InputEnv").show();
-            $("#" + modalType + "InputAccMass").show();
-            $("#" + modalType + "InputMass").show();
-            $("#" + modalType + "InputVol").show();
-            $("#" + modalType + "InputCarMass").show();
-            $("#" + modalType + "InputCarVol").show();
+            inputName.show();
+            inputDesc.show();
+            inputCOS.show();
+            inputEnv.show();
+            inputAccMass.show();
+            inputMass.show();
+            inputVol.show();
+            inputCarMass.show();
+            inputCarVol.show();
 
-            $("#" + modalType + "InputNameLabel").show();
-            $("#" + modalType + "InputDescLabel").show();
-            $("#" + modalType + "InputCOSLabel").show();
-            $("#" + modalType + "InputEnvLabel").show();
-            $("#" + modalType + "InputAccMassLabel").show();
-            $("#" + modalType + "InputMassLabel").show();
-            $("#" + modalType + "InputVolLabel").show();
-            $("#" + modalType + "InputCarMassLabel").show();
-            $("#" + modalType + "InputCarVolLabel").show();
+            inputNameLabel.show();
+            inputDescLabel.show();
+            inputCOSLabel.show();
+            inputEnvLabel.show();
+            inputAccMassLabel.show();
+            inputMassLabel.show();
+            inputVolLabel.show();
+            inputCarMassLabel.show();
+            inputCarVolLabel.show();
             break;
         }
         case 'Element Carrier': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputDesc").show();
-            $("#" + modalType + "InputCOS").show();
-            $("#" + modalType + "InputEnv").show();
-            $("#" + modalType + "InputAccMass").show();
-            $("#" + modalType + "InputMass").show();
-            $("#" + modalType + "InputVol").show();
-            $("#" + modalType + "InputEnv").show();
-            $("#" + modalType + "InputCarMass").show();
-            $("#" + modalType + "InputCarVol").show();
+            inputName.show();
+            inputDesc.show();
+            inputCOS.show();
+            inputEnv.show();
+            inputAccMass.show();
+            inputMass.show();
+            inputVol.show();
+            inputEnv.show();
+            inputCarMass.show();
+            inputCarVol.show();
 
-            $("#" + modalType + "InputNameLabel").show();
-            $("#" + modalType + "InputDescLabel").show();
-            $("#" + modalType + "InputCOSLabel").show();
-            $("#" + modalType + "InputEnvLabel").show();
-            $("#" + modalType + "InputAccMassLabel").show();
-            $("#" + modalType + "InputMassLabel").show();
-            $("#" + modalType + "InputVolLabel").show();
-            $("#" + modalType + "InputCarMassLabel").show();
-            $("#" + modalType + "InputCarVolLabel").show();
+            inputNameLabel.show();
+            inputDescLabel.show();
+            inputCOSLabel.show();
+            inputEnvLabel.show();
+            inputAccMassLabel.show();
+            inputMassLabel.show();
+            inputVolLabel.show();
+            inputCarMassLabel.show();
+            inputCarVolLabel.show();
 
             break;
         }
         case 'Human Agent': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputDesc").show();
-            $("#" + modalType + "InputCOS").show();
-            $("#" + modalType + "InputEnv").show();
-            $("#" + modalType + "InputAccMass").show();
-            $("#" + modalType + "InputMass").show();
-            $("#" + modalType + "InputVol").show();
-            $("#" + modalType + "InputATF").show();
+            inputName.show();
+            inputDesc.show();
+            inputCOS.show();
+            inputEnv.show();
+            inputAccMass.show();
+            inputMass.show();
+            inputVol.show();
+            inputATF.show();
 
-            $("#" + modalType + "InputNameLabel").show();
-            $("#" + modalType + "InputDescLabel").show();
-            $("#" + modalType + "InputCOSLabel").show();
-            $("#" + modalType + "InputEnvLabel").show();
-            $("#" + modalType + "InputAccMassLabel").show();
-            $("#" + modalType + "InputMassLabel").show();
-            $("#" + modalType + "InputVolLabel").show();
-            $("#" + modalType + "InputATFLabel").show();
+            inputNameLabel.show();
+            inputDescLabel.show();
+            inputCOSLabel.show();
+            inputEnvLabel.show();
+            inputAccMassLabel.show();
+            inputMassLabel.show();
+            inputVolLabel.show();
+            inputATFLabel.show();
 
             break;
         }
         case 'Robotic Agent': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputDesc").show();
-            $("#" + modalType + "InputCOS").show();
-            $("#" + modalType + "InputEnv").show();
-            $("#" + modalType + "InputAccMass").show();
-            $("#" + modalType + "InputMass").show();
-            $("#" + modalType + "InputVol").show();
-            $("#" + modalType + "InputATF").show();
+            inputName.show();
+            inputDesc.show();
+            inputCOS.show();
+            inputEnv.show();
+            inputAccMass.show();
+            inputMass.show();
+            inputVol.show();
+            inputATF.show();
 
-            $("#" + modalType + "InputNameLabel").show();
-            $("#" + modalType + "InputDescLabel").show();
-            $("#" + modalType + "InputCOSLabel").show();
-            $("#" + modalType + "InputEnvLabel").show();
-            $("#" + modalType + "InputAccMassLabel").show();
-            $("#" + modalType + "InputMassLabel").show();
-            $("#" + modalType + "InputVolLabel").show();
-            $("#" + modalType + "InputATFLabel").show();
+            inputNameLabel.show();
+            inputDescLabel.show();
+            inputCOSLabel.show();
+            inputEnvLabel.show();
+            inputAccMassLabel.show();
+            inputMassLabel.show();
+            inputVolLabel.show();
+            inputATFLabel.show();
 
             break;
         }
         case 'Propulsive Vehicle': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputDesc").show();
-            $("#" + modalType + "InputCOS").show();
-            $("#" + modalType + "InputEnv").show();
-            $("#" + modalType + "InputAccMass").show();
-            $("#" + modalType + "InputMass").show();
-            $("#" + modalType + "InputVol").show();
-            $("#" + modalType + "InputMaxCrew").show();
-            $("#" + modalType + "InputSpecImp").show();
-            $("#" + modalType + "InputMaxFuel").show();
-            $("#" + modalType + "InputCarMass").show();
-            $("#" + modalType + "InputCarVol").show();
+            inputName.show();
+            inputDesc.show();
+            inputCOS.show();
+            inputEnv.show();
+            inputAccMass.show();
+            inputMass.show();
+            inputVol.show();
+            inputMaxCrew.show();
+            inputSpecImp.show();
+            inputMaxFuel.show();
+            inputCarMass.show();
+            inputCarVol.show();
 
-            $("#" + modalType + "InputNameLabel").show();
-            $("#" + modalType + "InputDescLabel").show();
-            $("#" + modalType + "InputCOSLabel").show();
-            $("#" + modalType + "InputEnvLabel").show();
-            $("#" + modalType + "InputAccMassLabel").show();
-            $("#" + modalType + "InputMassLabel").show();
-            $("#" + modalType + "InputVolLabel").show();
-            $("#" + modalType + "InputCarMassLabel").show();
-            $("#" + modalType + "InputCarVolLabel").show();
-            $("#" + modalType + "InputMaxCrewLabel").show();
-            $("#" + modalType + "InputSpecImpLabel").show();
-            $("#" + modalType + "InputMaxFuelLabel").show();
+            inputNameLabel.show();
+            inputDescLabel.show();
+            inputCOSLabel.show();
+            inputEnvLabel.show();
+            inputAccMassLabel.show();
+            inputMassLabel.show();
+            inputVolLabel.show();
+            inputCarMassLabel.show();
+            inputCarVolLabel.show();
+            inputMaxCrewLabel.show();
+            inputSpecImpLabel.show();
+            inputMaxFuelLabel.show();
 
 
             break;
         }
         case 'Surface Vehicle': {
-            $("#" + modalType + "InputName").show();
-            $("#" + modalType + "InputDesc").show();
-            $("#" + modalType + "InputCOS").show();
-            $("#" + modalType + "InputEnv").show();
-            $("#" + modalType + "InputAccMass").show();
-            $("#" + modalType + "InputMass").show();
-            $("#" + modalType + "InputVol").show();
-            $("#" + modalType + "InputMaxCrew").show();
-            $("#" + modalType + "InputMaxSpeed").show();
-            $("#" + modalType + "InputMaxFuel").show();
-            $("#" + modalType + "InputCarMass").show();
-            $("#" + modalType + "InputCarVol").show();
+            inputName.show();
+            inputDesc.show();
+            inputCOS.show();
+            inputEnv.show();
+            inputAccMass.show();
+            inputMass.show();
+            inputVol.show();
+            inputMaxCrew.show();
+            inputMaxSpeed.show();
+            inputMaxFuel.show();
+            inputCarMass.show();
+            inputCarVol.show();
 
-            $("#" + modalType + "InputNameLabel").show();
-            $("#" + modalType + "InputDescLabel").show();
-            $("#" + modalType + "InputCOSLabel").show();
-            $("#" + modalType + "InputEnvLabel").show();
-            $("#" + modalType + "InputAccMassLabel").show();
-            $("#" + modalType + "InputMassLabel").show();
-            $("#" + modalType + "InputVolLabel").show();
-            $("#" + modalType + "InputCarMassLabel").show();
-            $("#" + modalType + "InputCarVolLabel").show();
-            $("#" + modalType + "InputMaxCrewLabel").show();
-            $("#" + modalType + "InputSpecImpLabel").show();
-            $("#" + modalType + "InputMaxFuelLabel").show();
+            inputNameLabel.show();
+            inputDescLabel.show();
+            inputCOSLabel.show();
+            inputEnvLabel.show();
+            inputAccMassLabel.show();
+            inputMassLabel.show();
+            inputVolLabel.show();
+            inputCarMassLabel.show();
+            inputCarVolLabel.show();
+            inputMaxCrewLabel.show();
+            inputSpecImpLabel.show();
+            inputMaxFuelLabel.show();
 
             break;
         }
@@ -413,7 +441,6 @@ function formFill(data) {
     $("#editInputEnv").val(data.environment)
     $("#editInputMass").val(data.environment)
     $("#editInputVol").val(data.volume)
-    $("#editInputAccMass").val(data.accommodation_mass)
     $("#editInputAccMass").val(data.accommodation_mass)
 
     if (elType === 'Resource Container') {
