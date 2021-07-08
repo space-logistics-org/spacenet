@@ -6,96 +6,96 @@ mass = 0;
 vol = 0;
 units = "";
 
-function subclassSet(){
-  recCOS = document.getElementById("inputCOS").value;
+function subclassSet(modalType){
+  recCOS = $("#" + modalType + "InputCOS").val();
 
-  document.getElementById("inputCOSSub1").style.display = "none";
-  document.getElementById("inputCOSSub2").style.display = "none";
-  document.getElementById("inputCOSSub3").style.display = "none";
-  document.getElementById("inputCOSSub4").style.display = "none";
-  document.getElementById("inputCOSSub5").style.display = "none";
-  document.getElementById("inputCOSSub6").style.display = "none";
-  document.getElementById("inputCOSSub7").style.display = "none";
-  document.getElementById("inputCOSSub8").style.display = "none";
-  document.getElementById("inputCOSSub9").style.display = "none";
-  document.getElementById("inputCOSSub4Sub").style.display = "none";
-  document.getElementById("inputCOSSub8Sub").style.display = "none";
-  document.getElementById("inputCOSSub9Sub").style.display = "none";
+  $("#" + modalType + "InputCOSSub1").hide();
+  $("#" + modalType + "InputCOSSub2").hide();
+  $("#" + modalType + "InputCOSSub3").hide();
+  $("#" + modalType + "InputCOSSub4").hide();
+  $("#" + modalType + "InputCOSSub5").hide();
+  $("#" + modalType + "InputCOSSub6").hide();
+  $("#" + modalType + "InputCOSSub7").hide();
+  $("#" + modalType + "InputCOSSub8").hide();
+  $("#" + modalType + "InputCOSSub9").hide();
+  $("#" + modalType + "InputCOSSub4Sub").hide();
+  $("#" + modalType + "InputCOSSub8Sub").hide();
+  $("#" + modalType + "InputCOSSub9Sub").hide();
 
   switch(recCOS){
     case 'Propellants and Fuels':{
-      document.getElementById("inputCOSSub1").style.display = "block";
+      $("#" + modalType + "InputCOSSub1").show();
       classOS = 1;
       break;
     }
     case 'Crew Provisions':{
-      document.getElementById("inputCOSSub2").style.display = "block";
+      $("#" + modalType + "InputCOSSub2").show();
       classOS = 2;
       break;
     }
     case 'Crew Operations':{
-      document.getElementById("inputCOSSub3").style.display = "block";
+      $("#" + modalType + "InputCOSSub3").show();
       classOS = 3;
       break;
     }
     case 'Maintenence and Upkeep':{
-      document.getElementById("inputCOSSub4").style.display = "block";
+      $("#" + modalType + "InputCOSSub4").show();
       classOS = 4;
       break;
     }
     case 'Stowage and Restraint':{
-      document.getElementById("inputCOSSub5").style.display = "block";
+      $("#" + modalType + "InputCOSSub5").show();
       classOS = 5;
       break;
     }
     case 'Exploration and Research':{
-      document.getElementById("inputCOSSub6").style.display = "block";
+      $("#" + modalType + "InputCOSSub6").show();
       classOS = 6;
       break;
     }
     case 'Waste and Disposal':{
-      document.getElementById("inputCOSSub7").style.display = "block";
+      $("#" + modalType + "InputCOSSub7").show();
       classOS = 7;
       break;
     }
     case 'Habitation and Infrastructure':{
-      document.getElementById("inputCOSSub8").style.display = "block";
+      $("#" + modalType + "InputCOSSub8").show();
       classOS = 8;
       break;
     }
     case 'Transportation and Carriers':{
-      document.getElementById("inputCOSSub9").style.display = "block";
+      $("#" + modalType + "InputCOSSub9").show();
       classOS = 9;
       break;
     }
   }
 }
 
-function subSelect4(){
-  sub4 = document.getElementById("inputCOSSub4").value;
+function subSelect4(modalType){
+  sub4 = $("#" + modalType + "InputCOSSub4").val();
   if(sub4 == "Spares and Repair Parts"){
-    document.getElementById("inputCOSSub4Sub").style.display = "block";
+    $("#" + modalType + "InputCOSSub4Sub").show();
   }
 }
 
-function subSelect8(){
-  sub8 = document.getElementById("inputCOSSub8").value;
+function subSelect8(modalType){
+  sub8 = $("#" + modalType + "InputCOSSub8").val();
   if(sub8 == "Robotic Systems"){
-    document.getElementById("inputCOSSub8Sub").style.display = "block";
+    $("#" + modalType + "InputCOSSub8Sub").show();
   }
 }
 
-function subSelect9(){
-  sub9 = document.getElementById("inputCOSSub9").value;
+function subSelect9(modalType){
+  sub9 = $("#" + modalType + "InputCOSSub9").val();
   if(sub9 == "Propulsive Elements"){
-    document.getElementById("inputCOSSub9Sub").style.display = "block";
+    $("#" + modalType + "InputCOSSub9Sub").show();
   }
 }
 
-function setCOS(){
+function setCOS(modalType){
   switch(classOS){
     case 1: {
-      switch(document.getElementById("inputCOSSub1").value){
+      switch($("#" + modalType + "InputCOSSub1").val()){
         case 'Cryogens' : {classOS = 101; break;}
         case 'Hypergols': {classOS = 102; break;}
         case 'Nuclear Fuel' : {classOS = 103; break;}
@@ -103,7 +103,7 @@ function setCOS(){
         case 'Other Fuels': {classOS = 105; break;}
     } break; }
     case 2: {
-      switch(document.getElementById("inputCOSSub2").value){
+      switch($("#" + modalType + "InputCOSSub2").val()){
         case 'Water and Support Equipment' : {classOS = 201; break;}
         case 'Food and Support Equipment' : {classOS = 202; break;}
         case 'Gases' : {classOS = 203; break;}
@@ -112,7 +112,7 @@ function setCOS(){
         case 'Personal Items' : {classOS = 206; break;}
       } break; }
     case 3: {
-      switch(document.getElementById("inputCOSSub3").value){
+      switch($("#" + modalType + "InputCOSSub3").val()){
         case 'Office Equipment and Supplies' : {classOS = 301; break;}
         case 'EVA Equipment and Consumables' : {classOS = 302; break;}
         case 'Health Equipment and Consumables' : {classOS = 303; break;}
@@ -121,7 +121,7 @@ function setCOS(){
         case 'Computers and Support Equipment' : {classOS = 306; break;}
       } break; }
     case 4: {
-      switch(document.getElementById("inputCOSSub4").value){
+      switch($("#" + modalType + "InputCOSSub4").val()){
         case 'Spares and Repair Parts' : {classOS = 401; break;}
         case 'Maintenence Tools' : {classOS = 402; break;}
         case 'Lubricants and Bulk Chemicals' : {classOS = 403; break;}
@@ -129,29 +129,29 @@ function setCOS(){
         case 'Cleaning Equipment and Consumables' : {classOS = 405; break;}
       } break; }
     case 401: {
-      switch(document.getElementById("inputCOSSub4Sub").value){
+      switch($("#" + modalType + "InputCOSSub4Sub").val()){
         case 'Spares' : {classOS = 4011; break;}
         case 'Repair Parts' : {classOS = 4012; break;}
       } break; }
     case 5: {
-      switch(document.getElementById("inputCOSSub5").value){
+      switch($("#" + modalType + "InputCOSSub5").val()){
         case 'Cargo Containers and Restraints' : {classOS = 501; break;}
         case 'Inventory Management Equipment' : {classOS = 502; break;}
       } break; }
     case 6: {
-      switch(document.getElementById("inputCOSSub6").value){
+      switch($("#" + modalType + "InputCOSSub6").val()){
         case 'Science Payloads and Instruments' : {classOS = 601; break;}
         case 'Field Equipment' : {classOS = 602; break;}
         case 'Samples' : {classOS = 603; break;}
       } break; }
     case 7: {
-      switch(document.getElementById("inputCOSSub7").value){
+      switch($("#" + modalType + "InputCOSSub7").val()){
         case 'Waste' : {classOS = 701; break;}
         case 'Waste Management Equipment' : {classOS = 702; break;}
         case 'Failed Pairs' : {classOS = 703; break;}
       } break; }
     case 8: {
-      switch(document.getElementById("inputCOSSub8").value){
+      switch($("#" + modalType + "InputCOSSub8").val()){
         case 'Habitation Facilities' : {classOS = 801; break;}
         case 'Surface Mobility Systems' : {classOS = 802; break;}
         case 'Power Systems' : {classOS = 803; break;}
@@ -160,17 +160,17 @@ function setCOS(){
         case 'Orbiting Service Systems' : {classOS = 806; break;}
       } break; }
     case 804: {
-      switch(document.getElementById("inputCOSSub8Sub").value){
+      switch($("#" + modalType + "InputCOSSub8Sub").val()){
         case 'Science Robotics' : {classOS = 8041; break;}
         case 'Construction/Maintenence Robotics' : {classOS = 8042; break;}
       } break; }
     case 9: {
-      switch(document.getElementById("inputCOSSub9").value){
+      switch($("#" + modalType + "InputCOSSub9").val()){
         case 'Carriers, Non-propulsive Elements' : {classOS = 901; break;}
         case 'Propulsive Elements' : {classOS = 902; break;}
       } break; }
     case 902: {
-      switch(document.getElementById("inputCOSSub9Sub").value){
+      switch($("#" + modalType + "InputCOSSub9Sub").val()){
         case 'Launch Vehicles' : {classOS = 9021; break;}
         case 'Upper Stages/In-Space Propulsion Systems' : {classOS = 9022; break;}
         case 'Descent Stages' : {classOS = 9023; break;}
@@ -182,13 +182,13 @@ function setCOS(){
 
 
 
-function onComplete(){
-name = document.getElementById("inputName").value;
-desc = document.getElementById("inputDescription").value;
-type = document.getElementById("dropPick").value;
-mass = document.getElementById("inputMass").value;
-vol = document.getElementById("inputVol").value;
-units = document.getElementById("inputUnits").value;
+function getMessage(modalType){
+name = $("#" + modalType + "InputName").val();
+desc = $("#" + modalType + "InputDescription").val();
+type = $("#" + modalType + "DropPick").val();
+mass = $("#" + modalType + "InputMass").val();
+vol = $("#" + modalType + "InputVol").val();
+units = $("#" + modalType + "InputUnits").val();
 
 
 switch(type){
@@ -218,19 +218,16 @@ switch(type){
 }
   }
 
-  console.log(message)
-  $.ajax({
-    url: "/database/api/resource/",
-    data: message,
-    contentType: 'application/json; charset=utf-8',
-    dataType: "json",
-    method: "POST",
-    success: function() {
-      document.getElementById("resource").reset();
-      document.getElementById("components").reset();
-      $('#addModal').modal('hide')
-      location.reload()
-    }
-  });
+  return message
+}
 
+
+function formFill(data) {
+  $('#editDropPick').val(data.type)
+  $("#editInputName").val(data.name)
+  $("#editInputDescription").val(data.description)
+  $("#editInputMass").val(data.unit_mass)
+  $("#editInputDescription").val(data.description)
+  $("#editInputVol").val(data.unit_volume)
+  $("#editInputUnits").val(data.units)
 }

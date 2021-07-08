@@ -138,6 +138,31 @@ $(document).ready( function() {
     $('#pickNode').append('<option value="' + node.origin_id + '">' + node.name + '</option>')
   })
 
+
+  var table = $("#crewTable").DataTable( {
+    scrollX: true,
+    dom: 't',
+    columnDefs: [ 
+    {
+      targets:   0,
+      searchable: false,
+      orderable: false,
+      defaultContent: '',
+      className: 'select-checkbox',
+      width: '8%',
+    }],
+    select: {
+        style:    'multi',
+        selector: 'td:first-child'
+    },
+    order: [[ 1, 'asc' ]],
+  });
+
+  campaign.elements.forEach( function(element) {
+    table.row.add([, element.name, element.type]).draw()
+  })
+
+
 })
 
 
@@ -147,18 +172,12 @@ function setNode(){
   var node = $('#pickNode').val()
 
   campaign.elements.forEach( function(elt) {
-      $('#pickElement').append('<option value="' + elt.name + '">' + elt.name + '</option>')
+      $('#pickLocation').append('<option value="' + elt.name + '">' + elt.name + '</option>')
   })
 
 }
 
-function setTransfer() {
-
-  console.log('set transfer activated')
-
-  campaign.resources.forEach( function(resource) {
-    $('#transferResourcesTable > tbody').append('<tr><td>' + resource.name + '</td><td>' + 'amount' + '</td><td>' + 'transfered' + '</td></tr>')
-  })
+function setLocation() {
 
 }
 
@@ -209,7 +228,10 @@ function onComplete(){
     node = $("#pickNode").val();
     time = $("#inputTime").val();
     priority = $("#pickPriority").val();
-    element = $("#pickElement").val();
+    duration = $("#inputDuration").val();
+    num_EVAs = $("#inputNumEVAS").val();
+    EVA_Duration = $('#inputEVADuration').val();
+    crew_location = $('#pickLocation')
 
 
     data = {
@@ -217,10 +239,12 @@ function onComplete(){
       node: node,
       time: time,
       priority: priority,
-      element: element
+      duration: duration,
+      num_EVAs: num_EVAs,
+      EVA_Duration: EVA_Duration,
+      crew_location: crew_location,
     }
 
-    location.reload()
     console.log(data)
-
+    location.reload()
 }

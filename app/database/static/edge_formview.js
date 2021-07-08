@@ -28,6 +28,8 @@ function formSet(modalType) {
   $("#" + modalType + "InputDescriptionLabel").hide();
 
   var edgeType = $('#' + modalType + 'DropPick').val();
+  console.log('in formset')
+  console.log(edgeType)
 
   switch(edgeType) {
     case 'def':{
@@ -49,7 +51,9 @@ function formSet(modalType) {
       $("#" + modalType + "InputDescriptionLabel").hide();
       break;
     }
-    case 'Flight': {
+    case 'FlightEdge':
+    case 'Flight':
+       {
       $("#" + modalType + "InputName").show();
       $("#" + modalType + "InputNameLabel").show();
 
@@ -73,7 +77,9 @@ function formSet(modalType) {
 
       break;
         }
-    case 'Space':{
+    case 'SpaceEdge':
+    case 'Space':
+      {
       $("#" + modalType + "InputName").show();
       $("#" + modalType + "InputNameLabel").show();
 
@@ -92,7 +98,9 @@ function formSet(modalType) {
       break;
     }
 
-    case 'Surface':{
+    case 'SurfaceEdge':
+    case 'Surface':
+      {
       $("#" + modalType + "InputName").show();
       $("#" + modalType + "InputNameLabel").show();
 
@@ -126,7 +134,9 @@ function getMessage(modalType) {
 
   switch(type){
 
-    case "Flight":{
+    case "FlightEdge":
+    case 'Flight':
+      {
         message = JSON.stringify({
         type : "FlightEdge",
         name : name,
@@ -139,7 +149,9 @@ function getMessage(modalType) {
         });
         break;
       }
-    case "Space":{
+    case "SpaceEdge":
+    case 'Space': 
+    {
       message = JSON.stringify({
         type : "SpaceEdge",
         name : name,
@@ -150,7 +162,9 @@ function getMessage(modalType) {
     });
     break;
   }
-    case "Surface":{
+    case "SurfaceEdge":
+    case 'Surface':
+      {
       message = JSON.stringify({
         type : "SurfaceEdge",
         name : name,
@@ -171,6 +185,7 @@ return message;
 function formFill(data) {
   console.log(data)
   var edgeType = data.type
+  console.log(edgeType)
   $('#editDropPick').val(edgeType).trigger('change')
   $("#editInputName").val(data.name)
   $("#editInputOrigin_ID").val(data.origin_id)

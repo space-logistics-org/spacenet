@@ -44,37 +44,37 @@
           </div>
           <div class="modal-body">
             <div class="text-center" class="dropdown">
-            <label for="dropPick">Node Type</label>
-              <form id="selection">
-                <select id="dropPick" onChange = "formSet()" class="form-control" class="text-center">
+            <label for="addDropPick">Node Type</label>
+              <form id="addType">
+                <select id="addDropPick" onChange = "formSet('add')" class="form-control" class="text-center">
                   <option selected id="def">Choose...</option>
-                  <option id="SurfaceNode">Surface Node</option>
-                  <option id="OrbitalNode">Orbital Node</option>
-                  <option id="LagrangeNode">Lagrange Node</option>
+                  <option value="SurfaceNode" id="SurfaceNode">Surface Node</option>
+                  <option value="OrbitalNode" id="OrbitalNode">Orbital Node</option>
+                  <option value="LagrangeNode" id="LagrangeNode">Lagrange Node</option>
                 </select>
               </form>
             </div>
             <hr></hr>
-              <form id="node">
+              <form id="addComponents">
                 <div class="form-row">
                   <div class="form-group col-md-6">
-                    <label for="inputName">Name</label>
-                    <input type="text" class="form-control" id="inputName" placeholder="Node Name">
+                    <label id="addInputNameLabel" for="addInputName">Name</label>
+                    <input type="text" class="form-control" id="addInputName" placeholder="Node Name">
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="inputDesc">Description</label>
-                    <input type="text" class="form-control" id="inputDesc" placeholder="Node Description">
+                    <label id="addInputDescLabel" for="addInputDesc">Description</label>
+                    <input type="text" class="form-control" id="addInputDesc" placeholder="Node Description">
                   </div>
-                  <label for="body1">Body 1</label>
-                  <select id="body1" class="form-control" class="text-center">
+                  <label id="addBody1Label" for="addBody1">Body 1</label>
+                  <select id="addBody1" class="form-control" class="text-center">
                     <option selected id="def">Choose...</option>
                     <option id="Sun">Sun</option>
                     <option id="Moon">Moon</option>
                     <option id="Earth">Earth</option>
                     <option id="Mars">Mars</option>
                   </select>
-                  <label for="body2">Body 2</label>
-                  <select id="body2" class="form-control" class="text-center">
+                  <label id="addBody2Label" for="addBody2">Body 2</label>
+                  <select id="addBody2" class="form-control" class="text-center">
                     <option selected id="def">Choose...</option>
                     <option id="Sun">Sun</option>
                     <option id="Moon">Moon</option>
@@ -83,36 +83,123 @@
                   </select>
                   <div class="form-row">
                     <div class="form-group col-md-4">
-                      <label for="inputlpNum">Lagrange Point Number</label>
-                      <input type="number" class="form-control" id="inputlpNum" placeholder="Lagrange Point Number">
+                      <label id="addInputlpNumLabel" for="addInputlpNum">Lagrange Point Number</label>
+                      <input type="number" class="form-control" id="addInputlpNum" placeholder="Lagrange Point Number">
                     </div>
                     <div class="form-group col-md-4">
-                      <label for="inputApo">Apoapsis</label>
-                      <input type="number" class="form-control" id="inputApo" placeholder="Apoapsis">
+                      <label id="addInputApoLabel" for="addInputApo">Apoapsis</label>
+                      <input type="number" class="form-control" id="addInputApo" placeholder="Apoapsis">
                     </div>
                     <div class="form-group col-md-4">
-                      <label for="inputPeri">Periapsis</label>
-                      <input type="number" class="form-control" id="inputPeri" placeholder="Periapsis">
+                      <label id="addInputPeriLabel" for="addInputPeri">Periapsis</label>
+                      <input type="number" class="form-control" id="addInputPeri" placeholder="Periapsis">
                     </div>
                   </div>
                   <div class="form-row">
                     <div class="form-group col-md-4">
-                      <label for="inputLat">Latitude</label>
-                      <input type="number" class="form-control" id="inputLat" placeholder="Latitude">
+                      <label id="addInputLatLabel" for="addInputLat">Latitude</label>
+                      <input type="number" class="form-control" id="addInputLat" placeholder="Latitude">
                     </div>
                     <div class="form-group col-md-4">
-                      <label for="inputLong">Longitude</label>
-                      <input type="number" class="form-control" id="inputLong" placeholder="Longitude">
+                      <label id="addInputLongLabel" for="addInputLong">Longitude</label>
+                      <input type="number" class="form-control" id="addInputLong" placeholder="Longitude">
                     </div>
                     <div class="form-group col-md-4">
-                      <label for="inputInc">Inclination</label>
-                      <input type="number" class="form-control" id="inputInc" placeholder="Inclination">
+                      <label id="addInputIncLabel" for="addInputInc">Inclination</label>
+                      <input type="number" class="form-control" id="addInputInc" placeholder="Inclination">
                     </div>
                   </div>
               </div>
 
               <hr></hr>
-              <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
+              <input type="button" value="Submit" id="addButton" class="btn btn-primary">
+            </form>
+          </div>
+      </div>
+        </div>
+      </div>  
+
+    <!-- modal for editting a node -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModal">View/Edit Node</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center" class="dropdown">
+            <label for="editDropPick">Node Type</label>
+              <form id="editType">
+                <select id="editDropPick" onChange = "formSet('edit')" class="form-control" class="text-center">
+                  <option selected id="def">Choose...</option>
+                  <option value="SurfaceNode" id="SurfaceNode">Surface Node</option>
+                  <option value="OrbitalNode" id="OrbitalNode">Orbital Node</option>
+                  <option value="LagrangeNode" id="LagrangeNode">Lagrange Node</option>
+                </select>
+              </form>
+            </div>
+            <hr></hr>
+              <form id="editComponents">
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label id="editInputNameLabel" for="editInputName">Name</label>
+                    <input type="text" class="form-control" id="editInputName" placeholder="Node Name">
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label id="editInputDescLabel" for="editInputDesc">Description</label>
+                    <input type="text" class="form-control" id="editInputDesc" placeholder="Node Description">
+                  </div>
+                  <label id="editBody1Label" for="editBody1">Body 1</label>
+                  <select id="editBody1" class="form-control" class="text-center">
+                    <option selected id="def">Choose...</option>
+                    <option id="Sun">Sun</option>
+                    <option id="Moon">Moon</option>
+                    <option id="Earth">Earth</option>
+                    <option id="Mars">Mars</option>
+                  </select>
+                  <label id="editBody2Label" for="editBody2">Body 2</label>
+                  <select id="editBody2" class="form-control" class="text-center">
+                    <option selected id="def">Choose...</option>
+                    <option id="Sun">Sun</option>
+                    <option id="Moon">Moon</option>
+                    <option id="Earth">Earth</option>
+                    <option id="Mars">Mars</option>
+                  </select>
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                      <label id="editInputlpNumLabel" for="editInputlpNum">Lagrange Point Number</label>
+                      <input type="number" class="form-control" id="editInputlpNum" placeholder="Lagrange Point Number">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label id="editInputApoLabel" for="editInputApo">Apoapsis</label>
+                      <input type="number" class="form-control" id="editInputApo" placeholder="Apoapsis">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label id="editInputPeriLabel" for="editInputPeri">Periapsis</label>
+                      <input type="number" class="form-control" id="editInputPeri" placeholder="Periapsis">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                      <label id="editInputLatLabel" for="editInputLat">Latitude</label>
+                      <input type="number" class="form-control" id="editInputLat" placeholder="Latitude">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label id="editInputLongLabel" for="editInputLong">Longitude</label>
+                      <input type="number" class="form-control" id="editInputLong" placeholder="Longitude">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label id="editInputIncLabel" for="editInputInc">Inclination</label>
+                      <input type="number" class="form-control" id="editInputInc" placeholder="Inclination">
+                    </div>
+                  </div>
+              </div>
+
+              <hr></hr>
+              <input type="button" value="Submit" id="updateButton" class="btn btn-primary">
             </form>
           </div>
       </div>

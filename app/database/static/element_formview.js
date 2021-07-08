@@ -14,124 +14,241 @@ specImp = 0;
 maxFuel = 0;
 maxSpeed = 0;
 
-function formSet(){
+const TYPES = {
+  'Element': 'Element',
+  'ResourceContainer': 'Resource Container',
+  'ElementCarrier': 'Element Carrier',
+  'HumanAgent': 'Human Agent',
+  'RoboticAgent': 'Robotic Agent',
+  'SurfaceVehicle': 'Surface Vehicle',
+  'PropulsiveVehicle': 'Propulsive Vehicle'
+}
 
-  $("#components #inputName").prop("disabled",true);
-  $("#components #inputDesc").prop("disabled",true);
-  $("#components #inputCOS").prop("disabled",true);
-  $("#components #inputEnv").prop("disabled",true);
-  $("#components #inputAccMass").prop("disabled",true);
-  $("#components #inputMass").prop("disabled",true);
-  $("#components #inputVol").prop("disabled",true);
-  $("#components #inputCarMass").prop("disabled",true);
-  $("#components #inputCarVol").prop("disabled",true);
-  $("#components #inputATF").prop("disabled",true);
-  $("#components #inputMaxCrew").prop("disabled",true);
-  $("#components #inputSpecImp").prop("disabled",true);
-  $("#components #inputMaxFuel").prop("disabled",true);
-  $("#components #inputMaxSpeed").prop("disabled",true);
+function formSet(modalType){
 
-  elType = document.getElementById('dropPick').value;
+  $("#" + modalType + "InputName").hide();
+  $("#" + modalType + "InputDesc").hide();
+  $("#" + modalType + "InputCOS").hide();
+  $("#" + modalType + "InputEnv").hide();
+  $("#" + modalType + "InputAccMass").hide();
+  $("#" + modalType + "InputMass").hide();
+  $("#" + modalType + "InputVol").hide();
+  $("#" + modalType + "InputCarMass").hide();
+  $("#" + modalType + "InputCarVol").hide();
+  $("#" + modalType + "InputATF").hide();
+  $("#" + modalType + "InputMaxCrew").hide();
+  $("#" + modalType + "InputSpecImp").hide();
+  $("#" + modalType + "InputMaxFuel").hide();
+  $("#" + modalType + "InputMaxSpeed").hide();
+
+  $("#" + modalType + "InputNameLabel").hide();
+  $("#" + modalType + "InputDescLabel").hide();
+  $("#" + modalType + "InputCOSLabel").hide();
+  $("#" + modalType + "InputEnvLabel").hide();
+  $("#" + modalType + "InputAccMassLabel").hide();
+  $("#" + modalType + "InputMassLabel").hide();
+  $("#" + modalType + "InputVolLabel").hide();
+  $("#" + modalType + "InputCarMassLabel").hide();
+  $("#" + modalType + "InputCarVolLabel").hide();
+  $("#" + modalType + "InputATFLabel").hide();
+  $("#" + modalType + "InputMaxCrewLabel").hide();
+  $("#" + modalType + "InputSpecImpLabel").hide();
+  $("#" + modalType + "InputMaxFuelLabel").hide();
+  $("#" + modalType + "InputMaxSpeedLabel").hide();
+
+  var elType = $('#' + modalType + 'DropPick').val();
 
   switch(elType) {
     case 'def':{
-      $("#components #inputName").prop("disabled",true);
-      $("#components #inputDesc").prop("disabled",true);
-      $("#components #inputCOS").prop("disabled",true);
-      $("#components #inputEnv").prop("disabled",true);
-      $("#components #inputAccMass").prop("disabled",true);
-      $("#components #inputMass").prop("disabled",true);
-      $("#components #inputVol").prop("disabled",true);
-      $("#components #inputCarMass").prop("disabled",true);
-      $("#components #inputCarVol").prop("disabled",true);
-      $("#components #inputATF").prop("disabled",true);
-      $("#components #inputMaxCrew").prop("disabled",true);
-      $("#components #inputSpecImp").prop("disabled",true);
-      $("#components #inputMaxFuel").prop("disabled",true);
-      $("#components #inputMaxSpeed").prop("disabled",true);
+      $("#" + modalType + "InputName").hide();
+      $("#" + modalType + "InputDesc").hide();
+      $("#" + modalType + "InputCOS").hide();
+      $("#" + modalType + "InputEnv").hide();
+      $("#" + modalType + "InputAccMass").hide();
+      $("#" + modalType + "InputMass").hide();
+      $("#" + modalType + "InputVol").hide();
+      $("#" + modalType + "InputCarMass").hide();
+      $("#" + modalType + "InputCarVol").hide();
+      $("#" + modalType + "InputATF").hide();
+      $("#" + modalType + "InputMaxCrew").hide();
+      $("#" + modalType + "InputSpecImp").hide();
+      $("#" + modalType + "InputMaxFuel").hide();
+      $("#" + modalType + "InputMaxSpeed").hide();
+
+      $("#" + modalType + "InputNameLabel").hide();
+      $("#" + modalType + "InputDescLabel").hide();
+      $("#" + modalType + "InputCOSLabel").hide();
+      $("#" + modalType + "InputEnvLabel").hide();
+      $("#" + modalType + "InputAccMassLabel").hide();
+      $("#" + modalType + "InputMassLabel").hide();
+      $("#" + modalType + "InputVolLabel").hide();
+      $("#" + modalType + "InputCarMassLabel").hide();
+      $("#" + modalType + "InputCarVolLabel").hide();
+      $("#" + modalType + "InputATFLabel").hide();
+      $("#" + modalType + "InputMaxCrewLabel").hide();
+      $("#" + modalType + "InputSpecImpLabel").hide();
+      $("#" + modalType + "InputMaxFuelLabel").hide();
+      $("#" + modalType + "InputMaxSpeedLabel").hide();
       break;
     }
     case 'Element': {
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
-      $("#components #inputCOS").prop("disabled",false);
-      $("#components #inputEnv").prop("disabled",false);
-      $("#components #inputAccMass").prop("disabled",false);
-      $("#components #inputMass").prop("disabled",false);
-      $("#components #inputVol").prop("disabled",false);
+      $("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputDesc").show();
+      $("#" + modalType + "InputCOS").show();
+      $("#" + modalType + "InputEnv").show();
+      $("#" + modalType + "InputAccMass").show();
+      $("#" + modalType + "InputMass").show();
+      $("#" + modalType + "InputVol").show();
+
+      $("#" + modalType + "InputNameLabel").show();
+      $("#" + modalType + "InputDescLabel").show();
+      $("#" + modalType + "InputCOSLabel").show();
+      $("#" + modalType + "InputEnvLabel").show();
+      $("#" + modalType + "InputAccMassLabel").show();
+      $("#" + modalType + "InputMassLabel").show();
+      $("#" + modalType + "InputVolLabel").show();
       break;
         }
     case 'Resource Container':{
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
-      $("#components #inputCOS").prop("disabled",false);
-      $("#components #inputEnv").prop("disabled",false);
-      $("#components #inputAccMass").prop("disabled",false);
-      $("#components #inputMass").prop("disabled",false);
-      $("#components #inputVol").prop("disabled",false);
-      $("#components #inputCarMass").prop("disabled",false);
-      $("#components #inputCarVol").prop("disabled",false);
+      $("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputDesc").show();
+      $("#" + modalType + "InputCOS").show();
+      $("#" + modalType + "InputEnv").show();
+      $("#" + modalType + "InputAccMass").show();
+      $("#" + modalType + "InputMass").show();
+      $("#" + modalType + "InputVol").show();
+      $("#" + modalType + "InputCarMass").show();
+      $("#" + modalType + "InputCarVol").show();
+
+      $("#" + modalType + "InputNameLabel").show();
+      $("#" + modalType + "InputDescLabel").show();
+      $("#" + modalType + "InputCOSLabel").show();
+      $("#" + modalType + "InputEnvLabel").show();
+      $("#" + modalType + "InputAccMassLabel").show();
+      $("#" + modalType + "InputMassLabel").show();
+      $("#" + modalType + "InputVolLabel").show();
+      $("#" + modalType + "InputCarMassLabel").show();
+      $("#" + modalType + "InputCarVolLabel").show();
       break;}
     case 'Element Carrier':
-    {  $("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
-      $("#components #inputCOS").prop("disabled",false);
-      $("#components #inputEnv").prop("disabled",false);
-      $("#components #inputAccMass").prop("disabled",false);
-      $("#components #inputMass").prop("disabled",false);
-      $("#components #inputVol").prop("disabled",false);
-      $("#components #inputEnv").prop("disabled",false);
-      $("#components #inputCarMass").prop("disabled",false);
-      $("#components #inputCarVol").prop("disabled",false);
+    {  $("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputDesc").show();
+      $("#" + modalType + "InputCOS").show();
+      $("#" + modalType + "InputEnv").show();
+      $("#" + modalType + "InputAccMass").show();
+      $("#" + modalType + "InputMass").show();
+      $("#" + modalType + "InputVol").show();
+      $("#" + modalType + "InputEnv").show();
+      $("#" + modalType + "InputCarMass").show();
+      $("#" + modalType + "InputCarVol").show();
+
+      $("#" + modalType + "InputNameLabel").show();
+      $("#" + modalType + "InputDescLabel").show();
+      $("#" + modalType + "InputCOSLabel").show();
+      $("#" + modalType + "InputEnvLabel").show();
+      $("#" + modalType + "InputAccMassLabel").show();
+      $("#" + modalType + "InputMassLabel").show();
+      $("#" + modalType + "InputVolLabel").show();
+      $("#" + modalType + "InputCarMassLabel").show();
+      $("#" + modalType + "InputCarVolLabel").show();
 
       break;}
     case 'Human Agent':
-      {$("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
-      $("#components #inputCOS").prop("disabled",false);
-      $("#components #inputEnv").prop("disabled",false);
-      $("#components #inputAccMass").prop("disabled",false);
-      $("#components #inputMass").prop("disabled",false);
-      $("#components #inputVol").prop("disabled",false);
-      $("#components #inputATF").prop("disabled",false);
+      {$("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputDesc").show();
+      $("#" + modalType + "InputCOS").show();
+      $("#" + modalType + "InputEnv").show();
+      $("#" + modalType + "InputAccMass").show();
+      $("#" + modalType + "InputMass").show();
+      $("#" + modalType + "InputVol").show();
+      $("#" + modalType + "InputATF").show();
+
+      $("#" + modalType + "InputNameLabel").show();
+      $("#" + modalType + "InputDescLabel").show();
+      $("#" + modalType + "InputCOSLabel").show();
+      $("#" + modalType + "InputEnvLabel").show();
+      $("#" + modalType + "InputAccMassLabel").show();
+      $("#" + modalType + "InputMassLabel").show();
+      $("#" + modalType + "InputVolLabel").show();
+      $("#" + modalType + "InputATFLabel").show();
+
       break;}
     case 'Robotic Agent':
-    {  $("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
-      $("#components #inputCOS").prop("disabled",false);
-      $("#components #inputEnv").prop("disabled",false);
-      $("#components #inputAccMass").prop("disabled",false);
-      $("#components #inputMass").prop("disabled",false);
-      $("#components #inputVol").prop("disabled",false);
-      $("#components #inputATF").prop("disabled",false);
+    {  $("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputDesc").show();
+      $("#" + modalType + "InputCOS").show();
+      $("#" + modalType + "InputEnv").show();
+      $("#" + modalType + "InputAccMass").show();
+      $("#" + modalType + "InputMass").show();
+      $("#" + modalType + "InputVol").show();
+      $("#" + modalType + "InputATF").show();
+
+      $("#" + modalType + "InputNameLabel").show();
+      $("#" + modalType + "InputDescLabel").show();
+      $("#" + modalType + "InputCOSLabel").show();
+      $("#" + modalType + "InputEnvLabel").show();
+      $("#" + modalType + "InputAccMassLabel").show();
+      $("#" + modalType + "InputMassLabel").show();
+      $("#" + modalType + "InputVolLabel").show();
+      $("#" + modalType + "InputATFLabel").show();
+
       break;}
     case 'Propulsive Vehicle':
-      {$("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
-      $("#components #inputCOS").prop("disabled",false);
-      $("#components #inputEnv").prop("disabled",false);
-      $("#components #inputAccMass").prop("disabled",false);
-      $("#components #inputMass").prop("disabled",false);
-      $("#components #inputVol").prop("disabled",false);
-      $("#components #inputMaxCrew").prop("disabled",false);
-      $("#components #inputSpecImp").prop("disabled",false);
-      $("#components #inputMaxFuel").prop("disabled",false);
-      $("#components #inputCarMass").prop("disabled",false);
-      $("#components #inputCarVol").prop("disabled",false);
+      {$("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputDesc").show();
+      $("#" + modalType + "InputCOS").show();
+      $("#" + modalType + "InputEnv").show();
+      $("#" + modalType + "InputAccMass").show();
+      $("#" + modalType + "InputMass").show();
+      $("#" + modalType + "InputVol").show();
+      $("#" + modalType + "InputMaxCrew").show();
+      $("#" + modalType + "InputSpecImp").show();
+      $("#" + modalType + "InputMaxFuel").show();
+      $("#" + modalType + "InputCarMass").show();
+      $("#" + modalType + "InputCarVol").show();
+
+      $("#" + modalType + "InputNameLabel").show();
+      $("#" + modalType + "InputDescLabel").show();
+      $("#" + modalType + "InputCOSLabel").show();
+      $("#" + modalType + "InputEnvLabel").show();
+      $("#" + modalType + "InputAccMassLabel").show();
+      $("#" + modalType + "InputMassLabel").show();
+      $("#" + modalType + "InputVolLabel").show();
+      $("#" + modalType + "InputCarMassLabel").show();
+      $("#" + modalType + "InputCarVolLabel").show();
+      $("#" + modalType + "InputMaxCrewLabel").show();
+      $("#" + modalType + "InputSpecImpLabel").show();
+      $("#" + modalType + "InputMaxFuelLabel").show();
+
+
       break;}
     case 'Surface Vehicle':
-      {$("#components #inputName").prop("disabled",false);
-      $("#components #inputDesc").prop("disabled",false);
-      $("#components #inputCOS").prop("disabled",false);
-      $("#components #inputEnv").prop("disabled",false);
-      $("#components #inputAccMass").prop("disabled",false);
-      $("#components #inputMass").prop("disabled",false);
-      $("#components #inputVol").prop("disabled",false);
-      $("#components #inputMaxCrew").prop("disabled",false);
-      $("#components #inputMaxSpeed").prop("disabled",false);
-      $("#components #inputMaxFuel").prop("disabled",false);
-      $("#components #inputCarMass").prop("disabled",false);
-      $("#components #inputCarVol").prop("disabled",false);
+      {$("#" + modalType + "InputName").show();
+      $("#" + modalType + "InputDesc").show();
+      $("#" + modalType + "InputCOS").show();
+      $("#" + modalType + "InputEnv").show();
+      $("#" + modalType + "InputAccMass").show();
+      $("#" + modalType + "InputMass").show();
+      $("#" + modalType + "InputVol").show();
+      $("#" + modalType + "InputMaxCrew").show();
+      $("#" + modalType + "InputMaxSpeed").show();
+      $("#" + modalType + "InputMaxFuel").show();
+      $("#" + modalType + "InputCarMass").show();
+      $("#" + modalType + "InputCarVol").show();
+
+      $("#" + modalType + "InputNameLabel").show();
+      $("#" + modalType + "InputDescLabel").show();
+      $("#" + modalType + "InputCOSLabel").show();
+      $("#" + modalType + "InputEnvLabel").show();
+      $("#" + modalType + "InputAccMassLabel").show();
+      $("#" + modalType + "InputMassLabel").show();
+      $("#" + modalType + "InputVolLabel").show();
+      $("#" + modalType + "InputCarMassLabel").show();
+      $("#" + modalType + "InputCarVolLabel").show();
+      $("#" + modalType + "InputMaxCrewLabel").show();
+      $("#" + modalType + "InputSpecImpLabel").show();
+      $("#" + modalType + "InputMaxFuelLabel").show();
+
     break;}
   }
 }
@@ -139,75 +256,76 @@ function formSet(){
 
 
 
-function subclassSet(){
-  elCOS = document.getElementById("inputCOS").value;
+function subclassSet(modalType){
+  elCOS = $("#" + modalType + "InputCOS").val();
+  console.log(elCOS)
 
-  document.getElementById("inputCOSSub1").style.display = "none";
-  document.getElementById("inputCOSSub2").style.display = "none";
-  document.getElementById("inputCOSSub3").style.display = "none";
-  document.getElementById("inputCOSSub4").style.display = "none";
-  document.getElementById("inputCOSSub5").style.display = "none";
-  document.getElementById("inputCOSSub6").style.display = "none";
-  document.getElementById("inputCOSSub7").style.display = "none";
-  document.getElementById("inputCOSSub8").style.display = "none";
-  document.getElementById("inputCOSSub9").style.display = "none";
-  document.getElementById("inputCOSSub4Sub").style.display = "none";
-  document.getElementById("inputCOSSub8Sub").style.display = "none";
-  document.getElementById("inputCOSSub9Sub").style.display = "none";
+  $("#" + modalType + "InputCOSSub1").hide();
+  $("#" + modalType + "InputCOSSub2").hide();
+  $("#" + modalType + "InputCOSSub3").hide();
+  $("#" + modalType + "InputCOSSub4").hide();
+  $("#" + modalType + "InputCOSSub5").hide();
+  $("#" + modalType + "InputCOSSub6").hide();
+  $("#" + modalType + "InputCOSSub7").hide();
+  $("#" + modalType + "InputCOSSub8").hide();
+  $("#" + modalType + "InputCOSSub9").hide();
+  $("#" + modalType + "InputCOSSub4Sub").hide();
+  $("#" + modalType + "InputCOSSub8Sub").hide();
+  $("#" + modalType + "InputCOSSub9Sub").hide();
 
   switch(elCOS){
     case 'Propellants and Fuels':{
-      document.getElementById("inputCOSSub1").style.display = "block";
+      $("#" + modalType + "InputCOSSub1").show();
       classOS = 1;
       break;
     }
     case 'Crew Provisions':{
-      document.getElementById("inputCOSSub2").style.display = "block";
+      $("#" + modalType + "InputCOSSub2").show();
       classOS = 2;
       break;
     }
     case 'Crew Operations':{
-      document.getElementById("inputCOSSub3").style.display = "block";
+      $("#" + modalType + "InputCOSSub3").show();
       classOS = 3;
       break;
     }
     case 'Maintenence and Upkeep':{
-      document.getElementById("inputCOSSub4").style.display = "block";
+      $("#" + modalType + "InputCOSSub4").show();
       classOS = 4;
       break;
     }
     case 'Stowage and Restraint':{
-      document.getElementById("inputCOSSub5").style.display = "block";
+      $("#" + modalType + "InputCOSSub5").show();
       classOS = 5;
       break;
     }
     case 'Exploration and Research':{
-      document.getElementById("inputCOSSub6").style.display = "block";
+      $("#" + modalType + "InputCOSSub6").show();
       classOS = 6;
       break;
     }
     case 'Waste and Disposal':{
-      document.getElementById("inputCOSSub7").style.display = "block";
+      $("#" + modalType + "InputCOSSub7").show();
       classOS = 7;
       break;
     }
     case 'Habitation and Infrastructure':{
-      document.getElementById("inputCOSSub8").style.display = "block";
+      $("#" + modalType + "InputCOSSub8").show();
       classOS = 8;
       break;
     }
     case 'Transportation and Carriers':{
-      document.getElementById("inputCOSSub9").style.display = "block";
+      $("#" + modalType + "InputCOSSub9").show();
       classOS = 9;
       break;
     }
   }
 }
 
-function setCOS(){
+function setCOS(modalType){
   switch(classOS){
     case 1: {
-      switch(document.getElementById("inputCOSSub1").value){
+      switch($("#" + modalType + "InputCOSSub1").val()){
         case 'Cryogens' : {classOS = 101; break;}
         case 'Hypergols': {classOS = 102; break;}
         case 'Nuclear Fuel' : {classOS = 103; break;}
@@ -215,7 +333,7 @@ function setCOS(){
         case 'Other Fuels': {classOS = 105; break;}
     } break; }
     case 2: {
-      switch(document.getElementById("inputCOSSub2").value){
+      switch($("#" + modalType + "InputCOSSub2").val()){
         case 'Water and Support Equipment' : {classOS = 201; break;}
         case 'Food and Support Equipment' : {classOS = 202; break;}
         case 'Gases' : {classOS = 203; break;}
@@ -224,7 +342,7 @@ function setCOS(){
         case 'Personal Items' : {classOS = 206; break;}
       } break; }
     case 3: {
-      switch(document.getElementById("inputCOSSub3").value){
+      switch($("#" + modalType + "InputCOSSub3").val()){
         case 'Office Equipment and Supplies' : {classOS = 301; break;}
         case 'EVA Equipment and Consumables' : {classOS = 302; break;}
         case 'Health Equipment and Consumables' : {classOS = 303; break;}
@@ -233,7 +351,7 @@ function setCOS(){
         case 'Computers and Support Equipment' : {classOS = 306; break;}
       } break; }
     case 4: {
-      switch(document.getElementById("inputCOSSub4").value){
+      switch($("#" + modalType + "InputCOSSub4").val()){
         case 'Spares and Repair Parts' : {classOS = 401; break;}
         case 'Maintenence Tools' : {classOS = 402; break;}
         case 'Lubricants and Bulk Chemicals' : {classOS = 403; break;}
@@ -241,29 +359,29 @@ function setCOS(){
         case 'Cleaning Equipment and Consumables' : {classOS = 405; break;}
       } break; }
     case 401: {
-      switch(document.getElementById("inputCOSSub4Sub").value){
+      switch($("#" + modalType + "InputCOSSub4Sub").val()){
         case 'Spares' : {classOS = 4011; break;}
         case 'Repair Parts' : {classOS = 4012; break;}
       } break; }
     case 5: {
-      switch(document.getElementById("inputCOSSub5").value){
+      switch($("#" + modalType + "InputCOSSub5").val()){
         case 'Cargo Containers and Restraints' : {classOS = 501; break;}
         case 'Inventory Management Equipment' : {classOS = 502; break;}
       } break; }
     case 6: {
-      switch(document.getElementById("inputCOSSub6").value){
+      switch($("#" + modalType + "InputCOSSub6").val()){
         case 'Science Payloads and Instruments' : {classOS = 601; break;}
         case 'Field Equipment' : {classOS = 602; break;}
         case 'Samples' : {classOS = 603; break;}
       } break; }
     case 7: {
-      switch(document.getElementById("inputCOSSub7").value){
+      switch($("#" + modalType + "InputCOSSub7").val()){
         case 'Waste' : {classOS = 701; break;}
         case 'Waste Management Equipment' : {classOS = 702; break;}
         case 'Failed Pairs' : {classOS = 703; break;}
       } break; }
     case 8: {
-      switch(document.getElementById("inputCOSSub8").value){
+      switch($("#" + modalType + "InputCOSSub8").val()){
         case 'Habitation Facilities' : {classOS = 801; break;}
         case 'Surface Mobility Systems' : {classOS = 802; break;}
         case 'Power Systems' : {classOS = 803; break;}
@@ -272,17 +390,17 @@ function setCOS(){
         case 'Orbiting Service Systems' : {classOS = 806; break;}
       } break; }
     case 804: {
-      switch(document.getElementById("inputCOSSub8Sub").value){
+      switch($("#" + modalType + "InputCOSSub8Sub").val()){
         case 'Science Robotics' : {classOS = 8041; break;}
         case 'Construction/Maintenence Robotics' : {classOS = 8042; break;}
       } break; }
     case 9: {
-      switch(document.getElementById("inputCOSSub9").value){
+      switch($("#" + modalType + "InputCOSSub9").val()){
         case 'Carriers, Non-propulsive Elements' : {classOS = 901; break;}
         case 'Propulsive Elements' : {classOS = 902; break;}
       } break; }
     case 902: {
-      switch(document.getElementById("inputCOSSub9Sub").value){
+      switch($("#" + modalType + "InputCOSSub9Sub").val()){
         case 'Launch Vehicles' : {classOS = 9021; break;}
         case 'Upper Stages/In-Space Propulsion Systems' : {classOS = 9022; break;}
         case 'Descent Stages' : {classOS = 9023; break;}
@@ -292,44 +410,44 @@ function setCOS(){
   }
 }
 
-function subSelect4(){
-  sub4 = document.getElementById("inputCOSSub4").value;
+function subSelect4(modalType){
+  sub4 = $("#" + modalType + "InputCOSSub4").val();
   if(sub4 == "Spares and Repair Parts"){
-    document.getElementById("inputCOSSub4Sub").style.display = "block";
+    $("#" + modalType + "InputCOSSub4Sub").show();
   }
 }
 
-function subSelect8(){
-  sub8 = document.getElementById("inputCOSSub8").value;
+function subSelect8(modalType){
+  sub8 = $("#" + modalType + "InputCOSSub8").val();
   if(sub8 == "Robotic Systems"){
-    document.getElementById("inputCOSSub8Sub").style.display = "block";
+    $("#" + modalType + "InputCOSSub8Sub").show();
   }
 }
 
-function subSelect9(){
-  sub9 = document.getElementById("inputCOSSub9").value;
+function subSelect9(modalType){
+  sub9 = $("#" + modalType + "InputCOSSub9").val();
   if(sub9 == "Propulsive Elements"){
-    document.getElementById("inputCOSSub9Sub").style.display = "block";
+    $("#" + modalType + "InputCOSSub9Sub").show();
 
   }
 }
 
 
-function onComplete(){
-name = document.getElementById("inputName").value;
-desc = document.getElementById("inputDesc").value;
-type = document.getElementById("dropPick").value;
-env = document.getElementById("inputEnv").value;
-accMass = document.getElementById("inputAccMass").value;
-mass = document.getElementById("inputMass").value;
-vol = document.getElementById("inputVol").value;
-carMass = document.getElementById("inputCarMass").value;
-carVol = document.getElementById("inputCarVol").value;
-atf = document.getElementById("inputATF").value;
-maxCC = document.getElementById("inputMaxCrew").value;
-specImp = document.getElementById("inputSpecImp").value;
-maxFuel = document.getElementById("inputMaxFuel").value;
-maxSpeed = document.getElementById("inputMaxSpeed").value;
+function getMessage(modalType){
+name = $("#" + modalType + "InputName").val();
+desc = $("#" + modalType + "InputDesc").val();
+type = $("#" + modalType + "DropPick").val();
+env = $("#" + modalType + "InputEnv").val();
+accMass = $("#" + modalType + "InputAccMass").val();
+mass = $("#" + modalType + "InputMass").val();
+vol = $("#" + modalType + "InputVol").val();
+carMass = $("#" + modalType + "InputCarMass").val();
+carVol = $("#" + modalType + "InputCarVol").val();
+atf = $("#" + modalType + "InputATF").val();
+maxCC = $("#" + modalType + "InputMaxCrew").val();
+specImp = $("#" + modalType + "InputSpecImp").val();
+maxFuel = $("#" + modalType + "InputMaxFuel").val();
+maxSpeed = $("#" + modalType + "InputMaxSpeed").val();
 
 switch(type){
   case "Element":{
@@ -453,21 +571,55 @@ switch(type){
       break;
     }
   }
-
-  console.log(message)
-  $.ajax({
-    url: "/database/api/element/",
-    data: message,
-    contentType: 'application/json; charset=utf-8',
-    dataType: "json",
-    method: "POST",
-    success: function() {
-      document.getElementById("element").reset();
-      document.getElementById("components").reset();
-      // location.href = 'element_table.html'
-      $('#addModal').modal('hide');
-      location.reload()
-    }
-  });
-
+  return message
 }
+
+
+function formFill(data) {
+  console.log(data)
+  var elType = TYPES[data.type]
+  console.log(elType)
+  $('#editDropPick').val(elType).trigger('change')
+  $('#' + data.class_of_supply).attr('selected', true)
+  $("#editInputName").val(data.name)
+  $("#editInputDesc").val(data.description)
+  $("#editInputEnv").val(data.environment)
+  $("#editInputMass").val(data.environment)
+  $("#editInputVol").val(data.volume)
+  $("#editInputAccMass").val(data.accommodation_mass)
+  $("#editInputAccMass").val(data.accommodation_mass)
+
+  if (elType === 'Resource Container') {
+    $("#editInputCarMass").val(data.max_cargo_mass);
+    $("#editInputCarVol").val(data.max_cargo_volume);
+  }
+
+  else if (elType === 'Element Carrier') {  
+    $("#editInputCarMass").val(data.max_cargo_mass);
+    $("#editInputCarVol").val(data.max_cargo_volume);
+  }
+  else if (elType === 'Human Agent')
+    {
+    $("#editInputATF").val(data.active_time_fraction);
+  }
+  else if (elType === 'Robotic Agent')
+    {  
+  $("#editInputATF").val(data.active_time_fraction);
+  }
+  else if (elType === 'Propulsive Vehicle')
+    {
+    $("#editInputMaxCrew").val(data.max_crew);
+    $("#editInputSpecImp").val(data.isp);
+    $("#editInputMaxFuel").val(data.max_fuel);
+    $("#editInputCarMass").val(data.max_cargo_mass);
+    $("#editInputCarVol").val(data.max_cargo_volume);
+    }
+  else if (elType === 'Surface Vehicle')
+    {
+    $("#editInputMaxCrew").val(data.max_crew);
+    $("#editInputMaxSpeed").val(data.max_speed);
+    $("#editInputMaxFuel").val(data.max_fuel);
+    $("#editInputCarMass").val(data.max_cargo_mass);
+    $("#editInputCarVol").val(data.max_cargo_volume);
+  }
+  }
