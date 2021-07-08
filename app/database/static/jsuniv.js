@@ -57,21 +57,21 @@ function subclassSet(){
 
 function subSelect4(){
   sub4 = document.getElementById("inputCOSSub4").value;
-  if(sub4 == "Spares and Repair Parts"){
+  if(sub4 === "Spares and Repair Parts"){
     document.getElementById("inputCOSSub4Sub").style.display = "block";
   }
 }
 
 function subSelect8(){
   sub8 = document.getElementById("inputCOSSub8").value;
-  if(sub8 == "Robotic Systems"){
+  if(sub8 === "Robotic Systems"){
     document.getElementById("inputCOSSub8Sub").style.display = "block";
   }
 }
 
 function subSelect9(){
   sub9 = document.getElementById("inputCOSSub9").value;
-  if(sub9 == "Propulsive Elements"){
+  if(sub9 === "Propulsive Elements"){
     document.getElementById("inputCOSSub9Sub").style.display = "block";
 
   }

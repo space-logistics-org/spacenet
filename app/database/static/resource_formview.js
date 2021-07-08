@@ -73,21 +73,21 @@ function subclassSet(modalType){
 
 function subSelect4(modalType){
   sub4 = $("#" + modalType + "InputCOSSub4").val();
-  if(sub4 == "Spares and Repair Parts"){
+  if(sub4 === "Spares and Repair Parts"){
     $("#" + modalType + "InputCOSSub4Sub").show();
   }
 }
 
 function subSelect8(modalType){
   sub8 = $("#" + modalType + "InputCOSSub8").val();
-  if(sub8 == "Robotic Systems"){
+  if(sub8 === "Robotic Systems"){
     $("#" + modalType + "InputCOSSub8Sub").show();
   }
 }
 
 function subSelect9(modalType){
   sub9 = $("#" + modalType + "InputCOSSub9").val();
-  if(sub9 == "Propulsive Elements"){
+  if(sub9 === "Propulsive Elements"){
     $("#" + modalType + "InputCOSSub9Sub").show();
   }
 }
