@@ -83,7 +83,7 @@ $(document).ready(function () {
     }
 
 
-    var table = $("#" + dataType + "_table").DataTable({
+    let table = $("#" + dataType + "_table").DataTable({
         scrollX: true,
         ajax: {
             url: "/database/api/" + dataType + "/",
