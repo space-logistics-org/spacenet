@@ -78,7 +78,7 @@ function onComplete(){
 
       case "Flight":{
           message = JSON.stringify({
-          type : "Flight",
+          type : "FlightEdge",
           name : name,
           origin_id :  parseInt(origin_id),
           destination_id : parseInt(dest_id),
@@ -91,7 +91,7 @@ function onComplete(){
         }
       case "Space":{
         message = JSON.stringify({
-          type : "Space",
+          type : "SpaceEdge",
           name : name,
           origin_id :  parseInt(origin_id),
           destination_id : parseInt(dest_id),
@@ -102,7 +102,7 @@ function onComplete(){
     }
       case "Surface":{
         message = JSON.stringify({
-          type : "Surface",
+          type : "SurfaceEdge",
           name : name,
           origin_id :  parseInt(origin_id),
           destination_id : parseInt(dest_id),

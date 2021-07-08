@@ -24,9 +24,9 @@ class Resource(Base):
 
 class DiscreteResource(Resource):
 
-    __mapper_args__ = {"polymorphic_identity": ResourceType.discrete.value}
+    __mapper_args__ = {"polymorphic_identity": ResourceType.Discrete.value}
 
 
 class ContinuousResource(Resource):
 
-    __mapper_args__ = {"polymorphic_identity": ResourceType.continuous.value}
+    __mapper_args__ = {"polymorphic_identity": ResourceType.Continuous.value}

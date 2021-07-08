@@ -9,6 +9,7 @@ from spacenet import test
 from app.database.api.models import node as models
 from app.database.api.schemas import node as schemas
 from app.database.api.database import Base, engine
+from spacenet.schemas import NodeType
 
 pytestmark = [pytest.mark.unit, pytest.mark.node, pytest.mark.database]
 
@@ -34,7 +35,7 @@ class TestNodeData(unittest.TestCase):
 
         for node in self.nodes_data:
 
-            if node["type"] == "Orbital":
+            if node["type"] == NodeType.Orbital.value:
                 testnode = schemas.OrbitalNode.parse_obj(node)
                 db_node = models.OrbitalNode(**testnode.dict())
                 self.assertIsNone(db_node.id)
@@ -51,7 +52,7 @@ class TestNodeData(unittest.TestCase):
                 self.db.delete(db_node)
                 self.db.commit()
 
-            elif node["type"] == "Surface":
+            elif node["type"] == NodeType.Surface.value:
                 testnode = schemas.SurfaceNode.parse_obj(node)
                 db_node = models.SurfaceNode(**testnode.dict())
                 self.assertIsNone(db_node.id)
@@ -67,7 +68,7 @@ class TestNodeData(unittest.TestCase):
                 self.db.delete(db_node)
                 self.db.commit()
 
-            elif node["type"] == "Lagrange":
+            elif node["type"] == NodeType.Lagrange.value:
                 testnode = schemas.LagrangeNode.parse_obj(node)
                 db_node = models.LagrangeNode(**testnode.dict())
                 self.assertIsNone(db_node.id)

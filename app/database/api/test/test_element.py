@@ -71,8 +71,8 @@ KIND_TO_FACTORIES: Dict[
     ),
     ElementKind.RoboticAgent: (ValidAgentArgsFactory, InvalidAgentArgsFactory),
     ElementKind.HumanAgent: (ValidAgentArgsFactory, InvalidAgentArgsFactory),
-    ElementKind.Propulsive: (ValidPropulsiveArgsFactory, InvalidPropulsiveArgsFactory),
-    ElementKind.Surface: (ValidSurfaceArgsFactory, InvalidSurfaceArgsFactory),
+    ElementKind.PropulsiveVehicle: (ValidPropulsiveArgsFactory, InvalidPropulsiveArgsFactory),
+    ElementKind.SurfaceVehicle: (ValidSurfaceArgsFactory, InvalidSurfaceArgsFactory),
 }
 
 TESTED_VARIANTS: List[ElementKind] = [variant for variant in ElementKind]
@@ -220,8 +220,6 @@ def test_delete(element_type: ElementKind):
     assert read_all_r.status_code == 200
     assert len(read_all_r.json()) == 0
 
-
-# TODO: tests for heterogeneous types
 
 if __name__ == "__main__":
     pytest.main()
