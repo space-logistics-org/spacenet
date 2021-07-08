@@ -1,53 +1,50 @@
-var COLUMNS = {
-  'edge': [
-    {data: null},
-    { data: 'name' },
-    { data: 'type' },
-    { data: 'origin_id' },
-    { data: 'destination_id' },
-    { data: 'description' }
-      ],
-  'element': [
-    {data: null},
-    { data: 'name' },
-    { data: 'type' },
-    { data: 'class_of_supply' },
-    { data: 'environment' },
-    { data: 'accommodation_mass' },
-    { data: 'mass' },
-    { data: 'volume' },
-    { data: 'description' }
-      ],
-  'node': [
-    {data: null},
-    { data: 'name' },
-    { data: 'type' },
-    { data: 'body_1' },
-    { data: 'description' },
-      ],
-  'resource': [
-    {data: null},
-    { data: 'name' },
-    { data: 'type' },
-    { data: 'class_of_supply' },
-    { data: 'units' },
-    { data: 'unit_mass' },
-    { data: 'unit_volume' },
-    { data: 'description' },
-      ]
-}
-
-
-
+const COLUMNS = {
+    'edge': [
+        {data: null},
+        {data: 'name'},
+        {data: 'type'},
+        {data: 'origin_id'},
+        {data: 'destination_id'},
+        {data: 'description'}
+    ],
+    'element': [
+        {data: null},
+        {data: 'name'},
+        {data: 'type'},
+        {data: 'class_of_supply'},
+        {data: 'environment'},
+        {data: 'accommodation_mass'},
+        {data: 'mass'},
+        {data: 'volume'},
+        {data: 'description'}
+    ],
+    'node': [
+        {data: null},
+        {data: 'name'},
+        {data: 'type'},
+        {data: 'body_1'},
+        {data: 'description'},
+    ],
+    'resource': [
+        {data: null},
+        {data: 'name'},
+        {data: 'type'},
+        {data: 'class_of_supply'},
+        {data: 'units'},
+        {data: 'unit_mass'},
+        {data: 'unit_volume'},
+        {data: 'description'},
+    ]
+};
 
 
 $(document).ready(function () {
-    var dataType = document.getElementsByName('dataType')[0].content
+    const dataType = document.getElementsByName('dataType')[0].content;
 
     $('#' + dataType + '_table tfoot th').each(function() {
       if ($(this).index() !== 0) {
-        var title = $(this).text();
-        $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+          const title = $(this).text();
+          $(this).html('<input type="text" placeholder="Search ' + title + '" />');
       }
     });
 
@@ -65,9 +62,9 @@ $(document).ready(function () {
       text: '<span data-customTooltip="Select row(s) to view/edit">View/Edit</span>',
       className: 'btn-style',
       action: function ( e, dt, node, config ) {
-        var record = table.rows( { selected: true } ).data();
-        var data = record[0]
-        formFill(data)
+          const record = table.rows({selected: true}).data();
+          const data = record[0];
+          formFill(data)
         $('#editModal').modal('show');
       }
   };
@@ -131,10 +128,10 @@ $(document).ready(function () {
 
 
     $('#modalDeleteButton').on('click', function () {
-        var record = table.rows( { selected: true } ).data();
+        const record = table.rows({selected: true}).data();
         for (i=0; i < record.length; i++) {
-          var element = record[i]
-          console.log(element)
+            const element = record[i];
+            console.log(element)
           $.ajax({
               url: "/database/api/" + dataType + "/" + element.id,
               method: "DELETE",
@@ -159,7 +156,7 @@ $(document).ready(function () {
     })
 
     table.on( 'select deselect hide.bs.modal', function ( e, dt, type, indexes ) {
-        var num_selected = table.rows( { selected: true } ).data().length;
+        const num_selected = table.rows({selected: true}).data().length;
         if (num_selected === 0) {
           dt.buttons([2]).text('<span data-customTooltip="Select row(s) to delete">Delete</span>')
           dt.buttons([3]).text('<span data-customTooltip="Select 1 row to view/edit">Edit</span>')
@@ -176,9 +173,9 @@ $(document).ready(function () {
     $('#updateButton').on('click', function () {
       message = getMessage('edit')
       console.log(message)
-      var record = table.rows( { selected: true } ).data();
-      var data = record[0]
-      $.ajax({
+        const record = table.rows({selected: true}).data();
+        const data = record[0];
+        $.ajax({
         url: "/database/api/" + dataType + "/" + data.id,
         method: "PATCH",
         contentType: 'application/json; charset=utf-8',
@@ -210,9 +207,9 @@ $(document).ready(function () {
 
     
     table.columns().every( function() {
-      var that = this;
+        const that = this;
 
-      $('input', this.footer()).on('keyup change', function() {
+        $('input', this.footer()).on('keyup change', function() {
           if (that.search() !== this.value) {
               that
                   .search(this.value)

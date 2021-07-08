@@ -27,7 +27,7 @@ function formSet(modalType) {
   $("#" + modalType + "InputDescription").hide();
   $("#" + modalType + "InputDescriptionLabel").hide();
 
-  var edgeType = $('#' + modalType + 'DropPick').val();
+  const edgeType = $('#' + modalType + 'DropPick').val();
   console.log('in formset')
   console.log(edgeType)
 
@@ -184,7 +184,7 @@ return message;
 
 function formFill(data) {
   console.log(data)
-  var edgeType = data.type
+  const edgeType = data.type
   console.log(edgeType)
   $('#editDropPick').val(edgeType).trigger('change')
   $("#editInputName").val(data.name)

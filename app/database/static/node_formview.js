@@ -174,7 +174,7 @@ switch(type){
 
 
 function formFill(data) {
-  var nType = data.type
+  const nType = data.type;
   $("#editDropPick").val(nType).trigger('change')
   $("#editInputName").val(data.name);
   $("#editInputDesc").val(data.description);

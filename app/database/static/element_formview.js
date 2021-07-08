@@ -56,9 +56,9 @@ function formSet(modalType){
   $("#" + modalType + "InputMaxFuelLabel").hide();
   $("#" + modalType + "InputMaxSpeedLabel").hide();
 
-  var elType = $('#' + modalType + 'DropPick').val();
+    const elType = $('#' + modalType + 'DropPick').val();
 
-  switch(elType) {
+    switch(elType) {
     case 'def':{
       $("#" + modalType + "InputName").hide();
       $("#" + modalType + "InputDesc").hide();
@@ -400,7 +400,7 @@ switch(type){
 
 function formFill(data) {
   console.log(data)
-  var elType = TYPES[data.type]
+  const elType = TYPES[data.type];
   console.log(elType)
   $('#editDropPick').val(elType).trigger('change')
   $('#' + data.class_of_supply).attr('selected', true)

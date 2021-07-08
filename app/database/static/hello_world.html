@@ -36,29 +36,29 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="undefined" crossorigin="anonymous"></script>
   <script>
-    var listHellos = function() {
-      $.ajax({
-        url: "/database/api/hello/",
-        method: "GET",
-        success: function(data) {
-          $("#hello-table tbody").empty();
-          data.forEach(function(item) {
-            $("#hello-table tbody").append(
-              "<tr><td>"
-              + item["id"]
-              + "</td><td>"
-              + item["message"]
-              + "</td><td>"
-              + "<button class='btn btn-danger btn-delete' data-id='" + item["id"] + "'>Delete</button> "
-              + "<button class='btn btn-secondary btn-update' data-id='" + item["id"] + "'>Update</button>"
-              +"</td></tr>"
-            );
+      const listHellos = function () {
+          $.ajax({
+              url: "/database/api/hello/",
+              method: "GET",
+              success: function (data) {
+                  $("#hello-table tbody").empty();
+                  data.forEach(function (item) {
+                      $("#hello-table tbody").append(
+                          "<tr><td>"
+                          + item["id"]
+                          + "</td><td>"
+                          + item["message"]
+                          + "</td><td>"
+                          + "<button class='btn btn-danger btn-delete' data-id='" + item["id"] + "'>Delete</button> "
+                          + "<button class='btn btn-secondary btn-update' data-id='" + item["id"] + "'>Update</button>"
+                          + "</td></tr>"
+                      );
+                  });
+              }
           });
-        }
-      });
-    }
+      };
 
-    $(document).ready(function() {
+      $(document).ready(function() {
 
       listHellos();
 
@@ -89,8 +89,8 @@
       });
 
       $("#hello-table").on("click", ".btn-delete", function() {
-        var record = $(this);
-        $.ajax({
+          const record = $(this);
+          $.ajax({
           url: "/database/api/hello/" + record.data("id"),
           method: "DELETE",
           success: function(data) {
@@ -99,7 +99,7 @@
         });
       });
       $("#hello-table").on("click", ".btn-update", function() {
-        var record = $(this);
+          const record = $(this);
           $.ajax({
             url: "/database/api/hello/" + record.data("id"),
             data: JSON.stringify({
