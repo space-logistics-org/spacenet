@@ -11,10 +11,12 @@ from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from app.database.api.models.resource import Resource as ResourceModel
 from app.database.test.utilities import test_engine
+from app.dependencies import current_user
 from spacenet.schemas.resource import ResourceType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
+    get_current_user,
     get_test_db,
     make_subset,
     with_type,
@@ -28,6 +30,7 @@ Base.metadata.create_all(bind=test_engine)
 
 
 app.dependency_overrides[get_db] = get_test_db
+app.dependency_overrides[current_user] = get_current_user
 
 VALID_DISCRETE_ARGS = {
     "name": "foo",
