@@ -16,11 +16,6 @@
 
 <body>
   <div class="container py-4">
-    <header class="pb-3 mb-4 border-bottom">
-      <a class="d-flex align-items-center text-dark text-decoration-none"></a>
-        <img src = "SpaceNetLogo.jpg" height="30px">
-        <span class="fs-4">SpaceNet</span>
-    </header>
   <h1 class= "text-center">Transfer Resources Event</h1>
 
     <form id="transferResources">
@@ -35,9 +30,6 @@
         <label for="pickNode">Node</label>
         <select id="pickNode" onChange = "setNode()" class="form-control" class="text-center">
           <option selected id="def">Choose...</option>
-          <option id="Flight">Flight</option>
-          <option id="Space">Space</option>
-          <option id="Surface">Surface</option>
         </select>      
       </div>
       <div class="form-group col-md-6">
@@ -46,12 +38,14 @@
       </div>
       <div class="form-group col-md-6">
         <label for="pickPriority">Priority</label>
-        <select id="pickPriority" onChange = "setPriority()" class="form-control" class="text-center">
+        <select id="pickPriority" class="form-control" class="text-center">
           <option selected id="def">Choose...</option>
-          <option id="Flight">Flight</option>
-          <option id="Space">Space</option>
-          <option id="Surface">Surface</option>
-        </select>      
+          <option id="1">1</option>
+          <option id="2">2</option>
+          <option id="3">3</option>
+          <option id="4">4</option>
+          <option id="5">5</option>
+        </select> 
       </div>
     </div>
 
@@ -60,28 +54,36 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="pickFrom">Transfer From</label>
-        <select id="pickFrom" onChange = "setFrom()" class="form-control" class="text-center">
+        <select id="pickFrom" class="form-control" class="text-center">
           <option selected id="def">Choose...</option>
-          <option id="Flight">Flight</option>
-          <option id="Space">Space</option>
-          <option id="Surface">Surface</option>
         </select>      
       </div>
       <div class="form-group col-md-6">
         <label for="pickTo">Transfer To</label>
-        <select id="pickTo" onChange = "setTo()" class="form-control" class="text-center">
+        <select id="pickTo" onChange = "setTransfer()" class="form-control" class="text-center">
           <option selected id="def">Choose...</option>
-          <option id="Flight">Flight</option>
-          <option id="Space">Space</option>
-          <option id="Surface">Surface</option>
         </select>      
       </div>
     </div>
 
+    <table id="transferResourcesTable" class="table table-striped table-bordered">
+      <thead class="thead-light">
+          <tr>
+              <th>Resource</th>
+              <th>Amount</th>
+              <th>Transferred</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
 
     <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
   </form>
+
 </div>
+
 </body>
 
 </html>

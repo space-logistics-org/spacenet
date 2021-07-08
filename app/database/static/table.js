@@ -43,7 +43,6 @@ var COLUMNS = {
 
 $(document).ready(function () {
     var dataType = document.getElementsByName('dataType')[0].content
-    console.log(dataType)
 
     $('#' + dataType + '_table tfoot th').each(function() {
       if ($(this).index() !== 0) {
@@ -60,6 +59,18 @@ $(document).ready(function () {
           $('#deleteModal').modal('show');
         }
     };
+
+    $.fn.dataTable.ext.buttons.edit = {
+      extend: 'selectedSingle',
+      text: '<span data-customTooltip="Select row(s) to view/edit">View/Edit</span>',
+      className: 'btn-style',
+      action: function ( e, dt, node, config ) {
+        var record = table.rows( { selected: true } ).data();
+        var data = record[0]
+        formFill(data)
+        $('#editModal').modal('show');
+      }
+  };
 
 
     $.fn.dataTable.ext.buttons.export = {
@@ -85,8 +96,8 @@ $(document).ready(function () {
       buttons: [
           'export',
           'filter',
-          // 'edit',
           'delete',
+          'edit'
       ],
       language: {
         searchBuilder: {
@@ -121,8 +132,6 @@ $(document).ready(function () {
 
     $('#modalDeleteButton').on('click', function () {
         var record = table.rows( { selected: true } ).data();
-        console.log(record);
-        console.log(record.length);
         for (i=0; i < record.length; i++) {
           var element = record[i]
           console.log(element)
@@ -131,27 +140,73 @@ $(document).ready(function () {
               method: "DELETE",
               success: function(data) {
                 $('#deleteModal').modal('hide');
-                location.reload();
+                table.ajax.reload();
             }
           });
         }
     });
 
-    table.on( 'select deselect', function ( e, dt, type, indexes ) {
-      console.log("selected something")
+    $('#addModal').on('hide.bs.modal', function () {
+      $('#addModal #addType').trigger('reset');
+      $('#addModal #addComponents').trigger('reset');
+      $("#addModal :input").show();
+    })
+
+    $('#editModal').on('hide.bs.modal', function () {
+      $('#editModal #type').trigger('reset');
+      $('#editModal #components').trigger('reset');
+      $("#editModal :input").show();
+    })
+
+    table.on( 'select deselect hide.bs.modal', function ( e, dt, type, indexes ) {
         var num_selected = table.rows( { selected: true } ).data().length;
         if (num_selected === 0) {
           dt.buttons([2]).text('<span data-customTooltip="Select row(s) to delete">Delete</span>')
-          // dt.buttons([3]).text('<span data-customTooltip="Select 1 row to edit">Edit</span>')
+          dt.buttons([3]).text('<span data-customTooltip="Select 1 row to view/edit">Edit</span>')
         } else if (num_selected === 1) {
           dt.buttons([2]).text('Delete Row')
-          // dt.buttons([3]).text('Edit row')
+          dt.buttons([3]).text('View/Edit row')
         }
         else {
           dt.buttons([2]).text('Delete ' + num_selected + ' Rows')
-          // dt.buttons([3]).text('<span data-customTooltip="Select 1 row to edit">Edit</span>')
+          dt.buttons([3]).text('<span data-customTooltip="Select 1 row to view/edit">View/Edit</span>')
         }
     } );
+
+    $('#updateButton').on('click', function () {
+      message = getMessage('edit')
+      console.log(message)
+      var record = table.rows( { selected: true } ).data();
+      var data = record[0]
+      $.ajax({
+        url: "/database/api/" + dataType + "/" + data.id,
+        method: "PATCH",
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        data: message,
+        success: function(data) {
+          $('#editModal').modal('hide');
+          table.ajax.reload();
+      }
+    });
+    })
+
+    $('#addButton').on('click', function () {
+      message = getMessage('add')
+      console.log(message)
+      $.ajax({
+        url: "/database/api/" + dataType + "/",
+        data: message,
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        method: "POST",
+        success: function() {
+          $('#addModal').modal('hide');
+          table.ajax.reload()
+        }
+      });
+    })
+
 
     
     table.columns().every( function() {
@@ -166,4 +221,3 @@ $(document).ready(function () {
       });
     });
     });
-
