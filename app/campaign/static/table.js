@@ -34,7 +34,13 @@ var COLUMNS = {
     { data: 'unit_mass' },
     { data: 'unit_volume' },
     { data: 'description' },
-      ]
+      ],
+    'mission': [
+      {data: null},
+      {data: 'name'},
+      {data: 'date'},
+      {data: '#'}
+    ]
 }
 
 
@@ -52,6 +58,12 @@ $(document).ready(function () {
       }
     });
 
+    $.fn.dataTable.ext.buttons.edit = {
+      extend: 'selected',
+      text: 'Edit',
+      className: 'btn-style',
+    }
+
     $.fn.dataTable.ext.buttons.delete = {
         extend: 'selected',
         text: '<span data-customTooltip="Select row(s) to delete">Delete</span>',
@@ -60,7 +72,12 @@ $(document).ready(function () {
           $('#deleteModal').modal('show');
         }
     };
-
+    
+    $.fn.dataTable.ext.buttons.copy = {
+      extend: 'selected',
+      text: 'Copy',
+      className: 'btn-style',
+    }
 
     $.fn.dataTable.ext.buttons.export = {
       extend: 'excel',
@@ -74,7 +91,6 @@ $(document).ready(function () {
       className: 'btn-style',
     }
 
-
     var table = $("#" + dataType + "_table").DataTable( {
       scrollX: true,
       ajax: {
@@ -85,11 +101,12 @@ $(document).ready(function () {
       buttons: [
           'export',
           'filter',
-          // 'edit',
+          'edit',
+          'copy',
           'delete',
       ],
       language: {
-        searchBuilder: {
+        /*searchBuilder: {
           button: {
                 0: 'Apply Filters',
                 1: 'Filters (one selected)',
@@ -98,7 +115,7 @@ $(document).ready(function () {
           add: 'Add Filter',
           title: 'Apply Custom Filters',
           data: 'Property',
-        }
+        }*/
     },
       dom: 'BQlfrtip',
       columnDefs: [ 
@@ -119,7 +136,7 @@ $(document).ready(function () {
 
 
 
-   /* $('#modalDeleteButton').on('click', function () {
+   $('#modalDeleteButton').on('click', function () {
         var record = table.rows( { selected: true } ).data();
         console.log(record);
         console.log(record.length);
@@ -135,7 +152,7 @@ $(document).ready(function () {
             }
           });
         }
-    }); */
+    });
 
     table.on( 'select deselect', function ( e, dt, type, indexes ) {
       console.log("selected something")

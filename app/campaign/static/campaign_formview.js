@@ -1,4 +1,4 @@
-elType ="";
+/*elType ="";
 name = "";
 desc = "";
 classOS = 0;
@@ -462,7 +462,7 @@ switch(type){
     dataType: "json",
     method: "POST",
     success: function() {
-      document.getElementById("element").reset();
+      document.getElementById("mission").reset();
       document.getElementById("components").reset();
       // location.href = 'element_table.html'
       $('#addModal').modal('hide');
@@ -470,4 +470,4 @@ switch(type){
     }
   });
 
-}
+}*/
