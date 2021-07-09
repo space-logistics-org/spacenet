@@ -56,14 +56,14 @@ const network = {
           "inclination": 90,
           "type": "Orbital"
         },
-        {
-            "name": "Mars place",
-            "description": "Kennedy Space Center",
-            "body_1": "Mars",
-            "latitude": 28.6,
-            "longitude": -80.6,
-            "type": "Surface"
-          },
+        // {
+        //     "name": "Mars place",
+        //     "description": "Kennedy Space Center",
+        //     "body_1": "Mars",
+        //     "latitude": 28.6,
+        //     "longitude": -80.6,
+        //     "type": "Surface"
+        //   },
       ],
     edges: [
         {
@@ -117,16 +117,31 @@ function loadMapping () {
     })
 }
 
-// var mapping = loadMapping()
+var DisplaySun = true
 
 
-var dstCanvas = d3.select('#network').node();
+var dstCanvas = d3.select('#bodies').node();
     
 var dstContext = dstCanvas.getContext('2d');
+
+var netCanvas = d3.select('#network').node()
+
+var netContext = netCanvas.getContext('2d')
 
 function setUpCanvas () {
     dstContext.fillStyle = '#000000'
     dstContext.fillRect(0, 0, dstCanvas.width, dstCanvas.height);
+
+    if (DisplaySun) {
+        var sunImg = document.createElement('img');
+        sunImg.src = PLANET_IMAGES['Sun']
+        console.log(sunImg)
+        var w = dstCanvas.width
+        var h = dstCanvas.height
+        var sunW = sunImg.width
+        var sunH = sunImg.height
+        dstContext.drawImage(sunImg, 0, h/4, sunW*h/(sunH*2), h/2)
+    }
 };
 
 
@@ -138,18 +153,11 @@ function warpImage(imageURL, location, scale, nodes, mapping) {
         .scale(scale)
         .translate(location);
     
-    
     path = d3.geoPath().projection(dstProj).context(dstContext);
-    
-    var geoGenerator = d3.geoPath()
-    .projection(dstProj)
-    .context(dstContext);
-    
-
-    
-    var geoCircle = d3.geoCircle().precision(1);
-    
+        
     var srcImg = document.createElement('img');
+    srcImg.src = imageURL
+
 
     srcImg.onload = function () {
         var srcProj = d3.geoEquirectangular()
@@ -174,7 +182,6 @@ function warpImage(imageURL, location, scale, nodes, mapping) {
             node['canvasPt'] = dstProj([node.longitude, node.latitude])
         })
     }
-    srcImg.src = imageURL
     return nodes
 }
 
@@ -195,7 +202,6 @@ var orbitalNodes = {
     'Mars': []
 }
 
-var DisplaySun = true
 
 network.nodes.forEach( function (node) {
     bodies.add(node.body_1)
@@ -209,8 +215,7 @@ network.nodes.forEach( function (node) {
     }
 })
 
-async function drawBodies(mapping) {
-    var mapping = await loadMapping()
+function drawBodies(mapping) {
     var projected_nodes = []
     if (!DisplaySun) {
         if (bodies.size === 0) {
@@ -258,14 +263,6 @@ async function drawBodies(mapping) {
         if (notSunBodies.has('Sun')) {
             notSunBodies.remove('Sun')
         }
-        var sunImg = document.createElement('img');
-        sunImg.src = PLANET_IMAGES['Sun']
-        console.log(sunImg)
-        var w = dstCanvas.width
-        var h = dstCanvas.height
-        var sunW = sunImg.width
-        var sunH = sunImg.height
-        dstContext.drawImage(sunImg, 0, h/4, sunW*h/(sunH*2), h/2)
         
         if (notSunBodies.size === 0) {
         }
@@ -289,7 +286,7 @@ async function drawBodies(mapping) {
             })
         }
         else {
-            bodies.forEach(function (body) {
+            bodies.forEach( function (body) {
                 var srcImage = PLANET_IMAGES[body]
                 var scale = RAW_SCALES[body]
                 if (body === 'Earth') {
@@ -304,35 +301,127 @@ async function drawBodies(mapping) {
                     var widthRatio = 3/5
                     var heightRatio = 1/5
                 }  
-                projected_nodes.push.apply(projected_nodes, warpImage(srcImage, [dstCanvas.width * widthRatio, dstCanvas.height*heightRatio], scale, surfaceNodes[body], mapping))
+                const new_nodes = warpImage(srcImage, [dstCanvas.width * widthRatio, dstCanvas.height*heightRatio], scale, surfaceNodes[body], mapping)
+                projected_nodes.push.apply(projected_nodes, new_nodes)
             })
         }
     }
+
+    console.log(projected_nodes)
     return projected_nodes
+     
 }
 
-async function drawNodes() {
-    var projected_nodes = await drawBodies()
-    console.log(projected_nodes)
-    projected_nodes.forEach( function(node) {
-        dstContext.fillStyle = "#ff0000 "; // Red color
+const projectedSurfaceNodes = [
+    {
+        body_1: "Earth",
+        canvasPt: [388.35234999756017, 249.35198576377343],
+        description: "Kennedy Space Center",
+        latitude: 28.6,
+        longitude: -80.6,
+        name: "KSC",
+        type: "Surface"
+    },
+    {
+        body_1: "Earth",
+        canvasPt: [375.7030442988689, 217.36551851770133],
+        description: "Pacific Ocean Splashdown",
+        latitude: 35,
+        longitude: -117.9,
+        name: "PAC",
+        type: "Surface"
+    },
+    {
+        body_1: "Moon",
+        canvasPt: [960, 328.30894315746735],
+        description: "Lunar South Pole",
+        latitude: -80.9,
+        longitude: -180,
+        name: "LSP",
+        type: "Surface"
+    },
+    // {
+    //     body_1: "Mars",
+    //     canvasPt: [914.1761749987801, 274.6759928818867],
+    //     description: "Location on mars",
+    //     latitude: 28.6,
+    //     longitude: -80.6,
+    //     name: "Mars Node",
+    //     type: "Surface"
+    // },
+    
+]
 
-        var defined_node = JSON.parse(JSON.stringify(node))
-        console.log(defined_node)
-        dstContext.beginPath();
-        var x = defined_node.canvasPt
-        console.log(x)
-        var y = node.longitude
-        dstContext.arc(x, y, 4, 0, Math.PI * 2, true);
-        dstContext.fill();
+const projectedOrbitalNodes = [
+    {
+        "name": "LEO",
+        "description": "Low Earth Orbit",
+        "body_1": "Earth",
+        "apoapsis": 296,
+        "periapsis": 296,
+        "inclination": 28.5,
+        'canvasPt': [650, 375],
+        "type": "Orbital"
+      },
+      {
+        "name": "LLPO",
+        "description": "Low Lunar Polar Orbit",
+        "body_1": "Moon",
+        "apoapsis": 100,
+        "periapsis": 100,
+        "inclination": 90,
+        'canvasPt': [960, 360],
+        "type": "Orbital"
+      },
+]
+
+
+function drawNodes (projectedNodes) {
+    projectedNodes.forEach( function(node) {
+        netContext.fillStyle = "#ff0000 "; // Red color
+
+        netContext.beginPath();
+        var x = node.canvasPt[0]
+        var y = node.canvasPt[1]
+        netContext.arc(x, y, 4, 0, Math.PI * 2, true);
+        netContext.fill();
+        netContext.font = "14px Arial";
+        netContext.fillText(node.name, x, y + 20)
     })
 }
 
+function drawEdges () {
+    const KSC = [388.35234999756017, 249.35198576377343]
+    const LEO = [650, 375]
+    const PAC = [375.7030442988689, 217.36551851770133]
+    const LSP = [960, 328.30894315746735]
+    const LLPO = [960, 360]
+    netContext.strokeStyle = "#ff0000 "; // Red color
+
+    netContext.beginPath()
+    netContext.moveTo(KSC[0], KSC[1])
+    netContext.lineTo(LEO[0], LEO[1])
+    netContext.stroke();
+    netContext.lineTo(LLPO[0], LLPO[1])
+    netContext.stroke();
+
+    netContext.lineTo(LSP[0], LSP[1])
+    netContext.stroke();
+
+    netContext.lineTo(LLPO[0], LLPO[1])
+    netContext.stroke();
+
+    netContext.lineTo(PAC[0], PAC[1])
+    netContext.stroke();
+
+}
+
 function drawCanvas() {
-    // var mapping = loadMapping();
-    // var projected_nodes = drawBodies(mapping)
-    // drawNodes(projected_nodes)
-    drawNodes()
+    var mapping = loadMapping();
+    drawBodies(mapping)     
+    drawNodes(projectedSurfaceNodes)
+    drawNodes(projectedOrbitalNodes)
+    drawEdges()
     }
 
 
