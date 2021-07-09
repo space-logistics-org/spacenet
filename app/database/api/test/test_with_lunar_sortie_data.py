@@ -3,8 +3,9 @@ from fastapi.testclient import TestClient
 
 from app.database.api.database import get_db
 from app.database.api.main import app
+from app.dependencies import current_user
 from ..schemas.constants import CREATE_SCHEMAS
-from app.database.api.test.utilities import get_test_db
+from app.database.api.test.utilities import get_current_user, get_test_db
 from spacenet.schemas.element import Element
 from spacenet.schemas.node import Node
 from spacenet.schemas.edge import Edge
@@ -19,6 +20,7 @@ from spacenet.test.utilities import (
 pytestmark = [pytest.mark.unit, pytest.mark.database, pytest.mark.lunar_sortie]
 
 app.dependency_overrides[get_db] = get_test_db
+app.dependency_overrides[current_user] = get_current_user
 
 client = TestClient(app)
 
