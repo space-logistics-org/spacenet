@@ -2,99 +2,107 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <title>Node Formview</title>
-  <meta name="author" content="SpaceNet Team">
-  <meta name="description" content="A formview editor for SpaceNet Node objects.">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-  <script src="node_formview.js"></script>
+    <meta charset="utf-8">
+    <title>Node Formview</title>
+    <meta content="SpaceNet Team" name="author">
+    <meta content="A formview editor for SpaceNet Node objects." name="description">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="style.css" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+    <script crossorigin="anonymous"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+    <script src="node_formview.js"></script>
 </head>
 
 <body>
-  <div class="container py-4">
+<div class="container py-4">
     <header class="pb-3 mb-4 border-bottom">
-      <a class="d-flex align-items-center text-dark text-decoration-none"></a>
-      <a href = "formviewdir.html">
-        <img src = "SpaceNetLogo.jpg" height="30px">
-      </a>
+        <a class="d-flex align-items-center text-dark text-decoration-none"></a>
+        <a href="formviewdir.html">
+            <img height="30px" src="SpaceNetLogo.jpg">
+        </a>
         <span class="fs-4">SpaceNet</span>
     </header>
-  <h1 class= "text-center">Node Form</h1>
-  <div class="text-center" class="dropdown">
-  <label for="dropPick">Node Type</label>
-    <form id="selection">
-      <select id="dropPick" onChange = "formSet()" class="form-control" class="text-center">
-        <option selected id="def">Choose...</option>
-        <option id="SurfaceNode">Surface Node</option>
-        <option id="OrbitalNode">Orbital Node</option>
-        <option id="LagrangeNode">Lagrange Node</option>
-      </select>
-    </form>
-  </div>
-  <hr></hr>
-    <form id="node">
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="inputName">Name</label>
-          <input type="text" class="form-control" id="inputName" placeholder="Node Name">
-        </div>
-        <div class="form-group col-md-6">
-          <label for="inputDesc">Description</label>
-          <input type="text" class="form-control" id="inputDesc" placeholder="Node Description">
-        </div>
-        <label for="body1">Body 1</label>
-        <select id="body1" class="form-control" class="text-center">
-          <option selected id="def">Choose...</option>
-          <option id="Sun">Sun</option>
-          <option id="Moon">Moon</option>
-          <option id="Earth">Earth</option>
-          <option id="Mars">Mars</option>
-        </select>
-        <label for="body2">Body 2</label>
-        <select id="body2" class="form-control" class="text-center">
-          <option selected id="def">Choose...</option>
-          <option id="Sun">Sun</option>
-          <option id="Moon">Moon</option>
-          <option id="Earth">Earth</option>
-          <option id="Mars">Mars</option>
-        </select>
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="inputlpNum">Lagrange Point Number</label>
-            <input type="number" class="form-control" id="inputlpNum" placeholder="Lagrange Point Number">
-          </div>
-          <div class="form-group col-md-4">
-            <label for="inputApo">Apoapsis</label>
-            <input type="number" class="form-control" id="inputApo" placeholder="Apoapsis">
-          </div>
-          <div class="form-group col-md-4">
-            <label for="inputPeri">Periapsis</label>
-            <input type="number" class="form-control" id="inputPeri" placeholder="Periapsis">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="inputLat">Latitude</label>
-            <input type="number" class="form-control" id="inputLat" placeholder="Latitude">
-          </div>
-          <div class="form-group col-md-4">
-            <label for="inputLong">Longitude</label>
-            <input type="number" class="form-control" id="inputLong" placeholder="Longitude">
-          </div>
-          <div class="form-group col-md-4">
-            <label for="inputInc">Inclination</label>
-            <input type="number" class="form-control" id="inputInc" placeholder="Inclination">
-          </div>
-        </div>
+    <h1 class="text-center">Node Form</h1>
+    <div class="text-center" class="dropdown">
+        <label for="dropPick">Node Type</label>
+        <form id="selection">
+            <select class="form-control" class="text-center" id="dropPick" onChange="formSet()">
+                <option id="def" selected>Choose...</option>
+                <option id="SurfaceNode">Surface Node</option>
+                <option id="OrbitalNode">Orbital Node</option>
+                <option id="LagrangeNode">Lagrange Node</option>
+            </select>
+        </form>
     </div>
-
     <hr></hr>
-    <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
-  </form>
+    <form id="node">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputName">Name</label>
+                <input class="form-control" id="inputName" placeholder="Node Name" type="text">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputDesc">Description</label>
+                <input class="form-control" id="inputDesc" placeholder="Node Description" type="text">
+            </div>
+            <label for="body1">Body 1</label>
+            <select class="form-control" class="text-center" id="body1">
+                <option id="def" selected>Choose...</option>
+                <option id="Sun">Sun</option>
+                <option id="Moon">Moon</option>
+                <option id="Earth">Earth</option>
+                <option id="Mars">Mars</option>
+            </select>
+            <label for="body2">Body 2</label>
+            <select class="form-control" class="text-center" id="body2">
+                <option id="def" selected>Choose...</option>
+                <option id="Sun">Sun</option>
+                <option id="Moon">Moon</option>
+                <option id="Earth">Earth</option>
+                <option id="Mars">Mars</option>
+            </select>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="inputlpNum">Lagrange Point Number</label>
+                    <input class="form-control" id="inputlpNum" placeholder="Lagrange Point Number" type="number">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputApo">Apoapsis</label>
+                    <input class="form-control" id="inputApo" placeholder="Apoapsis" type="number">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputPeri">Periapsis</label>
+                    <input class="form-control" id="inputPeri" placeholder="Periapsis" type="number">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="inputLat">Latitude</label>
+                    <input class="form-control" id="inputLat" placeholder="Latitude" type="number">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputLong">Longitude</label>
+                    <input class="form-control" id="inputLong" placeholder="Longitude" type="number">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputInc">Inclination</label>
+                    <input class="form-control" id="inputInc" placeholder="Inclination" type="number">
+                </div>
+            </div>
+        </div>
+
+        <hr></hr>
+        <input class="btn btn-primary" onClick="onComplete()" type="button" value="Submit">
+    </form>
 </div>
 </body>
 

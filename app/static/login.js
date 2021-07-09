@@ -1,5 +1,5 @@
 
-var accesstoken="";
+let accesstoken="";
 
 $("#login_form_submit").click(function (){
 	/*

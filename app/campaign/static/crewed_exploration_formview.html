@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Crewed Exploration Event Formview</title>
+  <meta name="author" content="SpaceNet Team">
+  <meta name="description" content="A formview editor for a crewed exploration SpaceNet event.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.3.1/jszip-2.5.0/dt-1.10.25/af-2.3.7/b-1.7.1/b-colvis-1.7.1/b-html5-1.7.1/b-print-1.7.1/cr-1.5.4/date-1.1.0/fc-3.3.3/fh-3.1.9/kt-2.6.2/r-2.2.8/rg-1.1.3/rr-1.2.8/sc-2.0.4/sb-1.1.0/sp-1.3.0/sl-1.3.3/datatables.min.css"/>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.3.1/jszip-2.5.0/dt-1.10.25/af-2.3.7/b-1.7.1/b-colvis-1.7.1/b-html5-1.7.1/b-print-1.7.1/cr-1.5.4/date-1.1.0/fc-3.3.3/fh-3.1.9/kt-2.6.2/r-2.2.8/rg-1.1.3/rr-1.2.8/sc-2.0.4/sb-1.1.0/sp-1.3.0/sl-1.3.3/datatables.min.js"></script>
+  <script src="crewed_exploration_formview.js"></script>
+</head>
+
+<body>
+  <div class="container py-4">
+    <header class="pb-3 mb-4 border-bottom">
+      <a class="d-flex align-items-center text-dark text-decoration-none"></a>
+        <img src = "SpaceNetLogo.jpg" height="30px">
+        <span class="fs-4">SpaceNet</span>
+    </header>
+  <h1 class= "text-center">Crewed Exploration Event</h1>
+
+    <form id="crewedExploration">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="inputName">Name</label>
+          <input type="text" class="form-control" id="inputName" placeholder="Name">
+        </div>
+      </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="pickNode">Node</label>
+        <select id="pickNode" onChange = "setNode()" class="form-control" class="text-center">
+          <option selected id="def">Choose...</option>
+        </select>      
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputTime">Time</label>
+        <input type="number" class="form-control" id="inputTime" placeholder="Time">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="pickPriority">Priority</label>
+        <select id="pickPriority" class="form-control" class="text-center">
+          <option selected id="def">Choose...</option>
+          <option id="1">1</option>
+          <option id="2">2</option>
+          <option id="3">3</option>
+          <option id="4">4</option>
+          <option id="5">5</option>
+        </select>      
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="inputDuration">Duration</label>
+        <input type="number" class="form-control" id="inputDuration" placeholder="Duration">    
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputNumEVAS">Number EVAs</label>
+        <input type="number" class="form-control" id="inputNumEVAS" placeholder="Number EVAs">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputEVADuration">EVA Duration</label>
+        <input type="number" class="form-control" id="EVADuration" placeholder="EVA Duration">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="pickLocation">Crew Location</label>
+        <select id="pickLocation" onChange="setLocation()" class="form-control" class="text-center">
+          <option selected id="def">Choose...</option>
+        </select>      
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="text-center">
+      <label for="crewTable">Crew</label>
+      <table id="crewTable" class="table table-striped table-bordered" style="width: 100%">
+      <thead class="thead-light">
+          <tr>
+              <th>EVA?</th>
+              <th>Crew Member</th>
+              <th>EVA State</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    </div>
+
+    <hr>
+
+
+    <div class="text-center" class="dropdown">
+      <label for="consumeResourcesTable">Demands</label>
+      <input id="addDemand" type="button" value="Add Demand">
+      <table id="consumeResourcesTable" class="table table-striped table-bordered">
+      <thead class="thead-light">
+          <tr>
+              <th>Type</th>
+              <th>Resource</th>
+              <th>Amount</th>
+              <th>Units</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    </div>
+
+
+    <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
+  </form>
+</div>
+
+<div class="modal fade" id="demandModal" tabindex="-1" role="dialog" aria-labelledby="demandModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="demandModal">Add Resource Demand</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center" class="dropdown">
+          <label for="typeDropPick">Resource Type</label>
+            <form id="resourceType">
+              <select id="typeDropPick" onChange = "setResourceType()" class="form-control" class="text-center">
+                <option selected id="def">Choose...</option>
+                <option value="Generic" id="Generic">Generic</option>
+                <option value="Discrete" id="Discrete">Discrete</option>
+                <option value="Continuous" id="Continuous">Continuous</option>
+              </select>
+            </form>
+          </div>
+          <hr></hr>
+            <form>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="resourceDropPick">Resource</label>
+                  <select id="resourceDropPick" class="form-control" class="text-center">
+                    <option selected id="def">Choose...</option>
+                  </select>                
+                </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label id="inputAmountLabel" for="inputAmount">Amount</label>
+                <input type="number" class="form-control" id="inputAmount" placeholder="Amount">
+              </div>
+              <div class="form-group col-md-6">
+                <label id="inputUnitsLabel" for="inputUnits">Units</label>
+                <input type="text" class="form-control" id="inputUnits" placeholder="Units">
+              </div>
+        
+            </div>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input type="button" value="Add Demand" id="submitDemand" class="btn btn-primary">
+          </form>
+
+      </div>
+  </div>
+    </div>
+  </div>  
+
+</body>
+
+</html>

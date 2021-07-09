@@ -38,12 +38,14 @@ from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from app.database.api.models.element import Element as ElementModel
 from app.database.test.utilities import test_engine
+from app.dependencies import current_user
 from spacenet.schemas.element import ElementKind
 from spacenet.test.element_factories import *
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
     get_test_db,
+    get_current_user,
     make_subset,
     with_type,
 )
@@ -56,6 +58,7 @@ Base.metadata.create_all(bind=test_engine)
 
 
 app.dependency_overrides[get_db] = get_test_db
+app.dependency_overrides[current_user] = get_current_user
 
 KIND_TO_FACTORIES: Dict[
     ElementKind, Tuple[Type[ValidArgsFactory], Type[InvalidArgsFactory]]
@@ -71,7 +74,10 @@ KIND_TO_FACTORIES: Dict[
     ),
     ElementKind.RoboticAgent: (ValidAgentArgsFactory, InvalidAgentArgsFactory),
     ElementKind.HumanAgent: (ValidAgentArgsFactory, InvalidAgentArgsFactory),
-    ElementKind.PropulsiveVehicle: (ValidPropulsiveArgsFactory, InvalidPropulsiveArgsFactory),
+    ElementKind.PropulsiveVehicle: (
+        ValidPropulsiveArgsFactory,
+        InvalidPropulsiveArgsFactory,
+    ),
     ElementKind.SurfaceVehicle: (ValidSurfaceArgsFactory, InvalidSurfaceArgsFactory),
 }
 
