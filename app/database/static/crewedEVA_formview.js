@@ -1,18 +1,22 @@
 name = "";
-origin_node = "";
-destination_node = "";
-time= 0;
-priority = 0;
+origin_id = 0;
+dest_id = 0;
+dur = 0;
+dist = 0;
+max_crew = 0;
+max_cargo = 0;
+desc = "";
+
 
 
 $(document).ready(function () {
-    ElementList();
-    BurnsStages();
+    CrewList();
+    DemandList();
 });
 
 
 
-function ElementList() {
+function CrewList() {
 
     var itxtCnt = 0;    // COUNTER TO SET ELEMENT IDs.
 
@@ -25,19 +29,19 @@ function ElementList() {
         });
 
         // CREATE THE ELEMENTS.
-    $('#eleAdd').click(function () {
+    $('#crewAdd').click(function () {
         itxtCnt = itxtCnt + 1;
 
-        $(container).append('<input type="text"' +'placeholder="[properties]" class="elements" id=tb' + itxtCnt + ' value="" />');
+        $(container).append('<input type="text"' +'placeholder="[available time fraction = ____, EVA state = ___]" class="crew" id=tb' + itxtCnt + ' value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
-        $('#elementmain').after(container);
+        $('#crewmain').after(container);
     });
 }
 
 
 
-function BurnsStages() {
+function DemandList() {
 
     var itxtCnt = 0;    // COUNTER TO SET ELEMENT IDs.
 
@@ -50,45 +54,47 @@ function BurnsStages() {
         });
 
         // CREATE THE ELEMENTS.
-    $('#seqAdd').click(function () {
+    $('#demAdd').click(function () {
         itxtCnt = itxtCnt + 1;
 
-        $(container).append('<input type="text"' +'placeholder="[element= element1, burnstage = burn/stage], [element = element2, burnstage = burn/stage], ..." class="burnstage" id=tb' + itxtCnt + ' value="" />');
+        $(container).append('<input type="text"' +'placeholder="[resource type= ___, resource = ___, units= ___]" class="demand" id=tb' + itxtCnt + ' value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
-        $('#burnstagemain').after(container);
+        $('#demandmain').after(container);
     });
 }
 
 
-
-function onComplete() {
+function onComplete(){
     name = document.getElementById("inputName").value;
-    origin_node = document.getElementById("inputOriginNode").value;
-    destination_node = document.getElementById("inputDestinationNode").value;
+    node = document.getElementById("inputNode").value;
     time = document.getElementById("inputTime").value;
     priority = document.getElementById("inputPriority").value;
+    eva_duration = document.getElementById("inputEVADuration").value;
+    crew_vehicle = document.getElementById("inputCrewVehicle").value
 
-    var elementvalues = new Array();
-    $('.elements').each(function () {
+    var crewMem = new Array();
+    $('.crew').each(function () {
         if (this.value != '')
-            elementvalues.push(this.value);
+            crewMem.push(this.value);
     });
 
-    var burnStageProfile = new Array();
-    $('.burnstage').each(function () {
+    var addDemands = new Array();
+    $('.demand').each(function () {
         if (this.value != '')
-            burnStageProfile.push(this.value);
+            addDemands.push(this.value);
     });
-    alert(burnStageProfile);
+
+    alert(addDemands);
     message= JSON.stringify({
       name : name,
-      origin_node : origin_node,
-      destination_node : destination_node,
+      node : node,
       time : time,
       priority : priority,
-      elements : elementvalues,
-      burnStageProfile : burnstagevalues
+      eva_duration : eva_duration,
+      crew_vehicle : crew_vehicle,
+      crew : crewMem,
+      additional_demand : addDemands
     });
 
 

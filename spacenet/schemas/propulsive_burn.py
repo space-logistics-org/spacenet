@@ -5,7 +5,7 @@ from typing import List
 from .burn import Burn
 from .element import Element
 
-__all__ = ["BurnStage", "PropulsiveBurn"]
+__all__ = ["BurnStage", "PropulsiveBurn", "BurnStageItem"]
 
 
 class BurnStage(Enum):
