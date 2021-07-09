@@ -20,11 +20,6 @@
 
 <body>
   <div class="container py-4">
-    <header class="pb-3 mb-4 border-bottom">
-      <a class="d-flex align-items-center text-dark text-decoration-none"></a>
-        <img src = "SpaceNetLogo.jpg" height="30px">
-        <span class="fs-4">SpaceNet</span>
-    </header>
   <h1 class= "text-center">Crewed Exploration Event</h1>
 
     <form id="crewedExploration">
@@ -39,7 +34,7 @@
         <label for="pickNode">Node</label>
         <select id="pickNode" onChange = "setNode()" class="form-control" class="text-center">
           <option selected id="def">Choose...</option>
-        </select>      
+        </select>
       </div>
       <div class="form-group col-md-6">
         <label for="inputTime">Time</label>
@@ -54,7 +49,7 @@
           <option id="3">3</option>
           <option id="4">4</option>
           <option id="5">5</option>
-        </select>      
+        </select>
       </div>
     </div>
 
@@ -63,7 +58,7 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="inputDuration">Duration</label>
-        <input type="number" class="form-control" id="inputDuration" placeholder="Duration">    
+        <input type="number" class="form-control" id="inputDuration" placeholder="Duration">
       </div>
       <div class="form-group col-md-6">
         <label for="inputNumEVAS">Number EVAs</label>
@@ -77,7 +72,7 @@
         <label for="pickLocation">Crew Location</label>
         <select id="pickLocation" onChange="setLocation()" class="form-control" class="text-center">
           <option selected id="def">Choose...</option>
-        </select>      
+        </select>
       </div>
     </div>
 
@@ -151,7 +146,7 @@
                   <label for="resourceDropPick">Resource</label>
                   <select id="resourceDropPick" class="form-control" class="text-center">
                     <option selected id="def">Choose...</option>
-                  </select>                
+                  </select>
                 </div>
             </div>
             <div class="form-row">
@@ -163,7 +158,7 @@
                 <label id="inputUnitsLabel" for="inputUnits">Units</label>
                 <input type="text" class="form-control" id="inputUnits" placeholder="Units">
               </div>
-        
+
             </div>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <input type="button" value="Add Demand" id="submitDemand" class="btn btn-primary">
@@ -172,7 +167,7 @@
       </div>
   </div>
     </div>
-  </div>  
+  </div>
 
 </body>
 

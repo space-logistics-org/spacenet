@@ -27,6 +27,7 @@
         <a class="nav-link" aria-current="page" onClick = "elDiv()" href="#">Element Management</a>
         <a class="nav-link" onClick = "misDiv()" href="#">Missions</a>
         <a class="nav-link" onClick = "resDiv()" href="#">Resources</a>
+        <a class="nav-link" onClick = "visDiv()" href="#">Visualizations</a>
       </nav>
     </div>
     <div class="container" id = "elDirect">
@@ -38,15 +39,21 @@
     </div>
     <div class="container" id = "missionDirect" >
       <nav class="nav">
-        <a class="nav-link active" aria-current="page" onclick="createDiv()" href="#">Mission 1</a>
-        <a class="nav-link" href="#" >Mission 2</a>
+        <a class="nav-link active" aria-current="page" onclick="crewDiv()" href="#">Crewed Exploration</a>
+        <a class="nav-link" href="#" onclick="sptrDiv()">Space Transport</a>
         <a class="nav-link" href="#" >Message 3</a>
       </nav>
     </div>
     <div class="container" id = "resDirect">
       <nav class="nav">
-        <a class="nav-link" href="#" onclick = "consumeDiv()" > Consume Resources</a>
+        <a class="nav-link" href="#" onclick = "consumeDiv()" >Consume Resources</a>
         <a class="nav-link" href="#" onclick = "transferDiv()">Transfer Resources</a>
+      </nav>
+    </div>
+    <div class="container" id = "visDirect">
+      <nav class="nav">
+        <a class="nav-link" href="#" onclick = "batDiv()" >Bat Chart</a>
+        <a class="nav-link" href="#" onclick = "netDiv()">Network Visualization</a>
       </nav>
     </div>
     <div class = "container py-4" id = "formSpace">

@@ -12,6 +12,36 @@
   <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
   <script src="edge_formview.js"></script>
+  <style>
+  .name{
+    display:none;
+  }
+  .ori{
+    display:none;
+  }
+  .desti{
+    display:none;
+  }
+  .dura{
+    display:none;
+  }
+  .dista{
+    display:none;
+  }
+  .crew{
+    display:none;
+  }
+  .cargo{
+    display:none;
+  }
+  .descr{
+    display:none;
+  }
+  .button{
+       margin-top:10px;
+       margin-left: 10px;
+  }
+  </style>
 </head>
 
 <body>
@@ -22,8 +52,9 @@
         <span class="fs-4">SpaceNet</span>
     </header>
   <h1 class= "text-center">Edge Form</h1>
+
   <div class="text-center" class="dropdown">
-  <label for="Edge Type">Edge Type</label>
+  <label for="dropPick">Edge Type</label>
     <form id="edge">
       <select id="dropPick" onChange = "formSet()" class="form-control" class="text-center">
         <option selected id="def">Choose...</option>
@@ -33,46 +64,72 @@
       </select>
     </form>
   </div>
+
   <hr></hr>
     <form id="components">
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="Input Name">Name</label>
-          <input type="text" class="form-control" id="inputName" placeholder="Name">
+
+        <div class="container">
+          <div class="name">
+            <label for="inputName">Name</label>
+            <input type="text" class="form-control" id="inputName" placeholder="Name">
+          </div>
         </div>
-    </div>
+
+
     <div class="form-row">
-      <div class="form-group col-md-6">
-        <label for="inputOrigin_ID">Origin ID</label>
-        <input type="number" class="form-control" id="inputOrigin_ID" placeholder="Origin ID">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputDestination_ID">Destination ID</label>
-        <input type="number" class="form-control" id="inputDestination_ID" placeholder="Destination ID">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputDuration">Duration</label>
-        <input type="number" class="form-control" id="inputDuration" placeholder="Duration">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputDistance">Distance</label>
-        <input type="number" class="form-control" id="inputDistance" placeholder="Distance">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputMax_Crew">Max Crew</label>
-        <input type="number" class="form-control" id="inputMax_Crew" placeholder="Max Crew">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputMax_Cargo">Max Cargo</label>
-        <input type="number" class="form-control" id="inputMax_Cargo" placeholder="Max Cargo">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputDescription">Description</label>
-        <input type="text" class="form-control" id="inputDescription" placeholder="Description">
-      </div>
+
+        <div class="container">
+          <div class="ori">
+            <label for="inputOrigin_ID">Origin ID</label>
+            <input type="number" class="form-control" id="inputOrigin_ID" placeholder="Origin ID">
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="desti">
+            <label for="inputDestination_ID">Destination ID</label>
+            <input type="number" class="form-control" id="inputDestination_ID" placeholder="Destination ID">
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="dura">
+            <label for="inputDuration">Duration</label>
+            <input type="number" class="form-control" id="inputDuration" placeholder="Duration">
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="dista">
+            <label for="inputDistance">Distance</label>
+            <input type="number" class="form-control" id="inputDistance" placeholder="Distance">
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="crew">
+            <label for="inputMax_Crew">Max Crew</label>
+            <input type="number" class="form-control" id="inputMax_Crew" placeholder="Max Crew">
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="cargo">
+            <label for="inputMax_Cargo">Max Cargo</label>
+            <input type="number" class="form-control" id="inputMax_Cargo" placeholder="Max Cargo">
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="descr">
+            <label for="inputDescription">Description</label>
+            <input type="text" class="form-control" id="inputDescription" placeholder="Description">
+          </div>
+        </div>
 
     </div>
-    <input type="button" value="Submit" name = "Submit" onClick="onComplete()" class="btn btn-primary">
+      <div class="button">
+      <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
   </form>
 </div>
 </body>
