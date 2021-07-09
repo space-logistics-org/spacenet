@@ -3,6 +3,7 @@ function statusSet() {
   $("#missionDirect").hide();
   $("#resDirect").hide();
   $("#visDirect").hide();
+  $("#netDirect").hide();
 }
 
 
@@ -12,6 +13,7 @@ function elDiv(){
   $("#missionDirect").hide();
   $("#resDirect").hide();
   $("#visDirect").hide();
+  $("#netDirect").hide();
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="create_elements.html" ></object>';
 }
 
@@ -20,6 +22,7 @@ function misDiv(){
   $("#missionDirect").show();
   $("#resDirect").hide();
   $("#visDirect").hide();
+  $("#netDirect").hide();
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="crewed_exploration_formview.html" ></object>';
 }
 
@@ -28,6 +31,7 @@ function resDiv(){
   $("#missionDirect").hide();
   $("#resDirect").show();
   $("#visDirect").hide();
+  $("#netDirect").hide();
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="consume_resources_formview.html" ></object>';
 }
 
@@ -36,7 +40,17 @@ function visDiv(){
   $("#missionDirect").hide();
   $("#resDirect").hide();
   $("#visDirect").show();
+  $("#netDirect").hide();
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="bat_chart.html" ></object>';
+}
+
+function networkDiv(){
+  $("#elDirect").hide();
+  $("#missionDirect").hide();
+  $("#resDirect").hide();
+  $("#visDirect").hide();
+  $("#netDirect").show();
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="network_selection.html" ></object>';
 }
 
 
@@ -74,4 +88,8 @@ function crewDiv(){
 
 function sptrDiv(){
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="spaceTransport_formview.html" ></object>';
+}
+
+function netSelectDiv(){
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="network_selection.html" ></object>';
 }

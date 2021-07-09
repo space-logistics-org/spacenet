@@ -23,36 +23,43 @@
     </header>
     </div>
     <div class="container border-bottom" id = "navbar">
-      <nav class="nav">
+      <nav class="nav nav-tabs">
         <a class="nav-link" aria-current="page" onClick = "elDiv()" href="#">Element Management</a>
         <a class="nav-link" onClick = "misDiv()" href="#">Missions</a>
         <a class="nav-link" onClick = "resDiv()" href="#">Resources</a>
+        <a class="nav-link" onClick = "networkDiv()" href="#">Network</a>
         <a class="nav-link" onClick = "visDiv()" href="#">Visualizations</a>
       </nav>
     </div>
     <div class="container" id = "elDirect">
-      <nav class="nav">
-        <a class="nav-link active" aria-current="page" onclick="createDiv()" href="#">Create Element</a>
+      <nav class="nav nav-tabs">
+        <a class="nav-link " aria-current="page" onclick="createDiv()" href="#">Create Element</a>
         <a class="nav-link" href="#" onclick="moveDiv()">Move Element</a>
         <a class="nav-link" href="#" onclick="removeDiv()">Remove Element</a>
       </nav>
     </div>
     <div class="container" id = "missionDirect" >
-      <nav class="nav">
-        <a class="nav-link active" aria-current="page" onclick="crewDiv()" href="#">Crewed Exploration</a>
+      <nav class="nav nav-tabs">
+        <a class="nav-link " aria-current="page" onclick="crewDiv()" href="#">Crewed Exploration</a>
         <a class="nav-link" href="#" onclick="sptrDiv()">Space Transport</a>
         <a class="nav-link" href="#" >Message 3</a>
       </nav>
     </div>
     <div class="container" id = "resDirect">
-      <nav class="nav">
+      <nav class="nav nav-tabs">
         <a class="nav-link" href="#" onclick = "consumeDiv()" >Consume Resources</a>
         <a class="nav-link" href="#" onclick = "transferDiv()">Transfer Resources</a>
       </nav>
     </div>
     <div class="container" id = "visDirect">
-      <nav class="nav">
+      <nav class="nav nav-tabs">
         <a class="nav-link" href="#" onclick = "batDiv()" >Bat Chart</a>
+        <a class="nav-link" href="#" onclick = "netDiv()">Network Visualization</a>
+      </nav>
+    </div>
+    <div class="container" id = "netDirect">
+      <nav class="nav nav-tabs">
+        <a class="nav-link" href="#" onclick = "netSelectDiv()" >Network Selection</a>
         <a class="nav-link" href="#" onclick = "netDiv()">Network Visualization</a>
       </nav>
     </div>
