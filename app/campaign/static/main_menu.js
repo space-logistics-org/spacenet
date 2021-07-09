@@ -93,3 +93,19 @@ function sptrDiv(){
 function netSelectDiv(){
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="network_selection.html" ></object>';
 }
+
+function reconDiv(){
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="reconfigure_element_formview.html" ></object>';
+}
+
+function fliDiv(){
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="flight_transport_formview.html" ></object>';
+}
+
+function propBurnDiv(){
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="propulsive_burn_formview.html" ></object>';
+}
+
+function missDev(){
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="mission_demand_model.html" ></object>';
+}
