@@ -1,6 +1,7 @@
 const COLOR_MAPPINGS = {
     'Create Elements': 'green',
-    'Flight Transport': 'yellow',
+    'Flight Transport': 'red',
+    'Space Transport': 'yellow',
     'Crewed Exploration': 'blue',
     'Remove Elements': 'black',
     'Reconfigure Group': 'orange',
@@ -8,12 +9,12 @@ const COLOR_MAPPINGS = {
 }
 
 const POINT_SIZES = {
-    'Create Elements': 3,
+    'Create Elements': 4,
     'Flight Transport': 1,
     'Crewed Exploration': 1,
     'Remove Elements': 3.5,
-    'Reconfigure Group': 4,
-    'Move Elements': 4.5
+    'Reconfigure Group': 3,
+    'Move Elements': 5
 }
 var DateTime = luxon.DateTime;
 
