@@ -15,7 +15,7 @@ class DemandModel(Base):
     __mapper_args__ = {"polymorphic_identity": "demandModel", "polymorphic_on": type}
 
 class CrewConsumablesDemandModel(DemandModel):
-    mission = Column(Mission)
+    # mission = Column(Mission)
     reservesDuration = Column(Float)
     waterRecoveryRate = Column(Float)
     clothingLifetime = Column(Float)
@@ -46,18 +46,18 @@ class CrewConsumablesDemandModel(DemandModel):
     __mapper_args__ = {"polymorphic_identity": DemandModelType.crew_consumables}
 
 class TimedImpulseDemandModel(DemandModel):
-    demands = Column(DemandSet)
+    # demands = Column(DemandSet)
     flag = Column(Boolean)
 
     __mapper_args__ = {"polymorphic_identity": DemandModelType.timed_impulse}
 
 class RatedDemandModel(DemandModel):
-    demands = Column(DemandSet)
+    # demands = Column(DemandSet)
 
     __mapper_args__ = {"polymorphic_identity": DemandModelType.rated}
 
 class SparingByMassDemandModel(DemandModel):
-    element = Column(I_Element)
+    # element = Column(I_Element)
     unpressurizedSparesRates = Column(Float)
     pressurizedSparesRates = Column(Float)
     partsListEnabled = Column(Boolean)
