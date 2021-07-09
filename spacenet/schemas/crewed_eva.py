@@ -2,18 +2,12 @@ from pydantic import BaseModel, Field, PositiveFloat
 from typing import List
 
 from .missions_demand_model import MissionDemand
-from .element import HumanAgent
+from .element import Agent
 
-class EVACrew(HumanAgent): 
+class EVACrew(Agent): 
     """
     Schema for a Crew Member
     """
-    
-    eva_active: bool = Field(
-        ...,
-        title="EVA Active",
-        description="Whether the crew member will go on the EVA"
-    )
     
     eva_state: str = Field( 
         ..., 
@@ -31,10 +25,12 @@ class CrewedEVA(BaseModel):
         description="Crewed EVA name"
     )
     
+    type="EVA"
+    
     node: str = Field(
         ...,
-        title="Node",
-        description="The location of the Crewed EVA"
+        title="Origin Node",
+        description="The origin node of the Space Transport"
     )
     
     time: PositiveFloat = Field(
@@ -57,9 +53,9 @@ class CrewedEVA(BaseModel):
         description="The duraon of the EVA"
     )
     
-    crew_location: str = Field( 
+    crew_vehicle: str = Field( 
         ...,
-        title="Crew Location",
+        title="Crew Vehicle",
         description="The location of the crew that will be used for the EVA"
     )
     

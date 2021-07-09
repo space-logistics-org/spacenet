@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
 from typing import List
 
 from .propulsive_burn import BurnStageItem
+from .element import ElementKind
+
 
 class BurnStageSequence(BaseModel):
     burn_stage_sequence: List[BurnStageItem] = Field(
@@ -45,7 +47,7 @@ class SpaceTransport(BaseModel):
         le = 5
     )
     
-    elements: List[str] = Field(
+    elements: List[ElementKind] = Field(
         ...,
         title="Elements",
         description="The possible elements to be used in the Burn-Stage Sequence"
@@ -56,3 +58,4 @@ class SpaceTransport(BaseModel):
         title="Burn Sequence",
         description="List of seperate Burn-Stage Sequences" 
     )
+    
