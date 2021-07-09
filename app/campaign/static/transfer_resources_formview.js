@@ -57,7 +57,7 @@ var campaign = {
       "type": "HumanAgent"
     },
     {
-      "name": "Notional Cargo",
+      "name": "Resource Container Example",
       "description": "Cargo",
       "class_of_supply": 6,
       "environment": "Unpressurized",
@@ -121,6 +121,9 @@ $(document).ready( function() {
 
 
 function setNode(){
+  $('#pickFrom').find('option:not(:first)').remove()
+  $('#pickTo').find('option:not(:first)').remove()
+
 
   var node = $('#pickNode').val()
 
@@ -138,7 +141,7 @@ function setTransfer() {
   console.log('set transfer activated')
 
   campaign.resources.forEach( function(resource) {
-    $('#transferResourcesTable > tbody').append('<tr><td>' + resource.name + '</td><td>' + 'amount' + '</td><td>' + 'transfered' + '</td></tr>')
+    $('#transferResourcesTable > tbody').append('<tr><td>' + resource.name + '</td><td>' + 'x' + '</td><td>' + 'x' + '</td></tr>')
   })
 
 }

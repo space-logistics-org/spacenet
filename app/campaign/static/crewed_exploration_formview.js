@@ -1,5 +1,5 @@
 
-var campaign = {
+const campaign = {
   nodes: [
     {
       "name": "KSC",
@@ -46,6 +46,163 @@ var campaign = {
   ],
   elements: [
     {
+      "name": "Altair DM",
+      "description": "Altair Descent Module",
+      "class_of_supply": 9023,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 12000,
+      "volume": 0,
+      "max_crew": 0,
+      "max_cargo_mass": 500,
+      "max_cargo_volume": 0,
+      "isp": 448,
+      "max_fuel": 24900,
+      "propellant_id": 2,
+      "type": "PropulsiveVehicle"
+    },
+    {
+      "name": "Altair AM",
+      "description": "Altair Ascent Module",
+      "class_of_supply": 9024,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 3000,
+      "volume": 0,
+      "max_crew": 0,
+      "max_cargo_mass": 100,
+      "max_cargo_volume": 0,
+      "isp": 320,
+      "max_fuel": 3000,
+      "propellant_id": 3,
+      "type": "PropulsiveVehicle"
+    },
+    {
+      "name": "Ares I First Stage",
+      "description": "Ares I Launch Vehicle, First Propulsive Stage",
+      "class_of_supply": 9021,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 105000,
+      "volume": 0,
+      "max_crew": 0,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "isp": 267,
+      "max_fuel": 620000,
+      "propellant_id": 1,
+      "type": "PropulsiveVehicle"
+    },
+    {
+      "name": "Ares I Upper Stage",
+      "description": "Ares I Launch Vehicle, Second Propulsive Stage",
+      "class_of_supply": 9021,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 12000,
+      "volume": 0,
+      "max_crew": 0,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "isp": 448,
+      "max_fuel": 125000,
+      "propellant_id": 1,
+      "type": "PropulsiveVehicle"
+    },
+    {
+      "name": "Ares V SRBs",
+      "description": "Ares V Launch Vehicle, Solid Rocket Boosters",
+      "class_of_supply": 9021,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 210000,
+      "volume": 0,
+      "max_crew": 0,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "isp": 270,
+      "max_fuel": 1375000,
+      "propellant_id": 1,
+      "type": "PropulsiveVehicle"
+    },
+    {
+      "name": "Ares V Core",
+      "description": "Ares V Launch Vehicle, Core Engine",
+      "class_of_supply": 9021,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 175000,
+      "volume": 0,
+      "max_crew": 0,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "isp": 414,
+      "max_fuel": 1587000,
+      "propellant_id": 2,
+      "type": "PropulsiveVehicle"
+    },
+    {
+      "name": "EDS",
+      "description": "Earth Departure System",
+      "class_of_supply": 9022,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 26000,
+      "volume": 0,
+      "max_crew": 0,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "isp": 448,
+      "max_fuel": 253000,
+      "propellant_id": 2,
+      "type": "PropulsiveVehicle"
+    },
+    {
+      "name": "Orion SM",
+      "description": "Orion Service Module",
+      "class_of_supply": 9022,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 3000,
+      "volume": 0,
+      "max_crew": 0,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "isp": 328,
+      "max_fuel": 10000,
+      "propellant_id": 3,
+      "type": "PropulsiveVehicle"
+    },
+    {
+      "name": "Orion CM",
+      "description": "Orion Crew Module",
+      "class_of_supply": 9022,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 8000,
+      "volume": 0,
+      "max_crew": 4,
+      "max_cargo_mass": 100,
+      "max_cargo_volume": 0,
+      "isp": 0,
+      "max_fuel": 0,
+      "propellant_id": 3,
+      "type": "PropulsiveVehicle"
+    },
+    {
+      "name": "Orion LAS",
+      "description": "Orion Launch Abort System",
+      "class_of_supply": 9021,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 6000,
+      "volume": 0,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Unpressurized",
+      "type": "ElementCarrier"
+    },
+    {
       "name": "Crew Member",
       "description": "Crew Member",
       "class_of_supply": 0,
@@ -55,27 +212,8 @@ var campaign = {
       "volume": 0,
       "active_time_fraction": 0.66,
       "type": "HumanAgent"
-    },
-    {
-      "name": "Notional Cargo",
-      "description": "Cargo",
-      "class_of_supply": 6,
-      "environment": "Unpressurized",
-      "accommodation_mass": 0,
-      "mass": 500,
-      "volume": 0,
-      "type": "ResourceContainer"
-    },
-    {
-      "name": "Lunar Surface Samples",
-      "description": "Lunar Surface Samples",
-      "class_of_supply": 6,
-      "environment": "Unpressurized",
-      "accommodation_mass": 0,
-      "mass": 100,
-      "volume": 0,
-      "type": "Element"
     }
+  
   ],
   resources: [
     {
@@ -159,7 +297,9 @@ $(document).ready( function() {
   });
 
   campaign.elements.forEach( function(element) {
-    table.row.add([, element.name, element.type]).draw()
+    if (element.type === 'HumanAgent') {
+      table.row.add([, element.name,'x']).draw()
+    }
   })
 
 
@@ -168,6 +308,7 @@ $(document).ready( function() {
 
 
 function setNode(){
+  $('#pickLocation').find('option:not(:first)').remove()
 
   var node = $('#pickNode').val()
 
