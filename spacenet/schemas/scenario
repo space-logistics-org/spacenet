@@ -3,12 +3,12 @@ from enum import Enum
 
 import datetime
 
-from spacenet.data.I_DataSource import *
+# from spacenet.data.I_DataSource import *
 from spacenet.schemas.element. import *
-from spacenet.schemas.network import *
+# from spacenet.schemas.network import *
 from spacenet.schemas.node import *
-from spacenet.simulator.event.I_Event import *
-from spacenet.util.GlobalParameters import *
+# from spacenet.simulator.event.I_Event import *
+# from spacenet.util.GlobalParameters import *
 from spacenet.schemas.manifest import *
 
 class ScenarioType(str, Enum):
@@ -37,9 +37,9 @@ class Scenario(BaseModel):
     filePath: str = Field(..., title="File Path")
     createdBy: str = Field(..., title="Created By")
 
-    dataSource: I_DataSource = Field(..., title="Data Source")
+    # dataSource: I_DataSource = Field(..., title="Data Source")
 
-    network: Network = Field(..., title="Network")
+    # network: Network = Field(..., title="Network")
 
     missionList: list = Field(..., title="Mission List")
 
