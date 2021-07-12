@@ -1,12 +1,14 @@
 from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import declared_attr
+from sqlalchemy.ext.declarative import declared_attr
 
 from ..database import Base
 from spacenet.schemas.edge import EdgeType
 
+__all__ = ["EdgeType", "Edge", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
+
 
 class Edge(Base):
-    __tablename__ = "Edges"
+    __tablename__ = "edge"
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
@@ -38,7 +40,7 @@ class SpaceEdge(EdgeWithDuration):
 
 
 class FlightEdge(EdgeWithDuration):
-    max_crew = Column(Float)
+    max_crew = Column(Integer)
     max_cargo = Column(Float)
 
     __mapper_args__ = {"polymorphic_identity": EdgeType.Flight.value}

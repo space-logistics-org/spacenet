@@ -5,10 +5,11 @@ from abc import ABC
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field, conint, NonNegativeFloat, NonNegativeInt
+from pydantic import BaseModel, Field, confloat
 from typing_extensions import Literal
 
-from ..constants import Environment, ClassOfSupply
+from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
+from ..constants import ClassOfSupply, Environment
 
 __all__ = [
     "Element",
@@ -32,8 +33,8 @@ class ElementKind(str, Enum):
     ElementCarrier = "ElementCarrier"
     HumanAgent = "HumanAgent"
     RoboticAgent = "RoboticAgent"
-    Propulsive = "Propulsive"
-    Surface = "Surface"
+    PropulsiveVehicle = "PropulsiveVehicle"
+    SurfaceVehicle = "SurfaceVehicle"
 
 
 class Element(BaseModel):
@@ -52,16 +53,15 @@ class Element(BaseModel):
     environment: Environment = Field(
         ..., title="Environment", description="the element's environment"
     )
-    accommodation_mass: float = Field(
+    accommodation_mass: SafeNonNegFloat = Field(
         ...,
-        ge=0,
         title="Accommodation Mass",
         description="the amount of additional COS5 "
         "required to pack the element inside a"
         " carrier.",
     )
-    mass: NonNegativeFloat = Field(..., title="Mass", description="mass in kg")
-    volume: NonNegativeFloat = Field(..., title="Volume", description="volume in m^3")
+    mass: SafeNonNegFloat = Field(..., title="Mass", description="mass in kg")
+    volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
 
 
 class CargoCarrier(Element, ABC):
@@ -69,10 +69,10 @@ class CargoCarrier(Element, ABC):
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
     """
 
-    max_cargo_mass: Optional[NonNegativeFloat] = Field(
+    max_cargo_mass: Optional[SafeNonNegFloat] = Field(
         ..., title="Max Cargo Mass", description="cargo capacity constraint (kg)"
     )
-    max_cargo_volume: Optional[NonNegativeFloat] = Field(
+    max_cargo_volume: Optional[SafeNonNegFloat] = Field(
         ...,
         title="Maximum Cargo Volume",
         description="cargo capacity constraint (m^3)",
@@ -110,12 +110,10 @@ class Agent(Element, ABC):
     An abstract base class representing a generic Agent element.
     """
 
-    active_time_fraction: float = Field(
+    active_time_fraction: confloat(ge=0, le=1) = Field(
         ...,
         title="Active Time Fraction",
         description="the fraction of the day that an agent is active (available)",
-        ge=0,
-        le=1,
     )
 
 
@@ -140,24 +138,27 @@ class Vehicle(CargoCarrier, ABC):
     An abstract base class representing a generic Vehicle, surface or propulsive.
     """
 
-    max_crew: conint(strict=True, ge=0) = Field(
+    max_crew: SafeNonNegInt = Field(
         ..., title="Maximum Crew Count", description="crew capacity constraint"
     )
 
 
 class PropulsiveVehicle(Vehicle):
     """
-    An element representing a vehicle with its own propulsion via OMS.
+    An element representing a vehicle with its own propulsion.
     """
 
-    type: Literal[ElementKind.Propulsive] = Field(description="the element's type")
-    isp: NonNegativeFloat = Field(
+    type: Literal[ElementKind.PropulsiveVehicle] = Field(
+        description="the element's type"
+    )
+    isp: SafeNonNegFloat = Field(
         ..., title="Specific Impulse", description="specific impulse (s)"
     )
-    max_fuel: NonNegativeFloat = Field(
+    max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant_id: conint(strict=True)  # TODO: this needs constraints or to be an enum
+    propellant_id: SafeInt  # TODO: this needs constraints or to be an enum;
+    #  perhaps a foreign key constraint in model?
 
 
 class SurfaceVehicle(Vehicle):
@@ -165,11 +166,12 @@ class SurfaceVehicle(Vehicle):
     An element representing a surface vehicle.
     """
 
-    type: Literal[ElementKind.Surface] = Field(description="the element's type")
-    max_speed: NonNegativeFloat = Field(
+    type: Literal[ElementKind.SurfaceVehicle] = Field(description="the element's type")
+    max_speed: SafeNonNegFloat = Field(
         ..., title="Maximum Speed", description="maximum speed (kph)"
     )
-    max_fuel: NonNegativeFloat = Field(
+    max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    fuel_id: conint(strict=True)  # TODO: this needs constraints or to be an enum
+    fuel_id: SafeInt  # TODO: this needs constraints or to be an enum;
+    #  perhaps a foreign key constraint in model?
