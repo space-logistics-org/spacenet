@@ -77,9 +77,10 @@ function onComplete() {
             elementvalues.push(this.value);
     });
 
+
     var burnStageStr = new Array();
     var eleList = new Array();
-    //how to push an array into the burnstageprofile array and then reset that onesequence array to do it over.
+
     $('.burnstage').each(function () {
       if (this.value != '')
           burnStageStr.push(this.value);
