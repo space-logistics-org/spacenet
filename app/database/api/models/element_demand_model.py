@@ -1,18 +1,22 @@
-from sqlalchemy import Column, String, Float, Boolean
+from sqlalchemy import Column, Integer, String, Float, Boolean
 
 from ..database import Base
-from  spacenet.schemas.element_demand_model import DemandModelType
-from  spacenet.schemas.element import *
+from spacenet.schemas.element_demand_model import DemandModelType
+from spacenet.schemas.element import *
+
 # from  spacenet.schemas.mission import *
 
-__all__ = ["DemandModelType", "DemandModel", "CrewConsumablesDemandModel", "TimedImpulseDemandModel", "RatedDemandModel", "SparingByMassDemandModel"]
+__all__ = ["DemandModelType", "DemandModel", "CrewConsumablesDemandModel",
+           "TimedImpulseDemandModel", "RatedDemandModel", "SparingByMassDemandModel"]
+
 
 class DemandModel(Base):
     __tablename__ = "Demand Models"
-
+    id = Column(Integer, primary_key=True)
     type = Column(String)
 
     __mapper_args__ = {"polymorphic_identity": "demandModel", "polymorphic_on": type}
+
 
 class CrewConsumablesDemandModel(DemandModel):
     # mission = Column(Mission)
@@ -45,16 +49,19 @@ class CrewConsumablesDemandModel(DemandModel):
 
     __mapper_args__ = {"polymorphic_identity": DemandModelType.crew_consumables}
 
+
 class TimedImpulseDemandModel(DemandModel):
     # demands = Column(DemandSet)
     flag = Column(Boolean)
 
     __mapper_args__ = {"polymorphic_identity": DemandModelType.timed_impulse}
 
+
 class RatedDemandModel(DemandModel):
     # demands = Column(DemandSet)
 
     __mapper_args__ = {"polymorphic_identity": DemandModelType.rated}
+
 
 class SparingByMassDemandModel(DemandModel):
     # element = Column(I_Element)
