@@ -93,7 +93,7 @@ function onComplete() {
     max = eleList.length
     var burnStageProfile = [];
 
-    for ( var i=0 ; i < max ; i++){
+    for ( var i=0 ; i < max ; i++ ){
         burnStageProfile[i] = [JSON.stringify({
           element : eleList[i],
           burnStage : burnStageStr[i]
@@ -101,8 +101,6 @@ function onComplete() {
       ];
     }
 
-
-    alert([[1,2], [3,4]]);
     message= JSON.stringify({
       name : name,
       origin_node : origin_node,
