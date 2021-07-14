@@ -34,6 +34,9 @@ class Manifest(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+class Network(BaseModel):
+    nodes: SortedSet = Field(..., title="Nodes")
+    edges: SortedSet = Field(..., title="Edges")
 
 class ScenarioType(str, Enum):
     iss = "ISS"
@@ -67,7 +70,7 @@ class Scenario(BaseModel):
 
     # dataSource: I_DataSource = Field(..., title="Data Source")
 
-    # network: Network = Field(..., title="Network")
+    network: Network = Field(..., title="Network")
 
     missionList: list = Field(..., title="Mission List")
 
