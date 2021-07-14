@@ -3,13 +3,13 @@ from enum import Enum
 
 from datetime import datetime
 
-
 # from spacenet.data.I_DataSource import *
 from sortedcontainers import SortedDict, SortedSet
 
 from spacenet.schemas.element import *
 # from spacenet.schemas.network import *
 from spacenet.schemas.node import *
+
 # from spacenet.simulator.event.I_Event import *
 # from spacenet.util.GlobalParameters import *
 
@@ -34,9 +34,14 @@ class Manifest(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+
 class Network(BaseModel):
     nodes: SortedSet = Field(..., title="Nodes")
     edges: SortedSet = Field(..., title="Edges")
+
+    class Config:
+        arbitrary_types_allowed = True
+
 
 class ScenarioType(str, Enum):
     iss = "ISS"
@@ -94,3 +99,4 @@ class Scenario(BaseModel):
 
     class Config:
         title: "Scenario"
+        arbitrary_types_allowed = True
