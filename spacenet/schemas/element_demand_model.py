@@ -59,7 +59,7 @@ class TimedImpulseDemandModel(DemandModel):
 
 class RatedDemandModel(DemandModel):
     # demandRates: DemandSet = Field(..., title="Demand Rates")
-
+    pass
 
 class SparingByMassDemandModel(DemandModel):
     # element: I_Element = Field(..., title="Element")
