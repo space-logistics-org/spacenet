@@ -13,22 +13,29 @@ import pytest
 from fastapi.testclient import TestClient
 
 import spacenet
-from app.database.api.database import Base
+from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from app.database.api.models.edge import Edge as EdgeModel
 from app.database.api.models.node import Node as NodeModel
-from app.database.test.utilities import TestingSessionLocal, test_engine
+from app.database.test.utilities import test_engine
+from app.dependencies import current_user
 from spacenet.schemas.edge import EdgeType
 from spacenet.schemas.node import NodeType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
+    get_current_user,
+    get_test_db,
     make_subset,
 )
 
 pytestmark = [pytest.mark.integration, pytest.mark.routing]
 
 client = TestClient(app)
+
+app.dependency_overrides[get_db] = get_test_db
+app.dependency_overrides[current_user] = get_current_user
+
 
 Base.metadata.create_all(bind=test_engine)
 
@@ -51,14 +58,6 @@ BAD_EDGE_LIST = json.loads(
 
 def get_other_variants(to_exclude, enum: Type[Enum]) -> List[Enum]:
     return [variant.value for variant in enum if variant != to_exclude]
-
-
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 NODE_PREFIX = "/node"
@@ -143,24 +142,8 @@ def test_empty(prefix):
 
 @pytest.mark.parametrize(
     "variant_name",
-    [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.node,
-            ],
-        )
-        for name in NODE_NAMES
-    ]
-    + [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.edge,
-            ],
-        )
-        for name in EDGE_NAMES
-    ],
+    [pytest.param(name, marks=[pytest.mark.node,],) for name in NODE_NAMES]
+    + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_create(variant_name):
     prefix = VARIANT_NAME_TO_PREFIX[variant_name]
@@ -186,24 +169,8 @@ def test_create(variant_name):
 
 @pytest.mark.parametrize(
     "variant_name",
-    [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.node,
-            ],
-        )
-        for name in NODE_NAMES
-    ]
-    + [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.edge,
-            ],
-        )
-        for name in EDGE_NAMES
-    ],
+    [pytest.param(name, marks=[pytest.mark.node,],) for name in NODE_NAMES]
+    + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_update(variant_name):
     def check_get():
@@ -247,24 +214,8 @@ def test_update(variant_name):
 
 @pytest.mark.parametrize(
     "variant_name",
-    [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.node,
-            ],
-        )
-        for name in NODE_NAMES
-    ]
-    + [
-        pytest.param(
-            name,
-            marks=[
-                pytest.mark.edge,
-            ],
-        )
-        for name in EDGE_NAMES
-    ],
+    [pytest.param(name, marks=[pytest.mark.node,],) for name in NODE_NAMES]
+    + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_delete(variant_name):
     def check_get_all():

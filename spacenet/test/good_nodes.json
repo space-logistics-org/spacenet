@@ -1,6 +1,6 @@
 [
   {
-    "type": "Orbital",
+    "type": "OrbitalNode",
     "name": "ISSO",
     "body_1": "Earth",
     "apoapsis": 360.0,
@@ -9,7 +9,7 @@
     "description": "International Space Station Orbit"
   },
   {
-    "type": "Orbital",
+    "type": "OrbitalNode",
     "name": "LLPO",
     "body_1": "Moon",
     "apoapsis": 100.0,
@@ -18,7 +18,7 @@
     "description": "Low Lunar Polar Orbit"
   },
   {
-    "type": "Orbital",
+    "type": "OrbitalNode",
     "name": "LEO",
     "body_1": "Earth",
     "apoapsis": 166.7,
@@ -27,7 +27,7 @@
     "description": "Low Earth Parking Orbit"
   },
   {
-    "type": "Orbital",
+    "type": "OrbitalNode",
     "name": "RMO",
     "body_1": "Mars",
     "apoapsis": 250.0,
@@ -36,7 +36,7 @@
     "description": "Reference Mars Orbit"
   },
   {
-    "type": "Orbital",
+    "type": "OrbitalNode",
     "name": "AO10",
     "body_1": "Sun",
     "apoapsis": 151093980.0,
@@ -45,7 +45,7 @@
     "description": "Near-Earth Object 1999 AO10"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "KSC",
     "body_1": "Earth",
     "latitude": 28.6,
@@ -53,7 +53,7 @@
     "description": "Kennedy Space Center"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "TSC",
     "body_1": "Earth",
     "latitude": 30.4,
@@ -61,7 +61,7 @@
     "description": "Tanegashima"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "LSP",
     "body_1": "Moon",
     "latitude": -89.9,
@@ -69,7 +69,7 @@
     "description": "Lunar South Pole"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "MH",
     "body_1": "Moon",
     "latitude": 14.0,
@@ -77,7 +77,7 @@
     "description": "Marius Hills"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "MV",
     "body_1": "Mars",
     "latitude": 24.0,
@@ -85,7 +85,7 @@
     "description": "Mawrth Vallis"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "GC",
     "body_1": "Mars",
     "latitude": -4.6,
@@ -93,7 +93,7 @@
     "description": "Gale Crater"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "SL1",
     "body_1": "Moon",
     "latitude": -65.0,
@@ -101,7 +101,7 @@
     "description": "placeholder"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "SL2",
     "body_1": "Moon",
     "latitude": -55.0,
@@ -109,7 +109,7 @@
     "description": "placeholder"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "SL3",
     "body_1": "Moon",
     "latitude": -60.0,
@@ -117,7 +117,7 @@
     "description": "placeholder"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceNode",
     "name": "MC",
     "body_1": "Moon",
     "latitude": -84.9,
@@ -125,7 +125,7 @@
     "description": "Malapert Crater"
   },
   {
-    "type": "Lagrange",
+    "type": "LagrangeNode",
     "name": "E2",
     "body_1": "Earth",
     "body_2": "Sun",
@@ -133,7 +133,7 @@
     "description": "Earth-Sun Lagrange 2"
   },
   {
-    "type": "Lagrange",
+    "type": "LagrangeNode",
     "name": "MN4",
     "body_1": "Moon",
     "body_2": "Earth",
@@ -141,7 +141,7 @@
     "description": "Moon-Earth Lagrange 4"
   },
   {
-    "type": "Lagrange",
+    "type": "LagrangeNode",
     "name": "MS5",
     "body_1": "Mars",
     "body_2": "Sun",

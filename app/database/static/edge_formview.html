@@ -2,78 +2,86 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <title>Edge Formview</title>
-  <meta name="author" content="SpaceNet Team">
-  <meta name="description" content="A formview editor for SpaceNet Edge objects.">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="style.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-  <script src="edge_formview.js"></script>
+    <meta charset="utf-8">
+    <title>Edge Formview</title>
+    <meta content="SpaceNet Team" name="author">
+    <meta content="A formview editor for SpaceNet Edge objects." name="description">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="style.css" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+    <script crossorigin="anonymous"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+    <script src="edge_formview.js"></script>
 </head>
 
 <body>
-  <div class="container py-4">
+<div class="container py-4">
     <header class="pb-3 mb-4 border-bottom">
-      <a class="d-flex align-items-center text-dark text-decoration-none"></a>
-        <img src = "SpaceNetLogo.jpg" height="30px">
+        <a class="d-flex align-items-center text-dark text-decoration-none"></a>
+        <img height="30px" src="SpaceNetLogo.jpg">
         <span class="fs-4">SpaceNet</span>
     </header>
-  <h1 class= "text-center">Edge Form</h1>
-  <div class="text-center" class="dropdown">
-  <label for="dropPick">Edge Type</label>
-    <form id="edge">
-      <select id="dropPick" onChange = "formSet()" class="form-control" class="text-center">
-        <option selected id="def">Choose...</option>
-        <option id="Flight">Flight</option>
-        <option id="Space">Space</option>
-        <option id="Surface">Surface</option>
-      </select>
-    </form>
-  </div>
-  <hr></hr>
+    <h1 class="text-center">Edge Form</h1>
+    <div class="text-center" class="dropdown">
+        <label for="edge">Edge Type</label>
+        <form id="edge">
+            <select class="form-control" class="text-center" id="dropPick" onChange="formSet()">
+                <option id="def" selected>Choose...</option>
+                <option id="Flight">Flight</option>
+                <option id="Space">Space</option>
+                <option id="Surface">Surface</option>
+            </select>
+        </form>
+    </div>
+    <hr></hr>
     <form id="components">
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="inputName">Name</label>
-          <input type="text" class="form-control" id="inputName" placeholder="Name">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputName">Name</label>
+                <input class="form-control" id="inputName" placeholder="Name" type="text">
+            </div>
         </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        <label for="inputOrigin_ID">Origin ID</label>
-        <input type="number" class="form-control" id="inputOrigin_ID" placeholder="Origin ID">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputDestination_ID">Destination ID</label>
-        <input type="number" class="form-control" id="inputDestination_ID" placeholder="Destination ID">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputDuration">Duration</label>
-        <input type="number" class="form-control" id="inputDuration" placeholder="Duration">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputDistance">Distance</label>
-        <input type="number" class="form-control" id="inputDistance" placeholder="Distance">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputMax_Crew">Max Crew</label>
-        <input type="number" class="form-control" id="inputMax_Crew" placeholder="Max Crew">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputMax_Cargo">Max Cargo</label>
-        <input type="number" class="form-control" id="inputMax_Cargo" placeholder="Max Cargo">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="inputDescription">Description</label>
-        <input type="text" class="form-control" id="inputDescription" placeholder="Description">
-      </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputOrigin_ID">Origin ID</label>
+                <input class="form-control" id="inputOrigin_ID" placeholder="Origin ID" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputDestination_ID">Destination ID</label>
+                <input class="form-control" id="inputDestination_ID" placeholder="Destination ID" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputDuration">Duration</label>
+                <input class="form-control" id="inputDuration" placeholder="Duration" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputDistance">Distance</label>
+                <input class="form-control" id="inputDistance" placeholder="Distance" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputMax_Crew">Max Crew</label>
+                <input class="form-control" id="inputMax_Crew" placeholder="Max Crew" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputMax_Cargo">Max Cargo</label>
+                <input class="form-control" id="inputMax_Cargo" placeholder="Max Cargo" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputDescription">Description</label>
+                <input class="form-control" id="inputDescription" placeholder="Description" type="text">
+            </div>
 
-    </div>
-    <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
-  </form>
+        </div>
+        <input class="btn btn-primary" name="Submit" onClick="onComplete()" type="button" value="Submit">
+    </form>
 </div>
 </body>
 

@@ -12,3 +12,7 @@ p{
 .invalid {
 	display: none;
 }
+
+#logout {
+  display: none;
+}

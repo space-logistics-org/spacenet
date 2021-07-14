@@ -8,6 +8,7 @@ from spacenet import test
 from app.database.api.models import edge as models
 from app.database.api.schemas import edge as schemas
 from app.database.api.database import Base, engine
+from spacenet.schemas import EdgeType
 from .utilities import TestingSessionLocal
 
 pytestmark = [pytest.mark.unit, pytest.mark.edge, pytest.mark.database]
@@ -31,7 +32,7 @@ class TestEdgeData(unittest.TestCase):
     def test_model_good_edges(self):
 
         for edge in self.edge_data:
-            if edge["type"] == "Surface":
+            if edge["type"] == EdgeType.Surface.value:
                 testedge = schemas.SurfaceEdge.parse_obj(edge)
                 db_edge = models.SurfaceEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
@@ -47,7 +48,7 @@ class TestEdgeData(unittest.TestCase):
                 self.db.delete(db_edge)
                 self.db.commit()
 
-            elif edge["type"] == "Space":
+            elif edge["type"] == EdgeType.Space.value:
                 testedge = schemas.SpaceEdge.parse_obj(edge)
                 db_edge = models.SpaceEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)
@@ -64,7 +65,7 @@ class TestEdgeData(unittest.TestCase):
                 self.db.delete(db_edge)
                 self.db.commit()
 
-            elif edge["type"] == "Flight":
+            elif edge["type"] == EdgeType.Flight.value:
                 testedge = schemas.FlightEdge.parse_obj(edge)
                 db_edge = models.FlightEdge(**testedge.dict())
                 self.assertIsNone(db_edge.id)

@@ -37,10 +37,18 @@ from fastapi.testclient import TestClient
 from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from app.database.api.models.element import Element as ElementModel
-from app.database.test.utilities import TestingSessionLocal, test_engine
+from app.database.test.utilities import test_engine
+from app.dependencies import current_user
 from spacenet.schemas.element import ElementKind
 from spacenet.test.element_factories import *
-from .utilities import (filter_val_not_none, first_subset_second, make_subset, with_type)
+from .utilities import (
+    filter_val_not_none,
+    first_subset_second,
+    get_test_db,
+    get_current_user,
+    make_subset,
+    with_type,
+)
 
 pytestmark = [pytest.mark.integration, pytest.mark.element, pytest.mark.routing]
 
@@ -49,15 +57,8 @@ client = TestClient(app)
 Base.metadata.create_all(bind=test_engine)
 
 
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-app.dependency_overrides[get_db] = override_get_db
+app.dependency_overrides[get_db] = get_test_db
+app.dependency_overrides[current_user] = get_current_user
 
 KIND_TO_FACTORIES: Dict[
     ElementKind, Tuple[Type[ValidArgsFactory], Type[InvalidArgsFactory]]
@@ -73,8 +74,11 @@ KIND_TO_FACTORIES: Dict[
     ),
     ElementKind.RoboticAgent: (ValidAgentArgsFactory, InvalidAgentArgsFactory),
     ElementKind.HumanAgent: (ValidAgentArgsFactory, InvalidAgentArgsFactory),
-    ElementKind.Propulsive: (ValidPropulsiveArgsFactory, InvalidPropulsiveArgsFactory),
-    ElementKind.Surface: (ValidSurfaceArgsFactory, InvalidSurfaceArgsFactory),
+    ElementKind.PropulsiveVehicle: (
+        ValidPropulsiveArgsFactory,
+        InvalidPropulsiveArgsFactory,
+    ),
+    ElementKind.SurfaceVehicle: (ValidSurfaceArgsFactory, InvalidSurfaceArgsFactory),
 }
 
 TESTED_VARIANTS: List[ElementKind] = [variant for variant in ElementKind]
@@ -128,7 +132,7 @@ def test_create(element_type: ElementKind):
     read_all_response = client.get(f"/element/")
     assert read_all_response.status_code == 200
     assert (
-            len(read_all_response.json()) == 1
+        len(read_all_response.json()) == 1
     ), "expected length-1 list of existing elements"
     assert read_response.json() == read_all_response.json()[0]
 
@@ -222,8 +226,6 @@ def test_delete(element_type: ElementKind):
     assert read_all_r.status_code == 200
     assert len(read_all_r.json()) == 0
 
-
-# TODO: tests for heterogeneous types
 
 if __name__ == "__main__":
     pytest.main()

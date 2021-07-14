@@ -13,7 +13,7 @@
     "isp": 328,
     "max_fuel": 10000,
     "propellant_id": 3,
-    "type": "Propulsive"
+    "type": "PropulsiveVehicle"
   },
   {
     "name": "Orion CM",
@@ -29,7 +29,7 @@
     "isp": 0,
     "max_fuel": 0,
     "propellant_id": 3,
-    "type": "Propulsive"
+    "type": "PropulsiveVehicle"
   },
   {
     "name": "Orion LAS",

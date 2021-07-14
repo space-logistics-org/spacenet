@@ -10,45 +10,312 @@
 
   <link href="style.css" rel="stylesheet">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 </head>
 
 <main>
 <div class="container py-4">
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.js" integrity="sha512-CAv0l04Voko2LIdaPmkvGjH3jLsH+pmTXKFoyh5TIimAME93KjejeP9j7wSeSRXqXForv73KUZGJMn8/P98Ifg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@1.27.0/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.1"></script>
+    <script src="bat_chart_parsing.js"></script>
     <canvas id="batChart"></canvas>
 
     <script>
-        var DateTime = luxon.DateTime;
-        const start = DateTime.fromSQL("2020-11-20");
+
+        var lunar_sortie = {
+            name: 'Lunar Sortie',
+            startDate: '2021-07-09',
+            events: [
+                {
+                    name: 'Create Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'KSC',
+                        id: 1
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'KSC-LEO',
+                        origin_node: {
+                            name: 'KSC',
+                            id: 1
+                        },
+                        destination_node: {
+                            name: 'LEO',
+                            id: 3
+                        },
+                        duration: 0.25,
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'LEO-LLPO',
+                        origin_node: {
+                            name: 'LEO',
+                            id: 3
+                        },
+                        destination_node: {
+                            name: 'LLPO',
+                            id: 4
+                        },
+                        duration: 4.0,
+                    }
+                },
+                {
+                    name: 'Move Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'LLPO',
+                        id: 4
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'LLPO-LSP',
+                        origin_node: {
+                            name: 'LLPO',
+                            id: 4
+                        },
+                        destination_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        duration: 0.5,
+                    }
+                },
+                {
+                    name: 'Crewed Exploration',
+                    time: 0,
+                    priority: 1,
+                    edge: {
+                        name: 'Crewed Exploration',
+                        origin_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        destination_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        duration: 7.5,
+                    }
+                },
+                {
+                    name: 'Create Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'LSP',
+                        id: 5
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'LSP-LLPO',
+                        origin_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        destination_node: {
+                            name: 'LLPO',
+                            id: 4
+                        },
+                        duration: 0.5,
+                    }
+                },
+                {
+                    name: 'Move Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'LLPO',
+                        id: 4
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'LLPO-PAC',
+                        origin_node: {
+                            name: 'LLPO',
+                            id: 4
+                        },
+                        destination_node: {
+                            name: 'PAC',
+                            id: 2
+                        },
+                        duration: 4,
+                    }
+                }
+
+
+            ]
+        }
+
+        var mission2 = {
+            name: 'Surface Exploration',
+            startDate: '2019-11-29',
+            events: [
+                {
+                    name: 'Create Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'KSC',
+                        id: 1
+                    }
+                },
+                {
+                    name: 'Flight Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'Cargo Delivery',
+                        origin_node: {
+                            name: 'KSC',
+                            id: 1
+                        },
+                        destination_node: {
+                            name: 'LSP',
+                            id: 3
+                        },
+                        duration: 7.5,
+                    }
+                },
+                {
+                    name: 'Crewed Exploration',
+                    time: 0,
+                    priority: 1,
+                    edge: {
+                        name: 'Cargo Delivery',
+                        origin_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        destination_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        duration: 7,
+                    }
+                },
+                {
+                    name: 'Move Elements',
+                    time: 0,
+                    priority: 2,
+                    node: {
+                        name: 'LSP',
+                        id: 3
+                    }
+                },
+                {
+                    name: 'Crewed Return',
+                    time: 0,
+                    priority: 2,
+                    edge: {
+                        name: 'Cargo Delivery',
+                        origin_node: {
+                            name: 'LSP',
+                            id: 3
+                        },
+                        destination_node: {
+                            name: 'PAC',
+                            id: 2
+                        },
+                        duration: 5.5,
+                    }
+                },
+                {
+                    name: 'Remove Elements',
+                    time: 0,
+                    priority: 2,
+                    node: {
+                        name: 'PAC',
+                        id: 2
+                    }
+                }
+                
+            ]
+        }
+
+
+        var mission1 = {
+            name: 'Habitat Delivery',
+            startDate: '2020-02-29',
+            events: [
+                {
+                    name: 'Create Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'KSC',
+                        id: 1
+                    }
+                },
+                {
+                    name: 'Create Elements',
+                    time: 0,
+                    priority: 2,
+                    node: {
+                        name: 'KSC',
+                        id: 1
+                    }
+                },
+                {
+                    name: 'Flight Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'Cargo Delivery',
+                        origin_node: {
+                            name: 'KSC',
+                            id: 1
+                        },
+                        destination_node: {
+                            name: 'LSP',
+                            id: 3
+                        },
+                        duration: 7.5,
+                    }
+                },
+                
+            ]
+        }
+
+        var missions = [lunar_sortie]
+
+        var all_data = [];
+        var nodeNames = {};
+        missions.forEach(function(item) {
+            var parsed = parseMission(item);
+            $.extend(nodeNames, parsed[0]);
+            parsed[1].forEach(function(dataset) {
+                all_data.push(dataset)
+            })
+        })
 
         const data = {
-        labels: [ // Date Objects
-            start.plus({ days: 7}),
-            start.plus({ days: 14}),
-            start.plus({ days: 21}),
-            start.plus({ days: 28}),
-            start.plus({ days: 35}),
-            start.plus({ days: 42}),
-            start.plus({ days: 49})
-        ],
-        datasets: [ {
-            label: 'Mission 1',
-            data: [0, 1, 2, 1, 2, 0, 1],
-            borderColor: 'red',
-            backgroundColor: 'red',
-        },
-        {
-            label: 'Mission 2',
-            data: [,,,2, 1, 0],
-            borderColor: 'blue',
-            backgroundColor: 'blue',
-        }
-        ]
+            datasets: all_data
         };
-
-        var nodes = ['KSC', 'LAC', 'PAC']
 
         const config = {
             type: 'line',
@@ -57,7 +324,7 @@
                 responsive: true,
                 plugins: {
                     legend: {
-                        position: 'top',
+                        display: false,
                     },
                     title: {
                         display: true,
@@ -72,7 +339,7 @@
                                     label += ': ';
                                 }
                                 if (context.parsed.y !== null) {
-                                    label += nodes[context.parsed.y];
+                                    label += nodeNames[context.parsed.y];
                                 }
                                 return label;
                             }
@@ -84,7 +351,7 @@
                         type: 'time',
                         time: {
                             // Luxon format string
-                            tooltipFormat: 'DD'
+                            tooltipFormat: 'DD T'
                         },
                         title: {
                             display: true,
@@ -98,22 +365,17 @@
                         },
                         ticks: {
                             callback: function(value, index, values) {
-                                return nodes[value]
+                                return nodeNames[value]
                             }
                         }
                     }
                 },
             }
         };
-
         var myChart = new Chart(
             document.getElementById('batChart'),
             config
         );
-
-
-
-
     </script>
 
 
@@ -127,7 +389,3 @@
 </main>
 
 </html>
-
-things to add:
--point styling (make a function )
--line segment styling (make a function https://www.chartjs.org/docs/master/samples/line/segments.html)

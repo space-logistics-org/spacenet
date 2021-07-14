@@ -1,7 +1,29 @@
 import doctest
-import pytest
 import random
 from typing import Dict
+
+from app.database.test.utilities import TestingSessionLocal
+from app.dependencies import fastapi_users
+
+__all__ = [
+    "get_test_db",
+    "get_current_user",
+    "with_type",
+    "make_subset",
+    "first_subset_second",
+    "filter_val_not_none",
+]
+
+
+def get_test_db():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+get_current_user = fastapi_users.current_user(optional=True)
 
 
 def with_type(d: Dict, kind) -> Dict:
@@ -82,5 +104,5 @@ def filter_val_not_none(d: Dict) -> Dict:
     return {k: v for k, v in d.items() if v is not None}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     doctest.testmod()

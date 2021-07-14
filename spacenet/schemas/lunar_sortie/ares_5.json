@@ -13,7 +13,7 @@
     "isp": 270,
     "max_fuel": 1375000,
     "propellant_id": 1,
-    "type": "Propulsive"
+    "type": "PropulsiveVehicle"
   },
   {
     "name": "Ares V Core",
@@ -29,7 +29,7 @@
     "isp": 414,
     "max_fuel": 1587000,
     "propellant_id": 2,
-    "type": "Propulsive"
+    "type": "PropulsiveVehicle"
   },
   {
     "name": "EDS",
@@ -45,6 +45,6 @@
     "isp": 448,
     "max_fuel": 253000,
     "propellant_id": 2,
-    "type": "Propulsive"
+    "type": "PropulsiveVehicle"
   }
 ]

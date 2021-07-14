@@ -1,132 +1,172 @@
-name = "";
-origin_id = 0;
-dest_id = 0;
-dur = 0;
-dist = 0;
-max_crew = 0;
-max_cargo = 0;
-desc = "";
 
-
-
-
-function formSet(){
-
-  $("#components #inputName").prop("disabled",true);
-  $("#components #inputOrigin_ID").prop("disabled",true);
-  $("#components #inputDestination_ID").prop("disabled",true);
-  $("#components #inputDuration").prop("disabled",true);
-  $("#components #inputDistance").prop("disabled",true);
-  $("#components #inputMax_Crew").prop("disabled",true);
-  $("#components #inputMax_Cargo").prop("disabled",true);
-  $("#components #inputDescription").prop("disabled",true);
-
-  var edgeType = document.getElementById('dropPick').value;
-
-  switch(edgeType) {
-    case 'def':{
-      $("#components #inputName").prop("disabled",true);
-      $("#components #inputOrigin_ID").prop("disabled",true);
-      $("#components #inputDestination_ID").prop("disabled",true);
-      $("#components #inputDuration").prop("disabled",true);
-      $("#components #inputDistance").prop("disabled",true);
-      $("#components #inputMax_Crew").prop("disabled",true);
-      $("#components #inputMax_Cargo").prop("disabled",true);
-      $("#components #inputDescription").prop("disabled",true);
-      break;
+var campaign = {
+  nodes: [
+    {
+      "name": "KSC",
+      "description": "Kennedy Space Center",
+      "body_1": "Earth",
+      "latitude": 28.6,
+      "longitude": -80.6,
+      "type": "SurfaceNode"
+    },
+    {
+      "name": "PAC",
+      "description": "Pacific Ocean Splashdown",
+      "body_1": "Earth",
+      "latitude": 35,
+      "longitude": -117.9,
+      "type": "SurfaceNode"
+    },
+    {
+      "name": "LSP",
+      "description": "Lunar South Pole",
+      "body_1": "Moon",
+      "latitude": -89.9,
+      "longitude": -180,
+      "type": "SurfaceNode"
+    },
+    {
+      "name": "LEO",
+      "description": "Low Earth Orbit",
+      "body_1": "Earth",
+      "apoapsis": 296,
+      "periapsis": 296,
+      "inclination": 28.5,
+      "type": "OrbitalNode"
+    },
+    {
+      "name": "LLPO",
+      "description": "Low Lunar Polar Orbit",
+      "body_1": "Moon",
+      "apoapsis": 100,
+      "periapsis": 100,
+      "inclination": 90,
+      "type": "OrbitalNode"
     }
-    case 'Flight': {
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputOrigin_ID").prop("disabled",false);
-      $("#components #inputDestination_ID").prop("disabled",false);
-      $("#components #inputDuration").prop("disabled",false);
-      $("#components #inputMax_Crew").prop("disabled",false);
-      $("#components #inputMax_Cargo").prop("disabled",false);
-      $("#components #inputDescription").prop("disabled",false);
-      break;
-        }
-    case 'Space':{
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputOrigin_ID").prop("disabled",false);
-      $("#components #inputDestination_ID").prop("disabled",false);
-      $("#components #inputDuration").prop("disabled",false);
-      $("#components #inputDescription").prop("disabled",false);
-      break;}
-    case 'Surface':{
-      $("#components #inputName").prop("disabled",false);
-      $("#components #inputOrigin_ID").prop("disabled",false);
-      $("#components #inputDestination_ID").prop("disabled",false);
-      $("#components #inputDistance").prop("disabled",false);
-      $("#components #inputDescription").prop("disabled",false);
-      break;}
-  }
+  ],
+  elements: [
+    {
+      "name": "Crew Member",
+      "description": "Crew Member",
+      "class_of_supply": 0,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 100,
+      "volume": 0,
+      "active_time_fraction": 0.66,
+      "type": "HumanAgent"
+    },
+    {
+      "name": "Resource Container Example",
+      "description": "Cargo",
+      "class_of_supply": 6,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 500,
+      "volume": 0,
+      "type": "ResourceContainer"
+    },
+    {
+      "name": "Lunar Surface Samples",
+      "description": "Lunar Surface Samples",
+      "class_of_supply": 6,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 100,
+      "volume": 0,
+      "type": "Element"
+    }
+  ],
+  resources: [
+    {
+      "name": "PBAN Solid",
+      "description": "Solid rocket fuel",
+      "class_of_supply": 105,
+      "units": "kg",
+      "unit_mass": 1,
+      "unit_volume": 0,
+      "type": "Continuous"
+    },
+    {
+      "name": "LH2/LOX",
+      "description": "Liquid oxygen / liquid hydrogen cryogenic fuel",
+      "class_of_supply": 101,
+      "units": "kg",
+      "unit_mass": 1,
+      "unit_volume": 0,
+      "type": "Continuous"
+    },
+    {
+      "name": "MMH/N2O4",
+      "description": "Hypergolic fuel",
+      "class_of_supply": 102,
+      "units": "kg",
+      "unit_mass": 1,
+      "unit_volume": 0,
+      "type": "Continuous"
+    }
+  ]
+}
+
+$(document).ready( function() {
+  console.log('doc ready')
+
+  campaign.nodes.forEach( function (node) {
+    console.log(node)
+    $('#pickNode').append('<option value="' + node.origin_id + '">' + node.name + '</option>')
+  })
+
+})
+
+
+
+function setNode(){
+  $('#pickFrom').find('option:not(:first)').remove()
+  $('#pickTo').find('option:not(:first)').remove()
+
+
+  var node = $('#pickNode').val()
+
+  campaign.elements.forEach( function(elt) {
+    if (elt.type === 'ResourceContainer') {
+      $('#pickFrom').append('<option value="' + elt.name + '">' + elt.name + '</option>')
+      $('#pickTo').append('<option value="' + elt.name + '">' + elt.name + '</option>')
+    }
+  })
+
+}
+
+function setTransfer() {
+
+  console.log('set transfer activated')
+
+  campaign.resources.forEach( function(resource) {
+    $('#transferResourcesTable > tbody').append('<tr><td>' + resource.name + '</td><td>' + 'x' + '</td><td>' + 'x' + '</td></tr>')
+  })
+
 }
 
 function onComplete(){
 
-    name = document.getElementById("inputName").value;
-    type = document.getElementById("dropPick").value;
-    origin_id = document.getElementById("inputOrigin_ID").value;
-    dest_id = document.getElementById("inputDestination_ID").value;
-    dur = document.getElementById("inputDuration").value;
-    dist = document.getElementById("inputDistance").value;
-    max_crew = document.getElementById("inputMax_Crew").value;
-    max_cargo = document.getElementById("inputMax_Cargo").value;
-    desc = document.getElementById("inputDescription").value;
+    name = $("#inputName").val();
+    node = $("#pickNode").val();
+    time = $("#inputTime").val();
+    priority = $("#pickPriority").val();
+    origin_id = $("#pickFrom").val();
+    destination_id = $("#pickTo").val();
 
-    switch(type){
+    to_transfer = []
 
-      case "Flight":{
-          message = JSON.stringify({
-          type : "Flight",
-          name : name,
-          origin_id :  parseInt(origin_id),
-          destination_id : parseInt(dest_id),
-          duration : parseInt(dur),
-          max_crew : parseInt(max_crew),
-          max_cargo : parseInt(max_cargo),
-          description : desc,
-          });
-          break;
-        }
-      case "Space":{
-        message = JSON.stringify({
-          type : "Space",
-          name : name,
-          origin_id :  parseInt(origin_id),
-          destination_id : parseInt(dest_id),
-          duration : parseInt(dur),
-          description : desc,
-      });
-      break;
+    data = {
+      name: name,
+      node: node,
+      time: time,
+      priority: priority,
+      origin_id: origin_id,
+      destination_id: destination_id,
+      to_transfer: to_transfer
     }
-      case "Surface":{
-        message = JSON.stringify({
-          type : "Surface",
-          name : name,
-          origin_id :  parseInt(origin_id),
-          destination_id : parseInt(dest_id),
-          distance : parseInt(dist),
-          description : desc,
-        });
-        break;
-    }
-  }
 
-  console.log(message)
-  $.ajax({
-    url: "/database/api/edge/",
-    data: message,
-    contentType: 'application/json; charset=utf-8',
-    dataType: "json",
-    method: "POST",
-    success: function() {
-      document.getElementById("edge").reset()
-      document.getElementById("components").reset()
-      $('#addModal').modal('hide');
-      location.reload()
-    }
-  });
-
-
+    console.log(data)
+    location.reload()
 }

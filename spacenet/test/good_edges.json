@@ -1,6 +1,6 @@
 [
   {
-    "type": "Flight",
+    "type": "FlightEdge",
     "name": "Crew Launch to LEO",
     "origin_id": 6,
     "destination_id": 3,
@@ -10,7 +10,7 @@
     "description": "KSC Launch to LEO"
   },
   {
-    "type": "Flight",
+    "type": "FlightEdge",
     "name": "MAV Ascent from MV",
     "origin_id": 10,
     "destination_id": 4,
@@ -20,7 +20,7 @@
     "description": "Mars Ascent Vehicle Launch"
   },
   {
-    "type": "Flight",
+    "type": "FlightEdge",
     "name": "Improved Crew Delivery",
     "origin_id": 6,
     "destination_id": 8,
@@ -30,7 +30,7 @@
     "description": "placeholder"
   },
   {
-    "type": "Flight",
+    "type": "FlightEdge",
     "name": "Cargo Delivery",
     "origin_id": 6,
     "destination_id": 8,
@@ -40,7 +40,7 @@
     "description": "placeholder"
   },
   {
-    "type": "Flight",
+    "type": "FlightEdge",
     "name": "Ascent to LLO",
     "origin_id": 9,
     "destination_id": 2,
@@ -50,7 +50,7 @@
     "description": "Lunar Ascent"
   },
   {
-    "type": "Space",
+    "type": "SpaceEdge",
     "name": "KSC-LEO",
     "origin_id": 6,
     "destination_id": 3,
@@ -58,7 +58,7 @@
     "description": "Earth Ascent"
   },
   {
-    "type": "Space",
+    "type": "SpaceEdge",
     "name": "LEO-LLPO",
     "origin_id": 3,
     "destination_id": 2,
@@ -66,7 +66,7 @@
     "description": "Lunar Orbit Injection"
   },
   {
-    "type": "Space",
+    "type": "SpaceEdge",
     "name": "LLPO-LSP",
     "origin_id": 2,
     "destination_id": 8,
@@ -74,7 +74,7 @@
     "description": "Lunar Descent"
   },
   {
-    "type": "Space",
+    "type": "SpaceEdge",
     "name": "TMI/MOI",
     "origin_id": 3,
     "destination_id": 4,
@@ -82,7 +82,7 @@
     "description": "Trans-Mars Injection/ Mars Orbit Insertion(Aerocapture)"
   },
   {
-    "type": "Space",
+    "type": "SpaceEdge",
     "name": "Descent to GC",
     "origin_id": 4,
     "destination_id": 11,
@@ -90,7 +90,7 @@
     "description": "Descent to Gale Crater"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceEdge",
     "name": "LSP-SL1",
     "origin_id": 8,
     "destination_id": 12,
@@ -98,7 +98,7 @@
     "description": "placeholder"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceEdge",
     "name": "LSP-SL2",
     "origin_id": 8,
     "destination_id": 13,
@@ -106,7 +106,7 @@
     "description": "placeholder"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceEdge",
     "name": "LSP-SL3",
     "origin_id": 8,
     "destination_id": 14,
@@ -114,7 +114,7 @@
     "description": "placeholder"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceEdge",
     "name": "SL2-SL3",
     "origin_id": 13,
     "destination_id": 14,
@@ -122,7 +122,7 @@
     "description": "placeholder"
   },
   {
-    "type": "Surface",
+    "type": "SurfaceEdge",
     "name": "Path to Malapert",
     "origin_id": 8,
     "destination_id": 15,

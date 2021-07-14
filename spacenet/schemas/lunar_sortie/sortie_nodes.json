@@ -5,7 +5,7 @@
     "body_1": "Earth",
     "latitude": 28.6,
     "longitude": -80.6,
-    "type": "Surface"
+    "type": "SurfaceNode"
   },
   {
     "name": "PAC",
@@ -13,7 +13,7 @@
     "body_1": "Earth",
     "latitude": 35,
     "longitude": -117.9,
-    "type": "Surface"
+    "type": "SurfaceNode"
   },
   {
     "name": "LSP",
@@ -21,7 +21,7 @@
     "body_1": "Moon",
     "latitude": -89.9,
     "longitude": -180,
-    "type": "Surface"
+    "type": "SurfaceNode"
   },
   {
     "name": "LEO",
@@ -30,7 +30,7 @@
     "apoapsis": 296,
     "periapsis": 296,
     "inclination": 28.5,
-    "type": "Orbital"
+    "type": "OrbitalNode"
   },
   {
     "name": "LLPO",
@@ -39,6 +39,6 @@
     "apoapsis": 100,
     "periapsis": 100,
     "inclination": 90,
-    "type": "Orbital"
+    "type": "OrbitalNode"
   }
 ]
