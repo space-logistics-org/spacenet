@@ -1,14 +1,3 @@
-name = "";
-origin_id = 0;
-dest_id = 0;
-dur = 0;
-dist = 0;
-max_crew = 0;
-max_cargo = 0;
-desc = "";
-
-
-
 $(document).ready(function () {
     CrewList();
     DemandList();
