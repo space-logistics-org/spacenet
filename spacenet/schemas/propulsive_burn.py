@@ -36,12 +36,12 @@ class BurnStageItem(BaseModel):
     )
 
 
-class PropulsiveBurn(BaseModel):
+class PropulsiveBurn(BaseModel):  # MoveElements, RemoveElements, MakeElements
     """
     Event that represents a propulsive maneuver that may be composed of one or
     more burns or stages of individual elements.
     """
-
+    # TODO: these should be IDs / references to the original element
     elements: List[Element] = Field(
         ...,
         title="Elements List",

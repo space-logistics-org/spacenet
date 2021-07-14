@@ -4,7 +4,7 @@ from enum import Enum
 __all__ = ["Burn", "BurnType"]
 
 
-class BurnType(Enum):
+class BurnType(Enum):  # TODO: drop this? RCS too granular
     """
     An enumeration of the two different types
     of burns.
@@ -14,7 +14,7 @@ class BurnType(Enum):
     RCS = "RCS"
 
 
-class Burn(BaseModel):
+class Burn(BaseModel):  # TODO: how does a burn decompose into RemoveElements events
     """
     Base class for propulsive burns
     """
@@ -27,4 +27,6 @@ class Burn(BaseModel):
     type: BurnType = Field(..., description="Type of propuulsive burn")
     delta_v: float = Field(
         ..., description="Change in velocity to be achieved by a burn", ge=0
-    )
+    )  # TODO: how do we know the OMS delta-v of an element; you can go from delta-V and ISP
+    # to fuel consumption
+    # TODO: Burns should reference the IDs of elements they burn out, and those are removed
