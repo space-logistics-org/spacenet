@@ -38,7 +38,7 @@ class SpaceTransport(BaseModel):
         ..., title="Priority", description="Importance of mission event", ge=1, le=5
     )
 
-    elements_id_list: List[int] = Field(
+    elements_id_list: List[PositiveInt] = Field(
         ...,
         title="Element ID List",
         description="A list of the IDs of elements that may used in the Burn-Stage Sequence",
