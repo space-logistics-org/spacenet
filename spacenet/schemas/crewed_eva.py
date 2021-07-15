@@ -11,6 +11,15 @@ class EVACrew(HumanAgent):
     """
 
     eva_state: str = Field(..., title="EVA State", description="The state of the EVA")
+    
+class EVADemand(MissionDemand):
+    """
+    Schema for a Crew Member
+    """
+
+    amount: float= Field(..., title="Amount", description="The amount of the resource needed")
+    
+    
 
 
 class CrewedEVA(BaseModel):

@@ -18,7 +18,8 @@ class SpaceTransport(BaseModel):
 
     name: str = Field(..., title="Name", description="Space Transport name")
 
-    origin_node: str = Field(
+    # TODO
+    origin_node: str = Field(  # these should be integer IDs if everything else is
         ..., title="Origin Node", description="The origin node of the Space Transport"
     )
 
