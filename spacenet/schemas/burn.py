@@ -1,17 +1,7 @@
 from pydantic import BaseModel, Field
 from enum import Enum
 
-__all__ = ["Burn", "BurnType"]
-
-
-class BurnType(Enum):
-    """
-    An enumeration of the two different types
-    of burns.
-    """
-
-    OMS = "OMS"
-    RCS = "RCS"
+__all__ = ["Burn"]
 
 
 class Burn(BaseModel):
@@ -24,7 +14,6 @@ class Burn(BaseModel):
         ..., description="Mission time at which the burn will occur", ge=0
     )
     order: int = Field(..., description="Order in which this burn will occur", ge=0)
-    type: BurnType = Field(..., description="Type of propuulsive burn")
     delta_v: float = Field(
         ..., description="Change in velocity to be achieved by a burn", ge=0
     )
