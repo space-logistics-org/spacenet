@@ -3,5 +3,5 @@ $(document).ready(function () {
 })
 
 $("#logout").click(function (){
-    $.post("/auth/cookie/logout", function(response){setTimeout(() => { location.reload(); }, 500)})
+    $.post("/auth/cookie/logout", function(response){setTimeout(() => { location.reload(); }, 100)})
 })
