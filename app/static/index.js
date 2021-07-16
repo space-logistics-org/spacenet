@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $.get("/secret", function(){$("#logout").css("display", "block"), $("#login").css("display", "none");})
+    $.get("/users/me", function(){$("#logout").css("display", "block"), $("#login").css("display", "none");})
 })
 
 $("#logout").click(function (){
