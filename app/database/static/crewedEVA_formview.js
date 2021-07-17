@@ -49,19 +49,19 @@ function DemandList() {
         itxtCnt = itxtCnt + 1;
 
         $(container).append('<input type="text"' +'placeholder="Resource Type" class="demandType" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="Resource" class="demandResource" id=tb' + itxtCnt + ' value="" />');
+        $(container).append('<input type="text"' +'placeholder="Resource ID" class="demandResource" id=tb' + itxtCnt + ' value="" />');
         $(container).append('<input type="text"' +'placeholder="Amount" class="demandAmount" id=tb' + itxtCnt + ' value="" />');
         $(container).append('<input type="text"' +'placeholder="Units" class="demandUnit" id=tb' + itxtCnt + ' value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
         $('#demandmain').after(container);
-    });c
+    });
 }
 
 
 function onComplete(){
     name = document.getElementById("inputName").value;
-    node = document.getElementById("inputNode").value;
+    node = document.getElementById("inputNodeID").value;
     time = document.getElementById("inputTime").value;
     priority = document.getElementById("inputPriority").value;
     eva_duration = document.getElementById("inputEVADuration").value;
