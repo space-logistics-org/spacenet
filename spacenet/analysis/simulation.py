@@ -7,17 +7,17 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 from heapq import heappop, heappush
-from typing import Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
 from spacenet.schemas.element import Element
 from spacenet.schemas.edge import Edge
 from spacenet.schemas.node import Node
-
-
-class SimEntity(ABC):
-    @abstractmethod
-    def at(self, timestamp: datetime) -> Tuple["SimElement", ...]:
-        pass
+from spacenet.schemas.element_events import (
+    MoveElementsEvent,
+    MakeElementsEvent,
+    RemoveElementsEvent,
+)
+from spacenet.schemas.burn import Burn
 
 
 @dataclass()
@@ -39,14 +39,51 @@ class SimElement:
 
 
 @dataclass()
-class SimEvent:
+class SimEvent(ABC):
     timestamp: datetime
     priority: int
 
-    # TODO: other fields, perhaps subclasses?
-
     def __lt__(self, other: "SimEvent") -> bool:
         return (self.timestamp, self.priority) < (other.timestamp, other.priority)
+
+    @abstractmethod
+    def process_with_ctx(self, sim: "Simulation"):
+        pass
+
+
+@dataclass()
+class Move(SimEvent):
+    event: MoveElementsEvent
+
+    def process_with_ctx(self, sim: "Simulation"):
+        # TODO
+        raise NotImplementedError
+
+
+@dataclass()
+class Create(SimEvent):
+    event: MakeElementsEvent
+
+    def process_with_ctx(self, sim: "Simulation"):
+        # TODO
+        raise NotImplementedError
+
+
+@dataclass()
+class Remove(SimEvent):
+    event: RemoveElementsEvent
+
+    def process_with_ctx(self, sim: "Simulation"):
+        # TODO
+        raise NotImplementedError
+
+
+class BurnEvent(SimEvent):
+    event: Burn
+
+    def process_with_ctx(self, sim: "Simulation"):
+        # TODO
+        raise NotImplementedError
 
 
 @dataclass()
@@ -56,11 +93,14 @@ class SimError:
     # tell sim events how they're processed / how they modify a simulation
 
 
+T = TypeVar("T")
+SimCallback = Callable[["Simulation", Optional[T]], T]
+
+
 class Simulation:
     __slots__ = ("network", "event_queue", "errors", "pre_listeners", "post_listeners")
+
     # Simulations also need to map ids to entities being simulated
-    # TODO: make it possible to register functions which perform actions upon changes
-    #  (each time an event is processed)
 
     def __init__(self) -> None:
         # TODO: this should take a campaign mission and build it, or maybe
@@ -70,8 +110,10 @@ class Simulation:
         ] = {}  # adjacency list graph representation
         self.event_queue: List[SimEvent] = []  # min-heap of events
         self.errors: List[SimError] = []
-        self.pre_listeners: List[Callable[['Simulation'], None]] = []
-        self.post_listeners: List[Callable[['Simulation'], None]] = []
+        # Type annotations below aren't specific: Dict is a mapping of SimCallback[T] to T, but
+        # different T can be contained
+        self.pre_listeners: Dict[SimCallback[Any], Any] = {}
+        self.post_listeners: Dict[SimCallback[Any], Any] = {}
 
     def _add_event(self, event: SimEvent) -> None:
         heappush(self.event_queue, event)
@@ -82,18 +124,22 @@ class Simulation:
         return heappop(self.event_queue)
 
     def _process_event(self, event: SimEvent) -> None:
-        # TODO
-        # Apply the effects of the provided event, mutating the current state
-        pass
+        event.process_with_ctx(sim=self)
 
     def run(self) -> List[SimError]:
         # TODO: pre here?
+        if not self.event_queue:
+            for listener, arg in self.pre_listeners.items():
+                self.pre_listeners[listener] = listener(self, arg)
+            assert (
+                not self.event_queue
+            ), "listeners should not modify simulator state, only read it"
         while self.event_queue:
-            for listener in self.pre_listeners:
-                listener(self)
+            for listener, arg in self.pre_listeners.items():
+                self.pre_listeners[listener] = listener(self, arg)
             next_event = self._pop_next_event()
             assert next_event is not None
             self._process_event(next_event)
-            for listener in self.post_listeners:
-                listener(self)
+            for listener, arg in self.post_listeners.items():
+                self.post_listeners[listener] = listener(self, arg)
         return self.errors
