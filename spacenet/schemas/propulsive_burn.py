@@ -1,9 +1,9 @@
 from pydantic import BaseModel, Field
 from enum import Enum
 from typing import List
+from .types import SafeInt
 
 from .burn import Burn
-from .element import Element
 
 __all__ = ["BurnStage", "PropulsiveBurn", "BurnStageItem"]
 
@@ -24,7 +24,7 @@ class BurnStageItem(BaseModel):
     Class for items in the burn-stage sequence
     """
 
-    element: Element = Field(
+    element_id: SafeInt = Field(
         ...,
         title="Element",
         description="Element to be burned or staged."
@@ -41,8 +41,8 @@ class PropulsiveBurn(BaseModel):  # MoveElements, RemoveElements, MakeElements
     Event that represents a propulsive maneuver that may be composed of one or
     more burns or stages of individual elements.
     """
-    # TODO: these should be IDs / references to the original element
-    elements: List[Element] = Field(
+
+    element_id: List[SafeInt] = Field(
         ...,
         title="Elements List",
         description="List of the elements to be included in the burn event."
