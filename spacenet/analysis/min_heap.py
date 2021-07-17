@@ -15,7 +15,7 @@ class MinHeap(Generic[T]):
             self._inner = initial.copy()
             heapify(self._inner)
 
-    def min(self) -> Optional[T]:
+    def peek(self) -> Optional[T]:
         if not self._inner:
             return None
         return self._inner[0]

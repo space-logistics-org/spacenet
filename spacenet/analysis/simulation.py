@@ -9,7 +9,7 @@ from datetime import datetime
 from heapq import heappop, heappush
 from typing import Any, Callable, Dict, Generic, List, Optional, Set, Tuple, TypeVar
 
-from spacenet.analysis.types import MinHeap
+from spacenet.analysis.min_heap import MinHeap
 from spacenet.schemas.element import Element
 from spacenet.schemas.edge import Edge
 from spacenet.schemas.node import Node
