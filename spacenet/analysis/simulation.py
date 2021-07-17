@@ -7,8 +7,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 from heapq import heappop, heappush
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypeVar
+from typing import Any, Callable, Dict, Generic, List, Optional, Set, Tuple, TypeVar
 
+from spacenet.analysis.types import MinHeap
 from spacenet.schemas.element import Element
 from spacenet.schemas.edge import Edge
 from spacenet.schemas.node import Node
@@ -108,26 +109,23 @@ class Simulation:
         self.network: Dict[
             SimNode, Set[SimEdge]
         ] = {}  # adjacency list graph representation
-        self.event_queue: List[SimEvent] = []  # min-heap of events
+        self.event_queue: MinHeap[SimEvent] = MinHeap()
         self.errors: List[SimError] = []
-        # Type annotations below aren't specific: Dict is a mapping of SimCallback[T] to T, but
+        # Type annotations below aren't tight: Dict is a mapping of SimCallback[T] to T, but
         # different T can be contained
         self.pre_listeners: Dict[SimCallback[Any], Any] = {}
         self.post_listeners: Dict[SimCallback[Any], Any] = {}
 
     def _add_event(self, event: SimEvent) -> None:
-        heappush(self.event_queue, event)
+        self.event_queue.push(event)
 
     def _pop_next_event(self) -> Optional[SimEvent]:
-        if not self.event_queue:
-            return None
-        return heappop(self.event_queue)
+        return self.event_queue.pop()
 
     def _process_event(self, event: SimEvent) -> None:
         event.process_with_ctx(sim=self)
 
     def run(self) -> List[SimError]:
-        # TODO: pre here?
         if not self.event_queue:
             for listener, arg in self.pre_listeners.items():
                 self.pre_listeners[listener] = listener(self, arg)
