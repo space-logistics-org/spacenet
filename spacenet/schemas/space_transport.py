@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field, PositiveFloat, PositiveInt
 from typing import List
 
 from .propulsive_burn import BurnStageItem
-from .element import ElementKind
 
 
 class BurnStageSequence(BaseModel):

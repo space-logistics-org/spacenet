@@ -19,7 +19,7 @@ function DemandList() {
         itxtCnt = itxtCnt + 1;
 
         $(container).append('<input type="text"' +'placeholder="Resource Type" class="demandType" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="Resource" class="demandResource" id=tb' + itxtCnt + ' value="" />');
+        $(container).append('<input type="text"' +'placeholder="Resource ID" class="demandResource" id=tb' + itxtCnt + ' value="" />');
         $(container).append('<input type="text"' +'placeholder="Units" class="demandUnit" id=tb' + itxtCnt + ' value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
