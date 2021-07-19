@@ -74,5 +74,7 @@ class Scenario(BaseModel):
         ), "must not have common ids between elements and network entities"
         return values
 
+    # TODO: validator that events in missions and events in manifest agree?
+
     class Config:
         title: "Scenario"
