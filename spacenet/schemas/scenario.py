@@ -8,7 +8,7 @@ from sortedcontainers import SortedDict, SortedSet
 from spacenet.schemas.element import *
 from spacenet.schemas.node import *
 from spacenet.schemas.edge import *
-from spacenet.schemas.mission import *
+# from spacenet.schemas.mission import *
 
 __all__ = [
     "ScenarioType",
@@ -73,7 +73,7 @@ class Scenario(BaseModel):
 
     network: Network = Field(..., title="Network")
 
-    missionList: list[Mission] = Field(..., title="Mission List")
+    # missionList: list[Mission] = Field(..., title="Mission List")
         
     elementList: list[Element] = Field(..., titlee="Element List")
 
