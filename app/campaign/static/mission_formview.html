@@ -61,7 +61,7 @@
     <div class="form-row">
 
         <div class="container">
-            <label for="inputStartDate">Start Data</label>
+            <label for="inputStartDate">Start Date</label>
             <input type="text" class="form-control" id="inputStartDate" placeholder="Start Date">
         </div>
 
@@ -73,13 +73,13 @@
         </div>
 
         <div class="container">
-            <label for="inputDestId">Destination Id</label>
-            <input type="number" class="form-control" id="inputDestId" placeholder="Destination Id">
+            <label for="inputOriId">Origin ID</label>
+            <input type="number" class="form-control" id="inputOriId" placeholder="Origin Id">
         </div>
 
         <div class="container">
-            <label for="inputOriId">Origin ID</label>
-            <input type="number" class="form-control" id="inputOriId" placeholder="Origin Id">
+            <label for="inputDestId">Destination Id</label>
+            <input type="number" class="form-control" id="inputDestId" placeholder="Destination Id">
         </div>
 
         <div class="container">
@@ -91,6 +91,13 @@
             <label for="inputReturnDestId">Return Destination ID</label>
             <input type="number" class="form-control" id="inputReturnDestId" placeholder="Return Destination ID">
         </div>
+
+        <div class="container">
+           <label for="eventadd">Add Event ID</label>
+           <input type="button" id="eventadd" value="Add Event ID" class="btn btn-dark btn-sm"/>
+         </div>
+
+         <div id="eventmain"></div>
 
          <div class="container">
              <label for="demAdd">Press to add a new Demand</label>
