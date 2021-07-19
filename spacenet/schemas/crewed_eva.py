@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, PositiveFloat
+from pydantic import BaseModel, Field, PositiveFloat, PositiveInt
 from typing import List
 
 from .mission_demand_model import MissionDemand
@@ -11,6 +11,15 @@ class EVACrew(HumanAgent):
     """
 
     eva_state: str = Field(..., title="EVA State", description="The state of the EVA")
+    
+class EVADemand(MissionDemand):
+    """
+    Schema for a Crew Member
+    """
+
+    amount: float= Field(..., title="Amount", description="The amount of the resource needed")
+    
+    
 
 
 class CrewedEVA(BaseModel):
@@ -22,8 +31,8 @@ class CrewedEVA(BaseModel):
 
     type = "EVA"
 
-    node: str = Field(
-        ..., title="Origin Node", description="The origin node of the Space Transport"
+    node_id: PositiveInt() = Field(
+        ..., title="Origin Node ID", description="The origin node ID of the Space Transport"
     )
 
     time: PositiveFloat = Field(
