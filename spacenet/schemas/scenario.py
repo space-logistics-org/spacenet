@@ -1,35 +1,39 @@
-from pydantic import BaseModel, Field
+from uuid import UUID
+
+from pydantic import BaseModel, Field, root_validator
 from enum import Enum
-from typing import Dict, List, Set
+from typing import Any, Dict, List, Optional, Union
 
 from datetime import datetime
 
 from spacenet.schemas.element import Element
+from spacenet.schemas.element_events import MakeElementsEvent, MoveElementsEvent
 from spacenet.schemas.node import Node
 from spacenet.schemas.edge import Edge
 from spacenet.schemas.mission import Mission
 
-__all__ = [
-    "ScenarioType",
-    "Scenario",
-    "Manifest"
-]
+__all__ = ["ScenarioType", "Scenario", "Manifest"]
 
 
 class Manifest(BaseModel):
-    supplyEdges: Set = Field(..., title="Supply Edges")
-    supplyPoints: Set = Field(..., title="Supply Points")
-    aggregatedNodeDemands: Dict = Field(..., title="Aggregated Node Demands")
-    aggregatedEdgeDemands: Dict = Field(..., title="Aggregated Edge Demands")
-    demandsAsPacked: Dict = Field(..., title="Demands as packed")
-    packedDemands: Dict = Field(..., title="Packed Demands")
-    cachedContainerDemands: Dict = Field(..., title="Cached Container Demands")
-    manifestedContainers: Dict = Field(..., title="Manifested Containers")
+    container_events: List[Union[MakeElementsEvent, MoveElementsEvent]] = Field(
+        ..., title="Resource Event Sequence"
+    )
 
 
 class Network(BaseModel):
-    nodes: List[Node] = Field(..., title="Nodes")
-    edges: List[Edge] = Field(..., title="Edges")
+    nodes: Dict[UUID, Node] = Field(..., title="Nodes")
+    edges: Dict[UUID, Edge] = Field(..., title="Edges")
+
+    @root_validator(skip_on_failure=True)
+    def _no_common_ids(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        nodes = values.get("nodes")
+        edges = values.get("edges")
+        assert nodes is not None and edges is not None
+        assert not (
+            nodes.keys() & edges.keys()
+        ), "must not have common ids between nodes and edges"
+        return values
 
 
 class ScenarioType(str, Enum):
@@ -52,11 +56,25 @@ class Scenario(BaseModel):
 
     network: Network = Field(..., title="Network")
     missionList: List[Mission] = Field(..., title="Mission List")
-    elementList: List[Element] = Field(..., titlee="Element List")
-    # manifest: Manifest = Field(..., title="Manifest")
+    elementList: Dict[UUID, Element] = Field(..., title="Element List")
+    manifest: Manifest = Field(..., title="Manifest")
 
     volumeConstrained: bool = Field(False, title="Volume Constrained")
     environmentConstrained: bool = Field(False, title="Environment Constrained")
+
+    @root_validator(skip_on_failure=True)
+    def _no_common_ids(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        network: Optional[Network] = values.get("network")
+        assert network is not None
+        network_ids = network.nodes.keys() | network.edges.keys()
+        elements = values.get("elementList")
+        assert elements is not None
+        assert not (
+            elements.keys() & network_ids
+        ), "must not have common ids between elements and network entities"
+        return values
+
+    # TODO: validator that events in missions and events in manifest agree?
 
     class Config:
         title: "Scenario"
