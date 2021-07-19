@@ -32,8 +32,8 @@ class Manifest(BaseModel):
 
 
 class Network(BaseModel):
-    nodes: list[Node] = Field(..., title="Nodes")
-    edges: list[Edge] = Field(..., title="Edges")
+    # nodes: list[Node] = Field(..., title="Nodes")
+    # edges: list[Edge] = Field(..., title="Edges")
 
     class Config:
         arbitrary_types_allowed = True
@@ -75,7 +75,7 @@ class Scenario(BaseModel):
 
     # missionList: list[Mission] = Field(..., title="Mission List")
         
-    elementList: list[Element] = Field(..., titlee="Element List")
+    # elementList: list[Element] = Field(..., titlee="Element List")
 
     manifest: Manifest = Field(..., title="Manifest")
 
