@@ -21,23 +21,42 @@ from spacenet.schemas.element_events import (
 from spacenet.schemas.burn import Burn
 
 
+__all__ = ["Simulation"]
+
+
 class ContainsElements(BaseModel):
     contains: List["SimElement"] = Field(default_factory=list)
 
 
 class SimNode(ContainsElements):
+    """
+    A node under simulation; wraps Node schema.
+    """
+
     inner: Node
 
 
 class SimEdge(ContainsElements):
+    """
+    An edge under simulation; wraps Edge schema.
+    """
+
     inner: Edge
 
 
 class SimElement(ContainsElements):
+    """
+    An element under simulation; wraps Element schema.
+    """
+
     inner: Element
 
 
 class SimEvent(BaseModel, ABC):
+    """
+    An event in simulation.
+    """
+
     timestamp: datetime
     priority: int
 
@@ -50,6 +69,10 @@ class SimEvent(BaseModel, ABC):
 
 
 class Move(SimEvent):
+    """
+    Represents an event moving elements, one of the four primitive SimEvents.
+    """
+
     event: MoveElementsEvent
 
     def process_with_ctx(self, sim: "Simulation"):
@@ -58,6 +81,10 @@ class Move(SimEvent):
 
 
 class Create(SimEvent):
+    """
+    Represents an event creating elements, one of the four primitive SimEvents.
+    """
+
     event: MakeElementsEvent
 
     def process_with_ctx(self, sim: "Simulation"):
@@ -66,6 +93,10 @@ class Create(SimEvent):
 
 
 class Remove(SimEvent):
+    """
+    Represents an event removing elements, one of the four primitive SimEvents.
+    """
+
     event: RemoveElementsEvent
 
     def process_with_ctx(self, sim: "Simulation"):
@@ -74,6 +105,10 @@ class Remove(SimEvent):
 
 
 class BurnEvent(SimEvent):
+    """
+    Represents a burn, one of the four primitive SimEvents.
+    """
+
     event: Burn
 
     def process_with_ctx(self, sim: "Simulation"):
@@ -91,7 +126,19 @@ SimCallback = Callable[["Simulation", Optional[T]], T]
 
 
 class Simulation:
-    __slots__ = ("network", "event_queue", "errors", "pre_listeners", "post_listeners")
+    """
+    Represents a campaign simulation.
+    """
+
+    __slots__ = (
+        "network",
+        "event_queue",
+        "errors",
+        "pre_listeners",
+        "post_listeners",
+        "namespace",
+        "current_time"
+    )
 
     # Simulations also need to map ids to entities being simulated
 
@@ -107,6 +154,13 @@ class Simulation:
         # different T can be contained in the same dict
         self.pre_listeners: Dict[SimCallback[Any], Any] = {}
         self.post_listeners: Dict[SimCallback[Any], Any] = {}
+        # could be a tighter type bound; associates IDs to schemas
+        self.namespace: Dict[int, Any] = {}
+        self.current_time: datetime = datetime.now()  # TODO: replace
+
+    def _decompose_event(self, event) -> List[SimEvent]:
+        # TODO
+        pass
 
     def _add_event(self, event: SimEvent) -> None:
         self.event_queue.push(event)
@@ -122,6 +176,11 @@ class Simulation:
             listeners[listener] = listener(self, arg)
 
     def run(self) -> List[SimError]:
+        """
+        Run the simulation, consuming the simulation object and returning the resulting errors.
+
+        :return: all errors which resulted from running the simulation
+        """
         if not self.event_queue:
             self._run_listeners(self.pre_listeners)
             assert (
@@ -132,5 +191,6 @@ class Simulation:
             next_event = self._pop_next_event()
             assert next_event is not None
             self._process_event(next_event)
+            self.current_time = next_event.timestamp
             self._run_listeners(self.post_listeners)
         return self.errors
