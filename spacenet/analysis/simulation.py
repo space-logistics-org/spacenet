@@ -5,11 +5,13 @@
 # time-expanded part.
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional, Set, TypeVar
+from typing import Any, Callable, Dict, List, Optional, Set, TypeVar, Union
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from spacenet.analysis.min_heap import MinHeap
+from spacenet.schemas import Scenario
 from spacenet.schemas.element import Element
 from spacenet.schemas.edge import Edge
 from spacenet.schemas.node import Node
@@ -19,7 +21,6 @@ from spacenet.schemas.element_events import (
     RemoveElementsEvent,
 )
 from spacenet.schemas.burn import Burn
-
 
 __all__ = ["Simulation"]
 
@@ -137,28 +138,56 @@ class Simulation:
         "pre_listeners",
         "post_listeners",
         "namespace",
-        "current_time"
+        "current_time",
     )
 
     # Simulations also need to map ids to entities being simulated
 
-    def __init__(self) -> None:
-        # TODO: this should take a campaign mission and build it, or maybe
-        #  expose a static method for that
+    def __init__(
+        self,
+        scenario: Scenario,
+        pre_listeners: Optional[Dict[SimCallback[Any], Any]],
+        post_listeners: Optional[Dict[SimCallback[Any], Any]],
+    ) -> None:
         self.network: Dict[
             SimNode, Set[SimEdge]
         ] = {}  # adjacency list graph representation
-        self.event_queue: MinHeap[SimEvent] = MinHeap()
+        for id_, edge in scenario.network.edges.items():
+            # add edges to adj-list rep
+            print(edge.origin_id)
+            # TODO: origin_id refers to DB id but has to correspond to the UUID of the edge
+        for id_, node in scenario.network.nodes.items():
+            self.network.setdefault(SimNode(inner=node), set())
+        events = [
+            atomic_event
+            for mission in scenario.missionList
+            for event in mission.events
+            for atomic_event in Simulation._decompose_event(event)
+        ]
+        self.event_queue: MinHeap[SimEvent] = MinHeap(events)
         self.errors: List[SimError] = []
         # Type annotations below aren't tight: Dict is a mapping of SimCallback[T] to T, but
         # different T can be contained in the same dict
-        self.pre_listeners: Dict[SimCallback[Any], Any] = {}
-        self.post_listeners: Dict[SimCallback[Any], Any] = {}
-        # could be a tighter type bound; associates IDs to schemas
-        self.namespace: Dict[int, Any] = {}
-        self.current_time: datetime = datetime.now()  # TODO: replace
+        self.pre_listeners: Dict[
+            SimCallback[Any], Any
+        ] = {} if pre_listeners is None else pre_listeners
+        self.post_listeners: Dict[
+            SimCallback[Any], Any
+        ] = {} if post_listeners is None else post_listeners
+        self.namespace: Dict[UUID, Union[SimElement, SimNode, SimEdge]] = {}
+        for id_, node in scenario.network.nodes.items():
+            self.namespace[id_] = SimNode(inner=node)
+        for id_, edge in scenario.network.edges.items():
+            self.namespace[id_] = SimEdge(inner=edge)
+        for id_, element in scenario.elementList.items():
+            self.namespace[id_] = SimElement(inner=element)
+        assert len(scenario.network.nodes) + len(scenario.network.edges) + len(
+            scenario.elementList
+        ) == len(self.namespace), "expected no duplicate IDs"
+        self.current_time: datetime = scenario.startDate
 
-    def _decompose_event(self, event) -> List[SimEvent]:
+    @classmethod
+    def _decompose_event(cls, event) -> List[SimEvent]:
         # TODO
         pass
 
