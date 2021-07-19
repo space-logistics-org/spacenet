@@ -1,11 +1,12 @@
 from heapq import heapify, heappop, heappush
 from itertools import tee
-from typing import Callable, Iterable, List, Tuple, TypeVar
+from typing import Iterable, List, Tuple, TypeVar
 
 import pytest
 from hypothesis import given, strategies as st
 from hypothesis.stateful import RuleBasedStateMachine, invariant, rule
 
+from .utilities import DrawFn
 from spacenet.analysis.min_heap import MinHeap
 
 pytestmark = [pytest.mark.analysis]
@@ -67,12 +68,11 @@ class HeapModel(RuleBasedStateMachine):
 TestMinHeapStateful = HeapModel.TestCase
 
 T = TypeVar("T")
-DrawFn = Callable[[st.SearchStrategy[T]], T]
 
 
 @st.composite
 def iterable_and_list(
-    draw: DrawFn, elements: st.SearchStrategy[T]
+        draw: DrawFn, elements: st.SearchStrategy[T]
 ) -> Tuple[Iterable[T], List[T]]:
     xs = draw(st.iterables(elements))
     xs, xs_cpy = tee(xs)
@@ -102,8 +102,8 @@ def test_min_heap(xs_and_copy):
 @given(
     xs_and_copy=st.one_of(
         *(
-            iterable_and_list(t)
-            for t in (st.integers(), st.floats(allow_nan=False), st.text())
+                iterable_and_list(t)
+                for t in (st.integers(), st.floats(allow_nan=False), st.text())
         )
     )
 )
