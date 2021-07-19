@@ -53,7 +53,7 @@ class Scenario(BaseModel):
     network: Network = Field(..., title="Network")
     missionList: List[Mission] = Field(..., title="Mission List")
     elementList: List[Element] = Field(..., titlee="Element List")
-    manifest: Manifest = Field(..., title="Manifest")
+    # manifest: Manifest = Field(..., title="Manifest")
 
     volumeConstrained: bool = Field(False, title="Volume Constrained")
     environmentConstrained: bool = Field(False, title="Environment Constrained")
