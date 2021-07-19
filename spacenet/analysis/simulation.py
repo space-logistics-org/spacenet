@@ -4,9 +4,10 @@
 # You can model a time-expanded graph in a memory-efficient way by having the contents be the
 # time-expanded part.
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional, Set, TypeVar
+
+from pydantic import BaseModel, Field
 
 from spacenet.analysis.min_heap import MinHeap
 from spacenet.schemas.element import Element
@@ -20,26 +21,23 @@ from spacenet.schemas.element_events import (
 from spacenet.schemas.burn import Burn
 
 
-@dataclass()
-class SimNode:
+class ContainsElements(BaseModel):
+    contains: List["SimElement"] = Field(default_factory=list)
+
+
+class SimNode(ContainsElements):
     inner: Node
-    contains: List["SimElement"] = field(default_factory=list)
 
 
-@dataclass()
-class SimEdge:
+class SimEdge(ContainsElements):
     inner: Edge
-    contains: List["SimElement"] = field(default_factory=list)
 
 
-@dataclass()
-class SimElement:
+class SimElement(ContainsElements):
     inner: Element
-    contains: List["SimElement"] = field(default_factory=list)
 
 
-@dataclass()
-class SimEvent(ABC):
+class SimEvent(BaseModel, ABC):
     timestamp: datetime
     priority: int
 
@@ -51,7 +49,6 @@ class SimEvent(ABC):
         pass
 
 
-@dataclass()
 class Move(SimEvent):
     event: MoveElementsEvent
 
@@ -60,7 +57,6 @@ class Move(SimEvent):
         raise NotImplementedError
 
 
-@dataclass()
 class Create(SimEvent):
     event: MakeElementsEvent
 
@@ -69,7 +65,6 @@ class Create(SimEvent):
         raise NotImplementedError
 
 
-@dataclass()
 class Remove(SimEvent):
     event: RemoveElementsEvent
 
@@ -86,8 +81,7 @@ class BurnEvent(SimEvent):
         raise NotImplementedError
 
 
-@dataclass()
-class SimError:
+class SimError(BaseModel):
     timestamp: datetime
     description: str
 
@@ -110,7 +104,7 @@ class Simulation:
         self.event_queue: MinHeap[SimEvent] = MinHeap()
         self.errors: List[SimError] = []
         # Type annotations below aren't tight: Dict is a mapping of SimCallback[T] to T, but
-        # different T can be contained
+        # different T can be contained in the same dict
         self.pre_listeners: Dict[SimCallback[Any], Any] = {}
         self.post_listeners: Dict[SimCallback[Any], Any] = {}
 
