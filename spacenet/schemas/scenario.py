@@ -8,7 +8,7 @@ from sortedcontainers import SortedDict, SortedSet
 from spacenet.schemas.element import Element
 from spacenet.schemas.node import Node
 from spacenet.schemas.edge import Edge
-# from spacenet.schemas.mission import *
+from spacenet.schemas.mission import Mission
 
 __all__ = [
     "ScenarioType",
@@ -32,8 +32,8 @@ class Manifest(BaseModel):
 
 
 class Network(BaseModel):
-    # nodes: list[Node] = Field(..., title="Nodes")
-    # edges: list[Edge] = Field(..., title="Edges")
+    nodes: list[Node] = Field(..., title="Nodes")
+    edges: list[Edge] = Field(..., title="Edges")
 
     class Config:
         arbitrary_types_allowed = True
@@ -73,9 +73,9 @@ class Scenario(BaseModel):
 
     network: Network = Field(..., title="Network")
 
-    # missionList: list[Mission] = Field(..., title="Mission List")
+    missionList: list[Mission] = Field(..., title="Mission List")
         
-    # elementList: list[Element] = Field(..., titlee="Element List")
+    elementList: list[Element] = Field(..., titlee="Element List")
 
     manifest: Manifest = Field(..., title="Manifest")
 
