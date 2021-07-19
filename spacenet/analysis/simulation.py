@@ -6,8 +6,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
-from heapq import heappop, heappush
-from typing import Any, Callable, Dict, Generic, List, Optional, Set, Tuple, TypeVar
+from typing import Any, Callable, Dict, List, Optional, Set, TypeVar
 
 from spacenet.analysis.min_heap import MinHeap
 from spacenet.schemas.element import Element
@@ -90,8 +89,7 @@ class BurnEvent(SimEvent):
 @dataclass()
 class SimError:
     timestamp: datetime
-
-    # tell sim events how they're processed / how they modify a simulation
+    description: str
 
 
 T = TypeVar("T")
@@ -125,19 +123,20 @@ class Simulation:
     def _process_event(self, event: SimEvent) -> None:
         event.process_with_ctx(sim=self)
 
+    def _run_listeners(self, listeners: Dict[SimCallback[Any], Any]) -> None:
+        for listener, arg in listeners.items():
+            listeners[listener] = listener(self, arg)
+
     def run(self) -> List[SimError]:
         if not self.event_queue:
-            for listener, arg in self.pre_listeners.items():
-                self.pre_listeners[listener] = listener(self, arg)
+            self._run_listeners(self.pre_listeners)
             assert (
                 not self.event_queue
             ), "listeners should not modify simulator state, only read it"
         while self.event_queue:
-            for listener, arg in self.pre_listeners.items():
-                self.pre_listeners[listener] = listener(self, arg)
+            self._run_listeners(self.pre_listeners)
             next_event = self._pop_next_event()
             assert next_event is not None
             self._process_event(next_event)
-            for listener, arg in self.post_listeners.items():
-                self.post_listeners[listener] = listener(self, arg)
+            self._run_listeners(self.post_listeners)
         return self.errors
