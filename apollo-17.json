@@ -1,0 +1,211 @@
+{
+	"name": "Apollo 17",
+	"start": "1972-12-05T12:53:00",
+	"network": {
+		"nodes": [
+			{
+				"id": 1001,
+				"type": "SURFACE",
+				"name": "KSC",
+				"description": "Kennedy Space Center",
+				"body_1": "EARTH",
+				"latitude": 28.6,
+				"longitude": -80.6
+			},
+			{
+				"id": 1501,
+				"type": "ORBIT",
+				"name": "LEO",
+				"description": "Low-Earth Orbit",
+				"body": "EARTH",
+				"apoapsis": 296.0,
+				"periapsis": 296.0,
+				"inclination": 28.5
+			}
+		],
+		"edges": [
+			{
+				"id": 1,
+				"type": "Space",
+				"name": "KSC-LEO",
+				"description": "Kennedy Space Center to Low-Earth Orbit",
+				"origin_id": 1001,
+				"destination_id": 1501,
+				"duration": 0.25
+			}
+		]
+	},
+	"resourceTypes": [
+		{
+			"id": 1001,
+			"name": "Kerosene-LOX",
+			"description": "Kerosene and Liquid Oxygen",
+			"class_of_supply": 104,
+			"units": "kg",
+			"unit_mass": 1.0
+		},
+		{
+			"id": 1002,
+			"name": "LOX-LH2",
+			"description": "Liquid Hydrogen and Liquid Oxygen",
+			"class_of_supply": 101,
+			"units": "kg",
+			"unit_mass": 1.0
+		},
+		{
+			"id": 1003,
+			"name": "Aerozine-NTO",
+			"description": "Aerozine 50 and dinitrogen tetroxide",
+			"class_of_supply": 102,
+			"units": "kg",
+			"unit_mass": 1.0
+		}
+	],
+	"elementTypes": [
+		{
+			"id": 301,
+			"type": "PropulsiveVehicle",
+			"name": "S-IC",
+			"description": "First stage of the Saturn V",
+			"environment": "Unpressurized",
+			"accommodation_mass": 0,
+			"classOfSupply": 9021,
+			"mass": 113982.0,
+			"isp": 304.0,
+			"max_fuel": 2135839.0,
+			"max_crew": 0,
+			"propellant_id": 1002,
+		},
+		{
+			"id": 302,
+			"type": "PropulsiveVehicle",
+			"name": "S-II",
+			"description": "Second stage of the Saturn V",
+			"environment": "Unpressurized",
+			"accommodation_mass": 0,
+			"classOfSupply": 9021,
+			"mass": 38415.0,
+			"isp": 421.0,
+			"max_fuel": 2135839.0,
+			"max_crew": 0,
+			"propellant_id": 1002
+		},
+		{
+			"id": 303,
+			"type": "PropulsiveVehicle",
+			"name": "S-IVB",
+			"description": "Third stage of the Saturn V",
+			"environment": "Unpressurized",
+			"accommodation_mass": 0,
+			"classOfSupply": 9021,
+			"mass": 12014.0,
+			"isp": 421.0,
+			"max_fuel": 2135839.0,
+			"max_crew": 0,
+			"propellant_id": 1002
+		},
+		{
+			"id": 304,
+			"type": "PropulsiveVehicle",
+			"name": "Lunar Module DM",
+			"description": "The lunar module Challenger decent module.",
+			"environment": "Pressurized",
+			"accommodation_mass": 0,
+			"classOfSupply": 9023,
+			"mass": 6100.0,
+			"isp": 311.0,
+			"max_fuel": 19500.0,
+			"max_crew": 2,
+			"propellant_id": 1003
+		},
+		{
+			"id": 305,
+			"type": "PropulsiveVehicle",
+			"name": "Lunar Module AM",
+			"description": "The lunar module Challenger decent module.",
+			"environment": "Pressurized",
+			"accommodation_mass": 0,
+			"classOfSupply": 9023,
+			"mass": 4700.0,
+			"isp": 311.0,
+			"max_fuel": 5200.0,
+			"max_crew": 2,
+			"propellant_id": 1003
+		}
+	],
+	"elements": [
+		{
+			"uuid": "69018bea-fc19-412d-8557-14393a16922c",
+			"name": "Apollo 17 S-IC",
+			"typeId": 301
+		},
+		{
+			"uuid": "4aab255e-be48-492e-a322-0323ba72e2a7",
+			"name": "Apollo 17 S-II",
+			"typeId": 302
+		},
+		{
+			"uuid": "9ad8c701-1e76-41d4-bcdd-ccaa0ef47302",
+			"name": "Apollo 17 S-IVB",
+			"typeId": 303
+		}
+	],
+	"missions": [
+		{
+			"name": "Apollo 17",
+			"events": [
+				{
+					"uuid": "b4996a6a-93ea-4935-aeaa-11a78370c066",
+					"type": "CREATE_ELEMENTS",
+					"name": "Create Apollo 17 Saturn-V Stack at KSC",
+					"time": 0.0,
+					"priority": 0,
+					"locationUuid": "c8fa6bfb-9d3a-4c52-bedb-b05a06812d47",
+					"carrierUuid": null,
+					"elementUuids": [
+						"69018bea-fc19-412d-8557-14393a16922c",
+						"4aab255e-be48-492e-a322-0323ba72e2a7",
+						"9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
+					]
+				},
+				{
+					"uuid": "49790e11-d94e-479d-8cf7-467777e3fc7d",
+					"type": "SPACE_TRANSPORT",
+					"name": "Launch to LEO",
+					"time": 0.0,
+					"priority": 1,
+					"locationUuid": "c8fa6bfb-9d3a-4c52-bedb-b05a06812d47",
+					"elementUuids": [
+						"69018bea-fc19-412d-8557-14393a16922c",
+						"4aab255e-be48-492e-a322-0323ba72e2a7",
+						"9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
+					],
+					"burnStageSequences": [
+						[
+							{
+								"type": "BURN",
+								"elementUuid": "69018bea-fc19-412d-8557-14393a16922c"
+							},
+							{
+								"type": "STAGE",
+								"elementUuid": "69018bea-fc19-412d-8557-14393a16922c"
+							},
+							{
+								"type": "BURN",
+								"elementUuid": "4aab255e-be48-492e-a322-0323ba72e2a7"
+							},
+							{
+								"type": "STAGE",
+								"elementUuid": "4aab255e-be48-492e-a322-0323ba72e2a7"
+							},
+							{
+								"type": "BURN",
+								"elementUuid": "9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
+							}
+						]
+					]
+				}
+			]
+		}
+	]
+}
