@@ -5,9 +5,9 @@ from datetime import datetime
 
 from sortedcontainers import SortedDict, SortedSet
 
-from spacenet.schemas.element import Element, *
-from spacenet.schemas.node import Node, *
-from spacenet.schemas.edge import Edge, *
+from spacenet.schemas.element import Element
+from spacenet.schemas.node import Node
+from spacenet.schemas.edge import Edge
 # from spacenet.schemas.mission import *
 
 __all__ = [
