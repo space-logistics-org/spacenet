@@ -63,8 +63,7 @@ class ConsumablesModel(BaseModel):
     mission_id: int = Field(
         ...,
         title="Mission ID",
-        gt=0,
-        lt=inf
+        gt=0
     )
     reserves_duration: float = Field(
         ...,
