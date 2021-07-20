@@ -1,4 +1,4 @@
-*.pyc
+*.py[co]
 **/*.egg-info/
 sql_app.db
 test.db
@@ -6,3 +6,4 @@ uvicorn.exe
 uvicorn-script.py
 .hypothesis/**
 .coverage
+**/__pycache__/*
