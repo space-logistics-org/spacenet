@@ -5,22 +5,49 @@
 		"nodes": [
 			{
 				"id": 1001,
-				"type": "SURFACE",
+				"type": "Surface",
 				"name": "KSC",
 				"description": "Kennedy Space Center",
-				"body_1": "EARTH",
+				"body_1": "Earth",
 				"latitude": 28.6,
 				"longitude": -80.6
 			},
 			{
 				"id": 1501,
-				"type": "ORBIT",
+				"type": "Orbital",
 				"name": "LEO",
 				"description": "Low-Earth Orbit",
-				"body": "EARTH",
+				"body_1": "Earth",
 				"apoapsis": 296.0,
 				"periapsis": 296.0,
 				"inclination": 28.5
+			},
+			{
+				"id": 1502,
+				"type": "Orbital",
+				"name": "28 km Lunar Orbit",
+				"description": "Lunar Orbit at 28 km",
+				"body_1": "Moon",
+				"apoapsis": 28.0,
+				"periapsis": 28.0
+			},
+			{
+				"id": 1503,
+				"type": "Orbital",
+				"name": "11.5 km Lunar Orbit",
+				"description": "Lunar orbit at 11.5 km",
+				"body_1": "Moon",
+				"apoapsis": 11.5,
+				"periapsis": 11.5
+			},
+			{
+				"id": 1504,
+				"type": "Surface",
+				"name": "Taurus-Littrow",
+				"description": "A valley on the face of the moon",
+				"body_1": "Moon",
+				"latitude": 20.0,
+				"longitude": 31.0
 			}
 		],
 		"edges": [
@@ -32,6 +59,33 @@
 				"origin_id": 1001,
 				"destination_id": 1501,
 				"duration": 0.25
+			},
+			{
+				"id": 2,
+				"type": "Space",
+				"name": "LEO-28 km Lunar Orbit",
+				"description": "Low-Earth Orbit to 28km lunar orbit",
+				"origin_id": 1501,
+				"destination_id": 1502,
+				"duration": 3.5
+			},
+			{
+				"id": 3,
+				"type": "Space",
+				"name": "28 km to 11.5 km lunar orbit",
+				"description": "Decent from a 28 km orbit to an 11.5 km orbit",
+				"origin_id": 1502,
+				"destination_id": 1503,
+				"duration": 0.1
+			},
+			{
+				"id": 4,
+				"type": "Space",
+				"name": "11.5 km orbit-Taurus-Littrow",
+				"description": "Decent from lunar orbit to the surface of the moon",
+				"origin_id": 1503,
+				"destination_id": 1504,
+				"duration": 0.1
 			}
 		]
 	},
@@ -74,7 +128,7 @@
 			"isp": 304.0,
 			"max_fuel": 2135839.0,
 			"max_crew": 0,
-			"propellant_id": 1002,
+			"propellant_id": 1002
 		},
 		{
 			"id": 302,
@@ -131,6 +185,41 @@
 			"max_fuel": 5200.0,
 			"max_crew": 2,
 			"propellant_id": 1003
+		},
+		{
+			"id": 306,
+			"type": "RoboticAgent",
+			"name": "LRV",
+			"description": "Lunar Roving Vehicle",
+			"environment": "Unpressurized",
+			"accommodation_mass": 0,
+			"classOfSupply": 8041,
+			"mass": 460,
+			"active_time_fraction": 0.5
+		},
+		{
+			"id": 307,
+			"type": "PropulsiveVehicle",
+			"name": "CSM",
+			"description": "Apollo Command and Service Module",
+			"environment": "Pressurized",
+			"accommodation_mass": 0,
+			"classOfSupply": 9022,
+			"mass": 11900,
+			"isp": 319,
+			"max_fuel": null,
+			"max_crew": 3,
+			"propellant_id": 1003
+		},
+		{
+			"id": 308,
+			"type": "HumanAgent",
+			"name": "Crew Member",
+			"description": "Typical human astronaut",
+			"enviroment": "Pressurized",
+			"accommodation_mass": 0,
+			"mass": 70,
+			"active_time_fraction": 0.67
 		}
 	],
 	"elements": [
@@ -148,6 +237,36 @@
 			"uuid": "9ad8c701-1e76-41d4-bcdd-ccaa0ef47302",
 			"name": "Apollo 17 S-IVB",
 			"typeId": 303
+		},
+		{
+			"uuid": "677fe98e-a8e3-4b6c-a148-d7004287d43e",
+			"name": "Apollo 17 CSM",
+			"type": 307
+		},
+		{
+			"uuid": "9ed11cf6-38d3-4d98-9af0-03ab6c173353",
+			"name": "Apollo 17 Lunar DM",
+			"type": 304
+		},
+		{
+			"uuid": "4df36b84-c111-4e64-ada0-5c212321370d",
+			"name": "Apollo 17 Lunar AM",
+			"type": 305
+		},
+		{
+			"uuid": "0fbec9f6-ee3b-44d2-b30c-b20e0d5dd92a",
+			"name": "Apollo 17 LRV",
+			"type": 306
+		},
+		{
+			"uuid": "5d95732e-5380-48ad-9cfb-867684231a14",
+			"name": "Crew Member",
+			"type": 308
+		},
+		{
+			"uuid": "d794e69a-f6cf-466f-b054-687fff1346ad",
+			"name": "Crew Member",
+			"type": 308
 		}
 	],
 	"missions": [
@@ -156,7 +275,7 @@
 			"events": [
 				{
 					"uuid": "b4996a6a-93ea-4935-aeaa-11a78370c066",
-					"type": "CREATE_ELEMENTS",
+					"type": "MakeElementsEvent",
 					"name": "Create Apollo 17 Saturn-V Stack at KSC",
 					"time": 0.0,
 					"priority": 0,
@@ -165,12 +284,29 @@
 					"elementUuids": [
 						"69018bea-fc19-412d-8557-14393a16922c",
 						"4aab255e-be48-492e-a322-0323ba72e2a7",
-						"9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
+						"9ad8c701-1e76-41d4-bcdd-ccaa0ef47302",
+						"677fe98e-a8e3-4b6c-a148-d7004287d43e",
+						"9ed11cf6-38d3-4d98-9af0-03ab6c173353",
+						"4df36b84-c111-4e64-ada0-5c212321370d",
+						"0fbec9f6-ee3b-44d2-b30c-b20e0d5dd92a"
+					]
+				},
+				{
+					"uuid": "88af6f3d-011e-4947-aada-87f7bfc27c7c",
+					"type": "MakeElementsEvent",
+					"name": "Create crew members in the CSM",
+					"time": 0.0,
+					"priority": 0,
+					"locationUuid": "c8fa6bfb-9d3a-4c52-bedb-b05a06812d47",
+					"carrierUuid": "677fe98e-a8e3-4b6c-a148-d7004287d43e",
+					"elementUuids": [
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
 					]
 				},
 				{
 					"uuid": "49790e11-d94e-479d-8cf7-467777e3fc7d",
-					"type": "SPACE_TRANSPORT",
+					"type": "SpaceTransport",
 					"name": "Launch to LEO",
 					"time": 0.0,
 					"priority": 1,
@@ -178,7 +314,13 @@
 					"elementUuids": [
 						"69018bea-fc19-412d-8557-14393a16922c",
 						"4aab255e-be48-492e-a322-0323ba72e2a7",
-						"9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
+						"9ad8c701-1e76-41d4-bcdd-ccaa0ef47302",
+						"677fe98e-a8e3-4b6c-a148-d7004287d43e",
+						"9ed11cf6-38d3-4d98-9af0-03ab6c173353",
+						"4df36b84-c111-4e64-ada0-5c212321370d",
+						"0fbec9f6-ee3b-44d2-b30c-b20e0d5dd92a",
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
 					],
 					"burnStageSequences": [
 						[
@@ -204,6 +346,12 @@
 							}
 						]
 					]
+				},
+				{
+					"uuid": "7e796556-9bc1-4603-831a-f95be4d376eb",
+					"type": "SpaceTransport",
+					"name": "Translunar Injection",
+					"time":
 				}
 			]
 		}
