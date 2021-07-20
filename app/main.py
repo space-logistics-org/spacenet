@@ -1,3 +1,5 @@
+import os.path
+
 from fastapi import Depends, FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi_users.user import UserAlreadyExists
@@ -62,8 +64,7 @@ async def startup():
     await database.connect()
     try:
         await fastapi_users.create_user(
-            UserCreate(email=EmailStr("admin@example.com"), password="admin",
-                       is_superuser=True, )
+            UserCreate.parse_file(os.path.join(os.path.dirname(__file__), "admin_user.json"))
         )
     except UserAlreadyExists:
         print(f"Admin account already exists, skipping.")

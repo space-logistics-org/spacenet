@@ -1,3 +1,5 @@
+import json
+import os
 import databases
 import sqlalchemy
 from fastapi import Request
@@ -7,7 +9,8 @@ from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 DATABASE_URL = "sqlite:///./userbase.db"
-SECRET = "spacenet2021"
+with open(os.path.join(os.path.dirname(__file__), "auth_secret.json")) as f:
+    SECRET = json.load(f)["secret"]
 
 
 class User(models.BaseUser):
