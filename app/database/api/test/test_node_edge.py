@@ -40,19 +40,19 @@ app.dependency_overrides[current_user] = get_current_user
 Base.metadata.create_all(bind=test_engine)
 
 GOOD_NODE_LIST = json.loads(
-    pkg_resources.resource_string(spacenet.__name__, "test/good_nodes.json")
+    pkg_resources.resource_string(spacenet.schemas.__name__, "test/good_nodes.json")
 )
 
 BAD_NODE_LIST = json.loads(
-    pkg_resources.resource_string(spacenet.__name__, "test/bad_nodes.json")
+    pkg_resources.resource_string(spacenet.schemas.__name__, "test/bad_nodes.json")
 )
 
 GOOD_EDGE_LIST = json.loads(
-    pkg_resources.resource_string(spacenet.__name__, "test/good_edges.json")
+    pkg_resources.resource_string(spacenet.schemas.__name__, "test/good_edges.json")
 )
 
 BAD_EDGE_LIST = json.loads(
-    pkg_resources.resource_string(spacenet.__name__, "test/bad_edges.json")
+    pkg_resources.resource_string(spacenet.schemas.__name__, "test/bad_edges.json")
 )
 
 
