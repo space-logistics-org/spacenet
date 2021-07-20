@@ -10,8 +10,12 @@ DATABASE_URL = "sqlite:///./userbase.db"
 SECRET = "spacenet2021"
 
 
-User = models.BaseUser
-UserCreate = models.BaseUserCreate
+class User(models.BaseUser):
+    pass
+
+
+class UserCreate(models.BaseUserCreate):
+    pass
 
 
 class UserUpdate(User, models.BaseUserUpdate):
