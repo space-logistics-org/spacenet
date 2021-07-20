@@ -5,8 +5,7 @@ import pkg_resources
 import pytest
 from pydantic import ValidationError
 
-from spacenet import test
-from spacenet.schemas import node as nos
+from spacenet.schemas import node as nos, test
 from spacenet.schemas.node import LagrangeNode, NodeType, OrbitalNode, SurfaceNode
 
 pytestmark = [pytest.mark.unit, pytest.mark.node, pytest.mark.schema]
