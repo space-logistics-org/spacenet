@@ -10,7 +10,7 @@ from spacenet.schemas.element import Element
 from spacenet.schemas.node import Node
 from spacenet.schemas.edge import Edge
 from spacenet.schemas.resource import Resource
-from spacenet.test.utilities import (
+from spacenet.schemas.test.utilities import (
     lunar_sortie_elements,
     lunar_sortie_edges,
     lunar_sortie_nodes,
