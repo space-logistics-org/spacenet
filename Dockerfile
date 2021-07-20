@@ -2,6 +2,10 @@ FROM python:3
 
 WORKDIR /usr/src/app
 
+ENV ADMIN_EMAIL = ""
+ENV ADMIN_PASSWORD = ""
+ENV AUTH_SECRET = ""
+
 COPY spacenet spacenet
 RUN python3 -m pip install spacenet/ --use-feature=in-tree-build
 
