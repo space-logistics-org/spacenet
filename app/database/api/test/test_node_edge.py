@@ -18,7 +18,7 @@ from app.database.api.main import app
 from app.database.api.models.edge import Edge as EdgeModel
 from app.database.api.models.node import Node as NodeModel
 from app.database.test.utilities import test_engine
-from app.dependencies import current_user
+from app.auth_dependencies import current_user
 from spacenet.schemas.edge import EdgeType
 from spacenet.schemas.node import NodeType
 from .utilities import (

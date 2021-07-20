@@ -1,18 +1,21 @@
+import json
+import os
 import databases
 import sqlalchemy
-from fastapi import FastAPI, Request, Depends
-from fastapi.staticfiles import StaticFiles
+from fastapi import Request
 from fastapi_users import FastAPIUsers, models
-from fastapi_users.authentication import JWTAuthentication, CookieAuthentication
+from fastapi_users.authentication import CookieAuthentication, JWTAuthentication
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
-from typing import Optional
-from pydantic import BaseModel
-
-
 DATABASE_URL = "sqlite:///./userbase.db"
-SECRET = "spacenet2021"
+try:
+    with open(os.path.join(os.path.dirname(__file__), "auth_secret.json")) as f:
+        SECRET = json.load(f)["secret"]
+except FileNotFoundError:
+    raise NameError("Authentication secret not defined. "
+                    "Run \"python -m app.provide_secrets\" from root directory "
+                    "to configure secrets.")
 
 
 class User(models.BaseUser):
@@ -48,7 +51,7 @@ users = UserTable.__table__
 user_db = SQLAlchemyUserDatabase(UserDB, database, users)
 
 
-def on_after_register(user: UserDB, request: Request):
+def on_after_register(user: UserDB, _request: Request):
     print(f"User {user.id} has registered.")
 
 

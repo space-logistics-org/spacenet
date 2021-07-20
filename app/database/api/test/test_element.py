@@ -38,7 +38,7 @@ from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from app.database.api.models.element import Element as ElementModel
 from app.database.test.utilities import test_engine
-from app.dependencies import current_user
+from app.auth_dependencies import current_user
 from spacenet.schemas.element import ElementKind
 from spacenet.schemas.test.element_factories import *
 from .utilities import (
