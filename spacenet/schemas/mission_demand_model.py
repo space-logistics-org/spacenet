@@ -60,8 +60,12 @@ class ConsumablesModel(BaseModel):
     Consumables Model
     A demand for resources based on NASA Space Logistics Consumables Model
     """
-    # TODO: Add mission field that takes a mission object schema to import certain fields
-
+    mission_id: int = Field(
+        ...,
+        title="Mission ID",
+        gt=0,
+        lt=inf
+    )
     reserves_duration: float = Field(
         ...,
         title="Reserves Duration",
