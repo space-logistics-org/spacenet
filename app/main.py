@@ -68,6 +68,10 @@ async def startup():
         )
     except UserAlreadyExists:
         print(f"Admin account already exists, skipping.")
+    except FileNotFoundError:
+        raise NameError("Administrator credentials not defined. "
+                        "Run \"python -m app.provide_secrets\" from root directory "
+                        "to configure admin credentials.")
 
 
 @app.on_event("shutdown")
