@@ -1,46 +1,39 @@
-from pydantic import BaseModel, Field
+from uuid import UUID
+
+from pydantic import BaseModel, Field, root_validator
 from enum import Enum
+from typing import Any, Dict, List, Optional, Union
 
 from datetime import datetime
 
-# from spacenet.data.I_DataSource import *
-from sortedcontainers import SortedDict, SortedSet
+from spacenet.schemas.element import Element
+from spacenet.schemas.element_events import MakeElementsEvent, MoveElementsEvent
+from spacenet.schemas.node import Node
+from spacenet.schemas.edge import Edge
+from spacenet.schemas.mission import Mission
 
-from spacenet.schemas.element import *
-# from spacenet.schemas.network import *
-from spacenet.schemas.node import *
-
-# from spacenet.simulator.event.I_Event import *
-# from spacenet.util.GlobalParameters import *
-
-__all__ = [
-    "ScenarioType",
-    "Scenario",
-    "Manifest"
-]
+__all__ = ["ScenarioType", "Scenario", "Manifest"]
 
 
 class Manifest(BaseModel):
-    scenario: "Scenario" = Field(..., title="Scenario")
-    supplyEdges: SortedSet = Field(..., title="Supply Edges")
-    supplyPoints: SortedSet = Field(..., title="Supply Points")
-    aggregatedNodeDemands: SortedDict = Field(..., title="Aggregated Node Demands")
-    aggregatedEdgeDemands: SortedDict = Field(..., title="Aggregated Edge Demands")
-    demandsAsPacked: dict = Field(..., title="Demands as packed")
-    packedDemands: dict = Field(..., title="Packed Demands")
-    cachedContainerDemands: SortedDict = Field(..., title="Cached Container Demands")
-    manifestedContainers: SortedDict = Field(..., title="Manifested Containers")
-
-    class Config:
-        arbitrary_types_allowed = True
+    container_events: List[Union[MakeElementsEvent, MoveElementsEvent]] = Field(
+        ..., title="Resource Event Sequence"
+    )
 
 
 class Network(BaseModel):
-    nodes: SortedSet = Field(..., title="Nodes")
-    edges: SortedSet = Field(..., title="Edges")
+    nodes: Dict[UUID, Node] = Field(..., title="Nodes")
+    edges: Dict[UUID, Edge] = Field(..., title="Edges")
 
-    class Config:
-        arbitrary_types_allowed = True
+    @root_validator(skip_on_failure=True)
+    def _no_common_ids(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        nodes = values.get("nodes")
+        edges = values.get("edges")
+        assert nodes is not None and edges is not None
+        assert not (
+            nodes.keys() & edges.keys()
+        ), "must not have common ids between nodes and edges"
+        return values
 
 
 class ScenarioType(str, Enum):
@@ -55,48 +48,33 @@ class ScenarioType(str, Enum):
         title: "Scenario Type"
 
 
-class ItemDiscretization(str, Enum):
-    none = "None"
-    by_element = "Element"
-    by_location = "Location"
-    by_scenario = "Scenario"
-
-    class Config:
-        title: "Item Discretization"
-
-
 class Scenario(BaseModel):
     name: str = Field(..., title="Name", description="Name of Scenario")
     description: str = Field(None, title="Description", description="Short description")
     startDate: datetime = Field(..., title="Start Date")
     scenarioType: ScenarioType = Field(..., title="Type of Scenario")
-    filePath: str = Field(..., title="File Path")
-    createdBy: str = Field(..., title="Created By")
-
-    # dataSource: I_DataSource = Field(..., title="Data Source")
 
     network: Network = Field(..., title="Network")
-
-    missionList: list = Field(..., title="Mission List")
-
+    missionList: List[Mission] = Field(..., title="Mission List")
+    elementList: Dict[UUID, Element] = Field(..., title="Element List")
     manifest: Manifest = Field(..., title="Manifest")
 
-    timePrecision: float = Field(..., title="Time Precision")
-    demandPrecision: float = Field(..., title="Demand Precision")
-    massPrecision: float = Field(..., title="Mass Precision")
-    volumePrecision: float = Field(..., title="Volume Precision")
+    volumeConstrained: bool = Field(False, title="Volume Constrained")
+    environmentConstrained: bool = Field(False, title="Environment Constrained")
 
-    volumeConstrained: bool = Field(..., title="Volume Constrained")
-    environmentConstrained: bool = Field(..., title="Environment Constrained")
+    @root_validator(skip_on_failure=True)
+    def _no_common_ids(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        network: Optional[Network] = values.get("network")
+        assert network is not None
+        network_ids = network.nodes.keys() | network.edges.keys()
+        elements = values.get("elementList")
+        assert elements is not None
+        assert not (
+            elements.keys() & network_ids
+        ), "must not have common ids between elements and network entities"
+        return values
 
-    itemDiscretization: ItemDiscretization = Field(..., title="Item Discretization")
-    itemAgrregation: float = Field(..., title="Item Aggregation")
-    scavengeSpares: bool = Field(..., title="Scavenge Spares")
-    repairedItems: dict = Field(..., title="Repaired Items")
-
-    detailedEva: bool = Field(..., title="Detailed EVA")
-    detailedExploration: bool = Field(..., title="Detailed Exploration")
+    # TODO: validator that events in missions and events in manifest agree?
 
     class Config:
         title: "Scenario"
-        arbitrary_types_allowed = True

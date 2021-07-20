@@ -1,8 +1,7 @@
-from pydantic import BaseModel, Field, PositiveFloat
+from pydantic import BaseModel, Field, PositiveFloat, PositiveInt
 from typing import List
 
 from .propulsive_burn import BurnStageItem
-from .element import ElementKind
 
 
 class BurnStageSequence(BaseModel):
@@ -18,14 +17,14 @@ class SpaceTransport(BaseModel):
 
     name: str = Field(..., title="Name", description="Space Transport name")
 
-    origin_node: str = Field(
-        ..., title="Origin Node", description="The origin node of the Space Transport"
+    origin_node_id: PositiveInt = Field(
+        ..., title="Origin Node ID", description="The origin node Id of the Space Transport"
     )
 
-    destination_node: str = Field(
+    destination_node_id: PositiveInt = Field(
         ...,
-        title="Destination Node",
-        description="The destination node of the Space Transport",
+        title="Destination Node ID",
+        description="The destination node Id of the Space Transport",
     )
 
     time: PositiveFloat = Field(
@@ -38,10 +37,10 @@ class SpaceTransport(BaseModel):
         ..., title="Priority", description="Importance of mission event", ge=1, le=5
     )
 
-    elements: List[ElementKind] = Field(
+    elements_id_list: List[PositiveInt] = Field(
         ...,
-        title="Elements",
-        description="The possible elements to be used in the Burn-Stage Sequence",
+        title="Element ID List",
+        description="A list of the IDs of elements that may used in the Burn-Stage Sequence",
     )
 
     burnStageProfile: List[BurnStageSequence] = Field(
