@@ -2,6 +2,7 @@
 **/*.egg-info/
 sql_app.db
 test.db
+userbase.db
 uvicorn.exe
 uvicorn-script.py
 .hypothesis/**
