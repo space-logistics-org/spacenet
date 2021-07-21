@@ -1,8 +1,8 @@
 from datetime import timedelta
+from typing import List
 from uuid import UUID
 
 from pydantic import Field
-from typing import List
 
 from spacenet.schemas import Event
 

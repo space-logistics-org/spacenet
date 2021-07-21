@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
+from . import Event
 from .resource import Resource
 from .types import SafeFloat
 
 
-class ConsumeResource(BaseModel):
+class ConsumeResource(Event):
     removal_point_id: UUID = Field(
         ...,
         title="Location ID",

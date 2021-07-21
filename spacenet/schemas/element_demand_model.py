@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field
 from enum import Enum
 
-from ..constants import ClassOfSupply
+from pydantic import BaseModel, Field
+
+
 # import spacenet.domain.resource.Demand
 # import spacenet.domain.resource.DemandSet
 # from spacenet.schemas.Mission import *

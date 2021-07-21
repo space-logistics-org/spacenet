@@ -9,8 +9,8 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from .types import SafeInt
 from .mission_demand_model import MissionDemand
+from .types import SafeInt
 
 
 class Mission(BaseModel):

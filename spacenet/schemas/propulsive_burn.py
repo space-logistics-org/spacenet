@@ -1,8 +1,8 @@
+from enum import Enum
+from typing import List
 from uuid import UUID
 
 from pydantic import BaseModel, Field
-from enum import Enum
-from typing import List
 
 from . import Event
 from .burn import Burn

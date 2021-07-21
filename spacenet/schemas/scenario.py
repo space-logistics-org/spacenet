@@ -1,16 +1,15 @@
+from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 
 from pydantic import BaseModel, Field, root_validator
-from enum import Enum
-from typing import Any, Dict, List, Optional, Union
 
-from datetime import datetime
-
+from spacenet.schemas.edge import Edge
 from spacenet.schemas.element import Element
 from spacenet.schemas.element_events import MakeElements, MoveElements
-from spacenet.schemas.node import Node
-from spacenet.schemas.edge import Edge
 from spacenet.schemas.mission import Mission
+from spacenet.schemas.node import Node
 
 __all__ = ["ScenarioType", "Scenario", "Manifest"]
 
