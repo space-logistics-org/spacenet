@@ -5,7 +5,7 @@ import pytest
 from hypothesis import assume, strategies as st
 from hypothesis.stateful import RuleBasedStateMachine, rule, consumes, Bundle
 
-from spacenet.constants import SQLITE_MIN_INT, SQLITE_MAX_INT
+from spacenet.schemas.constants import SQLITE_MIN_INT, SQLITE_MAX_INT
 from .utilities import TestingSessionLocal, test_engine
 from ..api import models
 from ..api.database import Base

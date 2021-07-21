@@ -1,7 +1,7 @@
 import pytest
 from hypothesis import given, strategies as st
 from .utilities import INVALID_INTS, success_from_kw, xfail_from_kw
-from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from spacenet.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from ..state import State
 
 pytestmark = [pytest.mark.unit, pytest.mark.state, pytest.mark.schema]

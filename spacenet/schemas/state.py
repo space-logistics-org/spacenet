@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, StrictBool, conint
 
 __all__ = ["State", "StateType"]
 
-from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from .constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 
 
 class StateType(str, Enum):

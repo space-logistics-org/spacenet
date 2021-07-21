@@ -8,7 +8,7 @@ from pydantic import (
 from typing_extensions import Literal
 
 from .types import SafeNonNegFloat, SafePosFloat
-from ..constants import ClassOfSupply
+from .constants import ClassOfSupply
 
 __all__ = ["ResourceType", "ContinuousResource", "DiscreteResource"]
 
