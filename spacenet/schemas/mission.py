@@ -11,7 +11,8 @@ from pydantic import BaseModel, Field
 
 from .types import SafeInt
 from .mission_demand_model import MissionDemand
-from .scenario import Scenario
+
+
 class Mission(BaseModel):
     name: str = Field(..., title = "Name", description = "name of mission")
     start_date: datetime = Field(..., title = "Start Date", description = "date of mission start")
