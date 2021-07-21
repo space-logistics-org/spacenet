@@ -1,4 +1,3 @@
-import json
 import os
 import databases
 import sqlalchemy
@@ -9,15 +8,10 @@ from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 DATABASE_URL = "sqlite:///./userbase.db"
-try:
-    with open(os.path.join(os.path.dirname(__file__), "auth_secret.json")) as f:
-        SECRET = json.load(f)["secret"]
-except FileNotFoundError:
-    raise NameError(
-        "Authentication secret not defined. "
-        'Run "python -m app.provide_secrets" from root directory '
-        "to configure secrets."
-    )
+SECRET = os.getenv("SPACENET_AUTH_SECRET")
+if SECRET is None:
+    raise NameError("Authentication secret not defined. "
+                    "Set the environment variable AUTH_SECRET to continue.")
 
 
 class User(models.BaseUser):

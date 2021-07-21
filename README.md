@@ -18,9 +18,12 @@ python -m pip install spacenet/
 python -m pip install app/
 ```
 
-To configure SpaceNet secrets for administrator accounts run:
+To configure SpaceNet secrets for administrator accounts, set the following environment variables to their desired 
+values:
 ```
-python -m app.provide_secrets <admin_email> <admin_pwd> <auth_secret>
+ADMIN_EMAIL
+ADMIN_PASSWORD
+AUTH_SECRET
 ```
 
 To launch the SpaceNet application, run:
