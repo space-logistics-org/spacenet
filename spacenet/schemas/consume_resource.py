@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from .types import SafeInt
 from pydantic import BaseModel, Field
+
 from .resource import Resource
+from .types import SafeFloat, SafeInt
 
 
 class ConsumeResource(BaseModel):
@@ -10,4 +11,5 @@ class ConsumeResource(BaseModel):
                                                   "resources from")
     to_remove: Resource = Field(..., title="Consumed Resource",
                                 description="resource to remove")
-    quantity: float = Field(..., title="Consumed Quantity", description="quantity to remove")
+    quantity: SafeFloat = Field(..., title="Consumed Quantity",
+                                description="quantity to remove")
