@@ -2,7 +2,7 @@ import random
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Tuple
 
-from spacenet.constants import Environment
+from spacenet.schemas.constants import Environment
 from spacenet.schemas.element import ElementKind
 
 STRINGS = ["foo", "bar", "baz"]
