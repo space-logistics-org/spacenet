@@ -24,6 +24,153 @@
 
     <script>
 
+        var lunar_sortie = {
+            name: 'Lunar Sortie',
+            startDate: '2021-07-09',
+            events: [
+                {
+                    name: 'Create Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'KSC',
+                        id: 1
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'KSC-LEO',
+                        origin_node: {
+                            name: 'KSC',
+                            id: 1
+                        },
+                        destination_node: {
+                            name: 'LEO',
+                            id: 3
+                        },
+                        duration: 0.25,
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'LEO-LLPO',
+                        origin_node: {
+                            name: 'LEO',
+                            id: 3
+                        },
+                        destination_node: {
+                            name: 'LLPO',
+                            id: 4
+                        },
+                        duration: 4.0,
+                    }
+                },
+                {
+                    name: 'Move Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'LLPO',
+                        id: 4
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'LLPO-LSP',
+                        origin_node: {
+                            name: 'LLPO',
+                            id: 4
+                        },
+                        destination_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        duration: 0.5,
+                    }
+                },
+                {
+                    name: 'Crewed Exploration',
+                    time: 0,
+                    priority: 1,
+                    edge: {
+                        name: 'Crewed Exploration',
+                        origin_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        destination_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        duration: 7.5,
+                    }
+                },
+                {
+                    name: 'Create Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'LSP',
+                        id: 5
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'LSP-LLPO',
+                        origin_node: {
+                            name: 'LSP',
+                            id: 5
+                        },
+                        destination_node: {
+                            name: 'LLPO',
+                            id: 4
+                        },
+                        duration: 0.5,
+                    }
+                },
+                {
+                    name: 'Move Elements',
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: 'LLPO',
+                        id: 4
+                    }
+                },
+                {
+                    name: 'Space Transport',
+                    time: 0,
+                    priority: 3,
+                    edge: {
+                        name: 'LLPO-PAC',
+                        origin_node: {
+                            name: 'LLPO',
+                            id: 4
+                        },
+                        destination_node: {
+                            name: 'PAC',
+                            id: 2
+                        },
+                        duration: 4,
+                    }
+                }
+
+
+            ]
+        }
+
         var mission2 = {
             name: 'Surface Exploration',
             startDate: '2019-11-29',
@@ -62,11 +209,11 @@
                         name: 'Cargo Delivery',
                         origin_node: {
                             name: 'LSP',
-                            id: 3
+                            id: 5
                         },
                         destination_node: {
                             name: 'LSP',
-                            id: 3
+                            id: 5
                         },
                         duration: 7,
                     }
@@ -154,7 +301,7 @@
             ]
         }
 
-        var missions = [mission1, mission2]
+        var missions = [lunar_sortie]
 
         var all_data = [];
         var nodeNames = {};

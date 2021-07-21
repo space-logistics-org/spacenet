@@ -3,7 +3,7 @@ import json
 import pkg_resources
 import pytest
 
-from spacenet import test
+from spacenet.schemas import test
 
 from app.database.api.models import edge as models
 from app.database.api.schemas import edge as schemas

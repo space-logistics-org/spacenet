@@ -143,6 +143,7 @@ $(document).ready( function() {
 
 
 function setNode(){
+  $('#pickElement').find('option:not(:first)').remove()
 
   var node = $('#pickNode').val()
 

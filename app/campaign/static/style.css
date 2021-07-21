@@ -25,3 +25,7 @@ p{
   margin-bottom: 20px !important;
   border-radius: 10% !important;
 }
+
+#logout {
+  display: none;
+}

@@ -20,6 +20,7 @@
     <link href="style.css" rel="stylesheet">
     <script src="resource_formview.js"></script>
     <script src="table.js"></script>
+    <script src="jsuniv.js"></script>
 
 </head>
 
@@ -29,8 +30,10 @@
         <a class="d-flex align-items-center text-dark text-decoration-none"></a>
         <img height="30px" src="SpaceNetLogo.jpg">
         <span class="fs-4">SpaceNet</span>
-        <span class="float-right"><a class="btn btn-outline-secondary" href="../../static/login.html" id="login"
-                                     role="button" type="button">Login</a></span>
+        <span class="float-right"><a class="btn btn-outline-secondary" href="../../login.html" id="login"
+                                     role="button" type="button" id="login">Login</a></span>
+        <span class="float-right"><input class="btn btn-outline-secondary" type="button" id="logout" value="Logout"></span>
+
     </header>
     <h1 class="text-dark" class="display-5">Resources</h1>
 
@@ -472,6 +475,7 @@
         &copy; 2021
     </footer>
 </div>
+<script defer src="index.js"></script>
 </body>
 
 </html>

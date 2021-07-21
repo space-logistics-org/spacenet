@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Edge Formview</title>
+  <meta name="author" content="SpaceNet Team">
+  <meta name="description" content="A formview editor for SpaceNet Edge objects.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+  <script src="crewedEVA_formview.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+  <style>
+  .button{
+       margin-top:10px;
+       margin-left: 10px;
+  }
+  input[type=text] {
+        padding: 2px 10px;
+        margin: 3px;
+        display: inline-block;
+        border: 1px solid #CCC;
+        box-sizing: border-box;
+        outline: none;
+    }
+    .crewName{
+          width: 32%;
+    }
+    .crewTimeFraction{
+          width: 32%;
+    }
+    .crewState{
+          width: 32%;
+    }
+    .demandType{
+          width: 24%;
+    }
+    .demandResource{
+          width: 24%;
+    }
+    .demandAmount{
+          width: 24%;
+    }
+    .demandUnit{
+          width: 24%;
+    }
+
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <header class="pb-3 mb-4 border-bottom">
+      <a class="d-flex align-items-center text-dark text-decoration-none"></a>
+        <img src = "SpaceNetLogo.jpg" height="30px">
+        <span class="fs-4">SpaceNet</span>
+    </header>
+  <h1 class= "text-center">Crewed EVA Form</h1>
+
+  <hr></hr>
+    <form id="components">
+      <div class="form-row">
+        <div class="container">
+              <label for="inputName">Name</label>
+              <input type="text" class="form-control" id="inputName" placeholder="Name">
+        </div>
+    </div>
+
+    <div class="form-row">
+
+        <div class="container">
+            <label for="inputNodeID">Node ID</label>
+            <input type="text" class="form-control" id="inputNodeID" placeholder="Node ID">
+        </div>
+
+        <div class="container">
+            <label for="inputTime">Time From Mission Start</label>
+            <input type="number" class="form-control" id="inputTime" placeholder="Time">
+        </div>
+
+        <div class="container">
+          <label for="inputPriority">Priority</label>
+          <select id="inputPriority" class="form-control" class="text-center">
+            <option selected id="def">Choose...</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+
+        <div class="container">
+            <label for="inputEVADuration">EVA Duration</label>
+            <input type="number" class="form-control" id="inputEVADuration" placeholder="EVA Duration">
+        </div>
+
+        <div class="container">
+            <label for="inputCrewVehicle">Crew Vehicle</label>
+            <input type="text" class="form-control" id="inputCrewVehicle" placeholder="Crew Vehicle">
+        </div>
+
+        <div class="container">
+           <label for="crewAdd">Press to add a new crew member</label>
+           <input type="button" id="crewAdd" value="Add Crew Member" class="btn btn-dark btn-sm"/>
+         </div>
+
+         <div id="crewmain"></div>
+
+         <div class="container">
+             <label for="demAdd">Press to add a new Demand</label>
+             <input type="button" id="demAdd" value="Add Demand" class="btn btn-dark btn-sm"/>
+         </div>
+
+       <div id="demandmain"></div>
+
+
+
+    </div>
+
+    <div class="button">
+      <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
+    </div>
+    </form>
+    </div>
+
+
+
+</body>
+
+</html>

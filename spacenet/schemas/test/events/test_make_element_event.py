@@ -8,7 +8,7 @@ from ..utilities import (
     success_from_kw,
     xfail_from_kw,
 )
-from ...constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 

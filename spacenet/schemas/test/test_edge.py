@@ -5,8 +5,7 @@ import pkg_resources
 import pytest
 from pydantic import ValidationError
 
-from spacenet import test
-from spacenet.schemas import edge as eos
+from spacenet.schemas import edge as eos, test
 from spacenet.schemas.edge import EdgeType, FlightEdge, SpaceEdge, SurfaceEdge
 
 pytestmark = [pytest.mark.unit, pytest.mark.edge, pytest.mark.schema]
