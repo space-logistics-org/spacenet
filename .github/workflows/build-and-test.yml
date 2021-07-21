@@ -31,8 +31,13 @@ jobs:
           python -m pip install spacenet/ --use-feature=in-tree-build
           python -m pip install app/ --use-feature=in-tree-build
       - name: Configure secrets
+        shell: bash
+        env:
+          ADMIN_EMAIL: ${{ secrets.DEFAULT_ADMIN_EMAIL }}
+          ADMIN_PWD: ${{ secrets.DEFAULT_ADMIN_PWD }}
+          SECRET: ${{ secrets.DEFAULT_SECRET }}
         run: |
-          python -m app.provide_secrets invalid_email@example.org invalid_pwd ThrowawaySecret
+          python -m app.provide_secrets "$ADMIN_EMAIL" "$ADMIN_PWD" "$SECRET"
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
