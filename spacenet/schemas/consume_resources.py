@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from .resource import Resource
 
 
-class ConsumeRescource(BaseModel):
+class ConsumeResource(BaseModel):
     removal_point_id: SafeInt = Field(..., title="Location ID",
                                       description="ID of the node or edge to remove "
                                                   "resources from")
