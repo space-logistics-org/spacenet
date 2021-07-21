@@ -1,12 +1,11 @@
-from fastapi import Depends, status
-from pydantic import ValidationError
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.auth_dependencies import User, current_user
-from spacenet.schemas import Element
 from .base_router import CRUDRouter, NOT_FOUND_RESPONSE, Route
 from .. import database
 from ..models import state as models
+from ..models.element import Element as ElementModel
 from ..schemas.constants import STATE_SCHEMAS
 from ..schemas.state import State, StateRead, StateUpdate
 
@@ -31,11 +30,12 @@ def create_state(
     db: Session = Depends(database.get_db),
     _user: User = Depends(current_user),
 ) -> StateRead:
-    db_element = db.query(Element).get(state.element_id)
+    db_element = db.query(ElementModel).get(state.element_id)
     if db_element is None:
-        raise ValidationError(
-            f"Invalid element id: {state.element_id} does not correspond to "
-            f"an element in the database"
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Invalid element id: {state.element_id} does not correspond to "
+            f"an element in the database",
         )
     create_item_fn = router.get_create_item()
     return create_item_fn(state, db, _user)
@@ -53,11 +53,12 @@ def update_state(
     db: Session = Depends(database.get_db),
     _user: User = Depends(current_user),
 ):
-    db_element = db.query(Element).get(state.element_id)
+    db_element = db.query(ElementModel).get(state.element_id)
     if db_element is None:
-        raise ValidationError(
-            f"Invalid element id: {state.element_id} does not correspond to "
-            f"an element in the database"
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Invalid element id: {state.element_id} does not correspond to "
+            f"an element in the database",
         )
     update_item_fn = router.get_update_item()
     return update_item_fn(state, db, _user)
