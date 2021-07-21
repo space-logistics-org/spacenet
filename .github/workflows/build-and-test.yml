@@ -39,7 +39,7 @@ jobs:
       - name: Test with pytest
         env:
           SPACENET_ADMIN_EMAIL: ${{ secrets.DEFAULT_ADMIN_EMAIL }}
-          SPACENET_ADMIN_PWD: ${{ secrets.DEFAULT_ADMIN_PWD }}
+          SPACENET_ADMIN_PASSWORD: ${{ secrets.DEFAULT_ADMIN_PWD }}
           SPACENET_AUTH_SECRET: ${{ secrets.DEFAULT_SECRET }}
         run: |
           pytest -m "not hypothesis"

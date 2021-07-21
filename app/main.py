@@ -66,22 +66,23 @@ async def startup():
         ADMIN_EMAIL = os.getenv("SPACENET_ADMIN_EMAIL")
         if ADMIN_EMAIL is None:
             raise NameError("Administrator email not defined. "
-                            "Set the environment variable ADMIN_EMAIL to continue.")
+                            "Set the environment variable SPACENET_ADMIN_EMAIL to continue.")
         ADMIN_PASSWORD = os.getenv("SPACENET_ADMIN_PASSWORD")
         if ADMIN_PASSWORD is None:
             raise NameError("Administrator password not defined. "
-                            "Set the environment variable ADMIN_PASSWORD to continue.")
-        await fastapi_users.create_user(
-            UserCreate(
-                email=EmailStr(ADMIN_EMAIL),
-                password=ADMIN_PASSWORD,
-                is_superuser=True
+                            "Set the environment variable SPACENET_ADMIN_PASSWORD to continue.")
+        try:
+            await fastapi_users.create_user(
+                UserCreate(
+                    email=EmailStr(ADMIN_EMAIL),
+                    password=ADMIN_PASSWORD,
+                    is_superuser=True
+                )
             )
-        )
+        except ValidationError:
+            raise ValueError(f"{ADMIN_EMAIL} is not a valid email")
     except UserAlreadyExists:
         print(f"Admin account already exists, skipping.")
-    except ValidationError:
-        raise ValueError(f"{ADMIN_EMAIL} is not a valid email")
 
 
 @app.on_event("shutdown")

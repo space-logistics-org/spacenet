@@ -11,7 +11,7 @@ DATABASE_URL = "sqlite:///./userbase.db"
 SECRET = os.getenv("SPACENET_AUTH_SECRET")
 if SECRET is None:
     raise NameError("Authentication secret not defined. "
-                    "Set the environment variable AUTH_SECRET to continue.")
+                    "Set the environment variable SPACENET_AUTH_SECRET to continue.")
 
 
 class User(models.BaseUser):
