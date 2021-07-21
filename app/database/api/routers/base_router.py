@@ -72,7 +72,7 @@ class CRUDRouter(APIRouter):
         if Route.GetAll in generated_routes:
             self.add_api_route(
                 path="/",
-                endpoint=self._read_all_items(),
+                endpoint=self.get_read_all_items(),
                 methods=["GET"],
                 response_model=List[self.read_schema],
                 summary=f"List {name_capitalized}s",
@@ -81,7 +81,7 @@ class CRUDRouter(APIRouter):
         if Route.GetOne in generated_routes:
             self.add_api_route(
                 path="/{item_id}",
-                endpoint=self._read_item(),
+                endpoint=self.get_read_item(),
                 methods=["GET"],
                 response_model=self.read_schema,
                 responses=NOT_FOUND_RESPONSE,
@@ -91,7 +91,7 @@ class CRUDRouter(APIRouter):
         if Route.Create in generated_routes:
             self.add_api_route(
                 path="/",
-                endpoint=self._create_item(),
+                endpoint=self.get_create_item(),
                 methods=["POST"],
                 response_model=self.read_schema,
                 status_code=status.HTTP_201_CREATED,
@@ -101,7 +101,7 @@ class CRUDRouter(APIRouter):
         if Route.Update in generated_routes:
             self.add_api_route(
                 path="/{item_id}",
-                endpoint=self._update_item(),
+                endpoint=self.get_update_item(),
                 methods=["PATCH"],
                 response_model=self.read_schema,
                 responses={
@@ -114,7 +114,7 @@ class CRUDRouter(APIRouter):
         if Route.Delete in generated_routes:
             self.add_api_route(
                 path="/{item_id}",
-                endpoint=self._delete_item(),
+                endpoint=self.get_delete_item(),
                 methods=["DELETE"],
                 response_model=self.read_schema,
                 responses=NOT_FOUND_RESPONSE,
@@ -122,14 +122,14 @@ class CRUDRouter(APIRouter):
                 description=f"Delete an existing {name_lower} from the database.",
             )
 
-    def _read_all_items(self):
+    def get_read_all_items(self):
         def route(db: Session = Depends(database.get_db)):
             db_items = db.query(self.table).all()
             return db_items
 
         return route
 
-    def _read_item(self):
+    def get_read_item(self):
         def route(item_id: int, db: Session = Depends(database.get_db)):
             db_item = db.query(self.table).get(item_id)
             if db_item is None:
@@ -141,7 +141,7 @@ class CRUDRouter(APIRouter):
 
         return route
 
-    def _create_item(self):
+    def get_create_item(self):
         create_schema = self.create_schema
 
         def route(
@@ -157,7 +157,7 @@ class CRUDRouter(APIRouter):
 
         return route
 
-    def _update_item(self):
+    def get_update_item(self):
         update_schema = self.update_schema
 
         def route(
@@ -188,7 +188,7 @@ class CRUDRouter(APIRouter):
 
         return route
 
-    def _delete_item(self):
+    def get_delete_item(self):
         def route(
             item_id: int,
             db: Session = Depends(database.get_db),
