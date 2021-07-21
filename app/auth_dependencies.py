@@ -13,9 +13,11 @@ try:
     with open(os.path.join(os.path.dirname(__file__), "auth_secret.json")) as f:
         SECRET = json.load(f)["secret"]
 except FileNotFoundError:
-    raise NameError("Authentication secret not defined. "
-                    "Run \"python -m app.provide_secrets\" from root directory "
-                    "to configure secrets.")
+    raise NameError(
+        "Authentication secret not defined. "
+        'Run "python -m app.provide_secrets" from root directory '
+        "to configure secrets."
+    )
 
 
 class User(models.BaseUser):
