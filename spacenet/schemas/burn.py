@@ -12,10 +12,10 @@ class Burn(BaseModel):
     """
 
     edge_id: UUID = Field(
-        ..., description="ID of the edge the burn will occur on", ge=0
+        ..., description="ID of the edge the burn will occur on"
     )
     time: timedelta = Field(
-        ..., description="Mission time at which the burn will occur", ge=0
+        ..., description="Mission time at which the burn will occur"
     )
     delta_v: NonNegativeFloat = Field(
         ..., description="Change in velocity to be achieved by a burn"
