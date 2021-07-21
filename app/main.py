@@ -3,7 +3,7 @@ import os.path
 from fastapi import Depends, FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi_users.user import UserAlreadyExists
-from pydantic import EmailStr
+from pydantic import EmailStr, ValidationError
 
 from .database import main as database_app
 from .campaign import main as campaign
@@ -80,6 +80,8 @@ async def startup():
         )
     except UserAlreadyExists:
         print(f"Admin account already exists, skipping.")
+    except ValidationError:
+        raise ValueError(f"{ADMIN_EMAIL} is not a valid email")
 
 
 @app.on_event("shutdown")
