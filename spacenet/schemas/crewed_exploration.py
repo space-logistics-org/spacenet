@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import Field
 
-from spacenet.constants import SQLITE_MAX_INT
+from .constants import SQLITE_MAX_INT
 from spacenet.schemas import Event
 
 

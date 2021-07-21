@@ -16,7 +16,7 @@ from app.database.api import models
 from app.database.api.database import Base, get_db
 from app.database.api.main import app
 from app.auth_dependencies import current_user
-from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from spacenet.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from spacenet.schemas import Element, State
 from .utilities import get_current_user, get_test_db
 from ..models import utilities as model_utils
