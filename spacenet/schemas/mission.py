@@ -5,7 +5,7 @@ Created on Fri Jul  9 06:55:31 2021
 @author: jredm
 """
 from datetime import datetime
-from typing import Dict, List
+from typing import List
 
 from pydantic import BaseModel, Field
 
