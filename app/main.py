@@ -63,11 +63,11 @@ app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
 async def startup():
     await database.connect()
     try:
-        ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+        ADMIN_EMAIL = os.getenv("SPACENET_ADMIN_EMAIL")
         if ADMIN_EMAIL is None:
             raise NameError("Administrator email not defined. "
                             "Set the environment variable ADMIN_EMAIL to continue.")
-        ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+        ADMIN_PASSWORD = os.getenv("SPACENET_ADMIN_PASSWORD")
         if ADMIN_PASSWORD is None:
             raise NameError("Administrator password not defined. "
                             "Set the environment variable ADMIN_PASSWORD to continue.")

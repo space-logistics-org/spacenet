@@ -38,8 +38,8 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         env:
-          ADMIN_EMAIL: ${{ secrets.DEFAULT_ADMIN_EMAIL }}
-          ADMIN_PWD: ${{ secrets.DEFAULT_ADMIN_PWD }}
-          AUTH_SECRET: ${{ secrets.DEFAULT_SECRET }}
+          SPACENET_ADMIN_EMAIL: ${{ secrets.DEFAULT_ADMIN_EMAIL }}
+          SPACENET_ADMIN_PWD: ${{ secrets.DEFAULT_ADMIN_PWD }}
+          SPACENET_AUTH_SECRET: ${{ secrets.DEFAULT_SECRET }}
         run: |
           pytest -m "not hypothesis"

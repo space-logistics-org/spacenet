@@ -8,7 +8,7 @@ from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 DATABASE_URL = "sqlite:///./userbase.db"
-SECRET = os.getenv("AUTH_SECRET")
+SECRET = os.getenv("SPACENET_AUTH_SECRET")
 if SECRET is None:
     raise NameError("Authentication secret not defined. "
                     "Set the environment variable AUTH_SECRET to continue.")
