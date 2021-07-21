@@ -11,16 +11,16 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 from spacenet.analysis.min_heap import MinHeap
-from spacenet.schemas import Scenario
-from spacenet.schemas.element import Element
-from spacenet.schemas.edge import Edge
-from spacenet.schemas.node import Node
-from spacenet.schemas.element_events import (
-    MoveElementsEvent,
-    MakeElementsEvent,
-    RemoveElementsEvent,
+from spacenet.schemas import (
+    PropulsiveBurn,
+    Scenario,
+    Element,
+    Edge,
+    MoveElements,
+    MakeElements,
+    RemoveElements,
 )
-from spacenet.schemas.burn import Burn
+from spacenet.schemas.node import Node
 
 __all__ = ["Simulation"]
 
@@ -74,7 +74,7 @@ class Move(SimEvent):
     Represents an event moving elements, one of the four primitive SimEvents.
     """
 
-    event: MoveElementsEvent
+    event: MoveElements
 
     def process_with_ctx(self, sim: "Simulation"):
         # TODO
@@ -86,7 +86,7 @@ class Create(SimEvent):
     Represents an event creating elements, one of the four primitive SimEvents.
     """
 
-    event: MakeElementsEvent
+    event: MakeElements
 
     def process_with_ctx(self, sim: "Simulation"):
         # TODO
@@ -98,7 +98,7 @@ class Remove(SimEvent):
     Represents an event removing elements, one of the four primitive SimEvents.
     """
 
-    event: RemoveElementsEvent
+    event: RemoveElements
 
     def process_with_ctx(self, sim: "Simulation"):
         # TODO
@@ -110,7 +110,7 @@ class BurnEvent(SimEvent):
     Represents a burn, one of the four primitive SimEvents.
     """
 
-    event: Burn
+    event: PropulsiveBurn
 
     def process_with_ctx(self, sim: "Simulation"):
         # TODO
