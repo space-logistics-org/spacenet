@@ -15,7 +15,6 @@ from .scenario import Scenario
 class Mission(BaseModel):
     name: str = Field(..., title = "Name", description = "name of mission")
     start_date: datetime = Field(..., title = "Start Date", description = "date of mission start")
-    scenario_name: Scenario = Field(..., title = "Scenario", description = "mission scenario")
     events: List[SafeInt] = Field(..., title = "Event ID List", description = "list of event IDs")
     demand_models : List[MissionDemand] = Field(..., title = "Demand Models List", description = "list of mission demand models")
     origin: SafeInt = Field(..., title = "Origin ID", description = "ID of origin node")
