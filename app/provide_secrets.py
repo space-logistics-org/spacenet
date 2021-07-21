@@ -18,6 +18,7 @@ if __name__ == "__main__":
         password=args.admin_password,
         is_superuser=True
     )
+    print(f"Admin Email: {admin_user.email}\nAdmin Password: {admin_user.password}")
     dirname = os.path.dirname(__file__)
     with open(os.path.join(dirname, "admin_user.json"), "w") as f:
         json.dump(admin_user.dict(), f, indent=2)
