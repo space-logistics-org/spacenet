@@ -61,6 +61,7 @@ app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
 @app.on_event("startup")
 async def startup():
     await database.connect()
+    await database.execute("""DELETE FROM user WHERE is_superuser=1""")
     try:
         await fastapi_users.create_user(
             UserCreate.parse_file(os.path.join(os.path.dirname(__file__), "admin_user.json"))
