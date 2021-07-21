@@ -18,6 +18,14 @@ python -m pip install spacenet/
 python -m pip install app/
 ```
 
+To configure SpaceNet secrets for administrator accounts, set the following environment variables to their desired 
+values:
+```
+ADMIN_EMAIL
+ADMIN_PASSWORD
+AUTH_SECRET
+```
+
 To launch the SpaceNet application, run:
 ```shell
 uvicorn app.main:app --reload-dir app --reload-dir spacenet

@@ -8,3 +8,5 @@ uvicorn-script.py
 .hypothesis/**
 .coverage
 **/__pycache__/*
+**/admin_user.json
+**/auth_secret.json

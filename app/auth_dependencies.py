@@ -1,18 +1,17 @@
+import os
 import databases
 import sqlalchemy
-from fastapi import FastAPI, Request, Depends
-from fastapi.staticfiles import StaticFiles
+from fastapi import Request
 from fastapi_users import FastAPIUsers, models
-from fastapi_users.authentication import JWTAuthentication, CookieAuthentication
+from fastapi_users.authentication import CookieAuthentication, JWTAuthentication
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
-from typing import Optional
-from pydantic import BaseModel
-
-
 DATABASE_URL = "sqlite:///./userbase.db"
-SECRET = "spacenet2021"
+SECRET = os.getenv("AUTH_SECRET")
+if SECRET is None:
+    raise NameError("Authentication secret not defined. "
+                    "Set the environment variable AUTH_SECRET to continue.")
 
 
 class User(models.BaseUser):
@@ -48,7 +47,7 @@ users = UserTable.__table__
 user_db = SQLAlchemyUserDatabase(UserDB, database, users)
 
 
-def on_after_register(user: UserDB, request: Request):
+def on_after_register(user: UserDB, _request: Request):
     print(f"User {user.id} has registered.")
 
 

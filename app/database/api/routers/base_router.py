@@ -10,7 +10,7 @@ from .utilities import create_read_update_unions
 from .. import database
 from ..database import Base
 from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
-from ....dependencies import User, current_user
+from ....auth_dependencies import User, current_user
 
 NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
 
