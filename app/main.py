@@ -3,7 +3,7 @@ import os.path
 from fastapi import Depends, FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi_users.user import UserAlreadyExists
-from pydantic import EmailStr
+from pydantic import EmailStr, ValidationError
 
 from .database import main as database_app
 from .campaign import main as campaign
@@ -63,21 +63,24 @@ app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
 async def startup():
     await database.connect()
     try:
-        ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+        ADMIN_EMAIL = os.getenv("SPACENET_ADMIN_EMAIL")
         if ADMIN_EMAIL is None:
             raise NameError("Administrator email not defined. "
-                            "Set the environment variable ADMIN_EMAIL to continue.")
-        ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+                            "Set the environment variable SPACENET_ADMIN_EMAIL to continue.")
+        ADMIN_PASSWORD = os.getenv("SPACENET_ADMIN_PASSWORD")
         if ADMIN_PASSWORD is None:
             raise NameError("Administrator password not defined. "
-                            "Set the environment variable ADMIN_PASSWORD to continue.")
-        await fastapi_users.create_user(
-            UserCreate(
-                email=EmailStr(ADMIN_EMAIL),
-                password=ADMIN_PASSWORD,
-                is_superuser=True
+                            "Set the environment variable SPACENET_ADMIN_PASSWORD to continue.")
+        try:
+            await fastapi_users.create_user(
+                UserCreate(
+                    email=EmailStr(ADMIN_EMAIL),
+                    password=ADMIN_PASSWORD,
+                    is_superuser=True
+                )
             )
-        )
+        except ValidationError:
+            raise ValueError(f"{ADMIN_EMAIL} is not a valid email")
     except UserAlreadyExists:
         print(f"Admin account already exists, skipping.")
 
