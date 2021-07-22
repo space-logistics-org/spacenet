@@ -5,7 +5,7 @@
 # time-expanded part.
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional, Set, TypeVar, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Set, TypeVar, Union
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 from spacenet.analysis.min_heap import MinHeap
 from spacenet.schemas import (
     Burn,
+    ElementCarrier,
     Scenario,
     Element,
     Edge,
@@ -26,7 +27,7 @@ __all__ = ["Simulation"]
 
 
 class ContainsElements(BaseModel):
-    contains: List["SimElement"] = Field(default_factory=list)
+    contents: List["SimElement"] = Field(default_factory=list)
 
 
 class SimNode(ContainsElements):
@@ -65,7 +66,7 @@ class SimEvent(BaseModel, ABC):
         return (self.timestamp, self.priority) < (other.timestamp, other.priority)
 
     @abstractmethod
-    def process_with_ctx(self, sim: "Simulation"):
+    def process_with_ctx(self, sim: "Simulation") -> None:
         pass
 
 
@@ -76,14 +77,47 @@ class Move(SimEvent):
 
     event: MoveElements
 
-    def process_with_ctx(self, sim: "Simulation"):
-        # TODO
+    def process_with_ctx(self, sim: "Simulation") -> None:
         # Move all elements in the list to the new destination
         # Possible errors:
         #   source is not a container -> error for each moved element
         #   destination is not a container -> error for each moved element
         #   some element in the list is not actually an element
-        raise NotImplementedError
+        # TODO: can decompose a move into a remove and a create
+        prev_error_count = len(sim.errors)
+        source = self.event.origin_id
+        if not sim.id_exists(source):
+            sim.add_error(SimError.does_not_exist(self.timestamp, source))
+        else:
+            if not sim.id_is_of_container(source):
+                sim.add_error(SimError.not_a_container(self.timestamp, source))
+        dest = self.event.destination_id
+        # TODO: refactor: code duplication
+        if not sim.id_exists(dest):
+            sim.add_error(SimError.does_not_exist(self.timestamp, dest))
+        else:
+            if not sim.id_is_of_container(dest):
+                sim.add_error(SimError.not_a_container(self.timestamp, dest))
+        for id_ in self.event.to_move:
+            if not sim.id_exists(id_):
+                sim.add_error(SimError.does_not_exist(self.timestamp, id_))
+            else:
+                if not sim.id_is_of_element(id_):
+                    sim.add_error(SimError.not_an_element(self.timestamp, id_))
+        if len(sim.errors) == prev_error_count:
+            # Filter source contents and move them over
+            prev_contents = sim.namespace[source].contents
+            # fixme Low-hanging fruit for optimization:
+            #  store UUIDs in elements and check those instead? Performance
+            new_contents = [
+                element
+                for element in prev_contents
+                if element not in self.event.to_move
+            ]
+            sim.namespace[source].contents = new_contents
+            sim.namespace[dest].contents.extend(
+                sim.namespace[id_] for id_ in self.event.to_move
+            )
 
 
 class Create(SimEvent):
@@ -93,13 +127,28 @@ class Create(SimEvent):
 
     event: MakeElements
 
-    def process_with_ctx(self, sim: "Simulation"):
-        # TODO
+    def process_with_ctx(self, sim: "Simulation") -> None:
         # Create all elements in the list at the specified location
         # Possible errors:
         #   location is not a container -> error for each created element
         #   values in the list don't correspond to actual elements
-        raise NotImplementedError
+        prev_error_count = len(sim.errors)
+        entry_point = self.event.entry_point_id
+        if not sim.id_exists(entry_point):
+            sim.add_error(SimError.does_not_exist(self.timestamp, entry_point))
+        else:
+            if not sim.id_is_of_container(entry_point):
+                sim.add_error(SimError.not_a_container(self.timestamp, entry_point))
+        for id_ in self.event.elements:
+            if not sim.id_exists(id_):
+                sim.add_error(SimError.does_not_exist(self.timestamp, id_))
+            else:
+                if not sim.id_is_of_element(id_):
+                    sim.add_error(SimError.not_an_element(self.timestamp, id_))
+        if len(sim.errors) == prev_error_count:
+            sim.namespace[entry_point].contents.extend(
+                sim.namespace[id_] for id_ in self.event.elements
+            )
 
 
 class Remove(SimEvent):
@@ -109,14 +158,46 @@ class Remove(SimEvent):
 
     event: RemoveElements
 
-    def process_with_ctx(self, sim: "Simulation"):
-        # TODO
+    def process_with_ctx(self, sim: "Simulation") -> None:
         # Remove all elements in the list at the specified location
         # Possible errors:
         #   location is not a container -> error for each created element
         #   values in the list don't correspond to actual elements
         #   elements provided aren't actually at the specified location
-        raise NotImplementedError
+        prev_error_count = len(sim.errors)
+        removal_point_id = self.event.removal_point_id
+        if not sim.id_exists(removal_point_id):
+            sim.add_error(SimError.does_not_exist(self.timestamp, removal_point_id))
+        else:
+            if not sim.id_is_of_container(self.event.removal_point_id):
+                sim.add_error(
+                    SimError.not_a_container(
+                        self.timestamp, self.event.removal_point_id
+                    )
+                )
+        for id_ in self.event.elements:
+            if not sim.id_exists(id_):
+                sim.add_error(SimError.does_not_exist(self.timestamp, id_))
+            else:
+                if not sim.id_is_of_element(id_):
+                    sim.add_error(SimError.not_an_element(self.timestamp, id_))
+                else:
+                    if not sim.id_is_at_location(id_, removal_point_id):
+                        sim.add_error(
+                            SimError.not_at_location(
+                                self.timestamp, id_, removal_point_id
+                            )
+                        )
+        if len(sim.errors) == prev_error_count:  # no errors
+            prev_contents = sim.namespace[removal_point_id].contents
+            # fixme Low-hanging fruit for optimization:
+            #  store UUIDs in elements and check those instead? Performance
+            new_contents = [
+                element
+                for element in prev_contents
+                if element not in self.event.elements
+            ]
+            sim.namespace[removal_point_id].contents = new_contents
 
 
 class BurnEvent(SimEvent):
@@ -127,7 +208,7 @@ class BurnEvent(SimEvent):
     event: Burn
     elements: List[UUID]  # ordered: last element is first to have delta-v consumed
 
-    def process_with_ctx(self, sim: "Simulation"):
+    def process_with_ctx(self, sim: "Simulation") -> None:
         # TODO
         # Consume the fuel at the given elements until enough fuel has been consumed
         # to satisfy delta-v requirement
@@ -141,6 +222,26 @@ class BurnEvent(SimEvent):
 class SimError(BaseModel):
     timestamp: datetime
     description: str
+
+    @staticmethod
+    def does_not_exist(timestamp: datetime, id_: UUID) -> "SimError":
+        return SimError(
+            timestamp=timestamp, description=f"No entity with id {id_} in namespace"
+        )
+
+    @staticmethod
+    def not_an_element(timestamp: datetime, id_: UUID) -> "SimError":
+        return SimError(timestamp=timestamp, description=f"ID {id_} is not an element")
+
+    @staticmethod
+    def not_a_container(timestamp: datetime, id_: UUID) -> "SimError":
+        return SimError(timestamp=timestamp, description=f"ID {id_} is not a container")
+
+    @staticmethod
+    def not_at_location(timestamp: datetime, id_: UUID, location: UUID) -> "SimError":
+        return SimError(
+            timestamp=timestamp, description=f"ID {id_} is not at location {location}"
+        )
 
 
 T = TypeVar("T")
@@ -210,6 +311,7 @@ class Simulation:
     @classmethod
     def _decompose_event(cls, event) -> List[SimEvent]:
         # TODO
+        # Honestly events should implement this but that might cause circular import problems
         pass
 
     def _add_event(self, event: SimEvent) -> None:
@@ -224,6 +326,32 @@ class Simulation:
     def _run_listeners(self, listeners: Dict[SimCallback[Any], Any]) -> None:
         for listener, arg in listeners.items():
             listeners[listener] = listener(self, arg)
+
+    def add_error(self, error: SimError) -> None:
+        self.errors.append(error)
+
+    def add_errors(self, errors: Iterable[SimError]) -> None:
+        self.errors.extend(errors)
+
+    def id_exists(self, id_: UUID) -> bool:
+        return id_ in self.namespace
+
+    def id_is_of_container(self, id_: UUID) -> bool:
+        assert self.id_exists(id_)
+        return isinstance(self.namespace[id_], (SimNode, SimEdge)) or isinstance(
+            self.namespace[id_].inner, ElementCarrier
+        )
+
+    def id_is_of_element(self, id_: UUID) -> bool:
+        assert self.id_exists(id_)
+        return isinstance(self.namespace[id_], SimElement)
+
+    def id_is_at_location(self, id_: UUID, location: UUID) -> bool:
+        assert self.id_exists(id_)
+        assert self.id_exists(location)
+        assert self.id_is_of_element(id_)
+        assert self.id_is_of_container(location)
+        return self.namespace[id_] in self.namespace[location].contents
 
     def run(self) -> List[SimError]:
         """
