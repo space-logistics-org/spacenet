@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 
 from spacenet.analysis.min_heap import MinHeap
 from spacenet.schemas import (
-    PropulsiveBurn,
+    Burn,
     Scenario,
     Element,
     Edge,
@@ -34,7 +34,7 @@ class SimNode(ContainsElements):
     A node under simulation; wraps Node schema.
     """
 
-    inner: Node # TODO: this should be some type that has UUID IDs, not int IDs
+    inner: Node  # TODO: this should be some type that has UUID IDs, not int IDs
 
 
 class SimEdge(ContainsElements):
@@ -78,6 +78,11 @@ class Move(SimEvent):
 
     def process_with_ctx(self, sim: "Simulation"):
         # TODO
+        # Move all elements in the list to the new destination
+        # Possible errors:
+        #   source is not a container -> error for each moved element
+        #   destination is not a container -> error for each moved element
+        #   some element in the list is not actually an element
         raise NotImplementedError
 
 
@@ -90,6 +95,10 @@ class Create(SimEvent):
 
     def process_with_ctx(self, sim: "Simulation"):
         # TODO
+        # Create all elements in the list at the specified location
+        # Possible errors:
+        #   location is not a container -> error for each created element
+        #   values in the list don't correspond to actual elements
         raise NotImplementedError
 
 
@@ -102,6 +111,11 @@ class Remove(SimEvent):
 
     def process_with_ctx(self, sim: "Simulation"):
         # TODO
+        # Remove all elements in the list at the specified location
+        # Possible errors:
+        #   location is not a container -> error for each created element
+        #   values in the list don't correspond to actual elements
+        #   elements provided aren't actually at the specified location
         raise NotImplementedError
 
 
@@ -110,10 +124,17 @@ class BurnEvent(SimEvent):
     Represents a burn, one of the four primitive SimEvents.
     """
 
-    event: PropulsiveBurn
+    event: Burn
+    elements: List[UUID]  # ordered: last element is first to have delta-v consumed
 
     def process_with_ctx(self, sim: "Simulation"):
         # TODO
+        # Consume the fuel at the given elements until enough fuel has been consumed
+        # to satisfy delta-v requirement
+        # Possible errors:
+        #   values in the list don't correspond to actual elements
+        #   not enough fuel (if this is a problem depends, but it's probably more efficient to
+        #    just not add burn events if there's no fuel constraint and just stage)
         raise NotImplementedError
 
 
@@ -153,8 +174,8 @@ class Simulation:
             SimNode, Set[SimEdge]
         ] = {}  # adjacency list graph representation
         for id_, edge in scenario.network.edges.items():
+            pass
             # add edges to adj-list rep
-            print(edge.origin_id)
             # TODO: origin_id refers to DB id but has to correspond to the UUID of the edge
         for id_, node in scenario.network.nodes.items():
             self.network.setdefault(SimNode(inner=node), set())
