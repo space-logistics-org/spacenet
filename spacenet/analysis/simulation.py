@@ -34,7 +34,7 @@ class SimNode(ContainsElements):
     A node under simulation; wraps Node schema.
     """
 
-    inner: Node
+    inner: Node # TODO: this should be some type that has UUID IDs, not int IDs
 
 
 class SimEdge(ContainsElements):
@@ -42,7 +42,7 @@ class SimEdge(ContainsElements):
     An edge under simulation; wraps Edge schema.
     """
 
-    inner: Edge
+    inner: Edge  # TODO: this should be some type that has UUID IDs, not int IDs
 
 
 class SimElement(ContainsElements):
@@ -50,7 +50,7 @@ class SimElement(ContainsElements):
     An element under simulation; wraps Element schema.
     """
 
-    inner: Element
+    inner: Element  # TODO: this should be some type that has UUID IDs, not int IDs
 
 
 class SimEvent(BaseModel, ABC):
