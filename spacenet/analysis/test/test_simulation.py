@@ -26,7 +26,7 @@ def listener_builder(
     def example_fn(sim: Simulation, prev: Optional[T]):
         pass
 
-    fn = st.functions(like=example_fn, returns=ty_strategy)
+    fn = draw(st.functions(like=example_fn, returns=ty_strategy))
     return fn, v
 
 
@@ -52,3 +52,29 @@ def listener_dict_builder(
 @pytest.mark.xfail
 def test_fuzz_simulation(scenario, pre_listeners, post_listeners):
     Simulation(scenario, pre_listeners, post_listeners)
+
+
+@given(
+    scenario=st.from_type(Scenario),
+)
+@pytest.mark.slow
+@pytest.mark.xfail
+def test_simulation_returns_same(scenario):
+    sim = Simulation(scenario)
+    first_errors = sim.run()
+    other_sim = Simulation(scenario)
+    second_errors = other_sim.run()
+    assert first_errors == second_errors
+    assert sim.network == other_sim.network
+    assert sim.current_time == other_sim.current_time
+
+
+@given(
+    scenario=st.from_type(Scenario),
+)
+@pytest.mark.slow
+@pytest.mark.xfail
+def test_simulation_empties_queue(scenario):
+    sim = Simulation(scenario)
+    sim.run()
+    assert not sim.event_queue

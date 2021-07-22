@@ -253,8 +253,8 @@ class Simulation:
     def __init__(
         self,
         scenario: Scenario,
-        pre_listeners: Optional[Dict[SimCallback[Any], Any]],
-        post_listeners: Optional[Dict[SimCallback[Any], Any]],
+        pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+        post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
     ) -> None:
         self.network: Dict[
             SimNode, Set[SimEdge]
