@@ -364,9 +364,9 @@ def _all_ids_are_elements(
     for id_ in ids:
         if not sim._id_exists(id_):
             ret.append(SimError.does_not_exist(timestamp, id_))
-        else:
-            if not sim._id_is_of_element(id_):
-                ret.append(SimError.not_an_element(timestamp, id_))
+            continue
+        if not sim._id_is_of_element(id_):
+            ret.append(SimError.not_an_element(timestamp, id_))
     return ret
 
 
@@ -377,12 +377,12 @@ def _all_ids_are_elements_at_location(
     for id_ in ids:
         if not sim._id_exists(id_):
             ret.append(SimError.does_not_exist(timestamp, id_))
-        else:
-            if not sim._id_is_of_element(id_):
-                ret.append(SimError.not_an_element(timestamp, id_))
-            else:
-                if not sim._id_is_at_location(id_, location):
-                    ret.append(SimError.not_at_location(timestamp, id_, location))
+            continue
+        if not sim._id_is_of_element(id_):
+            ret.append(SimError.not_an_element(timestamp, id_))
+            continue
+        if not sim._id_is_at_location(id_, location):
+            ret.append(SimError.not_at_location(timestamp, id_, location))
     return ret
 
 
@@ -392,7 +392,7 @@ def _id_exists_and_is_container(
     ret = []
     if not sim._id_exists(id_):
         ret.append(SimError.does_not_exist(timestamp, id_))
-    else:
-        if not sim._id_is_of_container(id_):
-            ret.append(SimError.not_a_container(timestamp, id_))
+        return ret
+    if not sim._id_is_of_container(id_):
+        ret.append(SimError.not_a_container(timestamp, id_))
     return ret
