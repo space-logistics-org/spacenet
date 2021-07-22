@@ -54,3 +54,14 @@ class RequiresOnlyType(OptionalFields):
 class ReadSchema(RequiresID):
     class Config:
         orm_mode = True
+
+
+class ImmutableBaseModel(BaseModel):
+
+    class Config:
+        allow_mutation = False
+        frozen = True
+
+    def __hash__(self):
+        return hash((type(self),) + tuple(self.__dict__.values()))
+

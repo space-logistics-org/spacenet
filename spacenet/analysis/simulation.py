@@ -37,6 +37,11 @@ class SimNode(ContainsElements):
 
     inner: Node  # TODO: this should be some type that has UUID IDs, not int IDs
 
+    def __hash__(self):
+        # This is safe because, assuming Node is safe to hash, we don't hash the mutable
+        # state in contents
+        return hash(self.inner)
+
 
 class SimEdge(ContainsElements):
     """

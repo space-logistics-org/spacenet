@@ -4,13 +4,14 @@ from pydantic import BaseModel, Field, confloat, conint
 from typing_extensions import Literal
 
 from .types import SafeNonNegFloat
+from .mixins import ImmutableBaseModel
 
 __all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode"]
 
 
 class Body(str, Enum):
     """
-    An ennumeration of the possible bodies for a node.
+    An enumeration of the possible bodies for a node.
     """
 
     Sun = "Sun"
@@ -21,7 +22,7 @@ class Body(str, Enum):
 
 class NodeType(str, Enum):
     """
-    An ennumeration of the three types of nodes.
+    An enumeration of the three types of nodes.
     """
 
     Surface = "SurfaceNode"
@@ -29,7 +30,7 @@ class NodeType(str, Enum):
     Lagrange = "LagrangeNode"
 
 
-class Node(BaseModel):
+class Node(ImmutableBaseModel):
     """
     Base class for all nodes.
     """
