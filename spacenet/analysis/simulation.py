@@ -83,27 +83,17 @@ class Move(SimEvent):
         #   source is not a container -> error for each moved element
         #   destination is not a container -> error for each moved element
         #   some element in the list is not actually an element
-        # TODO: can decompose a move into a remove and a create
+        # TODO: can decompose a move into a remove and a create?
         prev_error_count = len(sim.errors)
         source = self.event.origin_id
-        if not sim.id_exists(source):
-            sim.add_error(SimError.does_not_exist(self.timestamp, source))
-        else:
-            if not sim.id_is_of_container(source):
-                sim.add_error(SimError.not_a_container(self.timestamp, source))
+        sim.add_errors(
+            id_exists_and_is_container(id_=source, timestamp=self.timestamp, sim=sim)
+        )
         dest = self.event.destination_id
-        # TODO: refactor: code duplication
-        if not sim.id_exists(dest):
-            sim.add_error(SimError.does_not_exist(self.timestamp, dest))
-        else:
-            if not sim.id_is_of_container(dest):
-                sim.add_error(SimError.not_a_container(self.timestamp, dest))
-        for id_ in self.event.to_move:
-            if not sim.id_exists(id_):
-                sim.add_error(SimError.does_not_exist(self.timestamp, id_))
-            else:
-                if not sim.id_is_of_element(id_):
-                    sim.add_error(SimError.not_an_element(self.timestamp, id_))
+        sim.add_errors(
+            id_exists_and_is_container(id_=dest, timestamp=self.timestamp, sim=sim)
+        )
+        sim.add_errors(all_ids_are_elements(self.event.to_move, self.timestamp, sim))
         if len(sim.errors) == prev_error_count:
             # Filter source contents and move them over
             prev_contents = sim.namespace[source].contents
@@ -134,17 +124,16 @@ class Create(SimEvent):
         #   values in the list don't correspond to actual elements
         prev_error_count = len(sim.errors)
         entry_point = self.event.entry_point_id
-        if not sim.id_exists(entry_point):
-            sim.add_error(SimError.does_not_exist(self.timestamp, entry_point))
-        else:
-            if not sim.id_is_of_container(entry_point):
-                sim.add_error(SimError.not_a_container(self.timestamp, entry_point))
-        for id_ in self.event.elements:
-            if not sim.id_exists(id_):
-                sim.add_error(SimError.does_not_exist(self.timestamp, id_))
-            else:
-                if not sim.id_is_of_element(id_):
-                    sim.add_error(SimError.not_an_element(self.timestamp, id_))
+        sim.add_errors(
+            id_exists_and_is_container(
+                id_=entry_point, timestamp=self.timestamp, sim=sim
+            )
+        )
+        sim.add_errors(
+            all_ids_are_elements(
+                ids=self.event.elements, timestamp=self.timestamp, sim=sim
+            )
+        )
         if len(sim.errors) == prev_error_count:
             sim.namespace[entry_point].contents.extend(
                 sim.namespace[id_] for id_ in self.event.elements
@@ -166,28 +155,19 @@ class Remove(SimEvent):
         #   elements provided aren't actually at the specified location
         prev_error_count = len(sim.errors)
         removal_point_id = self.event.removal_point_id
-        if not sim.id_exists(removal_point_id):
-            sim.add_error(SimError.does_not_exist(self.timestamp, removal_point_id))
-        else:
-            if not sim.id_is_of_container(self.event.removal_point_id):
-                sim.add_error(
-                    SimError.not_a_container(
-                        self.timestamp, self.event.removal_point_id
-                    )
-                )
-        for id_ in self.event.elements:
-            if not sim.id_exists(id_):
-                sim.add_error(SimError.does_not_exist(self.timestamp, id_))
-            else:
-                if not sim.id_is_of_element(id_):
-                    sim.add_error(SimError.not_an_element(self.timestamp, id_))
-                else:
-                    if not sim.id_is_at_location(id_, removal_point_id):
-                        sim.add_error(
-                            SimError.not_at_location(
-                                self.timestamp, id_, removal_point_id
-                            )
-                        )
+        sim.add_errors(
+            id_exists_and_is_container(
+                id_=self.event.removal_point_id, timestamp=self.timestamp, sim=sim
+            )
+        )
+        sim.add_errors(
+            all_ids_are_elements_at_location(
+                ids=self.event.elements,
+                location=removal_point_id,
+                timestamp=self.timestamp,
+                sim=sim,
+            )
+        )
         if len(sim.errors) == prev_error_count:  # no errors
             prev_contents = sim.namespace[removal_point_id].contents
             # fixme Low-hanging fruit for optimization:
@@ -372,3 +352,44 @@ class Simulation:
             self.current_time = next_event.timestamp
             self._run_listeners(self.post_listeners)
         return self.errors
+
+
+def all_ids_are_elements(
+    ids: List[UUID], timestamp: datetime, sim: Simulation
+) -> List[SimError]:
+    ret = []
+    for id_ in ids:
+        if not sim.id_exists(id_):
+            ret.append(SimError.does_not_exist(timestamp, id_))
+        else:
+            if not sim.id_is_of_element(id_):
+                ret.append(SimError.not_an_element(timestamp, id_))
+    return ret
+
+
+def all_ids_are_elements_at_location(
+    ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
+) -> List[SimError]:
+    ret = []
+    for id_ in ids:
+        if not sim.id_exists(id_):
+            ret.append(SimError.does_not_exist(timestamp, id_))
+        else:
+            if not sim.id_is_of_element(id_):
+                ret.append(SimError.not_an_element(timestamp, id_))
+            else:
+                if not sim.id_is_at_location(id_, location):
+                    ret.append(SimError.not_at_location(timestamp, id_, location))
+    return ret
+
+
+def id_exists_and_is_container(
+    id_: UUID, timestamp: datetime, sim: Simulation
+) -> List[SimError]:
+    ret = []
+    if not sim.id_exists(id_):
+        ret.append(SimError.does_not_exist(timestamp, id_))
+    else:
+        if not sim.id_is_of_container(id_):
+            ret.append(SimError.not_a_container(timestamp, id_))
+    return ret
