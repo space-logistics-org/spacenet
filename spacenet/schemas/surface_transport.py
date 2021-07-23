@@ -1,19 +1,34 @@
-from pydantic import BaseModel, Field, PositiveFloat
+from datetime import timedelta
+from typing import List
+from uuid import UUID
+
+from pydantic import Field
+
+from spacenet.schemas import Event
 
 
-
-class SurfaceTransport(BaseModel):
+class SurfaceTransport(Event):
 
     # Schema for Surface Transport
 
-    name: str = Field(..., title = "Name", description = "The surface transport name")
+    name: str = Field(..., title="Name", description="The surface transport name")
 
-    node: str = Field(..., title = "Node", description = "The origin of the surface transport")
+    origin_node_id: UUID = Field(
+        ...,
+        title="Origin Node ID",
+        description="The ID of the surface transport's origin node",
+    )
 
-    time: PositiveFloat = Field(..., title = "Time", description = "The execution time")
+    destination_node_id: UUID = Field(
+        ...,
+        title="Destination Node ID",
+        description="The ID of the surface transport's destination node",
+    )
 
-    priority: int = Field(..., title = "Priority", description = "The importance of the mission event", ge = 1, le = 5)
+    time: timedelta = Field(..., title="Time", description="The execution time")
 
-    trajectory: str = Field(..., title = "Trajectory", description = "The nodes that the vehicle will travel to and from")
-
-    elements: str = Field(..., title = "Elements", description = "The elements")
+    elements_id_list: List[UUID] = Field(
+        ...,
+        title="List of Element IDs",
+        description="The list of IDs of elements being transported",
+    )

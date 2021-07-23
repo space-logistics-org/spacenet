@@ -18,7 +18,7 @@ $("#login_form_submit").click(function (){
 	})*/
 
 	
-	$.post("/auth/cookie/login", $("#login").serialize(), function(){setTimeout(() => { history.back(); }, 500)})
+	$.post("/auth/cookie/login", $("#login").serialize(), function(){setTimeout(() => { history.back(); }, 100)})
 	
 	setTimeout(() => { $("#invalid").css("display", "block"); }, 1000);
 

@@ -2,7 +2,7 @@ from math import inf
 
 from pydantic import confloat, conint
 
-from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from .constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 
 __all__ = [
     "SafeInt",

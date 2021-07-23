@@ -1,45 +1,47 @@
 import pytest
 from hypothesis import given, strategies as st
 
-from spacenet.schemas.element_events import MoveElementsEvent
+from spacenet.schemas.element_events import MoveElements
+from .utilities import VALID_PRIORITIES, INVALID_PRIORITIES
 from ..utilities import (
-    INVALID_INTS,
-    UNSERIALIZABLE_INTS,
+    INVALID_UUIDS,
     success_from_kw,
     xfail_from_kw,
 )
-from ...constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 VALID_MAP = {
     "to_move": st.lists(
-        st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT)
+        st.uuids()
     ),
-    "origin_id": st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
-    "destination_id": st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+    "origin_id": st.uuids(),
+    "destination_id": st.uuids(),
+    "priority": VALID_PRIORITIES,
 }
 
 INVALID_MAP = {
-    "to_move": st.lists(st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS), min_size=1),
-    "origin_id": st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
-    "destination_id": st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
+    "to_move": st.lists(INVALID_UUIDS, min_size=1),
+    "origin_id": INVALID_UUIDS,
+    "destination_id": INVALID_UUIDS,
+    "priority": INVALID_PRIORITIES
 }
 
 
-def xfail_construct_move(to_move, origin_id, destination_id):
+def xfail_construct_move(to_move, origin_id, destination_id, priority):
     xfail_from_kw(
-        MoveElementsEvent,
+        MoveElements,
         to_move=to_move,
         origin_id=origin_id,
         destination_id=destination_id,
+        priority=priority
     )
 
 
 @given(kw=st.fixed_dictionaries(mapping=VALID_MAP))
 def test_valid(kw):
     success_from_kw(
-        MoveElementsEvent, **kw,
+        MoveElements, **kw,
     )
 
 
@@ -65,4 +67,12 @@ def test_invalid_origin_id(kw):
     )
 )
 def test_invalid_destination_id(kw):
+    xfail_construct_move(**kw)
+
+@given(
+    kw=st.fixed_dictionaries(
+        mapping={**VALID_MAP, "priority": INVALID_MAP["priority"]}
+    )
+)
+def test_invalid_priority(kw):
     xfail_construct_move(**kw)
