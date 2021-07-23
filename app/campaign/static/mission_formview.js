@@ -1,6 +1,31 @@
 $(document).ready(function () {
+    EventList();
     DemandList();
 });
+
+
+function EventList() {
+
+    var itxtCnt = 0;    // COUNTER TO SET ELEMENT IDs.
+
+    // CREATE A DIV DYNAMICALLY TO SERVE A CONTAINER TO THE ELEMENTS.
+    var container = $(document.createElement('div')).css({
+        width: '100%',
+        clear: 'both',
+        'margin-top': '10px',
+        'margin-bottom': '10px'
+        });
+
+        // CREATE THE ELEMENTS.
+    $('#eventadd').click(function () {
+        itxtCnt = itxtCnt + 1;
+
+        $(container).append('<input type="text"' +'placeholder="Event ID" class="events" id=tb' + itxtCnt + ' value="" />');
+
+        // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
+        $('#eventmain').after(container);
+    });
+}
 
 function DemandList() {
 
@@ -19,23 +44,30 @@ function DemandList() {
         itxtCnt = itxtCnt + 1;
 
         $(container).append('<input type="text"' +'placeholder="Resource Type" class="demandType" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="Resource" class="demandResource" id=tb' + itxtCnt + ' value="" />');
+        $(container).append('<input type="text"' +'placeholder="Resource ID" class="demandResource" id=tb' + itxtCnt + ' value="" />');
         $(container).append('<input type="text"' +'placeholder="Units" class="demandUnit" id=tb' + itxtCnt + ' value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
         $('#demandmain').after(container);
-    });c
+    });
 }
 
 
 function onComplete(){
     name = document.getElementById("inputName").value;
-    node = document.getElementById("inputNode").value;
-    time = document.getElementById("inputTime").value;
-    priority = document.getElementById("inputPriority").value;
-    eva_duration = document.getElementById("inputEVADuration").value;
-    crew_vehicle = document.getElementById("inputCrewVehicle").value
+    startDate = document.getElementById("inputStartDate").value;
+    scenarioName = document.getElementById("inputScenarioName").value;
+    originID = document.getElementById("inputOriId").value;
+    destID = document.getElementById("inputDestId").value;
+    retOriginID = document.getElementById("inputReturnOriId").value;
+    retDestinationID = document.getElementById("inputReturnDestId").value;
 
+    var eventIds = new Array();
+
+    $('.events').each(function () {
+        if (this.value != '')
+            eventIds.push(this.value);
+    });
 
     var demandTypeList = new Array();
     var demandResourceList = new Array();
@@ -56,10 +88,10 @@ function onComplete(){
     });
 
     max = demandTypeList.length
-    var evaDemandList = [];
+    var missionDemands = [];
 
     for ( var i=0 ; i < max ; i++ ){
-        evaDemandList[i] = [JSON.stringify({
+        missionDemands[i] = [JSON.stringify({
           resourceType : demandTypeList[i],
           resource : demandResourceList[i],
           units : demandUnitList[i]
@@ -70,13 +102,14 @@ function onComplete(){
 
     message= JSON.stringify({
       name : name,
-      node : node,
-      time : time,
-      priority : priority,
-      eva_duration : eva_duration,
-      crew_vehicle : crew_vehicle,
-      crew : JSON.parse(crewMemEVAList),
-      additional_demand : JSON.parse(evaDemandList)
+      startDate : startDate,
+      scenarioName : scenarioName,
+      eventList : eventIds,
+      demandModels : JSON.parse(missionDemands),
+      destinationID : destID,
+      originID : originID,
+      returnOriginID : retOriginID,
+      returnDestinationID : retDestinationID
     });
 
 

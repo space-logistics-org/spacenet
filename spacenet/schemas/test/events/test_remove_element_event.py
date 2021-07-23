@@ -1,15 +1,14 @@
 import pytest
 from hypothesis import given, strategies as st
 
-from spacenet.schemas.element_events import RemoveElementsEvent
+from spacenet.schemas.element_events import RemoveElements
+from .utilities import INVALID_PRIORITIES, VALID_PRIORITIES
 from ..utilities import (
-    INVALID_INTS,
-    UNSERIALIZABLE_INTS,
+    INVALID_UUIDS,
     success_from_kw,
     valid_invalid_from_allowed,
     xfail_from_kw,
 )
-from ...constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
@@ -18,26 +17,28 @@ VALID_REMOVALS, INVALID_REMOVALS = valid_invalid_from_allowed(ALLOWED_REMOVAL_PO
 
 VALID_MAP = {
     "to_remove": st.lists(
-        st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT)
+        st.uuids()
     ),
-    "removal_point_id": st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+    "removal_point_id": st.uuids(),
+    "priority": VALID_PRIORITIES,
 }
 
 INVALID_MAP = {
-    "to_remove": st.lists(st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS), min_size=1),
-    "removal_point_id": st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
+    "to_remove": st.lists(INVALID_UUIDS, min_size=1),
+    "removal_point_id": INVALID_UUIDS,
+    "priority": INVALID_PRIORITIES
 }
 
 
-def xfail_construct_remove(to_remove, removal_point_id):
+def xfail_construct_remove(to_remove, removal_point_id, priority):
     xfail_from_kw(
-        RemoveElementsEvent, to_remove=to_remove, removal_point_id=removal_point_id,
+        RemoveElements, to_remove=to_remove, removal_point_id=removal_point_id, priority=priority
     )
 
 
 @given(kw=st.fixed_dictionaries(mapping=VALID_MAP))
 def test_valid(kw):
-    success_from_kw(RemoveElementsEvent, **kw)
+    success_from_kw(RemoveElements, **kw)
 
 
 @given(
@@ -55,4 +56,16 @@ def test_invalid_to_remove(kw):
     )
 )
 def test_invalid_removal_point_id(kw):
+    xfail_construct_remove(**kw)
+
+
+@given(
+    kw=st.fixed_dictionaries(
+        mapping={
+            **VALID_MAP,
+            "priority": INVALID_MAP["priority"],
+        }
+    )
+)
+def test_invalid_priority(kw):
     xfail_construct_remove(**kw)

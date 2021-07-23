@@ -1,7 +1,8 @@
 from math import inf
 
-from pydantic import BaseModel, Field, PositiveFloat
-from .resource import ResourceType, Resource
+from pydantic import BaseModel, Field
+
+from .resource import Resource, ResourceType
 
 
 class MissionDemand(BaseModel):
@@ -60,8 +61,11 @@ class ConsumablesModel(BaseModel):
     Consumables Model
     A demand for resources based on NASA Space Logistics Consumables Model
     """
-    # TODO: Add mission field that takes a mission object schema to import certain fields
-
+    mission_id: int = Field(
+        ...,
+        title="Mission ID",
+        gt=0
+    )
     reserves_duration: float = Field(
         ...,
         title="Reserves Duration",

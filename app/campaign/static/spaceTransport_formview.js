@@ -1,10 +1,3 @@
-name = "";
-origin_node = "";
-destination_node = "";
-time= 0;
-priority = 0;
-
-
 $(document).ready(function () {
     ElementList();
     BurnsStages();
@@ -28,7 +21,7 @@ function ElementList() {
     $('#eleAdd').click(function () {
         itxtCnt = itxtCnt + 1;
 
-        $(container).append('<input type="text"' +'placeholder="[properties]" class="elements" id=tb' + itxtCnt + ' value="" />');
+        $(container).append('<input type="text"' +'placeholder="Element ID" class="elements" id=tb' + itxtCnt + ' value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
         $('#elementmain').after(container);
@@ -53,7 +46,7 @@ function BurnsStages() {
     $('#seqAdd').click(function () {
         itxtCnt = itxtCnt ;
 
-        $(container).append('<input type="text"' +' placeholder="element"  class="seqele" id=tb1 value="" />');
+        $(container).append('<input type="text"' +' placeholder="Element ID"  class="seqele" id=tb1 value="" />');
         $(container).append('<input type="text"' +' placeholder="burn/stage"  class="burnstage" class= "second" id=tb2  value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
@@ -65,8 +58,8 @@ function BurnsStages() {
 
 function onComplete() {
     name = document.getElementById("inputName").value;
-    origin_node = document.getElementById("inputOriginNode").value;
-    destination_node = document.getElementById("inputDestinationNode").value;
+    origin_node = document.getElementById("inputOriginNodeID").value;
+    destination_node = document.getElementById("inputDestinationNodeID").value;
     time = document.getElementById("inputTime").value;
     priority = document.getElementById("inputPriority").value;
 

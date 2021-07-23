@@ -65,48 +65,43 @@
     <form id="components">
       <div class="form-row">
         <div class="container">
-            <div class="_name">
               <label for="inputName">Name</label>
               <input type="text" class="form-control" id="inputName" placeholder="Name">
-            </div>
         </div>
     </div>
 
     <div class="form-row">
 
         <div class="container">
-          <div class="_node">
-            <label for="inputOriginNode">Node</label>
-            <input type="text" class="form-control" id="inputNode" placeholder="Node">
-          </div>
+            <label for="inputNodeID">Node ID</label>
+            <input type="text" class="form-control" id="inputNodeID" placeholder="Node ID">
         </div>
 
         <div class="container">
-          <div class="_time">
             <label for="inputTime">Time From Mission Start</label>
             <input type="number" class="form-control" id="inputTime" placeholder="Time">
-          </div>
         </div>
 
         <div class="container">
-          <div class="_priority">
-            <label for="inputPriority">Priority</label>
-            <input type="number" class="form-control" id="inputPriority" placeholder="Priority">
-          </div>
+          <label for="inputPriority">Priority</label>
+          <select id="inputPriority" class="form-control" class="text-center">
+            <option selected id="def">Choose...</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
         </div>
 
         <div class="container">
-          <div class="_eva_duration">
             <label for="inputEVADuration">EVA Duration</label>
             <input type="number" class="form-control" id="inputEVADuration" placeholder="EVA Duration">
-          </div>
         </div>
 
         <div class="container">
-          <div class="_crew_vehicle">
-            <label for="inputCrewLocation">Crew Vehicle</label>
+            <label for="inputCrewVehicle">Crew Vehicle</label>
             <input type="text" class="form-control" id="inputCrewVehicle" placeholder="Crew Vehicle">
-          </div>
         </div>
 
         <div class="container">
