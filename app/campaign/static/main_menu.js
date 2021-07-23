@@ -109,3 +109,7 @@ function propBurnDiv(){
 function missDev(){
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="mission_demand_model.html" ></object>';
 }
+
+function crewEVA(){
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="crewedEVA_formview.html" ></object>';
+}
