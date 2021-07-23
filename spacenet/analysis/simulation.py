@@ -14,6 +14,7 @@ from spacenet.analysis.min_heap import MinHeap
 from spacenet.schemas import (
     Burn,
     ElementCarrier,
+    Event,
     Scenario,
     Element,
     Edge,
@@ -100,20 +101,19 @@ class Move(SimEvent):
             _id_exists_and_is_container(id_=dest, timestamp=self.timestamp, sim=sim)
         )
         sim._add_errors(_all_ids_are_elements(self.event.to_move, self.timestamp, sim))
-        if len(sim.errors) == prev_error_count:
-            # Filter source contents and move them over
-            prev_contents = sim.namespace[source].contents
-            # fixme Low-hanging fruit for optimization:
-            #  store UUIDs in elements and check those instead? Performance
-            new_contents = [
-                element
-                for element in prev_contents
-                if element not in self.event.to_move
-            ]
-            sim.namespace[source].contents = new_contents
-            sim.namespace[dest].contents.extend(
-                sim.namespace[id_] for id_ in self.event.to_move
-            )
+        # Filter source contents and move them over
+        prev_contents = sim.namespace[source].contents
+        # fixme Low-hanging fruit for optimization:
+        #  store UUIDs in elements and check those instead? Performance
+        new_contents = [
+            element
+            for element in prev_contents
+            if element not in self.event.to_move
+        ]
+        sim.namespace[source].contents = new_contents
+        sim.namespace[dest].contents.extend(
+            sim.namespace[id_] for id_ in self.event.to_move
+        )
 
 
 class Create(SimEvent):
@@ -128,7 +128,6 @@ class Create(SimEvent):
         # Possible errors:
         #   location is not a container -> error for each created element
         #   values in the list don't correspond to actual elements
-        prev_error_count = len(sim.errors)
         entry_point = self.event.entry_point_id
         sim._add_errors(
             _id_exists_and_is_container(
@@ -140,10 +139,9 @@ class Create(SimEvent):
                 ids=self.event.elements, timestamp=self.timestamp, sim=sim
             )
         )
-        if len(sim.errors) == prev_error_count:
-            sim.namespace[entry_point].contents.extend(
-                sim.namespace[id_] for id_ in self.event.elements
-            )
+        sim.namespace[entry_point].contents.extend(
+            sim.namespace[id_] for id_ in self.event.elements
+        )
 
 
 class Remove(SimEvent):
@@ -159,7 +157,6 @@ class Remove(SimEvent):
         #   location is not a container -> error for each created element
         #   values in the list don't correspond to actual elements
         #   elements provided aren't actually at the specified location
-        prev_error_count = len(sim.errors)
         removal_point_id = self.event.removal_point_id
         sim._add_errors(
             _id_exists_and_is_container(
@@ -174,16 +171,16 @@ class Remove(SimEvent):
                 sim=sim,
             )
         )
-        if len(sim.errors) == prev_error_count:  # no errors
-            prev_contents = sim.namespace[removal_point_id].contents
-            # fixme Low-hanging fruit for optimization:
-            #  store UUIDs in elements and check those instead? Performance
-            new_contents = [
-                element
-                for element in prev_contents
-                if element not in self.event.elements
-            ]
-            sim.namespace[removal_point_id].contents = new_contents
+        prev_contents = sim.namespace[removal_point_id].contents
+        # fixme Low-hanging fruit for optimization:
+        #  store UUIDs in elements and check those instead? Performance
+        new_contents = [
+            element
+            for element in prev_contents
+            if element not in self.event.elements
+        ]
+        sim.namespace[removal_point_id].contents = new_contents
+
 
 
 class BurnEvent(SimEvent):
@@ -269,8 +266,8 @@ class Simulation:
         ) == len(self.namespace), "expected no duplicate IDs"
         self.current_time: datetime = scenario.startDate
 
-    @classmethod
-    def _decompose_event(cls, event) -> List[SimEvent]:
+    @classmethod  # TODO: staticmethod?
+    def _decompose_event(cls, event: Event) -> List[SimEvent]:
         # TODO
         # Honestly events should implement this but that might cause circular import problems
         pass
