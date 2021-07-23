@@ -1,63 +1,63 @@
 import pytest
 from hypothesis import given, strategies as st
 
-from spacenet.schemas.element_events import ReconfigureElementsEvent
+from spacenet.schemas.element_events import ReconfigureElements
+from .utilities import INVALID_PRIORITIES, VALID_PRIORITIES
 from ..utilities import (
-    INVALID_INTS,
-    UNSERIALIZABLE_INTS,
+    INVALID_UUIDS,
     success_from_kw,
     xfail_from_kw,
 )
-from ...constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 VALID_TO_RECONFIGURE = st.dictionaries(
-    keys=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
-    values=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+    keys=st.uuids(),
+    values=st.uuids(),
 )
 INVALID_TO_RECONFIGURE = st.one_of(
     st.dictionaries(
-        keys=st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
-        values=st.integers(),
+        keys=INVALID_UUIDS,
+        values=st.uuids(),
         min_size=1,
     ),
     st.dictionaries(
         keys=st.integers(),
-        values=st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
+        values=INVALID_UUIDS,
         min_size=1,
     ),
     st.dictionaries(
-        keys=st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
-        values=st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
+        keys=INVALID_UUIDS,
+        values=INVALID_UUIDS,
         min_size=1,
     ),
 )
 
 VALID_MAP = {
     "to_reconfigure": VALID_TO_RECONFIGURE,
-    "reconfigure_point_id": st.integers(
-        min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT
-    ),
+    "reconfigure_point_id": st.uuids(),
+    "priority": VALID_PRIORITIES,
 }
 
 INVALID_MAP = {
     "to_reconfigure": INVALID_TO_RECONFIGURE,
-    "reconfigure_point_id": st.one_of(INVALID_INTS, UNSERIALIZABLE_INTS),
+    "reconfigure_point_id": INVALID_UUIDS,
+    "priority": INVALID_PRIORITIES
 }
 
 
-def xfail_construct_reconfigure(to_reconfigure, reconfigure_point_id):
+def xfail_construct_reconfigure(to_reconfigure, reconfigure_point_id, priority):
     xfail_from_kw(
-        ReconfigureElementsEvent,
+        ReconfigureElements,
         to_reconfigure=to_reconfigure,
         reconfigure_point_id=reconfigure_point_id,
+        priority=priority
     )
 
 
 @given(kw=st.fixed_dictionaries(mapping=VALID_MAP))
 def test_valid(kw):
-    success_from_kw(ReconfigureElementsEvent, **kw)
+    success_from_kw(ReconfigureElements, **kw)
 
 
 @given(
@@ -78,4 +78,16 @@ def test_invalid_to_reconfigure(kw):
     )
 )
 def test_invalid_reconfigure_point_id(kw):
+    xfail_construct_reconfigure(**kw)
+
+
+@given(
+    kw=st.fixed_dictionaries(
+        mapping={
+            **VALID_MAP,
+            "priority": INVALID_MAP["priority"],
+        }
+    )
+)
+def test_invalid_priority(kw):
     xfail_construct_reconfigure(**kw)

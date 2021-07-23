@@ -1,10 +1,3 @@
-name = "";
-origin_node = "";
-destination_node = "";
-time= 0;
-priority = 0;
-
-
 $(document).ready(function () {
     ElementList();
     BurnsStages();
@@ -28,7 +21,7 @@ function ElementList() {
     $('#eleAdd').click(function () {
         itxtCnt = itxtCnt + 1;
 
-        $(container).append('<input type="text"' +'placeholder="[properties]" class="elements" id=tb' + itxtCnt + ' value="" />');
+        $(container).append('<input type="text"' +'placeholder="Element ID" class="elements" id=tb' + itxtCnt + ' value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
         $('#elementmain').after(container);
@@ -51,9 +44,10 @@ function BurnsStages() {
 
         // CREATE THE ELEMENTS.
     $('#seqAdd').click(function () {
-        itxtCnt = itxtCnt + 1;
+        itxtCnt = itxtCnt ;
 
-        $(container).append('<input type="text"' +'placeholder="[element= element1, burnstage = burn/stage], [element = element2, burnstage = burn/stage], ..." class="burnstage" id=tb' + itxtCnt + ' value="" />');
+        $(container).append('<input type="text"' +' placeholder="Element ID"  class="seqele" id=tb1 value="" />');
+        $(container).append('<input type="text"' +' placeholder="burn/stage"  class="burnstage" class= "second" id=tb2  value="" />');
 
         // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
         $('#burnstagemain').after(container);
@@ -64,23 +58,43 @@ function BurnsStages() {
 
 function onComplete() {
     name = document.getElementById("inputName").value;
-    origin_node = document.getElementById("inputOriginNode").value;
-    destination_node = document.getElementById("inputDestinationNode").value;
+    origin_node = document.getElementById("inputOriginNodeID").value;
+    destination_node = document.getElementById("inputDestinationNodeID").value;
     time = document.getElementById("inputTime").value;
     priority = document.getElementById("inputPriority").value;
 
     var elementvalues = new Array();
+
     $('.elements').each(function () {
         if (this.value != '')
             elementvalues.push(this.value);
     });
 
-    var burnStageProfile = new Array();
+
+    var burnStageStr = new Array();
+    var eleList = new Array();
+
     $('.burnstage').each(function () {
-        if (this.value != '')
-            burnStageProfile.push(this.value);
+      if (this.value != '')
+          burnStageStr.push(this.value);
     });
-    alert(burnStageProfile);
+
+    $('.seqele').each(function () {
+      if (this.value != '')
+          eleList.push(this.value);
+    });
+
+    max = eleList.length
+    var burnStageProfile = [];
+
+    for ( var i=0 ; i < max ; i++ ){
+        burnStageProfile[i] = [JSON.stringify({
+          element : eleList[i],
+          burnStage : burnStageStr[i]
+        })
+      ];
+    }
+
     message= JSON.stringify({
       name : name,
       origin_node : origin_node,
@@ -88,7 +102,7 @@ function onComplete() {
       time : time,
       priority : priority,
       elements : elementvalues,
-      burnStageProfile : burnstagevalues
+      burnStageProfile : JSON.parse(burnStageProfile)
     });
 
 

@@ -19,7 +19,6 @@
        margin-left: 10px;
   }
   input[type=text] {
-        width: 100%;
         padding: 2px 10px;
         margin: 3px;
         display: inline-block;
@@ -27,6 +26,28 @@
         box-sizing: border-box;
         outline: none;
     }
+    .crewName{
+          width: 32%;
+    }
+    .crewTimeFraction{
+          width: 32%;
+    }
+    .crewState{
+          width: 32%;
+    }
+    .demandType{
+          width: 24%;
+    }
+    .demandResource{
+          width: 24%;
+    }
+    .demandAmount{
+          width: 24%;
+    }
+    .demandUnit{
+          width: 24%;
+    }
+
   </style>
 
 </head>
@@ -39,48 +60,43 @@
     <form id="components">
       <div class="form-row">
         <div class="container">
-            <div class="_name">
               <label for="inputName">Name</label>
               <input type="text" class="form-control" id="inputName" placeholder="Name">
-            </div>
         </div>
     </div>
 
     <div class="form-row">
 
         <div class="container">
-          <div class="_node">
-            <label for="inputOriginNode">Node</label>
-            <input type="text" class="form-control" id="inputNode" placeholder="Node">
-          </div>
+            <label for="inputNodeID">Node ID</label>
+            <input type="text" class="form-control" id="inputNodeID" placeholder="Node ID">
         </div>
 
         <div class="container">
-          <div class="_time">
             <label for="inputTime">Time From Mission Start</label>
             <input type="number" class="form-control" id="inputTime" placeholder="Time">
-          </div>
         </div>
 
         <div class="container">
-          <div class="_priority">
-            <label for="inputPriority">Priority</label>
-            <input type="number" class="form-control" id="inputPriority" placeholder="Priority">
-          </div>
+          <label for="inputPriority">Priority</label>
+          <select id="inputPriority" class="form-control" class="text-center">
+            <option selected id="def">Choose...</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
         </div>
 
         <div class="container">
-          <div class="_eva_duration">
             <label for="inputEVADuration">EVA Duration</label>
             <input type="number" class="form-control" id="inputEVADuration" placeholder="EVA Duration">
-          </div>
         </div>
 
         <div class="container">
-          <div class="_crew_vehicle">
-            <label for="inputCrewLocation">Crew Vehicle</label>
+            <label for="inputCrewVehicle">Crew Vehicle</label>
             <input type="text" class="form-control" id="inputCrewVehicle" placeholder="Crew Vehicle">
-          </div>
         </div>
 
         <div class="container">
@@ -104,8 +120,10 @@
     <div class="button">
       <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
     </div>
+    </form>
     </div>
-  </form>
+
+
 
 </body>
 

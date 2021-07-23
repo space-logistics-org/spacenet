@@ -4,13 +4,19 @@ import hypothesis.strategies as st
 import pytest
 from fastapi.testclient import TestClient
 from hypothesis import assume
-from hypothesis.stateful import Bundle, RuleBasedStateMachine, consumes, rule
+from hypothesis.stateful import (
+    Bundle,
+    RuleBasedStateMachine,
+    consumes,
+    precondition,
+    rule,
+)
 
 from app.database.api import models
 from app.database.api.database import Base, get_db
 from app.database.api.main import app
-from app.dependencies import current_user
-from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from app.auth_dependencies import current_user
+from spacenet.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from spacenet.schemas import Element, State
 from .utilities import get_current_user, get_test_db
 from ..models import utilities as model_utils
@@ -88,6 +94,12 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         self.model[table][id_] = result
         return id_, type(create_schema)
 
+    @rule(create_schema=st.builds(State))
+    def create_state_invalid_element_id(self, create_schema: State):
+        assume(create_schema.element_id not in self.model[models.Element])
+        response = self.client.post("/state/", json=create_schema.dict())
+        assert 422 == response.status_code
+
     @rule(id_and_type=inserted)
     def read(self, id_and_type):
         id_, type_ = id_and_type
@@ -158,6 +170,21 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
             "/".join((prefix, str(id_))), json=update_schema.dict()
         )
         assert 404 == response.status_code
+
+    @rule(
+        id_and_schema=inserted.filter(lambda t: issubclass(t[1], State)).flatmap(
+            lambda t: st.tuples(st.just(t[0]), st.builds(CREATE_TO_UPDATE[t[1]]))
+        )
+    )
+    @precondition(lambda self: len(self.model[models.Element]) > 0)
+    def update_state_invalid_element_id(self, id_and_schema):
+        id_, update_schema = id_and_schema
+        assume(update_schema.element_id not in self.model[models.Element])
+        prefix = PARENT_TO_PREFIX[models.State]
+        response = self.client.patch(
+            "/".join((prefix, str(id_))), json=update_schema.dict()
+        )
+        assert 422 == response.status_code
 
     @rule(
         id_table_and_schema=inserted.flatmap(
