@@ -19,7 +19,7 @@ class MakeElements(Event):
     at a specific time and location (node, edge, or inside an element carrier).
     """
 
-    element_id: List[UUID] = Field(
+    elements: List[UUID] = Field(
         ..., description="the IDs of the elements being added to simulation"
     )
     entry_point_id: UUID = Field(
@@ -53,7 +53,7 @@ class RemoveElements(Event):
     at a specific time and location (node or edge).
     """
 
-    to_remove: List[UUID] = Field(
+    elements: List[UUID] = Field(
         ..., description="the list of IDs of elements to remove"
     )
     removal_point_id: UUID = Field(

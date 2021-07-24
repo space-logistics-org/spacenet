@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, root_validator
 
 from . import Event
 from .burn import Burn
@@ -36,13 +36,13 @@ class BurnStageItem(BaseModel):
     )
 
 
-class PropulsiveBurn(Event):
+class PropulsiveBurn(Event):  # MoveElements, RemoveElements
     """
     Event that represents a propulsive maneuver that may be composed of one or
     more burns or stages of individual elements.
     """
 
-    element_id: List[UUID] = Field(
+    elements: List[UUID] = Field(
         ...,
         title="Elements List",
         description="List of the elements to be included in the burn event.",
@@ -53,3 +53,17 @@ class PropulsiveBurn(Event):
         title="Burn/Stage Sequence",
         description="List of the burns and stages to be performed in the event.",
     )
+
+    @root_validator(skip_on_failure=True)
+    def sequence_references_included_ids(cls, values):
+        elements: List[UUID] = values.get("elements")
+        assert elements is not None
+        sequence: List[BurnStageItem] = values.get("burn_stage_sequence")
+        assert sequence is not None
+        element_set = set(elements)
+        for burn_stage_item in sequence:
+            assert burn_stage_item.element_id in element_set, \
+                f"burn_stage_sequence involves {burn_stage_item.element_id} but " \
+                f"{burn_stage_item.element_id} is not included in burn event"
+        return values
+

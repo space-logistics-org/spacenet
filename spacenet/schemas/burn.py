@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, NonNegativeFloat
 __all__ = ["Burn"]
 
 
-class Burn(BaseModel):
+class Burn(BaseModel):  # TODO: how does a burn decompose into RemoveElements events
     """
     Base class for propulsive burns
     """
