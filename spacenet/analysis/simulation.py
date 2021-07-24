@@ -182,7 +182,6 @@ class Remove(SimEvent):
         sim.namespace[removal_point_id].contents = new_contents
 
 
-
 class BurnEvent(SimEvent):
     """
     Represents a burn, one of the four primitive SimEvents.
