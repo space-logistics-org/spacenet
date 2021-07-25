@@ -32,6 +32,17 @@ class ContainsElements(BaseModel):
     contents: List["SimElement"] = Field(default_factory=list)
 
 
+class SimElement(ContainsElements):
+    """
+    An element under simulation; wraps Element schema.
+    """
+
+    inner: Element  # TODO: this should be some type that has UUID IDs, not int IDs
+
+
+ContainsElements.update_forward_refs()
+
+
 class SimNode(ContainsElements):
     """
     A node under simulation; wraps Node schema.
@@ -51,14 +62,6 @@ class SimEdge(ContainsElements):
     """
 
     inner: Edge  # TODO: this should be some type that has UUID IDs, not int IDs
-
-
-class SimElement(ContainsElements):
-    """
-    An element under simulation; wraps Element schema.
-    """
-
-    inner: Element  # TODO: this should be some type that has UUID IDs, not int IDs
 
 
 class SimEvent(BaseModel, ABC):
@@ -182,7 +185,6 @@ class Remove(SimEvent):
         sim.namespace[removal_point_id].contents = new_contents
 
 
-
 class BurnEvent(SimEvent):
     """
     Represents a burn, one of the four primitive SimEvents.
@@ -224,10 +226,10 @@ class Simulation:
     # Simulations also need to map ids to entities being simulated
 
     def __init__(
-        self,
-        scenario: Scenario,
-        pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
-        post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+            self,
+            scenario: Scenario,
+            pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+            post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
     ) -> None:
         self.network: Dict[
             SimNode, Set[SimEdge]
@@ -270,7 +272,7 @@ class Simulation:
     def _decompose_event(cls, event: Event) -> List[SimEvent]:
         # TODO
         # Honestly events should implement this but that might cause circular import problems
-        pass
+        raise NotImplementedError
 
     def _add_event(self, event: SimEvent) -> None:
         self.event_queue.push(event)
@@ -355,7 +357,7 @@ class Simulation:
 
 
 def _all_ids_are_elements(
-    ids: List[UUID], timestamp: datetime, sim: Simulation
+        ids: List[UUID], timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -368,7 +370,7 @@ def _all_ids_are_elements(
 
 
 def _all_ids_are_elements_at_location(
-    ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
+        ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -384,7 +386,7 @@ def _all_ids_are_elements_at_location(
 
 
 def _id_exists_and_is_container(
-    id_: UUID, timestamp: datetime, sim: Simulation
+        id_: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     if not sim._id_exists(id_):

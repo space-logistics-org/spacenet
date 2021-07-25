@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from . import demands
+from . import demands, spatial_simulation
 
 # define the application
 app = FastAPI(
@@ -13,4 +13,9 @@ app = FastAPI(
 app.include_router(
     demands.router,
     prefix="/demands",
+)
+
+app.include_router(
+    spatial_simulation.router,
+    prefix="/simulation"
 )

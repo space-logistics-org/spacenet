@@ -11,14 +11,16 @@ router = APIRouter()
 
 
 class SimResult(BaseModel):
-    network: Dict[SimNode, Set[SimEdge]]
+    nodes: List[SimNode]
+    edges: List[SimEdge]
     end_time: datetime
 
     @staticmethod
     def from_sim(sim: Simulation) -> 'SimResult':
         return SimResult(
-            network=sim.network,
-            end_time=sim.current_time
+            nodes=list(sim.network.keys()),
+            edges=[e for adj in sim.network.values() for e in adj],
+            end_time=sim.current_time,
         )
 
 

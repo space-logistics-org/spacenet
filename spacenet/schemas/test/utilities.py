@@ -165,9 +165,5 @@ def xfail_from_kw(type_: Type[BaseModel], **kwargs) -> None:
     :param type_: the type to construct
     :param kwargs: keyword arguments to type_ constructor
     """
-    try:
+    with pytest.raises(ValidationError):
         type_.parse_obj(kwargs)
-    except ValidationError:
-        return
-    else:
-        assert False, f"Expected construction of {type_.__name__} with {kwargs} to fail"
