@@ -9,7 +9,7 @@ from hypothesis.stateful import RuleBasedStateMachine, invariant, rule
 from .utilities import DrawFn
 from spacenet.analysis.min_heap import MinHeap
 
-pytestmark = [pytest.mark.analysis]
+pytestmark = [pytest.mark.analysis, pytest.mark.unit]
 
 
 def check_heap_invariant(heap: MinHeap) -> None:

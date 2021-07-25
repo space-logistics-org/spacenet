@@ -9,7 +9,7 @@ from ..simulation import Simulation
 from spacenet.schemas import Scenario
 
 
-pytestmark = [pytest.mark.analysis]
+pytestmark = [pytest.mark.analysis, pytest.mark.unit]
 
 T = TypeVar("T")
 SimCallback = Callable[["Simulation", Optional[T]], T]
