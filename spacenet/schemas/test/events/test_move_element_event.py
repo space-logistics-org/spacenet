@@ -2,7 +2,7 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import MoveElements
-from .utilities import VALID_PRIORITIES, INVALID_PRIORITIES
+from .utilities import EVENT_INVALID_MAP, EVENT_VALID_MAP, VALID_PRIORITIES, INVALID_PRIORITIES
 from ..utilities import (
     INVALID_UUIDS,
     success_from_kw,
@@ -17,24 +17,25 @@ VALID_MAP = {
     ),
     "origin_id": st.uuids(),
     "destination_id": st.uuids(),
-    "priority": VALID_PRIORITIES,
+    **EVENT_VALID_MAP
 }
 
 INVALID_MAP = {
     "to_move": st.lists(INVALID_UUIDS, min_size=1),
     "origin_id": INVALID_UUIDS,
     "destination_id": INVALID_UUIDS,
-    "priority": INVALID_PRIORITIES
+    **EVENT_INVALID_MAP
 }
 
 
-def xfail_construct_move(to_move, origin_id, destination_id, priority):
+def xfail_construct_move(to_move, origin_id, destination_id, priority, mission_time):
     xfail_from_kw(
         MoveElements,
         to_move=to_move,
         origin_id=origin_id,
         destination_id=destination_id,
-        priority=priority
+        priority=priority,
+        mission_time=mission_time
     )
 
 

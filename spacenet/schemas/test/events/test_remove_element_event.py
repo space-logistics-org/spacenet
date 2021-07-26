@@ -2,7 +2,7 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import RemoveElements
-from .utilities import INVALID_PRIORITIES, VALID_PRIORITIES
+from .utilities import EVENT_VALID_MAP, EVENT_INVALID_MAP
 from ..utilities import (
     INVALID_UUIDS,
     success_from_kw,
@@ -20,19 +20,19 @@ VALID_MAP = {
         st.uuids()
     ),
     "removal_point_id": st.uuids(),
-    "priority": VALID_PRIORITIES,
+    **EVENT_VALID_MAP
 }
 
 INVALID_MAP = {
     "elements": st.lists(INVALID_UUIDS, min_size=1),
     "removal_point_id": INVALID_UUIDS,
-    "priority": INVALID_PRIORITIES
+    **EVENT_INVALID_MAP
 }
 
 
-def xfail_construct_remove(elements, removal_point_id, priority):
+def xfail_construct_remove(elements, removal_point_id, priority, mission_time):
     xfail_from_kw(
-        RemoveElements, elements=elements, removal_point_id=removal_point_id, priority=priority
+        RemoveElements, elements=elements, removal_point_id=removal_point_id, priority=priority, mission_time=mission_time
     )
 
 

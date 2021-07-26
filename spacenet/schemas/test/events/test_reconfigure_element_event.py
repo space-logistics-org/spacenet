@@ -2,7 +2,7 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import ReconfigureElements
-from .utilities import INVALID_PRIORITIES, VALID_PRIORITIES
+from .utilities import EVENT_VALID_MAP, INVALID_PRIORITIES, VALID_PRIORITIES
 from ..utilities import (
     INVALID_UUIDS,
     success_from_kw,
@@ -36,7 +36,7 @@ INVALID_TO_RECONFIGURE = st.one_of(
 VALID_MAP = {
     "to_reconfigure": VALID_TO_RECONFIGURE,
     "reconfigure_point_id": st.uuids(),
-    "priority": VALID_PRIORITIES,
+    **EVENT_VALID_MAP
 }
 
 INVALID_MAP = {
@@ -46,12 +46,13 @@ INVALID_MAP = {
 }
 
 
-def xfail_construct_reconfigure(to_reconfigure, reconfigure_point_id, priority):
+def xfail_construct_reconfigure(to_reconfigure, reconfigure_point_id, priority, mission_time):
     xfail_from_kw(
         ReconfigureElements,
         to_reconfigure=to_reconfigure,
         reconfigure_point_id=reconfigure_point_id,
-        priority=priority
+        priority=priority,
+        mission_time=mission_time
     )
 
 
