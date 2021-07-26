@@ -2,7 +2,7 @@
 A module re-exporting all events from one file
 so that `from spacenet.schemas.events import *` is usable.
 """
-from .event import *
+from .bases import *
 from .flight_transport import *
 from .space_transport import *
 from .surface_transport import *
