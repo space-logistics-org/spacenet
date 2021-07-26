@@ -8,6 +8,9 @@ from . import Event
 from .propulsive_burn import BurnStageItem
 
 
+__all__ = ["SpaceTransport"]
+
+
 class BurnStageSequence(BaseModel):
     burn_stage_sequence: List[BurnStageItem] = Field(
         ..., description="List of the burns and stages to be performed in the event"
@@ -33,10 +36,8 @@ class SpaceTransport(Event):
         description="The destination node Id of the Space Transport",
     )
 
-    time: timedelta = Field(
-        ...,
-        title="Time",
-        description="The execution time, relative to the start of the mission",
+    exec_time: timedelta = Field(
+        ..., description="The time this space transport runs for",
     )
 
     elements_id_list: List[UUID] = Field(
@@ -46,5 +47,5 @@ class SpaceTransport(Event):
     )
 
     burnStageProfile: List[BurnStageSequence] = Field(
-        ..., title="Burn Sequence", description="List of seperate Burn-Stage Sequences"
+        ..., title="Burn Sequence", description="List of separate Burn-Stage Sequences"
     )

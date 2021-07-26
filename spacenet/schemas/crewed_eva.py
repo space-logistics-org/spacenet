@@ -10,6 +10,11 @@ from .mission_demand_model import MissionDemand
 from .types import SafeFloat
 
 
+__all__ = [
+    "CrewedEVA"
+]
+
+
 class EVACrew(HumanAgent):
     """
     Schema for a Crew Member
@@ -37,12 +42,6 @@ class CrewedEVA(Event):
         ...,
         title="Origin Node ID",
         description="The origin node ID of the Space Transport",
-    )
-
-    time: timedelta = Field(
-        ...,
-        title="Time",
-        description="The execution time, relative to the start of the mission. ",
     )
 
     eva_duration: timedelta = Field(

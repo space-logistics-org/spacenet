@@ -27,4 +27,4 @@ class State(BaseModel):
     demandModels: SortedSet = Field(..., title="Demand Models")
 
     class Config:
-        arbitrary_types_allowed = True
+        arbitrary_types_allowed = True  # TODO: sortedSet? parametrize this?

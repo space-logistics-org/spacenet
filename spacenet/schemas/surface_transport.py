@@ -7,9 +7,10 @@ from pydantic import Field
 from spacenet.schemas import Event
 
 
-class SurfaceTransport(Event):
+__all__ = ["SurfaceTransport"]
 
-    # Schema for Surface Transport
+
+class SurfaceTransport(Event):
 
     name: str = Field(..., title="Name", description="The surface transport name")
 
@@ -25,7 +26,9 @@ class SurfaceTransport(Event):
         description="The ID of the surface transport's destination node",
     )
 
-    time: timedelta = Field(..., title="Time", description="The execution time")
+    exec_time: timedelta = Field(
+        ..., title="Time", description="The time this surface transport runs for"
+    )
 
     elements_id_list: List[UUID] = Field(
         ...,

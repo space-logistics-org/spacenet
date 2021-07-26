@@ -1,5 +1,4 @@
 from datetime import timedelta
-from math import inf
 from uuid import UUID
 
 from pydantic import Field
@@ -7,6 +6,10 @@ from pydantic import Field
 from .constants import SQLITE_MAX_INT
 from spacenet.schemas import Event
 
+
+__all__ = [
+    "CrewedExploration"
+]
 
 class CrewedExploration(Event):
     """
@@ -16,12 +19,6 @@ class CrewedExploration(Event):
     name: str = Field(..., title="Name", description="Crewed EVA name")
 
     node: UUID = Field(..., title="Node", description="The location of the Crewed EVA")
-
-    time: timedelta = Field(
-        ...,
-        title="Time",
-        description="The execution time, relative to the start of the mission. "
-    )
 
     eva_duration: timedelta = Field(
         ..., title="EVA Duration", description="The duration of the EVA"
