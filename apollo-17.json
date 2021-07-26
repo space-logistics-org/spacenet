@@ -48,6 +48,15 @@
 				"body_1": "Moon",
 				"latitude": 20.0,
 				"longitude": 31.0
+			},
+			{
+				"id": 1002,
+				"type": "Surface",
+				"name": "Pacific Splashdown",
+				"description": "The pacific ocean splashdown site for Apollo 17",
+				"body_1": "Earth",
+				"latitude": -18.0,
+				"longitude": -165.0
 			}
 		],
 		"edges": [
@@ -274,14 +283,11 @@
 			"name": "Apollo 17",
 			"events": [
 				{
-					"uuid": "b4996a6a-93ea-4935-aeaa-11a78370c066",
-					"type": "MakeElementsEvent",
 					"name": "Create Apollo 17 Saturn-V Stack at KSC",
 					"time": 0.0,
-					"priority": 0,
-					"locationUuid": "c8fa6bfb-9d3a-4c52-bedb-b05a06812d47",
-					"carrierUuid": null,
-					"elementUuids": [
+					"priority": 1,
+					"entry_point_id": "c8fa6bfb-9d3a-4c52-bedb-b05a06812d47",
+					"elements": [
 						"69018bea-fc19-412d-8557-14393a16922c",
 						"4aab255e-be48-492e-a322-0323ba72e2a7",
 						"9ad8c701-1e76-41d4-bcdd-ccaa0ef47302",
@@ -292,26 +298,22 @@
 					]
 				},
 				{
-					"uuid": "88af6f3d-011e-4947-aada-87f7bfc27c7c",
-					"type": "MakeElementsEvent",
 					"name": "Create crew members in the CSM",
 					"time": 0.0,
-					"priority": 0,
-					"locationUuid": "c8fa6bfb-9d3a-4c52-bedb-b05a06812d47",
-					"carrierUuid": "677fe98e-a8e3-4b6c-a148-d7004287d43e",
+					"priority": 1,
+					"entry_point_id": "677fe98e-a8e3-4b6c-a148-d7004287d43e",
 					"elementUuids": [
 						"5d95732e-5380-48ad-9cfb-867684231a14",
 						"d794e69a-f6cf-466f-b054-687fff1346ad"
 					]
 				},
 				{
-					"uuid": "49790e11-d94e-479d-8cf7-467777e3fc7d",
-					"type": "SpaceTransport",
 					"name": "Launch to LEO",
 					"time": 0.0,
-					"priority": 1,
-					"locationUuid": "c8fa6bfb-9d3a-4c52-bedb-b05a06812d47",
-					"elementUuids": [
+					"priority": 2,
+					"origin_node_id": 1001,
+					"destination_node_id": 1501,
+					"elements_id_list": [
 						"69018bea-fc19-412d-8557-14393a16922c",
 						"4aab255e-be48-492e-a322-0323ba72e2a7",
 						"9ad8c701-1e76-41d4-bcdd-ccaa0ef47302",
@@ -322,36 +324,181 @@
 						"5d95732e-5380-48ad-9cfb-867684231a14",
 						"d794e69a-f6cf-466f-b054-687fff1346ad"
 					],
-					"burnStageSequences": [
+					"burnStageProfile": [
 						[
 							{
-								"type": "BURN",
-								"elementUuid": "69018bea-fc19-412d-8557-14393a16922c"
+								"burnStage": "BURN",
+								"element_id": "69018bea-fc19-412d-8557-14393a16922c"
 							},
 							{
-								"type": "STAGE",
-								"elementUuid": "69018bea-fc19-412d-8557-14393a16922c"
+								"burnStage": "STAGE",
+								"element_id": "69018bea-fc19-412d-8557-14393a16922c"
 							},
 							{
-								"type": "BURN",
-								"elementUuid": "4aab255e-be48-492e-a322-0323ba72e2a7"
+								"burnStage": "BURN",
+								"element_id": "4aab255e-be48-492e-a322-0323ba72e2a7"
 							},
 							{
-								"type": "STAGE",
-								"elementUuid": "4aab255e-be48-492e-a322-0323ba72e2a7"
+								"burnStage": "STAGE",
+								"element_id": "4aab255e-be48-492e-a322-0323ba72e2a7"
 							},
 							{
-								"type": "BURN",
-								"elementUuid": "9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
+								"burnStage": "BURN",
+								"element_id": "9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
 							}
 						]
 					]
 				},
 				{
-					"uuid": "7e796556-9bc1-4603-831a-f95be4d376eb",
-					"type": "SpaceTransport",
 					"name": "Translunar Injection",
-					"time":
+					"time": "timedelta(hours=3, minutes=18, seconds=36.64)",
+					"priority": 1,
+					"origin_node_id": 1501,
+					"destination_node_id": 1502,
+					"elements_id_list": [
+						"9ad8c701-1e76-41d4-bcdd-ccaa0ef47302",
+						"677fe98e-a8e3-4b6c-a148-d7004287d43e",
+						"9ed11cf6-38d3-4d98-9af0-03ab6c173353",
+						"4df36b84-c111-4e64-ada0-5c212321370d",
+						"0fbec9f6-ee3b-44d2-b30c-b20e0d5dd92a",
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
+					],
+					"burnStageProfile": [
+						{
+							"burnStage": "BURN",
+							"element_id": "9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
+						},
+						{
+							"burnStage": "STAGE",
+							"element_id": "9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
+						}
+					]
+
+				},
+				{
+					"name": "1st decent orbit insertion",
+					"time": "timedelta(hours=90, minutes=31, seconds=37.43)",
+					"priority": 1,
+					"origin_node_id": 1502,
+					"destination_node_id": 1503,
+					"elements_id_list": [
+						"677fe98e-a8e3-4b6c-a148-d7004287d43e",
+						"9ed11cf6-38d3-4d98-9af0-03ab6c173353",
+						"4df36b84-c111-4e64-ada0-5c212321370d",
+						"0fbec9f6-ee3b-44d2-b30c-b20e0d5dd92a",
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
+					],
+					"burnStageProfile": [
+						{
+							"burnStage": "BURN",
+							"element_id": "677fe98e-a8e3-4b6c-a148-d7004287d43e"
+						}
+					]
+				},
+				{
+					"name": "Move crew to LM",
+					"time": "timedelta(hours=105, mintues=2)",
+					"priority": 1,
+					"to_move": [
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
+					],
+					"origin_id": "677fe98e-a8e3-4b6c-a148-d7004287d43e",
+					"destination_id": "9ed11cf6-38d3-4d98-9af0-03ab6c173353"
+				},
+				{
+					"name": "Lunar Decent",
+					"time":"timedelta(hours=109, minutes=22, seconds=42",
+					"priority": 1,
+					"origin_node_id": 1504,
+					"destination_node_id": 1505,
+					"elements_id_list": [
+						"9ed11cf6-38d3-4d98-9af0-03ab6c173353",
+						"4df36b84-c111-4e64-ada0-5c212321370d",
+						"0fbec9f6-ee3b-44d2-b30c-b20e0d5dd92a",
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
+					],
+					"burnStageProfile": [
+						{
+							"burnStage": "BURN",
+							"element_id": "9ed11cf6-38d3-4d98-9af0-03ab6c173353"
+						}
+					]
+				},
+				{
+					"name": "Apollo 17 crewed exploration",
+					"node": 1504,
+					"time": "timedelta(hours=114, minutes=21, seconds=49)",
+					"priority": 1,
+					"eva_duration": "timedelta(hours=8)",
+					"crew_location": "9ed11cf6-38d3-4d98-9af0-03ab6c173353",
+					"crew": [
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
+					],
+					"duration": "timedelta(days=3)",
+					"eva_per_week": 7
+				},
+				{
+					"name": "Transfer Crew to Lunar AM",
+					"time": "timedelta(hours=185, minutes=31, seconds=37)",
+					"priority": 2,
+					"to_move": [
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
+					],
+					"origin_id": "9ed11cf6-38d3-4d98-9af0-03ab6c173353",
+					"destination_id": "4df36b84-c111-4e64-ada0-5c212321370d"
+				},
+				{
+					"name": "Lunar ascent",
+					"time": "timedelta(hours=185, minutes=31, seconds=37)",
+					"priority": 2,
+					"origin_node_id": 1504,
+					"destination_node_id": 1503,
+					"element_id_list": [
+						"4df36b84-c111-4e64-ada0-5c212321370d",
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
+					],
+					"burnStageProfile": [
+						{
+							"burnStage": "BURN",
+							"element_id": "4df36b84-c111-4e64-ada0-5c212321370d"
+						}
+					]
+				},
+				{
+					"name": "Move crew to CM",
+					"time": "timedelta(hours=190, minutes=10",
+					"priority": 1,
+					"to_move": [
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
+					],
+					"origin_id": "9ed11cf6-38d3-4d98-9af0-03ab6c173353",
+					"destination_id": "677fe98e-a8e3-4b6c-a148-d7004287d43e"
+				},
+				{
+					"name": "Transearth injection",
+					"time": "timedelta(hours=234, minutes=02, seconds=9.18)",
+					"priority": 1,
+					"origin_node_id": 1503,
+					"destination_node_id": 1002,
+					"element_id_list": [
+						"677fe98e-a8e3-4b6c-a148-d7004287d43e",
+						"5d95732e-5380-48ad-9cfb-867684231a14",
+						"d794e69a-f6cf-466f-b054-687fff1346ad"
+					],
+					"burnStageProfile": [
+						{
+							"burnStage": "BURN",
+							"element_id": "677fe98e-a8e3-4b6c-a148-d7004287d43e"
+						}
+					]
 				}
 			]
 		}
