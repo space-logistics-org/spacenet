@@ -20,12 +20,6 @@ class CrewedExploration(Event):
 
     node: UUID = Field(..., title="Node", description="The location of the Crewed EVA")
 
-    time: timedelta = Field(
-        ...,
-        title="Time",
-        description="The execution time, relative to the start of the mission. "
-    )
-
     eva_duration: timedelta = Field(
         ..., title="EVA Duration", description="The duration of the EVA"
     )

@@ -44,12 +44,6 @@ class CrewedEVA(Event):
         description="The origin node ID of the Space Transport",
     )
 
-    time: timedelta = Field(
-        ...,
-        title="Time",
-        description="The execution time, relative to the start of the mission. ",
-    )
-
     eva_duration: timedelta = Field(
         ..., title="EVA Duration", description="The duration of the EVA"
     )

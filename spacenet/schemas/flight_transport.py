@@ -7,9 +7,7 @@ from pydantic import Field
 from spacenet.schemas import Event
 
 
-__all__ = [
-    "FlightTransport"
-]
+__all__ = ["FlightTransport"]
 
 
 class FlightTransport(Event):
@@ -30,7 +28,9 @@ class FlightTransport(Event):
         description="The ID of the flight transport's destination node",
     )
 
-    time: timedelta = Field(..., title="Time", description="The execution time")
+    exec_time: timedelta = Field(
+        ..., title="Time", description="The time this flight transport runs for"
+    )
 
     elements_id_list: List[UUID] = Field(
         ...,
