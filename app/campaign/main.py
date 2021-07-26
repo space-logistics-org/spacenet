@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy.orm import Session
 
 # define the application
 app = FastAPI(
@@ -10,7 +9,8 @@ app = FastAPI(
 )
 
 # include any application routers
-#app.include_router(...)
+from .api import main as api
+app.mount("/api", api.app)
 
 # mount the static directory
 app.mount("/", StaticFiles(directory="app/campaign/static", html=True), name="static")

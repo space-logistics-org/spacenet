@@ -441,6 +441,7 @@ function formFill(data) {
     $("#editInputEnv").val(data.environment)
     $("#editInputMass").val(data.environment)
     $("#editInputVol").val(data.volume)
+    $("#editInputMass").val(data.mass)
     $("#editInputAccMass").val(data.accommodation_mass)
 
     if (elType === 'Resource Container') {

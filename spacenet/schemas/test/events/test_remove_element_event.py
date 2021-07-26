@@ -16,7 +16,7 @@ ALLOWED_REMOVAL_POINTS = ["Node", "Edge"]
 VALID_REMOVALS, INVALID_REMOVALS = valid_invalid_from_allowed(ALLOWED_REMOVAL_POINTS)
 
 VALID_MAP = {
-    "to_remove": st.lists(
+    "elements": st.lists(
         st.uuids()
     ),
     "removal_point_id": st.uuids(),
@@ -24,15 +24,15 @@ VALID_MAP = {
 }
 
 INVALID_MAP = {
-    "to_remove": st.lists(INVALID_UUIDS, min_size=1),
+    "elements": st.lists(INVALID_UUIDS, min_size=1),
     "removal_point_id": INVALID_UUIDS,
     "priority": INVALID_PRIORITIES
 }
 
 
-def xfail_construct_remove(to_remove, removal_point_id, priority):
+def xfail_construct_remove(elements, removal_point_id, priority):
     xfail_from_kw(
-        RemoveElements, to_remove=to_remove, removal_point_id=removal_point_id, priority=priority
+        RemoveElements, elements=elements, removal_point_id=removal_point_id, priority=priority
     )
 
 
@@ -43,10 +43,10 @@ def test_valid(kw):
 
 @given(
     kw=st.fixed_dictionaries(
-        mapping={**VALID_MAP, "to_remove": INVALID_MAP["to_remove"]}
+        mapping={**VALID_MAP, "elements": INVALID_MAP["elements"]}
     )
 )
-def test_invalid_to_remove(kw):
+def test_invalid_elements(kw):
     xfail_construct_remove(**kw)
 
 
