@@ -51,6 +51,7 @@ class Scenario(BaseModel):
     name: str = Field(..., title="Name", description="Name of Scenario")
     description: str = Field(None, title="Description", description="Short description")
     startDate: datetime = Field(..., title="Start Date")
+    # TODO: should be same as earliest mission start date?
     scenarioType: ScenarioType = Field(..., title="Type of Scenario")
 
     network: Network = Field(..., title="Network")

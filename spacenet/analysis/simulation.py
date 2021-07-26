@@ -15,6 +15,7 @@ from spacenet.schemas import (
     Burn,
     ElementCarrier,
     Event,
+    PropulsiveBurn,
     Scenario,
     Element,
     Edge,
@@ -110,9 +111,7 @@ class Move(SimEvent):
         # fixme Low-hanging fruit for optimization:
         #  store UUIDs in elements and check those instead? Performance
         new_contents = [
-            element
-            for element in prev_contents
-            if element not in self.event.to_move
+            element for element in prev_contents if element not in self.event.to_move
         ]
         sim.namespace[source].contents = new_contents
         sim.namespace[dest].contents.extend(
@@ -179,9 +178,7 @@ class Remove(SimEvent):
         # fixme Low-hanging fruit for optimization:
         #  store UUIDs in elements and check those instead? Performance
         new_contents = [
-            element
-            for element in prev_contents
-            if element not in self.event.elements
+            element for element in prev_contents if element not in self.event.elements
         ]
         sim.namespace[removal_point_id].contents = new_contents
 
@@ -209,6 +206,9 @@ T = TypeVar("T")
 SimCallback = Callable[["Simulation", Optional[T]], T]
 
 
+EVENT_TO_SIM_EVENT = {MakeElements: Create, MoveElements: Move, RemoveElements: Remove}
+
+
 class Simulation:
     """
     Represents a campaign simulation.
@@ -227,10 +227,10 @@ class Simulation:
     # Simulations also need to map ids to entities being simulated
 
     def __init__(
-            self,
-            scenario: Scenario,
-            pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
-            post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+        self,
+        scenario: Scenario,
+        pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+        post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
     ) -> None:
         self.network: Dict[
             SimNode, Set[SimEdge]
@@ -245,7 +245,7 @@ class Simulation:
             atomic_event
             for mission in scenario.missionList
             for event in mission.events
-            for atomic_event in Simulation._decompose_event(event)
+            for atomic_event in Simulation._decompose_event(event, mission.start_date)
         ]
         self.event_queue: MinHeap[SimEvent] = MinHeap(events)
         self.errors: List[SimError] = []
@@ -270,15 +270,28 @@ class Simulation:
         self.current_time: datetime = scenario.startDate
 
     @classmethod  # TODO: staticmethod?
-    def _decompose_event(cls, event: Event) -> List[SimEvent]:
+    def _decompose_event(
+        cls, event: Event, mission_start_time: datetime
+    ) -> List[SimEvent]:
+        result = []
         for primitive in decompose_event(event):
-            if type(primitive) == MoveElements:
-                return Move()
-        # TODO
-        # Honestly events should implement this but that might cause circular import problems
-        # TODO: validate things like surface events to make sure their edges have right
-        #  endpoints. do this in the schema?
-        raise NotImplementedError
+            timestamp = mission_start_time + primitive.mission_time
+            priority = primitive.priority
+            if type(primitive) == PropulsiveBurn:
+                result.append(
+                    BurnEvent(
+                        timestamp=timestamp,
+                        priority=priority,
+                        event=primitive.burn,
+                        elements=primitive.elements,
+                    )
+                )
+            else:
+                ty = EVENT_TO_SIM_EVENT[type(primitive)]
+                result.append(
+                    ty(event=primitive, timestamp=timestamp, priority=priority)
+                )
+        return result
 
     def _add_event(self, event: SimEvent) -> None:
         self.event_queue.push(event)
@@ -363,7 +376,7 @@ class Simulation:
 
 
 def _all_ids_are_elements(
-        ids: List[UUID], timestamp: datetime, sim: Simulation
+    ids: List[UUID], timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -376,7 +389,7 @@ def _all_ids_are_elements(
 
 
 def _all_ids_are_elements_at_location(
-        ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
+    ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -392,7 +405,7 @@ def _all_ids_are_elements_at_location(
 
 
 def _id_exists_and_is_container(
-        id_: UUID, timestamp: datetime, sim: Simulation
+    id_: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     if not sim._id_exists(id_):
