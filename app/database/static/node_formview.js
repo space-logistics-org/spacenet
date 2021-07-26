@@ -200,16 +200,16 @@ function formFill(data) {
     $("#editDropPick").val(nType).trigger('change')
     $("#editInputName").val(data.name);
     $("#editInputDesc").val(data.description);
-    body1 = $("#editBody1").val(data.body_1);
-    lat = $("#editInputLat").val(data.latitude);
-    long = $("#editInputLong").val(data.longitude);
+    $("#editBody1").val(data.body_1);
+    $("#editInputLat").val(data.latitude);
+    $("#editInputLong").val(data.longitude);
 
     if (nType === 'OrbitalNode') {
-        apo = $("#editInputApo").val(data.apoapsis);
-        peri = $("#editInputPeri").val(data.periapsis);
-        inc = $("#editInputInc").val(data.inclination);
+        $("#editInputApo").val(data.apoapsis);
+        $("#editInputPeri").val(data.periapsis);
+        $("#editInputInc").val(data.inclination);
     } else if (nType === 'LagrangeNode') {
-        body2 = $("#editBody2").val(data.body_2);
-        lpn = $("#editInputlpNum").val(data.lp_number);
+        $("#editBody2").val(data.body_2);
+        $("#editInputlpNum").val(data.lp_number);
     }
 }

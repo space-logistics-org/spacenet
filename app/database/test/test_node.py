@@ -4,7 +4,7 @@ import pkg_resources
 import pytest
 from sqlalchemy.orm import sessionmaker
 
-from spacenet import test
+from spacenet.schemas import test
 
 from app.database.api.models import node as models
 from app.database.api.schemas import node as schemas

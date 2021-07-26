@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, confloat
 from typing_extensions import Literal
 
 from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
-from ..constants import ClassOfSupply, Environment
+from .constants import ClassOfSupply, Environment
 
 __all__ = [
     "Element",

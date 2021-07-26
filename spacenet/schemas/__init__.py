@@ -1,6 +1,7 @@
 from .burn import *
 from .edge import *
 from .element import *
+from .event import *
 from .element_events import *
 from .mixins import *
 from .node import *

@@ -1,0 +1,15 @@
+{
+  "good_data": [
+    {
+      "message": "an example message"
+    },
+    {
+      "message": "another example message"
+    }
+  ],
+  "bad_data": [
+    {
+      "content": "an example message"
+    }
+  ]
+}

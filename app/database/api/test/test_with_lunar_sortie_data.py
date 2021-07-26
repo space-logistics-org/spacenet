@@ -3,14 +3,14 @@ from fastapi.testclient import TestClient
 
 from app.database.api.database import get_db
 from app.database.api.main import app
-from app.dependencies import current_user
+from app.auth_dependencies import current_user
 from ..schemas.constants import CREATE_SCHEMAS
 from app.database.api.test.utilities import get_current_user, get_test_db
 from spacenet.schemas.element import Element
 from spacenet.schemas.node import Node
 from spacenet.schemas.edge import Edge
 from spacenet.schemas.resource import Resource
-from spacenet.test.utilities import (
+from spacenet.schemas.test.utilities import (
     lunar_sortie_elements,
     lunar_sortie_edges,
     lunar_sortie_nodes,
