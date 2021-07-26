@@ -8,6 +8,11 @@ from .resource import Resource
 from .types import SafeFloat
 
 
+__all__ = [
+    "ConsumeResource"
+]
+
+
 class ConsumeResource(Event):
     removal_point_id: UUID = Field(
         ...,

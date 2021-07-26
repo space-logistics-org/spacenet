@@ -7,6 +7,11 @@ from pydantic import Field
 from spacenet.schemas import Event
 
 
+__all__ = [
+    "SurfaceTransport"
+]
+
+
 class SurfaceTransport(Event):
 
     # Schema for Surface Transport

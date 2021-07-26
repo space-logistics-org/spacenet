@@ -7,6 +7,11 @@ from pydantic import Field
 from spacenet.schemas import Event
 
 
+__all__ = [
+    "FlightTransport"
+]
+
+
 class FlightTransport(Event):
 
     # Schema for Flight Transport

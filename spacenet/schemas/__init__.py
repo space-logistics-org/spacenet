@@ -9,3 +9,10 @@ from .propulsive_burn import *
 from .resource import *
 from .state import *
 from .scenario import *
+from .flight_transport import *
+from .space_transport import *
+from .surface_transport import *
+from .transfer_resources import *
+from .consume_resource import *
+from .crewed_eva import *
+from .crewed_exploration import *

@@ -8,6 +8,11 @@ from . import Event
 from .propulsive_burn import BurnStageItem
 
 
+__all__ = [
+    "SpaceTransport"
+]
+
+
 class BurnStageSequence(BaseModel):
     burn_stage_sequence: List[BurnStageItem] = Field(
         ..., description="List of the burns and stages to be performed in the event"

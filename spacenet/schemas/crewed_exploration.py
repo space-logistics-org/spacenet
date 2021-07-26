@@ -1,5 +1,4 @@
 from datetime import timedelta
-from math import inf
 from uuid import UUID
 
 from pydantic import Field
@@ -7,6 +6,10 @@ from pydantic import Field
 from .constants import SQLITE_MAX_INT
 from spacenet.schemas import Event
 
+
+__all__ = [
+    "CrewedExploration"
+]
 
 class CrewedExploration(Event):
     """
