@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from . import Event
+from . import ElementTransportEvent, Event
 from .propulsive_burn import BurnStageItem
 
 
@@ -17,28 +17,12 @@ class BurnStageSequence(BaseModel):
     )
 
 
-class SpaceTransport(Event):
+class SpaceTransport(ElementTransportEvent):
     """
     Schema for Space Transport
     """
 
     name: str = Field(..., title="Name", description="Space Transport name")
-
-    origin_node_id: UUID = Field(
-        ...,
-        title="Origin Node ID",
-        description="The origin node Id of the Space Transport",
-    )
-
-    destination_node_id: UUID = Field(
-        ...,
-        title="Destination Node ID",
-        description="The destination node Id of the Space Transport",
-    )
-
-    exec_time: timedelta = Field(
-        ..., description="The time this space transport runs for",
-    )
 
     elements_id_list: List[UUID] = Field(
         ...,
