@@ -15,8 +15,13 @@ p{
 }
 
 #formSpace {
-  width: 800px;
-  height: 1000px;
+  width: 1200px;
+  height: 600px;
+}
+
+#visSpace {
+  width: 1200px;
+  height: 600px;
 }
 
 .btn-style {
