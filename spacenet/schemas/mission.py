@@ -13,7 +13,7 @@ from .mission_demand_model import MissionDemand
 from .types import SafeInt
 
 
-class Mission(BaseModel):
+class Mission(BaseModel):  # TODO: should be UUIDs
     name: str = Field(..., title="Name", description="name of mission")
     start_date: datetime = Field(..., title="Start Date", description="date of mission start")
     events: List[SafeInt] = Field(..., title="Event ID List", description="list of event IDs")
