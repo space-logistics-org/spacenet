@@ -23,6 +23,7 @@ from spacenet.schemas import (
     RemoveElements,
 )
 from spacenet.schemas.node import Node
+from .decompose_events import decompose_event
 from .simulation_errors import SimError
 
 __all__ = ["Simulation"]
@@ -270,8 +271,13 @@ class Simulation:
 
     @classmethod  # TODO: staticmethod?
     def _decompose_event(cls, event: Event) -> List[SimEvent]:
+        for primitive in decompose_event(event):
+            if type(primitive) == MoveElements:
+                return Move()
         # TODO
         # Honestly events should implement this but that might cause circular import problems
+        # TODO: validate things like surface events to make sure their edges have right
+        #  endpoints. do this in the schema?
         raise NotImplementedError
 
     def _add_event(self, event: SimEvent) -> None:
