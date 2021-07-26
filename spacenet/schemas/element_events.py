@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import Field
 
-from .event import Event
+from .bases import Event
 
 __all__ = [
     "MakeElements",
