@@ -108,6 +108,7 @@ class Move(SimEvent):
         sim._add_errors(_all_ids_are_elements(self.event.to_move, self.timestamp, sim))
         # Filter source contents and move them over
         prev_contents = sim.namespace[source].contents
+        # TODO: if source doesn't exist you sort of can't continue
         # fixme Low-hanging fruit for optimization:
         #  store UUIDs in elements and check those instead? Performance
         new_contents = [

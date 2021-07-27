@@ -41,6 +41,7 @@ def decompose_flight_transport(event: FlightTransport) -> List[PrimitiveEvent]:
             to_move=event.elements_id_list,
             origin_id=event.origin_node_id,
             destination_id=event.destination_node_id,
+            mission_time=event.mission_time
         )
     )
 
@@ -52,6 +53,7 @@ def decompose_surface_transport(event: SurfaceTransport) -> List[PrimitiveEvent]
             to_move=event.elements_id_list,
             origin_id=event.origin_node_id,
             destination_id=event.edge_id,
+            mission_time=event.mission_time,
             # TODO: MoveElements events have to know the edge that they're on as well
         )
     ) + decompose_move(
@@ -60,12 +62,13 @@ def decompose_surface_transport(event: SurfaceTransport) -> List[PrimitiveEvent]
             to_move=event.elements_id_list,
             origin_id=event.edge_id,
             destination_id=event.destination_node_id,
+            mission_time=event.mission_time
         )
     )
 
 
 def decompose_space_transport(event: SpaceTransport) -> List[PrimitiveEvent]:
-    pass  # TODO
+    raise NotImplementedError  # TODO
 
 
 DECOMPOSE_REGISTRY: Dict[Type[E], DecomposeFn[E]] = {
