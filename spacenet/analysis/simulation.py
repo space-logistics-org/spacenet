@@ -203,6 +203,17 @@ class BurnEvent(SimEvent):
         #   not enough fuel (if this is a problem depends, but it's probably more efficient to
         #    just not add burn events if there's no fuel constraint and just stage)
         raise NotImplementedError
+        
+        #delta_ve = event.delta_v
+        #for element in elements:
+            #init_mass = element.mass
+            #fin_mass = final_mass_from(delta_v: delta_ve, isp: 0, m_0: init_mass)
+            #req_deltav = delts_v_from(isp: 0, m_0: init_mass, m_f: fin_mass)
+            #if (req_deltav > delta_ve):
+                #subtract mass/fuel
+            #else:
+                #delta_ve -= req_deltav
+                #RemoveElement? stage
 
 
 T = TypeVar("T")
@@ -232,6 +243,7 @@ class Simulation:
     def __init__(
         self,
         scenario: Scenario,
+        # TODO: write function to test scenario, call it here?
         pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
         post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
     ) -> None:
