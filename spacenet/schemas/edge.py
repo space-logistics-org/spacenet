@@ -1,11 +1,23 @@
 from enum import Enum
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
 
-__all__ = ["Edge", "EdgeType", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
+__all__ = [
+    "Edge",
+    "EdgeType",
+    "FlightEdge",
+    "SpaceEdge",
+    "SurfaceEdge",
+    "UUIDEdge",
+    "UUIDFlightEdge",
+    "UUIDSpaceEdge",
+    "UUIDSurfaceEdge",
+]
 
 from spacenet.schemas.types import SafeInt, SafeNonNegFloat, SafeNonNegInt
+from .utilities import model_with_changed_field_types
 
 
 class EdgeType(str, Enum):
@@ -37,6 +49,14 @@ class Edge(BaseModel):
     )
 
 
+REPLACED_EDGE_FIELDS = {"origin_id": UUID, "destination_id": UUID}
+
+
+UUIDEdge = model_with_changed_field_types(
+    "UUIDEdge", Edge, replaced_fields=REPLACED_EDGE_FIELDS,
+)
+
+
 class SurfaceEdge(Edge):
     """
     An edge between two surface nodes.
@@ -50,6 +70,11 @@ class SurfaceEdge(Edge):
     )
 
 
+UUIDSurfaceEdge = model_with_changed_field_types(
+    "UUIDSurfaceEdge", SurfaceEdge, base=UUIDEdge, replaced_fields=REPLACED_EDGE_FIELDS
+)
+
+
 class SpaceEdge(Edge):
     """
     An edge between two nodes using a specified list of propulsive burns.
@@ -61,6 +86,11 @@ class SpaceEdge(Edge):
     duration: SafeNonNegFloat = Field(
         ..., title="Duration", description="Duration of space edge"
     )
+
+
+UUIDSpaceEdge = model_with_changed_field_types(
+    "UUIDSpaceEdge", SpaceEdge, base=UUIDEdge, replaced_fields=REPLACED_EDGE_FIELDS
+)
 
 
 class FlightEdge(Edge):
@@ -81,3 +111,8 @@ class FlightEdge(Edge):
     max_cargo: SafeNonNegFloat = Field(
         ..., title="Max Cargo", description="Cargo capacity for flight"
     )
+
+
+UUIDFlightEdge = model_with_changed_field_types(
+    "UUIDFlightEdge", FlightEdge, base=UUIDEdge, replaced_fields=REPLACED_EDGE_FIELDS
+)

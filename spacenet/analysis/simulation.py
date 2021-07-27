@@ -18,7 +18,7 @@ from spacenet.schemas import (
     PropulsiveBurn,
     Scenario,
     Element,
-    Edge,
+    UUIDEdge,
     MoveElements,
     MakeElements,
     RemoveElements,
@@ -39,7 +39,7 @@ class SimElement(ContainsElements):
     An element under simulation; wraps Element schema.
     """
 
-    inner: Element  # TODO: this should be some type that has UUID IDs, not int IDs
+    inner: Element
 
 
 ContainsElements.update_forward_refs()
@@ -50,7 +50,7 @@ class SimNode(ContainsElements):
     A node under simulation; wraps Node schema.
     """
 
-    inner: Node  # TODO: this should be some type that has UUID IDs, not int IDs
+    inner: Node
 
     def __hash__(self):
         # This is safe because, assuming Node is safe to hash, we don't hash the mutable
@@ -63,7 +63,7 @@ class SimEdge(ContainsElements):
     An edge under simulation; wraps Edge schema.
     """
 
-    inner: Edge  # TODO: this should be some type that has UUID IDs, not int IDs
+    inner: UUIDEdge
 
 
 class SimEvent(BaseModel, ABC):

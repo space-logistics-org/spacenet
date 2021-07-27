@@ -14,9 +14,6 @@ __all__ = [
     "decompose_event"
 ]
 
-# TODO: what to do about timestamps in all of this. the times need to be stored somewhere,
-#  maybe in events
-
 
 def decompose_move(event: MoveElements) -> List[MoveElements]:
     return [event]
@@ -54,7 +51,6 @@ def decompose_surface_transport(event: SurfaceTransport) -> List[PrimitiveEvent]
             origin_id=event.origin_node_id,
             destination_id=event.edge_id,
             mission_time=event.mission_time,
-            # TODO: MoveElements events have to know the edge that they're on as well
         )
     ) + decompose_move(
         MoveElements(
