@@ -277,6 +277,7 @@ class Simulation:
         result = []
         for primitive in decompose_event(event):
             timestamp = mission_start_time + primitive.mission_time
+            # TODO: this can overflow. That's an invalid event? So should valueerror
             priority = primitive.priority
             if type(primitive) == PropulsiveBurn:
                 result.append(

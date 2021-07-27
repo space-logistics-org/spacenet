@@ -4,6 +4,8 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
 
+from spacenet.schemas.types import SafeInt, SafeNonNegFloat, SafeNonNegInt
+
 __all__ = [
     "Edge",
     "EdgeType",
@@ -16,9 +18,6 @@ __all__ = [
     "UUIDSurfaceEdge",
 ]
 
-from spacenet.schemas.types import SafeInt, SafeNonNegFloat, SafeNonNegInt
-from .utilities import model_with_changed_field_types
-
 
 class EdgeType(str, Enum):
     """
@@ -28,6 +27,17 @@ class EdgeType(str, Enum):
     Surface = "SurfaceEdge"
     Space = "SpaceEdge"
     Flight = "FlightEdge"
+
+
+class UUID_IDs(BaseModel):
+
+    origin_id: UUID = Field(
+        ..., title="Origin ID", description="ID of the origin node"
+    )
+
+    destination_id: UUID = Field(
+        ..., title="Destination ID", description="ID of the destination node",
+    )
 
 
 class Edge(BaseModel):
@@ -49,12 +59,9 @@ class Edge(BaseModel):
     )
 
 
-REPLACED_EDGE_FIELDS = {"origin_id": UUID, "destination_id": UUID}
-
-
-UUIDEdge = model_with_changed_field_types(
-    "UUIDEdge", Edge, replaced_fields=REPLACED_EDGE_FIELDS,
-)
+class UUIDEdge(UUID_IDs, Edge):
+    # This ordering matters, reverse it and the types of ID fields are wrong
+    pass
 
 
 class SurfaceEdge(Edge):
@@ -70,9 +77,8 @@ class SurfaceEdge(Edge):
     )
 
 
-UUIDSurfaceEdge = model_with_changed_field_types(
-    "UUIDSurfaceEdge", SurfaceEdge, base=UUIDEdge, replaced_fields=REPLACED_EDGE_FIELDS
-)
+class UUIDSurfaceEdge(UUID_IDs, SurfaceEdge):
+    pass
 
 
 class SpaceEdge(Edge):
@@ -88,9 +94,8 @@ class SpaceEdge(Edge):
     )
 
 
-UUIDSpaceEdge = model_with_changed_field_types(
-    "UUIDSpaceEdge", SpaceEdge, base=UUIDEdge, replaced_fields=REPLACED_EDGE_FIELDS
-)
+class UUIDSpaceEdge(UUID_IDs, SpaceEdge):
+    pass
 
 
 class FlightEdge(Edge):
@@ -111,8 +116,8 @@ class FlightEdge(Edge):
     max_cargo: SafeNonNegFloat = Field(
         ..., title="Max Cargo", description="Cargo capacity for flight"
     )
+    
+    
+class UUIDFlightEdge(UUID_IDs, FlightEdge):
+    pass
 
-
-UUIDFlightEdge = model_with_changed_field_types(
-    "UUIDFlightEdge", FlightEdge, base=UUIDEdge, replaced_fields=REPLACED_EDGE_FIELDS
-)
