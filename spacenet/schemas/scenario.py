@@ -78,6 +78,3 @@ class Scenario(BaseModel):
 
     class Config:
         title: "Scenario"
-        json_encoders = {
-            UUID: UUID.__str__
-        }
