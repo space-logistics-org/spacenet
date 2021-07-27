@@ -27,6 +27,8 @@ from spacenet.schemas.node import Node
 from .decompose_events import decompose_event
 from .simulation_errors import SimError
 
+from spacenet.fuel_functions.formulas import *
+
 __all__ = ["Simulation"]
 
 
