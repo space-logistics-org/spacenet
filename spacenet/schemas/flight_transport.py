@@ -4,13 +4,13 @@ from uuid import UUID
 
 from pydantic import Field
 
-from spacenet.schemas import Event
+from spacenet.schemas import ElementTransportEvent
 
 
 __all__ = ["FlightTransport"]
 
 
-class FlightTransport(Event):
+class FlightTransport(ElementTransportEvent):
 
     # Schema for Flight Transport
 

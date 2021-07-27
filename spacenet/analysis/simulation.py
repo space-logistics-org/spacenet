@@ -18,7 +18,7 @@ from spacenet.schemas import (
     PropulsiveBurn,
     Scenario,
     Element,
-    Edge,
+    UUIDEdge,
     MoveElements,
     MakeElements,
     RemoveElements,
@@ -26,6 +26,8 @@ from spacenet.schemas import (
 from spacenet.schemas.node import Node
 from .decompose_events import decompose_event
 from .simulation_errors import SimError
+
+from spacenet.fuel_formulas.functions import *
 
 __all__ = ["Simulation"]
 
@@ -39,7 +41,7 @@ class SimElement(ContainsElements):
     An element under simulation; wraps Element schema.
     """
 
-    inner: Element  # TODO: this should be some type that has UUID IDs, not int IDs
+    inner: Element
 
 
 ContainsElements.update_forward_refs()
@@ -50,7 +52,7 @@ class SimNode(ContainsElements):
     A node under simulation; wraps Node schema.
     """
 
-    inner: Node  # TODO: this should be some type that has UUID IDs, not int IDs
+    inner: Node
 
     def __hash__(self):
         # This is safe because, assuming Node is safe to hash, we don't hash the mutable
@@ -63,7 +65,7 @@ class SimEdge(ContainsElements):
     An edge under simulation; wraps Edge schema.
     """
 
-    inner: Edge  # TODO: this should be some type that has UUID IDs, not int IDs
+    inner: UUIDEdge
 
 
 class SimEvent(BaseModel, ABC):
@@ -108,6 +110,7 @@ class Move(SimEvent):
         sim._add_errors(_all_ids_are_elements(self.event.to_move, self.timestamp, sim))
         # Filter source contents and move them over
         prev_contents = sim.namespace[source].contents
+        # TODO: if source doesn't exist you sort of can't continue
         # fixme Low-hanging fruit for optimization:
         #  store UUIDs in elements and check those instead? Performance
         new_contents = [
@@ -200,6 +203,17 @@ class BurnEvent(SimEvent):
         #   not enough fuel (if this is a problem depends, but it's probably more efficient to
         #    just not add burn events if there's no fuel constraint and just stage)
         raise NotImplementedError
+        
+        #delta_ve = event.delta_v
+        #for element in elements:
+            #init_mass = element.mass
+            #fin_mass = final_mass_from(delta_v: delta_ve, isp: 0, m_0: init_mass)
+            #req_deltav = delts_v_from(isp: 0, m_0: init_mass, m_f: fin_mass)
+            #if (req_deltav > delta_ve):
+                #subtract mass/fuel
+            #else:
+                #delta_ve -= req_deltav
+                #RemoveElement? stage
 
 
 T = TypeVar("T")
@@ -229,6 +243,7 @@ class Simulation:
     def __init__(
         self,
         scenario: Scenario,
+        # TODO: write function to test scenario, call it here?
         pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
         post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
     ) -> None:
@@ -276,6 +291,7 @@ class Simulation:
         result = []
         for primitive in decompose_event(event):
             timestamp = mission_start_time + primitive.mission_time
+            # TODO: this can overflow. That's an invalid event? So should valueerror
             priority = primitive.priority
             if type(primitive) == PropulsiveBurn:
                 result.append(
