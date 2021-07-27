@@ -1,7 +1,8 @@
+from abc import ABC
 from datetime import timedelta
 from uuid import UUID
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 
 __all__ = ["Event", "ElementTransportEvent"]
 
@@ -19,11 +20,6 @@ class Event(BaseModel):
         title="Mission Time",
         description="The time this event starts at, relative to the start of the mission",
     )
-
-    @validator("mission_time")
-    def non_negative_time(cls, v):
-        assert v >= timedelta(0)
-        return v
 
 
 class ElementTransportEvent(Event):

@@ -5,7 +5,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, root_validator
 
-from spacenet.schemas.edge import Edge
+from spacenet.schemas.edge import UUIDEdge
 from spacenet.schemas.element import Element
 from spacenet.schemas.element_events import MakeElements, MoveElements
 from spacenet.schemas.mission import Mission
@@ -22,7 +22,7 @@ class Manifest(BaseModel):
 
 class Network(BaseModel):
     nodes: Dict[UUID, Node] = Field(..., title="Nodes")
-    edges: Dict[UUID, Edge] = Field(..., title="Edges")
+    edges: Dict[UUID, UUIDEdge] = Field(..., title="Edges")
 
     @root_validator(skip_on_failure=True)
     def _no_common_ids(cls, values: Dict[str, Any]) -> Dict[str, Any]:

@@ -23,12 +23,3 @@ def test_valid(kw):
 )
 def test_invalid_priority(kw):
     xfail_construct_event(**kw)
-
-
-@given(
-    kw=st.fixed_dictionaries(
-        mapping={**VALID_MAP, "mission_time": INVALID_MAP["mission_time"]}
-    )
-)
-def test_invalid_mission_time(kw):
-    xfail_construct_event(**kw)
