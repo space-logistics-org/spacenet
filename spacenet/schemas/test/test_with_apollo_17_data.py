@@ -6,7 +6,7 @@ from pydantic import parse_file_as
 from .. import Scenario
 
 
-pytestmark = [pytest.mark.schema]
+pytestmark = [pytest.mark.schema, pytest.mark.apollo_17]
 
 
 @pytest.mark.xfail(reason="apollo 17 data doesn't match schema at present")

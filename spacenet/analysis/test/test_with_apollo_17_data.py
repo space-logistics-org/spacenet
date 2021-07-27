@@ -7,7 +7,7 @@ from spacenet.analysis.simulation import Simulation
 from spacenet.schemas import Scenario
 
 
-pytestmark = [pytest.mark.analysis]
+pytestmark = [pytest.mark.analysis, pytest.mark.apollo_17]
 
 
 @pytest.mark.xfail(reason="apollo 17 data doesn't match schema at present")
