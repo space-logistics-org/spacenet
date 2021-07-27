@@ -1,13 +1,17 @@
 import typing
+from datetime import timedelta
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 
 import pytest
 from hypothesis import given, strategies as st
+from hypothesis.strategies import SearchStrategy
 
 from .utilities import DrawFn
 from ..simulation import Simulation
-from spacenet.schemas import Scenario
-
+from ...analysis.decompose_events import DECOMPOSE_REGISTRY
+from spacenet.schemas import Event, PropulsiveBurn, Scenario
+from ...schemas.mission import Mission
+from ...schemas.space_transport import BurnStageSequence
 
 pytestmark = [pytest.mark.analysis, pytest.mark.unit]
 
@@ -44,7 +48,7 @@ def listener_dict_builder(
 
 
 @given(
-    scenario=st.from_type(Scenario),
+    scenario=st.builds(Scenario),
     pre_listeners=listener_dict_builder(types=[int, float, str]),
     post_listeners=listener_dict_builder(types=[int, float, str]),
 )
@@ -54,9 +58,7 @@ def test_fuzz_simulation(scenario, pre_listeners, post_listeners):
     Simulation(scenario, pre_listeners, post_listeners)
 
 
-@given(
-    scenario=st.from_type(Scenario),
-)
+@given(scenario=st.builds(Scenario),)
 @pytest.mark.slow
 @pytest.mark.xfail
 def test_simulation_returns_same(scenario):
@@ -69,9 +71,7 @@ def test_simulation_returns_same(scenario):
     assert sim.current_time == other_sim.current_time
 
 
-@given(
-    scenario=st.from_type(Scenario),
-)
+@given(scenario=st.builds(Scenario),)
 @pytest.mark.slow
 @pytest.mark.xfail
 def test_simulation_empties_queue(scenario):
