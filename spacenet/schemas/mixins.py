@@ -7,7 +7,13 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-__all__ = ["RequiresID", "RequiresOnlyType", "OptionalFields", "ReadSchema"]
+__all__ = [
+    "RequiresID",
+    "RequiresOnlyType",
+    "OptionalFields",
+    "ReadSchema",
+    "ImmutableBaseModel",
+]
 
 
 class RequiresID(BaseModel, ABC):
@@ -57,11 +63,9 @@ class ReadSchema(RequiresID):
 
 
 class ImmutableBaseModel(BaseModel):
-
     class Config:
         allow_mutation = False
         frozen = True
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
-

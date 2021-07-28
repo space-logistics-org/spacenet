@@ -3,7 +3,7 @@ This module defines the schemas for Elements, and exports them explicitly.
 """
 from abc import ABC
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel, Field, confloat
 from typing_extensions import Literal
@@ -20,6 +20,18 @@ __all__ = [
     "PropulsiveVehicle",
     "SurfaceVehicle",
     "ElementKind",
+    "AllElements"
+]
+
+
+AllElements = Union[
+    "Element",
+    "ResourceContainer",
+    "ElementCarrier",
+    "HumanAgent",
+    "RoboticAgent",
+    "PropulsiveVehicle",
+    "SurfaceVehicle",
 ]
 
 
