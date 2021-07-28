@@ -225,3 +225,16 @@ function onComplete(){
     console.log(data)
 
 }
+
+
+$.ajax({
+  url: "/database/api/simulation",
+  method: "GET",
+  data: {}, //insert scenario json here
+  success: function (simResult) {
+    simResult.elements.forEach( function(element) {
+      $('#pickElement').append('<option value="' + element.name + '">' + element.name + '</option>')
+    })
+  }
+});
+
