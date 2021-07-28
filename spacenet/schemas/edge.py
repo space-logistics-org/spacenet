@@ -125,6 +125,6 @@ class UUIDFlightEdge(UUID_IDs, FlightEdge):
     pass
 
 
-AllEdges = Union["FlightEdge", "SpaceEdge", "SurfaceEdge"]
-AllUUIDEdges = Union["UUIDFlightEdge", "UUIDSpaceEdge", "UUIDSurfaceEdge"]
+AllEdges = Union[FlightEdge, SpaceEdge, SurfaceEdge]
+AllUUIDEdges = Union[UUIDFlightEdge, UUIDSpaceEdge, UUIDSurfaceEdge]
 

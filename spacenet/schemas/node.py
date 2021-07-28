@@ -98,4 +98,4 @@ class LagrangeNode(Node):
     )
 
 
-AllNodes = Union["LagrangeNode", "OrbitalNode", "SurfaceNode"]
+AllNodes = Union[LagrangeNode, OrbitalNode, SurfaceNode]
