@@ -22,10 +22,6 @@ __all__ = [
 ]
 
 
-AllEdges = Union["FlightEdge", "SpaceEdge", "SurfaceEdge"]
-AllUUIDEdges = Union["UUIDFlightEdge", "UUIDSpaceEdge", "UUIDSurfaceEdge"]
-
-
 class EdgeType(str, Enum):
     """
     An enumeration for the types of edges.
@@ -127,4 +123,8 @@ class FlightEdge(Edge):
     
 class UUIDFlightEdge(UUID_IDs, FlightEdge):
     pass
+
+
+AllEdges = Union["FlightEdge", "SpaceEdge", "SurfaceEdge"]
+AllUUIDEdges = Union["UUIDFlightEdge", "UUIDSpaceEdge", "UUIDSurfaceEdge"]
 

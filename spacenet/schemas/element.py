@@ -24,17 +24,6 @@ __all__ = [
 ]
 
 
-AllElements = Union[
-    "Element",
-    "ResourceContainer",
-    "ElementCarrier",
-    "HumanAgent",
-    "RoboticAgent",
-    "PropulsiveVehicle",
-    "SurfaceVehicle",
-]
-
-
 class ElementKind(str, Enum):
     """
     An enumeration of all the types of Element.
@@ -187,3 +176,14 @@ class SurfaceVehicle(Vehicle):
     )
     fuel_id: SafeInt  # TODO: this needs constraints or to be an enum;
     #  perhaps a foreign key constraint in model?
+
+
+AllElements = Union[
+    "Element",
+    "ResourceContainer",
+    "ElementCarrier",
+    "HumanAgent",
+    "RoboticAgent",
+    "PropulsiveVehicle",
+    "SurfaceVehicle",
+]

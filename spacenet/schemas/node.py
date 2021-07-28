@@ -10,9 +10,6 @@ from .mixins import ImmutableBaseModel
 __all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode", "AllNodes"]
 
 
-AllNodes = Union["LagrangeNode", "OrbitalNode", "SurfaceNode"]
-
-
 class Body(str, Enum):
     """
     An enumeration of the possible bodies for a node.
@@ -99,3 +96,6 @@ class LagrangeNode(Node):
     lp_number: conint(ge=1, le=5, strict=True) = Field(
         ..., title="LP Number", description="Number of Lagrange point"
     )
+
+
+AllNodes = Union["LagrangeNode", "OrbitalNode", "SurfaceNode"]
