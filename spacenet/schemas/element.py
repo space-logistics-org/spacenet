@@ -71,10 +71,10 @@ class CargoCarrier(Element, ABC):
     """
 
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
-        ..., title="Max Cargo Mass", description="cargo capacity constraint (kg)"
+        0, title="Max Cargo Mass", description="cargo capacity constraint (kg)"
     )
     max_cargo_volume: Optional[SafeNonNegFloat] = Field(
-        ...,
+        0,
         title="Maximum Cargo Volume",
         description="cargo capacity constraint (m^3)",
     )
