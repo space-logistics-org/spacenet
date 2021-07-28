@@ -8,7 +8,6 @@ from spacenet.schemas import Scenario
 pytestmark = [pytest.mark.analysis, pytest.mark.apollo_17]
 
 
-@pytest.mark.xfail(reason="simulation mvp not complete yet")
 def test_scenario_runs_without_error():
     filename = pkg_resources.resource_filename("spacenet.schemas", "apollo_17/apollo_17.json")
     scenario = Scenario.parse_file(filename)
