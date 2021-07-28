@@ -46,49 +46,44 @@
     <form id="components">
       <div class="form-row">
         <div class="container">
-            <div class="_name">
               <label for="inputName">Name</label>
               <input type="text" class="form-control" id="inputName" placeholder="Name">
-            </div>
         </div>
     </div>
 
     <div class="form-row">
 
         <div class="container">
-          <div class="_originnode">
-            <label for="inputOriginNode">Origin Node</label>
-            <input type="text" class="form-control" id="inputOriginNode" placeholder="Origin Node">
-          </div>
+            <label for="inputOriginNodeID">Origin Node ID</label>
+            <input type="text" class="form-control" id="inputOriginNodeID" placeholder="Origin Node ID">
         </div>
 
         <div class="container">
-          <div class="_destinationnode">
-            <label for="inputDestinationNode">Destination Node</label>
-            <input type="text" class="form-control" id="inputDestinationNode" placeholder="Destination Node">
-          </div>
+            <label for="inputDestinationNodeID">Destination Node ID</label>
+            <input type="text" class="form-control" id="inputDestinationNodeID" placeholder="Destination Node ID">
         </div>
 
         <div class="container">
-          <div class="_time">
             <label for="inputTime">Time from Mission Start</label>
             <input type="number" class="form-control" id="inputTime" placeholder="Time">
-          </div>
         </div>
 
-        <!--make a dropdown selector from 1-5?-->
         <div class="container">
-          <div class="_priority">
-            <label for="inputPriority">Priority</label>
-            <input type="number" class="form-control" id="inputPriority" placeholder="Priority">
-          </div>
+          <label for="inputPriority">Priority</label>
+          <select id="inputPriority" class="form-control" class="text-center">
+            <option selected id="def">Choose...</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
         </div>
 
      <div class="container">
-        <label for="eleadd">Press to add a new element</label>
-        <input type="button" id="eleAdd" value="Add Element" class="btn btn-dark btn-sm"/>
+        <label for="eleadd">Add Element ID</label>
+        <input type="button" id="eleAdd" value="Add Element ID" class="btn btn-dark btn-sm"/>
       </div>
-
 
       <div id="elementmain"></div>
 

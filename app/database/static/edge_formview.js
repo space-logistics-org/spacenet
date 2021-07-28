@@ -202,14 +202,14 @@ function formFill(data) {
     $("#editInputDestination_ID").val(data.destination_id)
     $("#editInputDescription").val(data.description)
 
-    if (edgeType === 'Flight') {
+    if (edgeType === 'FlightEdge') {
         $("#editInputMax_Crew").val(data.max_crew);
         $("#editInputMax_Cargo").val(data.max_cargo);
         $("#editInputDuration").val(data.duration);
 
-    } else if (edgeType === 'Space') {
+    } else if (edgeType === 'SpaceEdge') {
         $("#editInputDuration").val(data.duration);
-    } else if (edgeType === 'Surface') {
+    } else if (edgeType === 'SurfaceEdge') {
         $("#editInputDistance").val(data.distance);
     }
 }

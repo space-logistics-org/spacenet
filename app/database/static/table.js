@@ -34,6 +34,13 @@ const COLUMNS = {
         {data: 'unit_mass'},
         {data: 'unit_volume'},
         {data: 'description'},
+    ],
+    'state': [
+        {data: null},
+        {data: 'name'},
+        {data: 'state_type'},
+        {data: 'element_id'},
+        {data: 'is_initial_state'},
     ]
 };
 
@@ -124,7 +131,6 @@ $(document).ready(function () {
         },
         order: [[1, 'asc']],
     });
-
 
     $('#modalDeleteButton').on('click', function () {
         const record = table.rows({selected: true}).data();

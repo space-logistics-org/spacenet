@@ -1,11 +1,25 @@
 from enum import Enum
+from typing import Union
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
 
-__all__ = ["Edge", "EdgeType", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
-
 from spacenet.schemas.types import SafeInt, SafeNonNegFloat, SafeNonNegInt
+
+__all__ = [
+    "Edge",
+    "EdgeType",
+    "FlightEdge",
+    "SpaceEdge",
+    "SurfaceEdge",
+    "UUIDEdge",
+    "UUIDFlightEdge",
+    "UUIDSpaceEdge",
+    "UUIDSurfaceEdge",
+    "AllEdges",
+    "AllUUIDEdges"
+]
 
 
 class EdgeType(str, Enum):
@@ -16,6 +30,17 @@ class EdgeType(str, Enum):
     Surface = "SurfaceEdge"
     Space = "SpaceEdge"
     Flight = "FlightEdge"
+
+
+class UUID_IDs(BaseModel):
+
+    origin_id: UUID = Field(
+        ..., title="Origin ID", description="ID of the origin node"
+    )
+
+    destination_id: UUID = Field(
+        ..., title="Destination ID", description="ID of the destination node",
+    )
 
 
 class Edge(BaseModel):
@@ -37,6 +62,11 @@ class Edge(BaseModel):
     )
 
 
+class UUIDEdge(UUID_IDs, Edge):
+    # This ordering matters, reverse it and the types of ID fields are wrong
+    pass
+
+
 class SurfaceEdge(Edge):
     """
     An edge between two surface nodes.
@@ -50,6 +80,10 @@ class SurfaceEdge(Edge):
     )
 
 
+class UUIDSurfaceEdge(UUID_IDs, SurfaceEdge):
+    pass
+
+
 class SpaceEdge(Edge):
     """
     An edge between two nodes using a specified list of propulsive burns.
@@ -61,6 +95,10 @@ class SpaceEdge(Edge):
     duration: SafeNonNegFloat = Field(
         ..., title="Duration", description="Duration of space edge"
     )
+
+
+class UUIDSpaceEdge(UUID_IDs, SpaceEdge):
+    pass
 
 
 class FlightEdge(Edge):
@@ -81,3 +119,12 @@ class FlightEdge(Edge):
     max_cargo: SafeNonNegFloat = Field(
         ..., title="Max Cargo", description="Cargo capacity for flight"
     )
+    
+    
+class UUIDFlightEdge(UUID_IDs, FlightEdge):
+    pass
+
+
+AllEdges = Union[FlightEdge, SpaceEdge, SurfaceEdge]
+AllUUIDEdges = Union[UUIDFlightEdge, UUIDSpaceEdge, UUIDSurfaceEdge]
+

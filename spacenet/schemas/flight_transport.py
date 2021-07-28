@@ -1,19 +1,23 @@
-from pydantic import BaseModel, Field, PositiveFloat
+from datetime import timedelta
+from typing import List
+from uuid import UUID
+
+from pydantic import Field
+
+from spacenet.schemas import ElementTransportEvent
 
 
+__all__ = ["FlightTransport"]
 
-class FlightTransport(BaseModel):
+
+class FlightTransport(ElementTransportEvent):
 
     # Schema for Flight Transport
 
-    name: str = Field(..., title = "Name", description = "The flight transport name")
+    name: str = Field(..., title="Name", description="The flight transport name")
 
-    node: str = Field(..., title = "Node", description = "The origin of the flight transport")
-
-    time: PositiveFloat = Field(..., title = "Time", description = "The execution time")
-
-    priority: int = Field(..., title = "Priority", description = "The importance of the mission event", ge = 1, le = 5)
-
-    trajectory: str = Field(..., title = "Trajectory", description = "The nodes that the vehicle will travel to and from")
-
-    elements: str = Field(..., title = "Elements", description = "The elements")
+    elements_id_list: List[UUID] = Field(
+        ...,
+        title="List of Element IDs",
+        description="The list of IDs of elements being transported",
+    )
