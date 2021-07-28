@@ -52,7 +52,7 @@ class SimNode(ContainsElements):
     A node under simulation; wraps Node schema.
     """
 
-    inner: Node
+    inner: Node  # fixme: types: should be union
 
     def __hash__(self):
         # This is safe because, assuming Node is safe to hash, we don't hash the mutable
@@ -65,7 +65,7 @@ class SimEdge(ContainsElements):
     An edge under simulation; wraps Edge schema.
     """
 
-    inner: UUIDEdge
+    inner: UUIDEdge  # fixme: types: should be union
 
 
 class SimEvent(BaseModel, ABC):
@@ -80,6 +80,18 @@ class SimEvent(BaseModel, ABC):
         return (self.timestamp, self.priority) < (other.timestamp, other.priority)
 
     @abstractmethod
+    def validate_ids_exist(self, sim: "Simulation") -> None:
+        """
+        Validate this event, checking that its referenced values are present
+        in the namespace of the provided simulation.
+
+        :param sim: event to validate
+        :raise ValueError: if this event has referenced values not present
+        in the namespace
+        """
+        pass
+
+    @abstractmethod
     def process_with_ctx(self, sim: "Simulation") -> None:
         pass
 
@@ -90,6 +102,16 @@ class Move(SimEvent):
     """
 
     event: MoveElements
+
+    def validate_ids_exist(self, sim: "Simulation") -> None:
+        event = self.event
+        if not sim._id_exists(event.origin_id):
+            raise ValueError(f"Origin id {event.origin_id} does not exist")
+        elif not sim._id_exists(event.destination_id):
+            raise ValueError(f"Destination id {event.destination_id} does not exist")
+        for id_  in event.to_move:
+            if not sim._id_exists(id_):
+                raise ValueError(f"ID {id_} does not exist")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Move all elements in the list to the new destination
@@ -129,6 +151,14 @@ class Create(SimEvent):
 
     event: MakeElements
 
+    def validate_ids_exist(self, sim: "Simulation") -> None:
+        event = self.event
+        if not sim._id_exists(event.entry_point_id):
+            raise ValueError(f"Entry point {event.entry_point_id} does not exist")
+        for id_ in event.elements:
+            if not sim._id_exists(id_):
+                raise ValueError(f"ID {id_} does not exist")
+
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Create all elements in the list at the specified location
         # Possible errors:
@@ -156,6 +186,14 @@ class Remove(SimEvent):
     """
 
     event: RemoveElements
+
+    def validate_ids_exist(self, sim: "Simulation") -> None:
+        event = self.event
+        if not sim._id_exists(event.removal_point_id):
+            raise ValueError(f"Removal point {event.removal_point_id} does not exist")
+        for id_ in event.elements:
+            if not sim._id_exists(id_):
+                raise ValueError(f"ID {id_} does not exist")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Remove all elements in the list at the specified location
@@ -193,6 +231,9 @@ class BurnEvent(SimEvent):
 
     event: Burn
     elements: List[UUID]  # ordered: last element is first to have delta-v consumed
+
+    def validate_ids_exist(self, sim: "Simulation") -> None:
+        raise NotImplementedError
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # TODO
@@ -283,6 +324,8 @@ class Simulation:
             scenario.elementList
         ) == len(self.namespace), "expected no duplicate IDs"
         self.current_time: datetime = scenario.startDate
+        for event in self.event_queue:
+            event.validate_ids_exist(sim=self)
 
     @classmethod  # TODO: staticmethod?
     def _decompose_event(

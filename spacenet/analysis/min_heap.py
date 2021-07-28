@@ -1,5 +1,5 @@
 from heapq import heapify, heappop, heappush
-from typing import Generic, Iterable, Optional, TypeVar
+from typing import Generator, Generic, Iterable, Optional, TypeVar
 
 T = TypeVar("T")
 
@@ -36,6 +36,9 @@ class MinHeap(Generic[T]):
 
     def __getitem__(self, index: int) -> T:
         return self._inner[index]
+
+    def __iter__(self) -> Generator[T, None, None]:
+        yield from self._inner
 
     def __repr__(self) -> str:
         return repr(f'MinHeap({self._inner})')
