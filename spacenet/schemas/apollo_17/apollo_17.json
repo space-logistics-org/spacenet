@@ -306,7 +306,6 @@
 						"d794e69a-f6cf-466f-b054-687fff1346ad"
 					],
 					"burnStageProfile": [
-						[
 							{
 								"burnStage": "BURN",
 								"element_id": "69018bea-fc19-412d-8557-14393a16922c"
@@ -327,7 +326,6 @@
 								"burnStage": "BURN",
 								"element_id": "9ad8c701-1e76-41d4-bcdd-ccaa0ef47302"
 							}
-						]
 					]
 				},
 				{
@@ -448,7 +446,7 @@
 					"destination_node_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
 					"edge_id": "ff2715a9-c93c-4c60-870b-00e177b9c2ec",
 					"exec_time": "02:00:00",
-					"element_id_list": [
+					"elements_id_list": [
 						"4df36b84-c111-4e64-ada0-5c212321370d",
 						"5d95732e-5380-48ad-9cfb-867684231a14",
 						"d794e69a-f6cf-466f-b054-687fff1346ad"
@@ -479,7 +477,7 @@
 					"destination_node_id": "f49db8a6-6cac-48f6-9d27-6276ae08faf8",
 					"edge_id": "32615681-1c5e-4231-8f89-ba2c556a108c",
 					"exec_time": "2 16:00:00",
-					"element_id_list": [
+					"elements_id_list": [
 						"677fe98e-a8e3-4b6c-a148-d7004287d43e",
 						"5d95732e-5380-48ad-9cfb-867684231a14",
 						"d794e69a-f6cf-466f-b054-687fff1346ad"
