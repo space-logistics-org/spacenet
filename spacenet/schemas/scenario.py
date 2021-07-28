@@ -5,11 +5,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, root_validator
 
-from spacenet.schemas.edge import UUIDEdge
-from spacenet.schemas.element import Element
+from spacenet.schemas.edge import AllUUIDEdges
+from spacenet.schemas.element import AllElements
 from spacenet.schemas.element_events import MakeElements, MoveElements
 from spacenet.schemas.mission import Mission
-from spacenet.schemas.node import Node
+from spacenet.schemas.node import AllNodes
 
 __all__ = ["ScenarioType", "Scenario", "Manifest"]
 
@@ -21,8 +21,8 @@ class Manifest(BaseModel):
 
 
 class Network(BaseModel):
-    nodes: Dict[UUID, Node] = Field(..., title="Nodes")
-    edges: Dict[UUID, UUIDEdge] = Field(..., title="Edges")
+    nodes: Dict[UUID, AllNodes] = Field(..., title="Nodes")
+    edges: Dict[UUID, AllUUIDEdges] = Field(..., title="Edges")
 
     @root_validator(skip_on_failure=True)
     def _no_common_ids(cls, values: Dict[str, Any]) -> Dict[str, Any]:
@@ -56,7 +56,7 @@ class Scenario(BaseModel):
 
     network: Network = Field(..., title="Network")
     missionList: List[Mission] = Field(..., title="Mission List")
-    elementList: Dict[UUID, Element] = Field(..., title="Element List")
+    elementList: Dict[UUID, AllElements] = Field(..., title="Element List")
     manifest: Manifest = Field(..., title="Manifest")
 
     volumeConstrained: bool = Field(False, title="Volume Constrained")

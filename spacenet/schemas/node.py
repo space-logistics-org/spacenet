@@ -1,12 +1,13 @@
 from enum import Enum
+from typing import Union
 
-from pydantic import BaseModel, Field, confloat, conint
+from pydantic import Field, confloat, conint
 from typing_extensions import Literal
 
 from .types import SafeNonNegFloat
 from .mixins import ImmutableBaseModel
 
-__all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode"]
+__all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode", "AllNodes"]
 
 
 class Body(str, Enum):
@@ -95,3 +96,6 @@ class LagrangeNode(Node):
     lp_number: conint(ge=1, le=5, strict=True) = Field(
         ..., title="LP Number", description="Number of Lagrange point"
     )
+
+
+AllNodes = Union[LagrangeNode, OrbitalNode, SurfaceNode]

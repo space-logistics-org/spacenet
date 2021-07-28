@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Union
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -16,6 +17,8 @@ __all__ = [
     "UUIDFlightEdge",
     "UUIDSpaceEdge",
     "UUIDSurfaceEdge",
+    "AllEdges",
+    "AllUUIDEdges"
 ]
 
 
@@ -120,4 +123,8 @@ class FlightEdge(Edge):
     
 class UUIDFlightEdge(UUID_IDs, FlightEdge):
     pass
+
+
+AllEdges = Union[FlightEdge, SpaceEdge, SurfaceEdge]
+AllUUIDEdges = Union[UUIDFlightEdge, UUIDSpaceEdge, UUIDSurfaceEdge]
 

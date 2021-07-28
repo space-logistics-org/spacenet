@@ -3,7 +3,7 @@ This module defines the schemas for Elements, and exports them explicitly.
 """
 from abc import ABC
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel, Field, confloat
 from typing_extensions import Literal
@@ -20,6 +20,7 @@ __all__ = [
     "PropulsiveVehicle",
     "SurfaceVehicle",
     "ElementKind",
+    "AllElements"
 ]
 
 
@@ -175,3 +176,14 @@ class SurfaceVehicle(Vehicle):
     )
     fuel_id: SafeInt  # TODO: this needs constraints or to be an enum;
     #  perhaps a foreign key constraint in model?
+
+
+AllElements = Union[
+    Element,
+    ResourceContainer,
+    ElementCarrier,
+    HumanAgent,
+    RoboticAgent,
+    PropulsiveVehicle,
+    SurfaceVehicle,
+]
