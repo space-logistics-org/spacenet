@@ -190,10 +190,10 @@ class Remove(SimEvent):
     def validate_ids_exist(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.removal_point_id):
-            raise ValueError()
+            raise ValueError(f"Removal point {event.removal_point_id} does not exist")
         for id_ in event.elements:
             if not sim._id_exists(id_):
-                raise ValueError()
+                raise ValueError(f"ID {id_} does not exist")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Remove all elements in the list at the specified location
