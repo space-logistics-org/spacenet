@@ -1,12 +1,16 @@
 from enum import Enum
+from typing import Union
 
-from pydantic import BaseModel, Field, confloat, conint
+from pydantic import Field, confloat, conint
 from typing_extensions import Literal
 
 from .types import SafeNonNegFloat
 from .mixins import ImmutableBaseModel
 
-__all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode"]
+__all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode", "AllNodes"]
+
+
+AllNodes = Union["LagrangeNode", "OrbitalNode", "SurfaceNode"]
 
 
 class Body(str, Enum):
