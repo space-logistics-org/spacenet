@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import Callable, Dict, List, Type, TypeVar, Union
 
 from spacenet.schemas.events import *
 
