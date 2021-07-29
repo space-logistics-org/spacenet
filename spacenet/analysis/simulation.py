@@ -68,6 +68,10 @@ class SimEdge(ContainsElements):
 
     inner: UUIDEdge  # fixme: types: should be union
 
+    def __hash__(self):
+        # Analogous safety argument as to SimNode
+        return hash(self.inner)
+
 
 class SimEvent(BaseModel, ABC):
     """
@@ -288,15 +292,29 @@ class Simulation:
         pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
         post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
     ) -> None:
+        self.namespace: Dict[UUID, Union[SimElement, SimNode, SimEdge]] = {}
+        for id_, node in scenario.network.nodes.items():
+            self.namespace[id_] = SimNode(inner=node)
+        for id_, edge in scenario.network.edges.items():
+            self.namespace[id_] = SimEdge(inner=edge)
+        for id_, element in scenario.elementList.items():
+            self.namespace[id_] = SimElement(inner=element)
+        assert len(scenario.network.nodes) + len(scenario.network.edges) + len(
+            scenario.elementList
+        ) == len(self.namespace), "expected no duplicate IDs"
         self.network: Dict[
             SimNode, Set[SimEdge]
         ] = {}  # adjacency list graph representation
-        for id_, edge in scenario.network.edges.items():
-            pass
+        for id_ in scenario.network.nodes:
+            node = self.namespace[id_]
+            self.network.setdefault(node, set())
+        for id_ in scenario.network.edges:
+            edge = self.namespace[id_]
+            src = self.namespace[edge.inner.origin_id]
+            dst = self.namespace[edge.inner.destination_id]
+            assert src in self.network
+            self.network[src].add(edge)
             # add edges to adj-list rep
-            # TODO: origin_id refers to DB id but has to correspond to the UUID of the edge
-        for id_, node in scenario.network.nodes.items():
-            self.network.setdefault(SimNode(inner=node), set())
         events = [
             atomic_event
             for mission in scenario.missionList
@@ -313,16 +331,6 @@ class Simulation:
         self.post_listeners: Dict[
             SimCallback[Any], Any
         ] = {} if post_listeners is None else post_listeners
-        self.namespace: Dict[UUID, Union[SimElement, SimNode, SimEdge]] = {}
-        for id_, node in scenario.network.nodes.items():
-            self.namespace[id_] = SimNode(inner=node)
-        for id_, edge in scenario.network.edges.items():
-            self.namespace[id_] = SimEdge(inner=edge)
-        for id_, element in scenario.elementList.items():
-            self.namespace[id_] = SimElement(inner=element)
-        assert len(scenario.network.nodes) + len(scenario.network.edges) + len(
-            scenario.elementList
-        ) == len(self.namespace), "expected no duplicate IDs"
         self.current_time: datetime = scenario.startDate
         for event in self.event_queue:
             event.validate_ids_exist(sim=self)
