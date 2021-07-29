@@ -53,7 +53,7 @@ class SimNode(ContainsElements):
     A node under simulation; wraps Node schema.
     """
 
-    inner: AllNodes  # fixme: types: should be union
+    inner: AllNodes
 
     def __hash__(self):
         # This is safe because, assuming Node is safe to hash, we don't hash the mutable
@@ -66,7 +66,7 @@ class SimEdge(ContainsElements):
     An edge under simulation; wraps Edge schema.
     """
 
-    inner: AllUUIDEdges  # fixme: types: should be union
+    inner: AllUUIDEdges
 
     def __hash__(self):
         # Analogous safety argument as to SimNode
@@ -110,6 +110,11 @@ class SimEvent(BaseModel, ABC):
 
     @abstractmethod
     def process_with_ctx(self, sim: "Simulation") -> None:
+        """
+        Process this event given the context of ``sim``, modifying ``sim``.
+
+        :param sim:  simulation the event occurs in
+        """
         pass
 
 
@@ -149,7 +154,6 @@ class Move(SimEvent):
         sim._add_errors(_all_ids_are_elements(self.event.to_move, self.timestamp, sim))
         # Filter source contents and move them over
         prev_contents = sim.namespace[source].contents
-        # TODO: if source doesn't exist you sort of can't continue
         # fixme Low-hanging fruit for optimization:
         #  store UUIDs in elements and check those instead? Performance
         new_contents = [
@@ -359,8 +363,10 @@ class Simulation:
     ) -> List[SimEvent]:
         result = []
         for primitive in decompose_event(event):
-            timestamp = mission_start_time + primitive.mission_time
-            # TODO: this can overflow. That's an invalid event? So should ValueError.
+            try:
+                timestamp = mission_start_time + primitive.mission_time
+            except OverflowError as e:
+                raise ValueError(e)
             priority = primitive.priority
             if type(primitive) == PropulsiveBurn:
                 result.append(

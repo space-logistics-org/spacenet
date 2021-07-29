@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import List
 from uuid import UUID
 
 from pydantic import Field
@@ -30,7 +31,7 @@ class CrewedExploration(Event):
         description="The location of the crew that will be used for the EVA",
     )
 
-    crew: list = Field(  # TODO: parametrize this
+    crew: List[UUID] = Field(
         ..., title="Crew", description="List of the crew selected for the EVA"
     )
     duration: timedelta = Field(

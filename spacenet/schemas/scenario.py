@@ -75,6 +75,7 @@ class Scenario(BaseModel):
         return values
 
     # TODO: validator that events in missions and events in manifest agree?
+    #  or move to CheckedScenario event
 
     class Config:
         title: "Scenario"
