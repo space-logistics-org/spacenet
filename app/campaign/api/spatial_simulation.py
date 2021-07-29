@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Union
+from typing import List, Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -16,15 +16,12 @@ class ResultAndErrors(BaseModel):
 
 
 @router.post("/", response_model=ResultAndErrors)
-def simulate_scenario(scenario: Scenario) -> ResultAndErrors:
+def simulate_scenario_until(
+    scenario: Scenario, stop_time: Optional[datetime] = None
+) -> ResultAndErrors:
     sim = Simulation(scenario)
-    sim.run()
+    if stop_time is not None:
+        sim.run(until=stop_time)
+    else:
+        sim.run()
     return ResultAndErrors(result=sim.result(), errors=sim.errors)
-
-
-@router.post("/", response_model=ResultAndErrors)
-def simulate_scenario_until(scenario: Scenario, stop_time: datetime) -> ResultAndErrors:
-    sim = Simulation(scenario)
-    sim.run(until=stop_time)
-    return ResultAndErrors(result=sim.result(), errors=sim.errors)
-
