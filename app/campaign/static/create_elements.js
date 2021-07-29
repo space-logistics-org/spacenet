@@ -265,7 +265,7 @@ const scenario = {
 					"name": "Create Apollo 17 Saturn-V Stack at KSC",
 					"mission_time": "00",
 					"priority": 1,
-					"entry_point_id": "c8fa6bfb-9d3a-4c52-bedb-b05a06812d47",
+					"entry_point_id": "cb3aa87b-893c-4dbd-9acb-d1c5b7017644",
 					"elements": [
 						"69018bea-fc19-412d-8557-14393a16922c",
 						"4aab255e-be48-492e-a322-0323ba72e2a7",
@@ -506,29 +506,60 @@ const scenario = {
 
 
 $(document).ready( function() {
-  Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-    console.log(uuid, node)
-    $('#pickNode').append('<option value="' + uuid + '">' + node.name + '</option>')
-  }
-);
+	Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+		$('#pickNode').append('<option value="' + node.name + '">' + node.name + '</option>')
+	  });
 })
 
 
-function loadSim() {
-  var node = $('#pickNode').val(),
-      time = $('#inputTime').val(),
-      priority = $('#pickPriority').val();
+// function loadSim() {
+//   var node = $('#pickNode').val(),
+//       time = $('#inputTime').val(),
+//       priority = $('#pickPriority').val();
 
-  $.ajax({
-    url: "/campaign/api/simulation_placeholder/",
-    data: JSON.stringify(scenario),
-    method: "POST",
-    success: function (simResult) {
-      Object.entries(simResult.elementList).forEach( function([uuid, element]) {
-        $('#createIn').append('<option value="' + uuid + '">' + element.name + '</option>')
-      })
-    }
-  });
+//   $.ajax({
+//     url: "/campaign/api/simulation_placeholder/",
+//     data: JSON.stringify(scenario),
+//     method: "POST",
+//     success: function (simResult) {
+//       Object.entries(simResult.elementList).forEach( function([uuid, element]) {
+//         if (element.type !== 'HumanAgent' && element.type !== 'RoboticAgent') {
+//         $('#createIn').append('<option value="' + uuid + '">' + element.name + '</option>')
+//         }
+//       })
+//     }
+//   });
+
+// }
+
+function loadSim() {
+	let node = $('#pickNode').val(),
+		time = $('#inputTime').val(),
+		priority = $('#pickPriority').val();
+
+	if (node && time && priority !== 'Choose...') {
+		$('#createIn').find('option:not(:first)').remove();
+		  
+		$.ajax({
+			url: "/campaign/api/simulation/?days_to_run_for=" + time,
+			data: JSON.stringify(scenario),
+			method: "POST",
+			success: function (simResult) {
+			simResult.result.nodes.forEach( function(simNode) {
+				if (simNode.inner.name === node) {
+					$('#createIn').append('<option value="' + simNode.inner.name + '">' + simNode.inner.name + '</option>')
+					simNode.contents.forEach( function(elementContained) {
+						console.log(elementContained)
+						if (elementContained.inner.type !== 'HumanAgent' && elementContained.inner.type !== 'RoboticAgent') {
+							$('#createIn').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')
+						}
+					})
+				}
+			})
+			}
+		});
+	}
+
 
 }
 

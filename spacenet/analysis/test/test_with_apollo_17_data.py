@@ -11,5 +11,6 @@ pytestmark = [pytest.mark.analysis, pytest.mark.apollo_17]
 def test_scenario_runs_without_error():
     filename = pkg_resources.resource_filename("spacenet.schemas", "apollo_17/apollo_17.json")
     scenario = Scenario.parse_file(filename)
-    errors = Simulation(scenario).run()
-    assert len(errors) == 0, "expected no errors"
+    sim = Simulation(scenario)
+    sim.run()
+    assert not sim.errors, "expected no errors"

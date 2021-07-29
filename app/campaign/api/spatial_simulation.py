@@ -1,33 +1,32 @@
-from datetime import datetime
-from typing import List, Union, Dict, Set
+from datetime import datetime, timedelta
+from typing import List, Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 
 from spacenet.schemas import Scenario
-from spacenet.analysis.simulation import Simulation, SimError, SimNode, SimEdge
+from spacenet.analysis.simulation import Simulation, SimResult, SimError
 
 router = APIRouter()
 
 
-class SimResult(BaseModel):
-    nodes: List[SimNode]
-    edges: List[SimEdge]
-    end_time: datetime
-
-    @staticmethod
-    def from_sim(sim: Simulation) -> 'SimResult':
-        return SimResult(
-            nodes=list(sim.network.keys()),
-            edges=[e for adj in sim.network.values() for e in adj],
-            end_time=sim.current_time,
-        )
+class ResultAndErrors(BaseModel):
+    result: SimResult
+    errors: List[SimError]
 
 
-@router.post("/")  # TODO: response model should be union of SimResult or List[SimError]
-def simulate_scenario(scenario: Scenario) -> Union[SimResult, List[SimError]]:
+@router.post("/", response_model=ResultAndErrors)
+def simulate_scenario(
+    scenario: Scenario, days_to_run_for: Optional[float] = None
+) -> ResultAndErrors:
     sim = Simulation(scenario)
-    errors = sim.run()
-    if errors:
-        return errors
-    return SimResult.from_sim(sim)
+    if days_to_run_for is None:
+        sim.run()
+    else:
+        try:
+            stop_date = scenario.startDate + timedelta(days=days_to_run_for)
+        except OverflowError:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                detail="provided \"days_to_run_for\" causes overflow")
+        sim.run(until=stop_date)
+    return ResultAndErrors(result=sim.result(), errors=sim.errors)

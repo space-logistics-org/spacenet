@@ -18,19 +18,19 @@ from spacenet.schemas import (
     PropulsiveBurn,
     PropulsiveVehicle,
     Scenario,
-    Element,
-    UUIDEdge,
+    AllUUIDEdges,
+    AllNodes,
+    AllElements,
     MoveElements,
     MakeElements,
     RemoveElements,
 )
-from spacenet.schemas.node import Node
 from .decompose_events import decompose_event
 from .simulation_errors import SimError
 
 from spacenet.fuel_formulas.functions import *
 
-__all__ = ["Simulation"]
+__all__ = ["Simulation", "SimResult", "SimError"]
 
 
 class ContainsElements(BaseModel):
@@ -42,7 +42,7 @@ class SimElement(ContainsElements):
     An element under simulation; wraps Element schema.
     """
 
-    inner: Element
+    inner: AllElements
 
 
 ContainsElements.update_forward_refs()
@@ -53,7 +53,7 @@ class SimNode(ContainsElements):
     A node under simulation; wraps Node schema.
     """
 
-    inner: Node  # fixme: types: should be union
+    inner: AllNodes
 
     def __hash__(self):
         # This is safe because, assuming Node is safe to hash, we don't hash the mutable
@@ -66,11 +66,23 @@ class SimEdge(ContainsElements):
     An edge under simulation; wraps Edge schema.
     """
 
-    inner: UUIDEdge  # fixme: types: should be union
+    inner: AllUUIDEdges
 
     def __hash__(self):
         # Analogous safety argument as to SimNode
         return hash(self.inner)
+
+
+SimElement.update_forward_refs()
+
+
+class SimResult(BaseModel):
+    """
+    A type representing the result of a simulation.
+    """
+    nodes: List[SimNode]
+    edges: List[SimEdge]
+    end_time: datetime
 
 
 class SimEvent(BaseModel, ABC):
@@ -98,6 +110,11 @@ class SimEvent(BaseModel, ABC):
 
     @abstractmethod
     def process_with_ctx(self, sim: "Simulation") -> None:
+        """
+        Process this event given the context of ``sim``, modifying ``sim``.
+
+        :param sim:  simulation the event occurs in
+        """
         pass
 
 
@@ -137,7 +154,6 @@ class Move(SimEvent):
         sim._add_errors(_all_ids_are_elements(self.event.to_move, self.timestamp, sim))
         # Filter source contents and move them over
         prev_contents = sim.namespace[source].contents
-        # TODO: if source doesn't exist you sort of can't continue
         # fixme Low-hanging fruit for optimization:
         #  store UUIDs in elements and check those instead? Performance
         new_contents = [
@@ -264,7 +280,7 @@ class BurnEvent(SimEvent):
 
 T = TypeVar("T")
 SimCallback = Callable[["Simulation", Optional[T]], T]
-
+SimEntity = Union[SimEdge, SimElement, SimNode]
 
 EVENT_TO_SIM_EVENT = {MakeElements: Create, MoveElements: Move, RemoveElements: Remove}
 
@@ -284,15 +300,22 @@ class Simulation:
         "current_time",
     )
 
-    # Simulations also need to map ids to entities being simulated
-
     def __init__(
-        self,
-        scenario: Scenario,
-        pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
-        post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+            self,
+            scenario: Scenario,
+            pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+            post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
     ) -> None:
-        self.namespace: Dict[UUID, Union[SimElement, SimNode, SimEdge]] = {}
+        """
+        Construct a new simulation, raising a ValueError if the provided scenario cannot be run
+        without raising an exception.
+
+        :param scenario: scenario defining network and events to simulate
+        :param pre_listeners: listeners to run before each event
+        :param post_listeners: listeners to run after each event
+        :raise ValueError: if an event references values not in the namespace
+        """
+        self.namespace: Dict[UUID, SimEntity] = {}
         for id_, node in scenario.network.nodes.items():
             self.namespace[id_] = SimNode(inner=node)
         for id_, edge in scenario.network.edges.items():
@@ -311,7 +334,6 @@ class Simulation:
         for id_ in scenario.network.edges:
             edge = self.namespace[id_]
             src = self.namespace[edge.inner.origin_id]
-            dst = self.namespace[edge.inner.destination_id]
             assert src in self.network
             self.network[src].add(edge)
             # add edges to adj-list rep
@@ -337,12 +359,14 @@ class Simulation:
 
     @classmethod
     def _decompose_event(
-        cls, event: Event, mission_start_time: datetime
+            cls, event: Event, mission_start_time: datetime
     ) -> List[SimEvent]:
         result = []
         for primitive in decompose_event(event):
-            timestamp = mission_start_time + primitive.mission_time
-            # TODO: this can overflow. That's an invalid event? So should ValueError.
+            try:
+                timestamp = mission_start_time + primitive.mission_time
+            except OverflowError as e:
+                raise ValueError(e)
             priority = primitive.priority
             if type(primitive) == PropulsiveBurn:
                 result.append(
@@ -421,7 +445,7 @@ class Simulation:
         assert self._id_is_of_container(location)
         return self.namespace[id_] in self.namespace[location].contents
 
-    def run(self) -> List[SimError]:
+    def run(self, until: datetime = datetime.max) -> None:
         """
         Run the simulation, consuming the simulation object and returning the resulting errors.
 
@@ -436,14 +460,22 @@ class Simulation:
             self._run_listeners(self.pre_listeners)
             next_event = self._pop_next_event()
             assert next_event is not None
+            if next_event.timestamp > until:
+                break
             self._process_event(next_event)
             self.current_time = next_event.timestamp
             self._run_listeners(self.post_listeners)
-        return self.errors
+
+    def result(self) -> SimResult:
+        return SimResult(
+            nodes=list(self.network.keys()),
+            edges=[e for adj in self.network.values() for e in adj],
+            end_time=self.current_time,
+        )
 
 
 def _all_ids_are_elements(
-    ids: List[UUID], timestamp: datetime, sim: Simulation
+        ids: List[UUID], timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -456,7 +488,7 @@ def _all_ids_are_elements(
 
 
 def _all_ids_are_elements_at_location(
-    ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
+        ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -472,7 +504,7 @@ def _all_ids_are_elements_at_location(
 
 
 def _id_exists_and_is_container(
-    id_: UUID, timestamp: datetime, sim: Simulation
+        id_: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     if not sim._id_exists(id_):
