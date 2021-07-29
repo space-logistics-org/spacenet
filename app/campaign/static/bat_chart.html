@@ -20,16 +20,18 @@
     <script src="https://cdn.jsdelivr.net/npm/luxon@1.27.0/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.1"></script>
     <script src="bat_chart_parsing.js"></script>
+    <h1 class='text-center'>Scenario Bat Chart Visualization</h1>
     <canvas id="batChart"></canvas>
 
     <script>
 
-        var lunar_sortie = {
-            name: 'Lunar Sortie',
-            startDate: '2021-07-09',
+        var apollo_17 = {
+            name: 'Apollo 17',
+            startDate: "1972-12-05T12:53",
             events: [
                 {
-                    name: 'Create Elements',
+                    name: "Create Apollo 17 Saturn-V Stack at KSC",
+                    type: "Create Elements",
                     time: 0,
                     priority: 1,
                     node: {
@@ -38,7 +40,18 @@
                     }
                 },
                 {
-                    name: 'Space Transport',
+                    name: "Create crew members in the CSM",
+                    type: "Create Elements",
+                    time: 0,
+                    priority: 2,
+                    node: {
+                        name: 'KSC',
+                        id: 1
+                    }
+                },
+                {
+                    name: "Launch to LEO",
+                    type: "Space Transport",
                     time: 0,
                     priority: 3,
                     edge: {
@@ -55,115 +68,140 @@
                     }
                 },
                 {
-                    name: 'Space Transport',
+                    name: "Translunar Injection",
+                    type: 'Space Transport',
                     time: 0,
                     priority: 3,
                     edge: {
-                        name: 'LEO-LLPO',
+                        name: "LEO-28 km Lunar Orbit",
                         origin_node: {
                             name: 'LEO',
                             id: 3
                         },
                         destination_node: {
-                            name: 'LLPO',
+                            name: '28 km Lunar Orbit',
                             id: 4
                         },
-                        duration: 4.0,
+                        duration: 3.5,
                     }
                 },
                 {
-                    name: 'Move Elements',
+                    name: "1st descent orbit insertion",
+                    type: "Space Transport",
                     time: 0,
                     priority: 1,
-                    node: {
-                        name: 'LLPO',
-                        id: 4
-                    }
-                },
-                {
-                    name: 'Space Transport',
-                    time: 0,
-                    priority: 3,
                     edge: {
-                        name: 'LLPO-LSP',
+                        name: "28 km to 11.5 km lunar orbit",
                         origin_node: {
-                            name: 'LLPO',
+                            name: '28 km Lunar Orbit',
                             id: 4
                         },
                         destination_node: {
-                            name: 'LSP',
+                            name: '11.5 km Lunar Orbit',
                             id: 5
                         },
-                        duration: 0.5,
+                        duration: 0.1,
                     }
                 },
                 {
-                    name: 'Crewed Exploration',
+                    name: "Move crew to LM",
+                    time: 0,
+                    priority: 1,
+                    node: {
+                        name: '11.5 km Lunar Orbit',
+                        id: 5
+                    }
+                },
+                {
+                    name: 'Lunar Descent',
+                    type: "Space Transport",
+                    time: 0,
+                    priority: 1,
+                    edge: {
+                        name: "11.5 km orbit-Taurus-Littrow",
+                        origin_node: {
+                            name: "11.5 km Lunar Orbit",
+                            id: 5
+                        },
+                        destination_node: {
+                            name: 'Taurus-Littrow',
+                            id: 6
+                        },
+                        duration: 0.1,
+                    }
+                },
+                {
+                    name: "Apollo 17 crewed exploration",
+                    type: "Crewed Exploration",
                     time: 0,
                     priority: 1,
                     edge: {
                         name: 'Crewed Exploration',
                         origin_node: {
-                            name: 'LSP',
-                            id: 5
+                            name: 'Taurus-Littrow',
+                            id: 6
                         },
                         destination_node: {
-                            name: 'LSP',
-                            id: 5
+                            name: 'Taurus-Littrow',
+                            id: 6
                         },
-                        duration: 7.5,
+                        duration: 3,
                     }
                 },
                 {
-                    name: 'Create Elements',
+                    name: "Transfer Crew to Lunar AM",
+                    type: "Move Elements",
+                    time: 0,
+                    priority: 2,
+                    node: {
+                        name: 'Taurus-Littrow',
+                        id: 6
+                    }
+                },
+                {
+                    name: 'Lunar ascent',
+                    type: "Space Transport",
+                    time: 0,
+                    priority: 2,
+                    edge: {
+                        name: "Taurus-Littrow-11.5 km orbit",
+                        origin_node: {
+                            name: 'Taurus-Littrow',
+                            id: 6
+                        },
+                        destination_node: {
+                            name: '11.5 km Lunar Orbit',
+                            id: 5
+                        },
+                        duration: 0.1,
+                    }
+                },
+                {
+                    name: "Move crew to CM",
+                    type: "Move Elements",
                     time: 0,
                     priority: 1,
                     node: {
-                        name: 'LSP',
+                        name: '11.5 km Lunar Orbit',
                         id: 5
                     }
                 },
                 {
-                    name: 'Space Transport',
+                    name: "Transearth injection",
+                    type: "Space Transport",
                     time: 0,
-                    priority: 3,
+                    priority: 1,
                     edge: {
-                        name: 'LSP-LLPO',
+                        name: "Lunar orbit to Pacific Splashdown",
                         origin_node: {
-                            name: 'LSP',
+                            name: "11.5 km Lunar Orbit",
                             id: 5
                         },
                         destination_node: {
-                            name: 'LLPO',
-                            id: 4
-                        },
-                        duration: 0.5,
-                    }
-                },
-                {
-                    name: 'Move Elements',
-                    time: 0,
-                    priority: 1,
-                    node: {
-                        name: 'LLPO',
-                        id: 4
-                    }
-                },
-                {
-                    name: 'Space Transport',
-                    time: 0,
-                    priority: 3,
-                    edge: {
-                        name: 'LLPO-PAC',
-                        origin_node: {
-                            name: 'LLPO',
-                            id: 4
-                        },
-                        destination_node: {
-                            name: 'PAC',
+                            name: "Pacific Splashdown",
                             id: 2
                         },
-                        duration: 4,
+                        duration: 2.83,
                     }
                 }
 
@@ -171,137 +209,155 @@
             ]
         }
 
-        var mission2 = {
-            name: 'Surface Exploration',
-            startDate: '2019-11-29',
-            events: [
-                {
-                    name: 'Create Elements',
-                    time: 0,
-                    priority: 1,
-                    node: {
-                        name: 'KSC',
-                        id: 1
-                    }
-                },
-                {
-                    name: 'Flight Transport',
-                    time: 0,
-                    priority: 3,
-                    edge: {
-                        name: 'Cargo Delivery',
-                        origin_node: {
-                            name: 'KSC',
-                            id: 1
-                        },
-                        destination_node: {
-                            name: 'LSP',
-                            id: 3
-                        },
-                        duration: 7.5,
-                    }
-                },
-                {
-                    name: 'Crewed Exploration',
-                    time: 0,
-                    priority: 1,
-                    edge: {
-                        name: 'Cargo Delivery',
-                        origin_node: {
-                            name: 'LSP',
-                            id: 5
-                        },
-                        destination_node: {
-                            name: 'LSP',
-                            id: 5
-                        },
-                        duration: 7,
-                    }
-                },
-                {
-                    name: 'Move Elements',
-                    time: 0,
-                    priority: 2,
-                    node: {
-                        name: 'LSP',
-                        id: 3
-                    }
-                },
-                {
-                    name: 'Crewed Return',
-                    time: 0,
-                    priority: 2,
-                    edge: {
-                        name: 'Cargo Delivery',
-                        origin_node: {
-                            name: 'LSP',
-                            id: 3
-                        },
-                        destination_node: {
-                            name: 'PAC',
-                            id: 2
-                        },
-                        duration: 5.5,
-                    }
-                },
-                {
-                    name: 'Remove Elements',
-                    time: 0,
-                    priority: 2,
-                    node: {
-                        name: 'PAC',
-                        id: 2
-                    }
-                }
-                
-            ]
-        }
+
+        // var lunar_sortie = {
+        //     name: 'Lunar Sortie',
+        //     startDate: '2021-07-09',
+        //     events: [
+        //         {
+        //             name: 'Create Elements',
+        //             time: 0,
+        //             priority: 1,
+        //             node: {
+        //                 name: 'KSC',
+        //                 id: 1
+        //             }
+        //         },
+        //         {
+        //             name: 'Space Transport',
+        //             time: 0,
+        //             priority: 3,
+        //             edge: {
+        //                 name: 'KSC-LEO',
+        //                 origin_node: {
+        //                     name: 'KSC',
+        //                     id: 1
+        //                 },
+        //                 destination_node: {
+        //                     name: 'LEO',
+        //                     id: 3
+        //                 },
+        //                 duration: 0.25,
+        //             }
+        //         },
+        //         {
+        //             name: 'Space Transport',
+        //             time: 0,
+        //             priority: 3,
+        //             edge: {
+        //                 name: 'LEO-LLPO',
+        //                 origin_node: {
+        //                     name: 'LEO',
+        //                     id: 3
+        //                 },
+        //                 destination_node: {
+        //                     name: 'LLPO',
+        //                     id: 4
+        //                 },
+        //                 duration: 4.0,
+        //             }
+        //         },
+        //         {
+        //             name: 'Move Elements',
+        //             time: 0,
+        //             priority: 1,
+        //             node: {
+        //                 name: 'LLPO',
+        //                 id: 4
+        //             }
+        //         },
+        //         {
+        //             name: 'Space Transport',
+        //             time: 0,
+        //             priority: 3,
+        //             edge: {
+        //                 name: 'LLPO-LSP',
+        //                 origin_node: {
+        //                     name: 'LLPO',
+        //                     id: 4
+        //                 },
+        //                 destination_node: {
+        //                     name: 'LSP',
+        //                     id: 5
+        //                 },
+        //                 duration: 0.5,
+        //             }
+        //         },
+        //         {
+        //             name: 'Crewed Exploration',
+        //             time: 0,
+        //             priority: 1,
+        //             edge: {
+        //                 name: 'Crewed Exploration',
+        //                 origin_node: {
+        //                     name: 'LSP',
+        //                     id: 5
+        //                 },
+        //                 destination_node: {
+        //                     name: 'LSP',
+        //                     id: 5
+        //                 },
+        //                 duration: 7.5,
+        //             }
+        //         },
+        //         {
+        //             name: 'Create Elements',
+        //             time: 0,
+        //             priority: 1,
+        //             node: {
+        //                 name: 'LSP',
+        //                 id: 5
+        //             }
+        //         },
+        //         {
+        //             name: 'Space Transport',
+        //             time: 0,
+        //             priority: 3,
+        //             edge: {
+        //                 name: 'LSP-LLPO',
+        //                 origin_node: {
+        //                     name: 'LSP',
+        //                     id: 5
+        //                 },
+        //                 destination_node: {
+        //                     name: 'LLPO',
+        //                     id: 4
+        //                 },
+        //                 duration: 0.5,
+        //             }
+        //         },
+        //         {
+        //             name: 'Move Elements',
+        //             time: 0,
+        //             priority: 1,
+        //             node: {
+        //                 name: 'LLPO',
+        //                 id: 4
+        //             }
+        //         },
+        //         {
+        //             name: 'Space Transport',
+        //             time: 0,
+        //             priority: 3,
+        //             edge: {
+        //                 name: 'LLPO-PAC',
+        //                 origin_node: {
+        //                     name: 'LLPO',
+        //                     id: 4
+        //                 },
+        //                 destination_node: {
+        //                     name: 'PAC',
+        //                     id: 2
+        //                 },
+        //                 duration: 4,
+        //             }
+        //         }
 
 
-        var mission1 = {
-            name: 'Habitat Delivery',
-            startDate: '2020-02-29',
-            events: [
-                {
-                    name: 'Create Elements',
-                    time: 0,
-                    priority: 1,
-                    node: {
-                        name: 'KSC',
-                        id: 1
-                    }
-                },
-                {
-                    name: 'Create Elements',
-                    time: 0,
-                    priority: 2,
-                    node: {
-                        name: 'KSC',
-                        id: 1
-                    }
-                },
-                {
-                    name: 'Flight Transport',
-                    time: 0,
-                    priority: 3,
-                    edge: {
-                        name: 'Cargo Delivery',
-                        origin_node: {
-                            name: 'KSC',
-                            id: 1
-                        },
-                        destination_node: {
-                            name: 'LSP',
-                            id: 3
-                        },
-                        duration: 7.5,
-                    }
-                },
-                
-            ]
-        }
+        //     ]
+        // }
 
-        var missions = [lunar_sortie]
+        var missions = [apollo_17]
 
         var all_data = [];
         var nodeNames = {};
@@ -327,8 +383,8 @@
                         display: false,
                     },
                     title: {
-                        display: true,
-                        text: 'Processes'
+                        display: false,
+                        text: 'Scenario'
                     },
                     tooltip: {
                         callbacks: {
@@ -336,10 +392,11 @@
                                 var label = context.dataset.label || '';
 
                                 if (label) {
-                                    label += ': ';
+                                    label += ' (';
                                 }
                                 if (context.parsed.y !== null) {
                                     label += nodeNames[context.parsed.y];
+                                    label += ')'
                                 }
                                 return label;
                             }
