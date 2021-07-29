@@ -77,6 +77,9 @@ SimElement.update_forward_refs()
 
 
 class SimResult(BaseModel):
+    """
+    A type representing the result of a simulation.
+    """
     nodes: List[SimNode]
     edges: List[SimEdge]
     end_time: datetime
