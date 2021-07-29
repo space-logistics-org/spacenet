@@ -1,0 +1,100 @@
+var getSelected;
+var populateRows;
+var clearTable;
+$(document).ready(function () {
+    const dataType = document.getElementsByName('dataType')[0].content;
+
+    $('#' + dataType + '_table tfoot th').each(function () {
+        if ($(this).index() !== 0) {
+            const title = $(this).text();
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+        }
+    });
+
+
+    $.fn.dataTable.ext.buttons.filter = {
+        extend: 'searchBuilder',
+        text: 'Apply Filter',
+        className: 'btn-style',
+    }
+
+
+    let table = $("#" + dataType + "_table").DataTable({
+        scrollX: true,
+        buttons: [
+            'filter'
+        ],
+        language: {
+            searchBuilder: {
+                button: {
+                    0: 'Apply Filters',
+                    1: 'Filters (one selected)',
+                    _: 'Filters (%d)'
+                },
+                add: 'Add Filter',
+                title: 'Apply Custom Filters',
+                data: 'Property',
+            }
+        },
+        dom: 'Btip',
+        columnDefs: [
+            {
+                targets: 0,
+                searchable: false,
+                orderable: false,
+                defaultContent: '',
+                className: 'select-checkbox',
+                width: '8%',
+            }],
+        select: {
+            style: 'multi',
+            selector: 'td:first-child'
+        },
+        order: [[1, 'asc']],
+    });
+
+    populateRows = function(elements) {
+        elements.forEach( function(elt) {
+            var eltRow = [
+                null,
+                elt.inner.name,
+                elt.inner.type,
+                elt.inner.class_of_supply,
+                elt.inner.environment,
+                elt.inner.accommodation_mass,
+                elt.inner.mass,
+                elt.inner.volume,
+                elt.inner.description
+            ]
+            console.log(eltRow)
+            table.row.add(eltRow).draw()
+        })
+    }
+
+    clearTable = function() {
+        table.rows().remove().draw()
+    }
+
+
+    table.columns().every(function () {
+        const that = this;
+
+        $('input', this.footer()).on('keyup change', function () {
+            if (that.search() !== this.value) {
+                that
+                    .search(this.value)
+                    .draw();
+            }
+        });
+    });
+
+    getSelected = function () {
+        const record = table.rows({selected: true}).data();
+        let selectedElts = []
+        for (i=0; i<record.length; i++) {
+            selectedElts.push(record[i])
+        }
+        return selectedElts
+    }
+});
+
