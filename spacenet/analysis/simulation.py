@@ -437,17 +437,17 @@ class Simulation:
             assert (
                 not self.event_queue
             ), "listeners should not modify simulator state, only read it"
-        while self.event_queue and self.current_time < until:
+        while self.event_queue:
             self._run_listeners(self.pre_listeners)
             next_event = self._pop_next_event()
             assert next_event is not None
+            if next_event.timestamp > until:
+                break
             self._process_event(next_event)
             self.current_time = next_event.timestamp
             self._run_listeners(self.post_listeners)
 
-    def result(self) -> Union[SimResult, List[SimError]]:
-        if self.errors:
-            return self.errors
+    def result(self) -> SimResult:
         return SimResult(
             nodes=list(self.network.keys()),
             edges=[e for adj in self.network.values() for e in adj],
