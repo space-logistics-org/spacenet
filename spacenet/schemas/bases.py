@@ -8,6 +8,11 @@ __all__ = ["Event", "ElementTransportEvent"]
 
 
 class Event(BaseModel):
+    type: str = Field(
+        ...,
+        title="Type",
+        description="The type of event"
+    )
     priority: int = Field(
         ...,
         title="Priority",
