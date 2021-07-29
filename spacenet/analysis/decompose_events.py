@@ -30,6 +30,8 @@ def decompose_remove(event: RemoveElements) -> List[RemoveElements]:
 def decompose_propulsive_burn(event: PropulsiveBurn) -> List[PropulsiveBurn]:
     return [event]
 
+# TODO: the below methods are really similar and should be able to be refactored
+
 
 def decompose_flight_transport(event: FlightTransport) -> List[PrimitiveEvent]:
     return decompose_move(
@@ -37,8 +39,16 @@ def decompose_flight_transport(event: FlightTransport) -> List[PrimitiveEvent]:
             priority=event.priority,
             to_move=event.elements_id_list,
             origin_id=event.origin_node_id,
+            destination_id=event.edge_id,
+            mission_time=event.mission_time,
+        )
+    ) + decompose_move(
+        MoveElements(
+            priority=event.priority,
+            to_move=event.elements_id_list,
+            origin_id=event.edge_id,
             destination_id=event.destination_node_id,
-            mission_time=event.mission_time
+            mission_time=event.mission_time + event.exec_time
         )
     )
 
@@ -58,13 +68,30 @@ def decompose_surface_transport(event: SurfaceTransport) -> List[PrimitiveEvent]
             to_move=event.elements_id_list,
             origin_id=event.edge_id,
             destination_id=event.destination_node_id,
-            mission_time=event.mission_time
+            mission_time=event.mission_time + event.exec_time
         )
     )
 
 
 def decompose_space_transport(event: SpaceTransport) -> List[PrimitiveEvent]:
-    raise NotImplementedError  # TODO
+    # TODO: add burn steps here
+    return decompose_move(
+        MoveElements(
+            priority=event.priority,
+            to_move=event.elements_id_list,
+            origin_id=event.origin_node_id,
+            destination_id=event.destination_node_id,
+            mission_time=event.mission_time
+        )
+    ) + decompose_move(
+        MoveElements(
+            priority=event.priority,
+            to_move=event.elements_id_list,
+            origin_id=event.edge_id,
+            destination_id=event.destination_node_id,
+            mission_time=event.mission_time + event.exec_time
+        )
+    )
 
 
 DECOMPOSE_REGISTRY: Dict[Type[E], DecomposeFn[E]] = {
