@@ -224,146 +224,112 @@ const nCanvas = document.getElementById('network');
 const nCtx = nCanvas.getContext('2d')
 
 const network = {
-    nodes: [
-        {
-          "name": "KSC",
-          "description": "Kennedy Space Center",
-          "body_1": "Earth",
-          "latitude": 28.6,
-          "longitude": -80.6,
-          "type": "Surface",
-          "id": 1
-        },
-        {
-          "name": "PAC",
-          "description": "Pacific Ocean Splashdown",
-          "body_1": "Earth",
-          "latitude": 35,
-          "longitude": -117.9,
-          "type": "Surface",
-          "id": 2
-        },
-        {
-          "name": "LSP",
-          "description": "Lunar South Pole",
-          "body_1": "Moon",
-          "latitude": -89.9,
-          "longitude": -180,
-          "type": "Surface",
-          "id": 3
-        },
-        {
-          "name": "LEO",
-          "description": "Low Earth Orbit",
-          "body_1": "Earth",
-          "apoapsis": 296,
-          "periapsis": 296,
-          "inclination": 28.5,
-          "type": "Orbital",
-          "id": 4
-        },
-        {
-          "name": "LLPO",
-          "description": "Low Lunar Polar Orbit",
-          "body_1": "Moon",
-          "apoapsis": 100,
-          "periapsis": 100,
-          "inclination": 89,
-          "type": "Orbital",
-          "id": 5
-        },
-        // {
-        //     "name": "Mars place",
-        //     "description": "Kennedy Space Center",
-        //     "body_1": "Mars",
-        //     "latitude": 28.6,
-        //     "longitude": -80.6,
-        //     "type": "Surface"
-        //   },
-        // {
-        //   "name": "lagrange 1",
-        //   "description": "Low Lunar Polar Orbit",
-        //   "body_1": "Earth",
-        //   "body_2": "Sun",
-        //   "type": "Lagrange",
-        //   "lp_number": 1
-        // },
-        // {
-        //   "name": "lagrange 2",
-        //   "description": "Low Lunar Polar Orbit",
-        //   "body_1": "Earth",
-        //   "body_2": "Sun",
-        //   "type": "Lagrange",
-        //   "lp_number": 2
-        // },
-        // {
-        //   "name": "lagrange 3",
-        //   "description": "Low Lunar Polar Orbit",
-        //   "body_1": "Earth",
-        //   "body_2": "Sun",
-        //   "type": "Lagrange",
-        //   "lp_number": 3
-        // },
-        // {
-        //   "name": "lagrange 4",
-        //   "description": "Low Lunar Polar Orbit",
-        //   "body_1": "Earth",
-        //   "body_2": "Sun",
-        //   "type": "Lagrange",
-        //   "lp_number": 4
-        // },
-        // {
-        //   "name": "lagrange 5",
-        //   "description": "Low Lunar Polar Orbit",
-        //   "body_1": "Earth",
-        //   "body_2": "Sun",
-        //   "type": "Lagrange",
-        //   "lp_number": 5
-        // },
-      ],
-    edges: [
-        {
-          "name": "KSC-LEO",
-          "description": "Earth Ascent",
-          "origin_id": 1,
-          "destination_id": 4,
-          "duration": 0.25,
-          "type": "Space"
-        },
-        {
-          "name": "LEO-LLPO",
-          "description": "Lunar Orbit Injection",
-          "origin_id": 4,
-          "destination_id": 5,
-          "duration": 4,
-          "type": "Space"
-        },
-        {
-          "name": "LLPO-LSP",
-          "description": "Lunar Descent",
-          "origin_id": 5,
-          "destination_id": 3,
-          "duration": 0.5,
-          "type": "Space"
-        },
-        {
-          "name": "LSP-LLPO",
-          "description": "Lunar Ascent",
-          "origin_id": 3,
-          "destination_id": 5,
-          "duration": 0.5,
-          "type": "Space"
-        },
-        {
-          "name": "LLPO-PAC",
-          "description": "Trans-Earth Injection",
-          "origin_id": 5,
-          "destination_id": 2,
-          "duration": 4,
-          "type": "Space"
-        }
-      ]
+		"nodes": {
+			"cb3aa87b-893c-4dbd-9acb-d1c5b7017644": {
+				"type": "SurfaceNode",
+				"name": "KSC",
+				"description": "Kennedy Space Center",
+				"body_1": "Earth",
+				"latitude": 28.6,
+				"longitude": -80.6
+			},
+			"a2e22fe6-7f6b-48d0-8049-93a7fac9069b": {
+				"type": "OrbitalNode",
+				"name": "LEO",
+				"description": "Low-Earth Orbit",
+				"body_1": "Earth",
+				"apoapsis": 296.0,
+				"periapsis": 296.0,
+				"inclination": 28.5
+			},
+			"53fc1b8b-33c1-4b0f-b380-9436de076162": {
+				"type": "OrbitalNode",
+				"name": "28 km Lunar Orbit",
+				"description": "Lunar Orbit at 28 km",
+				"body_1": "Moon",
+				"apoapsis": 28.0,
+				"periapsis": 28.0,
+				"inclination": 30
+			},
+			"e8eb8492-9158-488e-9265-90e98f8b5eb6": {
+				"type": "OrbitalNode",
+				"name": "11.5 km Lunar Orbit",
+				"description": "Lunar orbit at 11.5 km",
+				"body_1": "Moon",
+				"apoapsis": 11.5,
+				"periapsis": 11.5,
+				"inclination": 30
+			},
+			"0c9814e1-3b9e-42fd-82cb-c979bca0ba6c": {
+				"type": "SurfaceNode",
+				"name": "Taurus-Littrow",
+				"description": "A valley on the face of the moon",
+				"body_1": "Moon",
+				"latitude": 20.0,
+				"longitude": 31.0
+			},
+			"f49db8a6-6cac-48f6-9d27-6276ae08faf8": {
+				"type": "SurfaceNode",
+				"name": "Pacific Splashdown",
+				"description": "The pacific ocean splashdown site for Apollo 17",
+				"body_1": "Earth",
+				"latitude": -18.0,
+				"longitude": -165.0
+			}
+		},
+		"edges": {
+			"0d70a94d-0c03-4f26-b807-844b12649453": {
+				"type": "SpaceEdge",
+				"name": "KSC-LEO",
+				"description": "Kennedy Space Center to Low-Earth Orbit",
+				"origin_id": "cb3aa87b-893c-4dbd-9acb-d1c5b7017644",
+				"destination_id": "a2e22fe6-7f6b-48d0-8049-93a7fac9069b",
+				"duration": 0.25
+			},
+			"710e4e69-e70c-4fc1-9216-8c8e0fb763f2": {
+				"type": "SpaceEdge",
+				"name": "LEO-28 km Lunar Orbit",
+				"description": "Low-Earth Orbit to 28km lunar orbit",
+				"origin_id": "a2e22fe6-7f6b-48d0-8049-93a7fac9069b",
+				"destination_id": "53fc1b8b-33c1-4b0f-b380-9436de076162",
+				"duration": 3.5
+			},
+			"22e72f69-8e84-4c5e-ac65-6d7d0e228f76": {
+				"type": "SpaceEdge",
+				"name": "28 km to 11.5 km lunar orbit",
+				"description": "Decent from a 28 km orbit to an 11.5 km orbit",
+				"origin_id": "53fc1b8b-33c1-4b0f-b380-9436de076162",
+				"destination_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
+				"duration": 0.1
+			},
+			"6c2f54ef-a4ba-444a-b0af-4cdd4f31aba2": {
+				"type": "SpaceEdge",
+				"name": "11.5 km orbit-Taurus-Littrow",
+				"description": "Decent from lunar orbit to the surface of the moon",
+				"origin_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
+				"destination_id": "0c9814e1-3b9e-42fd-82cb-c979bca0ba6c",
+				"duration": 0.1
+			},
+			"ff2715a9-c93c-4c60-870b-00e177b9c2ec": {
+				"type": "SpaceEdge",
+				"name": "Taurus-Littrow-11.5 km orbit",
+				"description": "Ascent from the lunar surface to orbit",
+				"origin_id": "0c9814e1-3b9e-42fd-82cb-c979bca0ba6c",
+				"destination_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
+				"duration": 0.1
+			},
+			"32615681-1c5e-4231-8f89-ba2c556a108c": {
+				"type": "SpaceEdge",
+				"name": "Lunar orbit to Pacific Splashdown",
+				"description": "Return trip from lunar orbit to the Pacific Ocean",
+				"origin_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
+				"destination_id": "f49db8a6-6cac-48f6-9d27-6276ae08faf8",
+				"duration": 2.83
+			}
+		}
 }
+
+
 
 
 function drawPoint(context, x, y, label) {
@@ -372,7 +338,7 @@ function drawPoint(context, x, y, label) {
   context.fillStyle = '#ff0000'
   context.fill();
   context.font = "14px Arial";
-  context.fillText(label, x, y + 20) 
+  context.fillText(label, x, y - 12) 
 }
 
 
@@ -386,10 +352,27 @@ function drawSurfaceNode(context, node, projFuncs) {
 }
 
 function drawOrbitalNode(context, node, projFuncs) {
-  RAW_KM_TO_PIXELS = 5
+  RAW_KM_TO_PIXELS = 4
   rad = projFuncs[node.body_1].rad
   angle = node.inclination * Math.PI/180
-  avg_dist = ((node.apoapsis + node.periapsis)/2)/RAW_KM_TO_PIXELS
+  avg_dist = ((node.apoapsis + node.periapsis)/(2*RAW_KM_TO_PIXELS))
+
+  center = projFuncs[node.body_1].center
+  point = { 'x': center.x + rad + avg_dist, 'y': center.y}
+
+  var rotatedX = Math.cos(angle) * (point.x - center.x) - Math.sin(angle) * (point.y-center.y) + center.x;
+  var rotatedY = Math.sin(angle) * (point.x - center.x) + Math.cos(angle) * (point.y - center.y) + center.y;
+
+  drawPoint(context, rotatedX, rotatedY, node.name)
+  return {'x': rotatedX, 'y': rotatedY}  
+
+}
+
+function drawLunarOrbitalNode(context, node, projFuncs) {
+  RAW_KM_TO_PIXELS = 0.5
+  rad = projFuncs[node.body_1].rad
+  angle = node.inclination * Math.PI/180
+  avg_dist = ((node.apoapsis + node.periapsis)/(2*RAW_KM_TO_PIXELS))
 
   center = projFuncs[node.body_1].center
   point = { 'x': center.x + rad + avg_dist, 'y': center.y}
@@ -457,9 +440,11 @@ function drawLagrangeNode(context, node, projFuncs) {
 
 
 
-function drawStraightEdge(context, edge, nodesByID) {
-  origin = nodesByID[edge.origin_id].canvasPt
-  dest = nodesByID[edge.destination_id].canvasPt
+function drawStraightEdge(context, edge) {
+  console.log(network.nodes)
+  console.log(edge)
+  var origin = network.nodes[edge.origin_id].canvasPt
+  var dest = network.nodes[edge.destination_id].canvasPt
   
   context.strokeStyle = "#ff0000 ";
   context.beginPath()
@@ -484,19 +469,26 @@ function drawSlope(ctx, x1, y1, x2, y2, slope) {
   ctx.stroke()
 }
 
-function drawCurvedEdge(context, edge, nodesByID) {
-  origin = nodesByID[edge.origin_id].canvasPt
-  dest = nodesByID[edge.destination_id].canvasPt
+function drawCurvedEdge(context, edge) {
+  console.log(edge)
+  console.log(network.nodes)
+
+  var origin = network.nodes[edge.origin_id].canvasPt
+  var dest = network.nodes[edge.destination_id].canvasPt
 
   if (Math.abs(origin.y - dest.y) < 30) {
     slope = 0
   } else if (Math.abs(origin.x - dest.x) < 30) {
     slope = 0
   } else if (origin.y < dest.y) {
-    slope = origin.y/dest.y
+    // slope = origin.y/dest.y
+    slope = 0.3
   } else {
-    slope = dest.y/origin.y
+    // slope = dest.y/origin.y
+    slope = 0.3
   }
+
+  console.log(slope)
 
   drawSlope(context, dest.x, dest.y, origin.x, origin.y, slope)
 }
@@ -526,24 +518,28 @@ function drawCanvas(){
   console.log(projFuncs)
 
   // drawing network
-  const nodesByID = {}
+  // const nodesByID = {}
 
-  network.nodes.forEach( function (node) {
-    if (node.type === 'Surface') {
+  Object.entries(network.nodes).forEach( function([uuid, node]) {
+    if (node.type === 'SurfaceNode') {
       node['canvasPt'] = drawSurfaceNode(nCtx, node, projFuncs)
-    } else if (node.type === 'Orbital') {
-      node['canvasPt'] = drawOrbitalNode(nCtx, node, projFuncs)
+    } else if (node.type === 'OrbitalNode') {
+      if (node.body_1 === 'Moon') {
+        node['canvasPt'] = drawLunarOrbitalNode(nCtx, node, projFuncs)
+      } else {
+        node['canvasPt'] = drawOrbitalNode(nCtx, node, projFuncs)
+      }
     } else {
       node['canvasPt'] = drawLagrangeNode(nCtx, node, projFuncs)
     }
-    nodesByID[node.id] = node
+    // nodesByID[node.id] = node
   })
 
-  network.edges.forEach( function(edge) {
-    if (edge.type === 'Surface') {
-      drawStraightEdge(nCtx, edge, nodesByID)
+  Object.entries(network.edges).forEach( function([uuid, edge]) {
+    if (edge.type === 'SurfaceEdge') {
+      drawStraightEdge(nCtx, edge)
     } else {
-      drawCurvedEdge(nCtx, edge, nodesByID)
+      drawCurvedEdge(nCtx, edge)
     }
   })
 

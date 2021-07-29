@@ -76,7 +76,7 @@ function removeDiv(){
 function consumeDiv(){
   $("#formSpace").show();
   $("#visSpace").hide();
-  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="consume_resources_formview.html" ></object>';
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="consume_resources.html" ></object>';
 }
 
 function transferDiv(){
@@ -118,7 +118,7 @@ function netSelectDiv(){
 function reconDiv(){
   $("#formSpace").show();
   $("#visSpace").hide();
-  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="reconfigure_element_formview.html" ></object>';
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="reconfigure_elements.html" ></object>';
 }
 
 function fliDiv(){

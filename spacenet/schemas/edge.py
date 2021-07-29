@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
 
+from spacenet.schemas.mixins import ImmutableBaseModel
 from spacenet.schemas.types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 
 __all__ = [
@@ -32,7 +33,7 @@ class EdgeType(str, Enum):
     Flight = "FlightEdge"
 
 
-class UUID_IDs(BaseModel):
+class UUID_IDs(ImmutableBaseModel):
 
     origin_id: UUID = Field(
         ..., title="Origin ID", description="ID of the origin node"

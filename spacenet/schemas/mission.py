@@ -10,7 +10,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from . import Event
 from .mission_demand_model import MissionDemand
 from .events import (
     FlightTransport,
@@ -19,24 +18,26 @@ from .events import (
     MakeElements,
     RemoveElements,
     MoveElements,
+    CrewedExploration
 )
 
-EventTypes = Union[
+AllEvents = Union[
     FlightTransport,
     SpaceTransport,
     SurfaceTransport,
     MoveElements,
     RemoveElements,
     MakeElements,
-]  # TODO: eventTypes should be expanded to include all the types of Event
+    CrewedExploration
+]  # TODO: AllEvents should be expanded to include all the types of Event
 
 
-class Mission(BaseModel):  # TODO: should be UUIDs
+class Mission(BaseModel):
     name: str = Field(..., title="Name", description="name of mission")
     start_date: datetime = Field(
         ..., title="Start Date", description="date of mission start"
     )
-    events: List[EventTypes] = Field(
+    events: List[AllEvents] = Field(
         ..., title="Event ID List", description="list of event IDs"
     )
     demand_models: List[MissionDemand] = Field(
