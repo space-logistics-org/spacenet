@@ -24,7 +24,7 @@ class SimResult(BaseModel):
         )
 
 
-@router.get("/")
+@router.post("/")  # TODO: response model should be union of SimResult or List[SimError]
 def simulate_scenario(scenario: Scenario) -> Union[SimResult, List[SimError]]:
     sim = Simulation(scenario)
     errors = sim.run()
