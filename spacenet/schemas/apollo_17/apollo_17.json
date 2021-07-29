@@ -264,6 +264,7 @@
 				{
 					"name": "Create Apollo 17 Saturn-V Stack at KSC",
 					"mission_time": "00",
+					"type": "MakeElements",
 					"priority": 1,
 					"entry_point_id": "cb3aa87b-893c-4dbd-9acb-d1c5b7017644",
 					"elements": [
@@ -279,6 +280,7 @@
 				{
 					"name": "Create crew members in the CSM",
 					"mission_time": "00",
+					"type": "MakeElements",
 					"priority": 2,
 					"entry_point_id": "677fe98e-a8e3-4b6c-a148-d7004287d43e",
 					"elements": [
@@ -289,6 +291,7 @@
 				{
 					"name": "Launch to LEO",
 					"mission_time": "00",
+					"type": "SpaceTransport",
 					"priority": 3,
 					"origin_node_id": "cb3aa87b-893c-4dbd-9acb-d1c5b7017644",
 					"destination_node_id": "a2e22fe6-7f6b-48d0-8049-93a7fac9069b",
@@ -331,6 +334,7 @@
 				{
 					"name": "Translunar Injection",
 					"mission_time": "03:18:36.64",
+					"type": "SpaceTransport",
 					"priority": 1,
 					"origin_node_id": "a2e22fe6-7f6b-48d0-8049-93a7fac9069b",
 					"destination_node_id": "53fc1b8b-33c1-4b0f-b380-9436de076162",
@@ -360,6 +364,7 @@
 				{
 					"name": "1st decent orbit insertion",
 					"mission_time": "90:31:37.43",
+					"type": "SpaceTransport",
 					"priority": 1,
 					"origin_node_id": "53fc1b8b-33c1-4b0f-b380-9436de076162",
 					"destination_node_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
@@ -383,6 +388,7 @@
 				{
 					"name": "Move crew to LM",
 					"mission_time": "105:02:00",
+					"type": "SpaceTransport",
 					"priority": 1,
 					"to_move": [
 						"5d95732e-5380-48ad-9cfb-867684231a14",
@@ -394,6 +400,7 @@
 				{
 					"name": "Lunar Decent",
 					"mission_time":"109:22:42",
+					"type": "SpaceTransport",
 					"priority": 1,
 					"origin_node_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
 					"destination_node_id": "0c9814e1-3b9e-42fd-82cb-c979bca0ba6c",
@@ -417,6 +424,7 @@
 					"name": "Apollo 17 crewed exploration",
 					"node": "0c9814e1-3b9e-42fd-82cb-c979bca0ba6c",
 					"mission_time": "114:21:49",
+					"type": "CrewedExploration",
 					"priority": 1,
 					"eva_duration": "08:00:00",
 					"crew_location": "9ed11cf6-38d3-4d98-9af0-03ab6c173353",
@@ -430,6 +438,7 @@
 				{
 					"name": "Transfer Crew to Lunar AM",
 					"mission_time": "185:31:37",
+					"type": "MoveElements",
 					"priority": 2,
 					"to_move": [
 						"5d95732e-5380-48ad-9cfb-867684231a14",
@@ -441,6 +450,7 @@
 				{
 					"name": "Lunar ascent",
 					"mission_time": "185:31:37",
+					"type": "SpaceTransport",
 					"priority": 2,
 					"origin_node_id": "0c9814e1-3b9e-42fd-82cb-c979bca0ba6c",
 					"destination_node_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
@@ -461,6 +471,7 @@
 				{
 					"name": "Move crew to CM",
 					"mission_time": "190:10:00",
+					"type": "MoveElements",
 					"priority": 1,
 					"to_move": [
 						"5d95732e-5380-48ad-9cfb-867684231a14",
@@ -472,6 +483,7 @@
 				{
 					"name": "Transearth injection",
 					"mission_time": "234:02:09.18",
+					"type": "SpaceTransport",
 					"priority": 1,
 					"origin_node_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
 					"destination_node_id": "f49db8a6-6cac-48f6-9d27-6276ae08faf8",
