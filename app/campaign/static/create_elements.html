@@ -22,7 +22,9 @@
 </head>
 
 <body>
-  <h1 class= "text-center">Create Elements Event</h1>
+<div class="container py-4">
+
+<h1 class= "text-center">Create Elements Event</h1>
 
 <form id="createElements">
     <div class="form-row">
@@ -34,13 +36,13 @@
   <div class="form-row">
     <div class="form-group col-md-6">
       <label for="pickNode">Node</label>
-      <select id="pickNode" class="form-control" class="text-center">
+      <select id="pickNode" class="form-control" class="text-center" onChange="loadSim()">
         <option selected id="def">Choose...</option>
       </select>      
     </div>
     <div class="form-group col-md-6">
       <label for="inputTime">Time</label>
-      <input type="number" class="form-control" id="inputTime" placeholder="Time">
+      <input type="number" class="form-control" id="inputTime" placeholder="Days" onChange="loadSim()">
     </div>
     <div class="form-group col-md-6">
       <label for="pickPriority">Priority</label>
