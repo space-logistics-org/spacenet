@@ -32,7 +32,7 @@ AllEvents = Union[
 ]  # TODO: AllEvents should be expanded to include all the types of Event
 
 
-class Mission(BaseModel):  # TODO: should be UUIDs
+class Mission(BaseModel):
     name: str = Field(..., title="Name", description="name of mission")
     start_date: datetime = Field(
         ..., title="Start Date", description="date of mission start"

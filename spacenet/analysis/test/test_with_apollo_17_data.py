@@ -13,4 +13,4 @@ def test_scenario_runs_without_error():
     scenario = Scenario.parse_file(filename)
     sim = Simulation(scenario)
     sim.run()
-    assert len(sim.errors) == 0, "expected no errors"
+    assert not sim.errors, "expected no errors"
