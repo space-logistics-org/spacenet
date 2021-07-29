@@ -1,17 +1,12 @@
 import typing
-from datetime import timedelta
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 
 import pytest
 from hypothesis import given, strategies as st
-from hypothesis.strategies import SearchStrategy
 
 from .utilities import DrawFn
 from ..simulation import Simulation
-from ...analysis.decompose_events import DECOMPOSE_REGISTRY
-from spacenet.schemas import Event, PropulsiveBurn, Scenario
-from ...schemas.mission import Mission
-from ...schemas.space_transport import BurnStageSequence
+from spacenet.schemas import Scenario
 
 pytestmark = [pytest.mark.analysis, pytest.mark.unit]
 
