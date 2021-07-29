@@ -63,12 +63,11 @@ def test_fuzz_simulation(scenario, pre_listeners, post_listeners):
 @pytest.mark.xfail
 def test_simulation_returns_same(scenario):
     sim = Simulation(scenario)
-    first_errors = sim.run()
+    sim.run()
     other_sim = Simulation(scenario)
-    second_errors = other_sim.run()
-    assert first_errors == second_errors
-    assert sim.network == other_sim.network
-    assert sim.current_time == other_sim.current_time
+    other_sim.run()
+    assert sim.errors == other_sim.errors
+    assert sim.result() == other_sim.result()
 
 
 @given(scenario=st.builds(Scenario),)
