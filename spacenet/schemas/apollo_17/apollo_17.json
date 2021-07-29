@@ -388,7 +388,7 @@
 				{
 					"name": "Move crew to LM",
 					"mission_time": "105:02:00",
-					"type": "SpaceTransport",
+					"type": "MoveElements",
 					"priority": 1,
 					"to_move": [
 						"5d95732e-5380-48ad-9cfb-867684231a14",
