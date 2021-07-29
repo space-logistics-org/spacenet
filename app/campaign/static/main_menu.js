@@ -150,3 +150,9 @@ function missDem(){
   $("#visSpace").hide();
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="mission_model_formview.html" ></object>';
 }
+
+function burnDiv(){
+  $("#formSpace").show();
+  $("#visSpace").hide();
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="prop_burn_visualization.html" ></object>';
+}

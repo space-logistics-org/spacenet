@@ -9,6 +9,7 @@ from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 DATABASE_URL = "sqlite:///./userbase.db"
 SECRET = os.getenv("SPACENET_AUTH_SECRET")
+SECRET = "password"
 if SECRET is None:
     raise NameError("Authentication secret not defined. "
                     "Set the environment variable SPACENET_AUTH_SECRET to continue.")

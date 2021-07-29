@@ -9,3 +9,10 @@ def food_demand(crew: int, days: int, evas: int):
     days = 5
     evas = 1
     return (0.83 * crew * days) + (0.2075 * evas)
+
+@router.get("/water")
+def food_demand(crew: int, days: int, evas: int):
+    crew = 2
+    days = 5
+    evas = 1
+    return (0.83 * crew * days) + (0.2075 * evas)
