@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.post("/", response_model=Union[SimResult, List[SimError]])
-def simulate_scenario(scenario: Scenario):
+def simulate_scenario(scenario: Scenario) -> Union[SimResult, List[SimError]]:
     sim = Simulation(scenario)
     sim.run()
     return sim.result()

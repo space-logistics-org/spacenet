@@ -429,7 +429,7 @@ class Simulation:
         assert self._id_is_of_container(location)
         return self.namespace[id_] in self.namespace[location].contents
 
-    def run(self) -> List[SimError]:
+    def run(self, until: datetime = datetime.max) -> List[SimError]:
         """
         Run the simulation, consuming the simulation object and returning the resulting errors.
 
@@ -440,7 +440,7 @@ class Simulation:
             assert (
                 not self.event_queue
             ), "listeners should not modify simulator state, only read it"
-        while self.event_queue:
+        while self.event_queue and self.current_time < until:
             self._run_listeners(self.pre_listeners)
             next_event = self._pop_next_event()
             assert next_event is not None
