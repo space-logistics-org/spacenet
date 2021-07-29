@@ -28,7 +28,7 @@ def error_case(response_json, sim_errors):
 
 
 def success_case(response_json, sim):
-    assert SimResult.parse_obj(response_json) == SimResult.from_sim(sim), response_json
+    assert SimResult.parse_obj(response_json) == sim.result(), response_json
 
 
 @pytest.mark.slow
@@ -38,7 +38,8 @@ def test_same_result_as_analysis(scenario: Scenario):
     response = client.get("/simulation", json=jsonable_encoder(scenario.dict()))
     response_json = response.json()
     sim = Simulation(scenario)
-    expected_errors = sim.run()
+    sim.run()
+    expected_errors = sim.errors
     if expected_errors:
         error_case(response_json, expected_errors)
     else:

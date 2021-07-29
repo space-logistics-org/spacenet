@@ -292,8 +292,6 @@ class Simulation:
         "current_time",
     )
 
-    # Simulations also need to map ids to entities being simulated
-
     def __init__(
             self,
             scenario: Scenario,
@@ -319,7 +317,6 @@ class Simulation:
         for id_ in scenario.network.edges:
             edge = self.namespace[id_]
             src = self.namespace[edge.inner.origin_id]
-            dst = self.namespace[edge.inner.destination_id]
             assert src in self.network
             self.network[src].add(edge)
             # add edges to adj-list rep
@@ -429,7 +426,7 @@ class Simulation:
         assert self._id_is_of_container(location)
         return self.namespace[id_] in self.namespace[location].contents
 
-    def run(self, until: datetime = datetime.max) -> List[SimError]:
+    def run(self, until: datetime = datetime.max) -> None:
         """
         Run the simulation, consuming the simulation object and returning the resulting errors.
 
@@ -447,7 +444,6 @@ class Simulation:
             self._process_event(next_event)
             self.current_time = next_event.timestamp
             self._run_listeners(self.post_listeners)
-        return self.errors
 
     def result(self) -> Union[SimResult, List[SimError]]:
         if self.errors:
