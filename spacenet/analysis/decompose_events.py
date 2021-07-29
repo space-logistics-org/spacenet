@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import Callable, Dict, List, Type, TypeVar, Union
 
 from spacenet.schemas.events import *
 
@@ -83,4 +83,7 @@ def add_to_decompose_registry(ty: Type[E], fn: DecomposeFn[E]) -> None:
 
 
 def decompose_event(event: Event) -> List[PrimitiveEvent]:
+    if type(event) not in DECOMPOSE_REGISTRY:
+        # fixme
+        return []
     return DECOMPOSE_REGISTRY[type(event)](event)

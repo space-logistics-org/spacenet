@@ -64,6 +64,10 @@ class HeapModel(RuleBasedStateMachine):
         item = self.model[0]
         assert item == self.heap.peek() == self.heap[0]
 
+    @invariant()
+    def iter_contains_all(self):
+        assert set(self.model) == set(self.heap)
+
 
 TestMinHeapStateful = HeapModel.TestCase
 
