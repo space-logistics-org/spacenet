@@ -18,9 +18,9 @@ from spacenet.schemas import (
     PropulsiveBurn,
     PropulsiveVehicle,
     Scenario,
-    Element,
     AllUUIDEdges,
     AllNodes,
+    AllElements,
     MoveElements,
     MakeElements,
     RemoveElements,
@@ -42,7 +42,7 @@ class SimElement(ContainsElements):
     An element under simulation; wraps Element schema.
     """
 
-    inner: Element
+    inner: AllElements
 
 
 ContainsElements.update_forward_refs()
