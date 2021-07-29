@@ -273,6 +273,7 @@ class BurnEvent(SimEvent):
 
 T = TypeVar("T")
 SimCallback = Callable[["Simulation", Optional[T]], T]
+SimEntity = Union[SimEdge, SimElement, SimNode]
 
 EVENT_TO_SIM_EVENT = {MakeElements: Create, MoveElements: Move, RemoveElements: Remove}
 
@@ -298,7 +299,16 @@ class Simulation:
             pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
             post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
     ) -> None:
-        self.namespace: Dict[UUID, Union[SimElement, SimNode, SimEdge]] = {}
+        """
+        Construct a new simulation, raising a ValueError if the provided scenario cannot be run
+        without raising an exception.
+
+        :param scenario: scenario defining network and events to simulate
+        :param pre_listeners: listeners to run before each event
+        :param post_listeners: listeners to run after each event
+        :raise ValueError: if an event references values not in the namespace
+        """
+        self.namespace: Dict[UUID, SimEntity] = {}
         for id_, node in scenario.network.nodes.items():
             self.namespace[id_] = SimNode(inner=node)
         for id_, edge in scenario.network.edges.items():
