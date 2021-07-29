@@ -128,7 +128,7 @@ var campaign = {
 
       name = $("#inputName").val();
     
-      $('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td>[Stage]</td><td>' + name + '</td>')
+      $('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td class="burnStage">[Stage]</td><td>' + name + '</td>')
     })
 
     $('#delete').on('click', function() {
@@ -173,7 +173,21 @@ var campaign = {
       node = $("#pickNode").val();
       time = $("#inputTime").val();
       priority = $("#pickPriority").val();
-      //sequnce
+      var sequence;
+
+      var tableRef = document.getElementById('propulsiveBurnTableBody');
+      var tableRows = tableRef.rows;
+    
+      var rows = [];
+      for (var i = 0; i < tableRows.length; i++) {
+          if (tableRows[i].querySelector('.burnStage')) {
+             rows.push(tableRows[i]);
+          }
+      }
+    
+      for (var k = 0; k < checkedRows.length; k++) {
+          sequence.push(rows[k]);
+      }
   
   
       data = {
@@ -181,7 +195,7 @@ var campaign = {
         node: node,
         time: time,
         priority: priority,
-        //sequence
+        sequence: sequence
       }
   
       location.reload()
