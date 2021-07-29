@@ -1,29 +1,28 @@
+from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 
 from pydantic import BaseModel, Field, root_validator
-from enum import Enum
-from typing import Any, Dict, List, Optional, Union
 
-from datetime import datetime
-
-from spacenet.schemas.element import Element
-from spacenet.schemas.element_events import MakeElementsEvent, MoveElementsEvent
-from spacenet.schemas.node import Node
-from spacenet.schemas.edge import Edge
+from spacenet.schemas.edge import AllUUIDEdges
+from spacenet.schemas.element import AllElements
+from spacenet.schemas.element_events import MakeElements, MoveElements
 from spacenet.schemas.mission import Mission
+from spacenet.schemas.node import AllNodes
 
 __all__ = ["ScenarioType", "Scenario", "Manifest"]
 
 
 class Manifest(BaseModel):
-    container_events: List[Union[MakeElementsEvent, MoveElementsEvent]] = Field(
+    container_events: List[Union[MakeElements, MoveElements]] = Field(
         ..., title="Resource Event Sequence"
     )
 
 
 class Network(BaseModel):
-    nodes: Dict[UUID, Node] = Field(..., title="Nodes")
-    edges: Dict[UUID, Edge] = Field(..., title="Edges")
+    nodes: Dict[UUID, AllNodes] = Field(..., title="Nodes")
+    edges: Dict[UUID, AllUUIDEdges] = Field(..., title="Edges")
 
     @root_validator(skip_on_failure=True)
     def _no_common_ids(cls, values: Dict[str, Any]) -> Dict[str, Any]:
@@ -52,11 +51,12 @@ class Scenario(BaseModel):
     name: str = Field(..., title="Name", description="Name of Scenario")
     description: str = Field(None, title="Description", description="Short description")
     startDate: datetime = Field(..., title="Start Date")
+    # TODO: should be same as earliest mission start date?
     scenarioType: ScenarioType = Field(..., title="Type of Scenario")
 
     network: Network = Field(..., title="Network")
     missionList: List[Mission] = Field(..., title="Mission List")
-    elementList: Dict[UUID, Element] = Field(..., title="Element List")
+    elementList: Dict[UUID, AllElements] = Field(..., title="Element List")
     manifest: Manifest = Field(..., title="Manifest")
 
     volumeConstrained: bool = Field(False, title="Volume Constrained")

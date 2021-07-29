@@ -1,7 +1,14 @@
-from pydantic import BaseModel, Field, PositiveFloat, PositiveInt
+from datetime import timedelta
 from typing import List
+from uuid import UUID
 
+from pydantic import BaseModel, Field
+
+from . import ElementTransportEvent, Event
 from .propulsive_burn import BurnStageItem
+
+
+__all__ = ["SpaceTransport"]
 
 
 class BurnStageSequence(BaseModel):
@@ -10,39 +17,19 @@ class BurnStageSequence(BaseModel):
     )
 
 
-class SpaceTransport(BaseModel):
+class SpaceTransport(ElementTransportEvent):
     """
     Schema for Space Transport
     """
 
     name: str = Field(..., title="Name", description="Space Transport name")
 
-    origin_node_id: PositiveInt = Field(
-        ..., title="Origin Node ID", description="The origin node Id of the Space Transport"
-    )
-
-    destination_node_id: PositiveInt = Field(
-        ...,
-        title="Destination Node ID",
-        description="The destination node Id of the Space Transport",
-    )
-
-    time: PositiveFloat = Field(
-        ...,
-        title="Time",
-        description="The execution time, relative to the start of the mission",
-    )
-
-    priority: int = Field(
-        ..., title="Priority", description="Importance of mission event", ge=1, le=5
-    )
-
-    elements_id_list: List[PositiveInt] = Field(
+    elements_id_list: List[UUID] = Field(
         ...,
         title="Element ID List",
         description="A list of the IDs of elements that may used in the Burn-Stage Sequence",
     )
 
     burnStageProfile: List[BurnStageSequence] = Field(
-        ..., title="Burn Sequence", description="List of seperate Burn-Stage Sequences"
+        ..., title="Burn Sequence", description="List of separate Burn-Stage Sequences"
     )

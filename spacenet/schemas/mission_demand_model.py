@@ -1,7 +1,8 @@
 from math import inf
 
-from pydantic import BaseModel, Field, PositiveFloat
-from .resource import ResourceType, Resource
+from pydantic import BaseModel, Field
+
+from .resource import Resource, ResourceType
 
 
 class MissionDemand(BaseModel):

@@ -9,7 +9,7 @@ from hypothesis.strategies import SearchStrategy
 from pydantic import BaseModel, ValidationError
 
 from spacenet import schemas
-from spacenet.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from spacenet.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from spacenet.schemas.element import *
 from spacenet.schemas.edge import FlightEdge, SpaceEdge, SurfaceEdge, EdgeType
 from spacenet.schemas.node import SurfaceNode, OrbitalNode, LagrangeNode, NodeType
@@ -165,9 +165,5 @@ def xfail_from_kw(type_: Type[BaseModel], **kwargs) -> None:
     :param type_: the type to construct
     :param kwargs: keyword arguments to type_ constructor
     """
-    try:
+    with pytest.raises(ValidationError):
         type_.parse_obj(kwargs)
-    except ValidationError:
-        return
-    else:
-        assert False, f"Expected construction of {type_.__name__} with {kwargs} to fail"

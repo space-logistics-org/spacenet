@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
 from enum import Enum
+
+from pydantic import BaseModel, Field
 from sortedcontainers import SortedSet
 
 
@@ -26,4 +27,4 @@ class State(BaseModel):
     demandModels: SortedSet = Field(..., title="Demand Models")
 
     class Config:
-        arbitrary_types_allowed = True
+        arbitrary_types_allowed = True  # TODO: sortedSet? parametrize this?

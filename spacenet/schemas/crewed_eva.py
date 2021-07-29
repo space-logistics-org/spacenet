@@ -1,8 +1,18 @@
-from pydantic import BaseModel, Field, PositiveFloat, PositiveInt
+from datetime import timedelta
 from typing import List
+from uuid import UUID
 
-from .mission_demand_model import MissionDemand
+from pydantic import Field
+
+from . import Event
 from .element import HumanAgent
+from .mission_demand_model import MissionDemand
+from .types import SafeFloat
+
+
+__all__ = [
+    "CrewedEVA"
+]
 
 
 class EVACrew(HumanAgent):
@@ -11,45 +21,34 @@ class EVACrew(HumanAgent):
     """
 
     eva_state: str = Field(..., title="EVA State", description="The state of the EVA")
-    
+    # TODO: type?
+
+
 class EVADemand(MissionDemand):
     """
     Schema for a Crew Member
     """
 
-    amount: float= Field(..., title="Amount", description="The amount of the resource needed")
-    
-    
+    amount: SafeFloat = Field(
+        ..., title="Amount", description="The amount of the resource needed"
+    )
 
 
-class CrewedEVA(BaseModel):
-    """
-    Schema for Space Transport
-    """
+class CrewedEVA(Event):
 
     name: str = Field(..., title="Name", description="Crewed EVA name")
 
-    type = "EVA"
-
-    node_id: PositiveInt() = Field(
-        ..., title="Origin Node ID", description="The origin node ID of the Space Transport"
-    )
-
-    time: PositiveFloat = Field(
+    node_id: UUID = Field(
         ...,
-        title="Time",
-        description="The execution time, relative to the start of the mission. ",
+        title="Origin Node ID",
+        description="The origin node ID of the Space Transport",
     )
 
-    priority: int = Field(
-        ..., title="Priority", description="Importance of mission event", ge=1, le=5
+    eva_duration: timedelta = Field(
+        ..., title="EVA Duration", description="The duration of the EVA"
     )
 
-    eva_duration: PositiveFloat = Field(
-        ..., title="EVA Duration", description="The duraon of the EVA"
-    )
-
-    crew_vehicle: str = Field(
+    crew_vehicle: UUID = Field(
         ...,
         title="Crew Vehicle",
         description="The location of the crew that will be used for the EVA",
