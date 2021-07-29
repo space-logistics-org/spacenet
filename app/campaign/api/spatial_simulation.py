@@ -16,7 +16,7 @@ class ResultAndErrors(BaseModel):
 
 
 @router.post("/", response_model=ResultAndErrors)
-def simulate_scenario_until(
+def simulate_scenario(
     scenario: Scenario, stop_time: Optional[datetime] = None
 ) -> ResultAndErrors:
     sim = Simulation(scenario)
