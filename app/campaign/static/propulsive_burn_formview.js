@@ -185,7 +185,7 @@ var campaign = {
           }
       }
     
-      for (var k = 0; k < checkedRows.length; k++) {
+      for (var k = 0; k < rows.length; k++) {
           sequence.push(rows[k]);
       }
   
