@@ -338,7 +338,7 @@ function drawPoint(context, x, y, label) {
   context.fillStyle = '#ff0000'
   context.fill();
   context.font = "14px Arial";
-  context.fillText(label, x, y + 20) 
+  context.fillText(label, x, y - 12) 
 }
 
 
@@ -355,7 +355,24 @@ function drawOrbitalNode(context, node, projFuncs) {
   RAW_KM_TO_PIXELS = 4
   rad = projFuncs[node.body_1].rad
   angle = node.inclination * Math.PI/180
-  avg_dist = ((node.apoapsis + node.periapsis)/2)/RAW_KM_TO_PIXELS
+  avg_dist = ((node.apoapsis + node.periapsis)/(2*RAW_KM_TO_PIXELS))
+
+  center = projFuncs[node.body_1].center
+  point = { 'x': center.x + rad + avg_dist, 'y': center.y}
+
+  var rotatedX = Math.cos(angle) * (point.x - center.x) - Math.sin(angle) * (point.y-center.y) + center.x;
+  var rotatedY = Math.sin(angle) * (point.x - center.x) + Math.cos(angle) * (point.y - center.y) + center.y;
+
+  drawPoint(context, rotatedX, rotatedY, node.name)
+  return {'x': rotatedX, 'y': rotatedY}  
+
+}
+
+function drawLunarOrbitalNode(context, node, projFuncs) {
+  RAW_KM_TO_PIXELS = 0.5
+  rad = projFuncs[node.body_1].rad
+  angle = node.inclination * Math.PI/180
+  avg_dist = ((node.apoapsis + node.periapsis)/(2*RAW_KM_TO_PIXELS))
 
   center = projFuncs[node.body_1].center
   point = { 'x': center.x + rad + avg_dist, 'y': center.y}
@@ -453,8 +470,8 @@ function drawSlope(ctx, x1, y1, x2, y2, slope) {
 }
 
 function drawCurvedEdge(context, edge) {
-  console.log(network.nodes)
   console.log(edge)
+  console.log(network.nodes)
 
   var origin = network.nodes[edge.origin_id].canvasPt
   var dest = network.nodes[edge.destination_id].canvasPt
@@ -464,10 +481,14 @@ function drawCurvedEdge(context, edge) {
   } else if (Math.abs(origin.x - dest.x) < 30) {
     slope = 0
   } else if (origin.y < dest.y) {
-    slope = origin.y/dest.y
+    // slope = origin.y/dest.y
+    slope = 0.3
   } else {
-    slope = dest.y/origin.y
+    // slope = dest.y/origin.y
+    slope = 0.3
   }
+
+  console.log(slope)
 
   drawSlope(context, dest.x, dest.y, origin.x, origin.y, slope)
 }
@@ -503,7 +524,11 @@ function drawCanvas(){
     if (node.type === 'SurfaceNode') {
       node['canvasPt'] = drawSurfaceNode(nCtx, node, projFuncs)
     } else if (node.type === 'OrbitalNode') {
-      node['canvasPt'] = drawOrbitalNode(nCtx, node, projFuncs)
+      if (node.body_1 === 'Moon') {
+        node['canvasPt'] = drawLunarOrbitalNode(nCtx, node, projFuncs)
+      } else {
+        node['canvasPt'] = drawOrbitalNode(nCtx, node, projFuncs)
+      }
     } else {
       node['canvasPt'] = drawLagrangeNode(nCtx, node, projFuncs)
     }
