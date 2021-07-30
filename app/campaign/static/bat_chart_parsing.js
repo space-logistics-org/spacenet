@@ -21,15 +21,15 @@ var DateTime = luxon.DateTime;
 
 function parseMission(mission) {
     var nodeNames = {};
-    var startDate = DateTime.fromSQL(mission.startDate);
+    var startDate = DateTime.fromISO(mission.startDate);
     var datasets = [];
     var total_time = 0;
     mission.events.forEach(function (item) {
         //create a separate dataset for each event
         var dataset = {
             label: item.name,
-            borderColor: COLOR_MAPPINGS[item.name],
-            backgroundColor: COLOR_MAPPINGS[item.name],
+            borderColor: COLOR_MAPPINGS[item.type],
+            backgroundColor: COLOR_MAPPINGS[item.type],
         }
 
         if (item.node) {
@@ -39,7 +39,7 @@ function parseMission(mission) {
                 x: startDate.plus({days: total_time}),
                 y: item.node.id
             }]
-            dataset.pointRadius = POINT_SIZES[item.name]
+            dataset.pointRadius = POINT_SIZES[item.type]
         } else if (item.edge) {
             //if event occurs in two nodes connected by an edge
             nodeNames[item.edge.origin_node.id] = item.edge.origin_node.name
