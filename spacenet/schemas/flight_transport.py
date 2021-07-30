@@ -21,4 +21,4 @@ class FlightTransport(ElementTransportEvent):
         title="List of Element IDs",
         description="The list of IDs of elements being transported",
     )
-    type: Literal["SpaceTransport"]
+    type: Literal["FlightTransport"]
