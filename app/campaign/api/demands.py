@@ -118,6 +118,7 @@ def getWasteContainmentRate():
 
 @router.post("/analysis")
 def generateDemands():
+        """
         water = (getMissionExplorationDuration()+getMissionTransitDuration()+getReservesDuration())*getWaterRate()*getMissionCrewSize()*(1-getWaterRecoveryRate())
         evaWater = getMissionEvaCrewTime()*getEvaWaterRate()
         totalWater = water + evaWater
@@ -159,3 +160,4 @@ def generateDemands():
         trashBags = (getMissionExplorationDuration()+getMissionTransitDuration())*getTrashBagRate()*getMissionCrewSize()
 
         wasteEquipment = (getMissionExplorationDuration()+getMissionTransitDuration()+getReservesDuration())*getWasteContainmentRate()*getMissionCrewSize()
+        """
