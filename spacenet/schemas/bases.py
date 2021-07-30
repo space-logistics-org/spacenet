@@ -9,7 +9,7 @@ __all__ = ["Event", "ElementTransportEvent"]
 
 class Event(BaseModel):
     type: str = Field(
-        "Event",
+        ...,
         title="Type",
         description="The type of event"
     )
