@@ -9,10 +9,7 @@ P = TypeVar("P", bound=PrimitiveEvent)
 
 DecomposeFn = Callable[[E], List[PrimitiveEvent]]
 
-__all__ = [
-    "add_to_decompose_registry",
-    "decompose_event"
-]
+__all__ = ["add_to_decompose_registry", "decompose_event"]
 
 
 def decompose_move(event: MoveElements) -> List[MoveElements]:
@@ -31,40 +28,40 @@ def decompose_propulsive_burn(event: PropulsiveBurn) -> List[PropulsiveBurn]:
     return [event]
 
 
-def decompose_flight_transport(event: FlightTransport) -> List[PrimitiveEvent]:
-    return decompose_move(
+def move_from_transport(
+    transport_event: Union[FlightTransport, SurfaceTransport, SpaceTransport]
+) -> List[MoveElements]:
+    return [
         MoveElements(
-            priority=event.priority,
-            to_move=event.elements_id_list,
-            origin_id=event.origin_node_id,
-            destination_id=event.destination_node_id,
-            mission_time=event.mission_time
-        )
-    )
+            priority=transport_event.priority,
+            to_move=transport_event.elements_id_list,
+            origin_id=transport_event.origin_node_id,
+            destination_id=transport_event.edge_id,
+            mission_time=transport_event.mission_time,
+            type="MoveElements",
+        ),
+        MoveElements(
+            priority=transport_event.priority,
+            to_move=transport_event.elements_id_list,
+            origin_id=transport_event.edge_id,
+            destination_id=transport_event.destination_node_id,
+            mission_time=transport_event.mission_time + transport_event.exec_time,
+            type="MoveElements",
+        ),
+    ]
+
+
+def decompose_flight_transport(event: FlightTransport) -> List[PrimitiveEvent]:
+    return [e for move in move_from_transport(event) for e in decompose_move(move)]
 
 
 def decompose_surface_transport(event: SurfaceTransport) -> List[PrimitiveEvent]:
-    return decompose_move(
-        MoveElements(
-            priority=event.priority,
-            to_move=event.elements_id_list,
-            origin_id=event.origin_node_id,
-            destination_id=event.edge_id,
-            mission_time=event.mission_time,
-        )
-    ) + decompose_move(
-        MoveElements(
-            priority=event.priority,
-            to_move=event.elements_id_list,
-            origin_id=event.edge_id,
-            destination_id=event.destination_node_id,
-            mission_time=event.mission_time
-        )
-    )
+    return [e for move in move_from_transport(event) for e in decompose_move(move)]
 
 
 def decompose_space_transport(event: SpaceTransport) -> List[PrimitiveEvent]:
-    raise NotImplementedError  # TODO
+    # TODO: splice in burn into middle later
+    return [e for move in move_from_transport(event) for e in decompose_move(move)]
 
 
 DECOMPOSE_REGISTRY: Dict[Type[E], DecomposeFn[E]] = {
