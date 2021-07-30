@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 import json
+import datetime
+from datetime import time
 
 router = APIRouter()
 
+defaultMissionEvaCrewTime = "00:00:00"
 defaultReservesDuration = 0
 defaultwaterRecoveryRate = 0.42
 defaultclothingLifetime = 4
@@ -34,12 +37,51 @@ with open("spacenet/schemas/apollo_17/apollo_17.json") as json_file:
         for i in json_data:
                 print(i)
 
-def getMissionCrewSize():
+def getMissionExplorationDuration():
+    {   totalExpHours = 0
+
+        for i in json_data['missionList']:
+                if i['type'] == "CrewedExploration": {
+                        dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
+                        itDur = dur.time().hour + (dur.time().minute/60.0) + (dur.time().second/3600.0)
+                        totalExpHours += itDur
+                        }
+        return totalExpHours
+    }
+
+def getMissionTransitDuration():
+    {   totalTransportHours = 0
+
+        for i in json_data['missionList']:
+                if i['type'] == "SpaceTransport": {
+                        dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
+                        itDur = dur.time().hour + (dur.time().minute/60.0) + (dur.time().second/3600.0)
+                        totalTransportHours += itDur
+                        }
+        return totalTransportHours
+    }
+
+def getMissionEvaCrewTime():
+    {   totalHours = 0
+
+        for i in json_data['missionList']:
+                if i['type'] == "CrewedExploration": {
+                        dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
+                        itDur = dur.time().hour + (dur.time().minute/60.0) + (dur.time().second/3600.0)
+                        totalHours += itDur
+                        }
+        return totalHours
+    }
+
+
+def getMissionCrewSize(): {
         count=0
 
         for i in json_data['elementList']:
                 if i['type'] == "HumanAgent":
                         count += 1
+        return count
+    }
 
 def getReservesDuration():
         return defaultReservesDuration
@@ -160,6 +202,6 @@ def generateDemands():
         trashBags = (getMissionExplorationDuration()+getMissionTransitDuration())*getTrashBagRate()*getMissionCrewSize()
 
         wasteEquipment = (getMissionExplorationDuration()+getMissionTransitDuration()+getReservesDuration())*getWasteContainmentRate()*getMissionCrewSize()
-        
+
         return {totalWater, totalFood, gases, totalHygiene, clothing, personalItems, officeEquipment, totalEva, totalHealth, safetyEquipment, commEquipment, computerEquipment, trashBags, wasteEquipment}
         """
