@@ -1,5 +1,5 @@
-from datetime import timedelta
 from typing import List
+from typing_extensions import Literal
 from uuid import UUID
 
 from pydantic import Field
@@ -21,3 +21,4 @@ class FlightTransport(ElementTransportEvent):
         title="List of Element IDs",
         description="The list of IDs of elements being transported",
     )
+    type: Literal["SpaceTransport"]
