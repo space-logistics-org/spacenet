@@ -1,3 +1,5 @@
+var deltSum = 0;
+var masses = 0;
 var campaign = {
     nodes: [
       {
@@ -117,17 +119,21 @@ var campaign = {
     $('#addBurn').on('click', function() {
       console.log('add burn button clicked')
 
-      name = $('#inputName').val()
+      name = $('#inputName').val();
+      dv = $("#inputDelta").val();
+      deltSum += Number(dv);
 
-      $('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td>[Burn]</td><td>' + name + '</td>')
+      $('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td>[Burn]</td><td>' + name + '</td><td>' + dv + '</td>' )
     })
 
     $('#addStage').on('click', function() {
       console.log('add stage button clicked')
 
       name = $("#inputName").val();
+      dv = $("#inputDelta").val();
+      deltSum += Number(dv);
 
-      $('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td>[Stage]</td><td>' + name + '</td>')
+      $('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td>[Stage]</td><td>' + name + '</td><td>' + dv + '</td>' )
     })
 
     $('#delete').on('click', function() {
@@ -144,23 +150,40 @@ var campaign = {
         for (var k = 0; k < checkedRows.length; k++) {
             checkedRows[k].parentNode.removeChild(checkedRows[k]);
         }
+        deltSum = 0;
     })
 
     $('#prepBurn').on('click', function() {
-        var tableRef = document.getElementById('element_table');
-        var tableRows = tableRef.rows;
-        var masses = 0;
+      var tableRef = document.getElementById('elementTableBody');
+      var tableRows = tableRef.rows;
+      var checkedRows = [];
+      for (var i = 0; i < tableRows.length; i++) {
+        m = Number(tableRows[i].cells[6].innerText);
+        masses = Number(masses + m);
+        document.getElementById('mass').innerHTML = masses + " kg";
+      }
 
-        var checkedRows = [];
-        for (var i = 0; i < tableRows.length; i++) {
-            if (tableRows[i].querySelector('input').checked) {
-                checkedRows.push(tableRows[i]);
-            }
-        }
 
-        for (var k = 0; k < checkedRows.length; k++) {
-            masses = masses + checkedRows[k].parentNode.find("td:eq(5)").text();
-            alert(masses);
+        // for (var k = 0; k < checkedRows.length; k++) {
+        //   checkedRows[k].parentNode.removeChild(checkedRows[k]);
+        // }
+    })
+
+    $('#calcDV').on('click', function() {
+      document.getElementById('Delta-V_Measure').max = deltSum;
+      document.getElementById('dispDV').innerHTML = deltSum;
+      // """
+      //   Find the delta-v resulting from the burn described by the
+      //   given specific impulse and masses.
+      //   :param isp: specific impulse in seconds
+      //   :param m_0: initial mass
+      //   :param m_f: final mass; must be same units as m_0
+      //   :return: change in velocity resulting from burning (m_0 - m_f) units of fuel
+      //   with given specific impulse
+      //   """
+      var calcVal =  2.14 * 9.80665 * Math.log(masses / 3);
+      document.getElementById('Delta-V_Measure').value = calcVal;
+      document.getElementById('dispDVVal').innerHTML = calcVal;
     })
 
 

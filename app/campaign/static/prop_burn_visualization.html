@@ -28,21 +28,53 @@
 
       <hr>
 
-      <div class="form-row form-group col-md-12 py-4">
-      <div class="form-group col-md-6">
-        <label for="pickBurnType">Burn Type</label>
-        <select id="pickBurnType" onChange = "setBurnType()" class="form-control" class="text-center">
-          <option selected id="def">Choose...</option>
-          <option id="OMS">OMS</option>
-          <option id="RCS">RCS</option>
-        </select>
+      <form id="propulsiveBurn">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputName">Name</label>
+            <input type="text" class="form-control" id="inputName" placeholder="Name">
+          </div>
+        </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="pickNode">Node</label>
+          <select id="pickNode" onChange = "setNode()" class="form-control" class="text-center">
+            <option selected id="def">Choose...</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="inputTime">Time</label>
+          <input type="number" class="form-control" id="inputTime" placeholder="Time">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="pickPriority">Priority</label>
+          <select id="pickPriority" onChange = "setPriority()" class="form-control" class="text-center">
+            <option selected id="def">Choose...</option>
+            <option id="One">1</option>
+            <option id="Two">2</option>
+            <option id="Three">3</option>
+            <option id="Four">4</option>
+            <option id="Five">5</option>
+          </select>
+        </div>
+
+        <hr>
+
+        <div class="form-row form-group col-md-12 py-4">
+        <div class="form-group col-md-6">
+          <label for="pickBurnType">Burn Type</label>
+          <select id="pickBurnType" onChange = "setBurnType()" class="form-control" class="text-center">
+            <option selected id="def">Choose...</option>
+            <option id="OMS">OMS</option>
+            <option id="RCS">RCS</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="inputDelta">Required Delta-V</label>
+          <input type="number" class="form-control" id="inputDelta" placeholder="Delta-V">
+        </div>
+        </div>
       </div>
-      <div class="form-group col-md-6">
-        <label for="inputDelta">Required Delta-V</label>
-        <input type="text" class="form-control" id="inputDelta" placeholder="Delta-V">
-      </div>
-      </div>
-    </div>
 
     <hr>
 
@@ -57,12 +89,12 @@
                   <th>Class of Supply</th>
                   <th>Environment</th>
                   <th>Accomodation Mass</th>
-                  <th id="mass">Mass</th>
+                  <th>Mass</th>
                   <th>Volume</th>
                   <th>Description</th>
               </tr>
           </thead>
-          <tbody>
+          <tbody id = "elementTableBody">
           </tbody>
           <tfoot>
             <tr>
@@ -79,17 +111,30 @@
           </tfoot>
         </table>
       </div>
+
+      <div class="form-row col-md-3 float-right d-flex flex-row-reverse py-4">
+        <input id="prepBurn" type="button" class="btn btn-danger" value="Prep Burn">
+      </div>
+
       <div class="form-row col-md-2 py-4 d-flex justify-content-between">
         <input id="addBurn" type="button" value="Burn" class="btn btn-outline-dark float-right">
         <input id="addStage" type="button" value="Stage" class="btn btn-outline-dark float-right">
       </div>
       <div class="form-row col-md-12 py-4 d-flex justify-content-between">
         <label for="Delta-V_Measure">Delta-V: </label>
-        <meter id="Delta-V_Measure" class="col-md-12" value="0" min="0" max="10">0.0 / 0.0 m/s</meter>
+        <progress id="Delta-V_Measure" class="col-md-12" value="0" min="0" max="10">0.0 / 0.0 m/s</progress>
       </div>
       <div class="form-row col-md-2 py-4 d-flex justify-content-between">
         <label for="stackMass" class="">Stack Mass: </label>
-        <h5 id = "mass">0.0 kg</h5>
+        <h5 id = "mass">0 kg</h5>
+      </div>
+      <div class="form-row col-md-2 py-4 d-flex justify-content-between">
+        <label for="dispDV" class="">Delta V Total: </label>
+        <h5 id = "dispDV"></h5>
+      </div>
+      <div class="form-row col-md-2 py-4 d-flex justify-content-between">
+        <label for="dispDVVal" class="">Current Delta V: </label>
+        <h5 id = "dispDVVal"></h5>
       </div>
 
       <div class="col-md-12">
@@ -100,7 +145,9 @@
               <tr>
                   <th class="col-md-1"></th>
                   <th class="col-md-2">Type</th>
-                  <th class="col-md-9">Name</th>
+                  <th class="col-md-2">Name</th>
+                  <th class="col-md-2">Required Delta-V</th>
+
               </tr>
           </thead>
           <tbody id="propulsiveBurnTableBody">
@@ -111,10 +158,7 @@
 
       <div class="form-row col-md-3 float-right d-flex flex-row-reverse py-4">
         <input id="delete" type="button" class="btn btn-danger" value="Delete Selected">
-      </div>
-
-      <div class="form-row col-md-3 float-right d-flex flex-row-reverse py-4">
-        <input id="prepBurn" type="button" class="btn btn-danger" value="Prep Burn">
+        <input id="calcDV" type="button" class="btn btn-danger" value="Calculate Delta V">
       </div>
 
     <div class="form-row col-md-12">
