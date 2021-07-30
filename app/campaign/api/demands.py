@@ -160,4 +160,6 @@ def generateDemands():
         trashBags = (getMissionExplorationDuration()+getMissionTransitDuration())*getTrashBagRate()*getMissionCrewSize()
 
         wasteEquipment = (getMissionExplorationDuration()+getMissionTransitDuration()+getReservesDuration())*getWasteContainmentRate()*getMissionCrewSize()
+        
+        return {totalWater, totalFood, gases, totalHygiene, clothing, personalItems, officeEquipment, totalEva, totalHealth, safetyEquipment, commEquipment, computerEquipment, trashBags, wasteEquipment}
         """
