@@ -9,8 +9,8 @@ from spacenet.schemas import Event
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 
-def xfail_construct_event(priority, mission_time, type):
-    return xfail_from_kw(Event, priority=priority, mission_time=mission_time, type=type)
+def xfail_construct_event(priority, mission_time):
+    return xfail_from_kw(Event, priority=priority, mission_time=mission_time)
 
 
 @given(kw=st.fixed_dictionaries(mapping=VALID_MAP),)

@@ -2,11 +2,11 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import ReconfigureElements
-from .utilities import EVENT_INVALID_MAP, EVENT_VALID_MAP, INVALID_PRIORITIES
+from .utilities import EVENT_VALID_MAP, INVALID_PRIORITIES, VALID_PRIORITIES
 from ..utilities import (
     INVALID_UUIDS,
     success_from_kw,
-    valid_invalid_from_allowed, xfail_from_kw,
+    xfail_from_kw,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
@@ -32,31 +32,27 @@ INVALID_TO_RECONFIGURE = st.one_of(
         min_size=1,
     ),
 )
-VALID_TYPES, INVALID_TYPES = valid_invalid_from_allowed(["ReconfigureElements"])
 
 VALID_MAP = {
     "to_reconfigure": VALID_TO_RECONFIGURE,
     "reconfigure_point_id": st.uuids(),
-    **EVENT_VALID_MAP,
-    "type": VALID_TYPES
+    **EVENT_VALID_MAP
 }
 
 INVALID_MAP = {
     "to_reconfigure": INVALID_TO_RECONFIGURE,
     "reconfigure_point_id": INVALID_UUIDS,
-    **EVENT_INVALID_MAP,
-    "type": INVALID_TYPES
+    "priority": INVALID_PRIORITIES
 }
 
 
-def xfail_construct_reconfigure(to_reconfigure, reconfigure_point_id, priority, mission_time, type):
+def xfail_construct_reconfigure(to_reconfigure, reconfigure_point_id, priority, mission_time):
     xfail_from_kw(
         ReconfigureElements,
         to_reconfigure=to_reconfigure,
         reconfigure_point_id=reconfigure_point_id,
         priority=priority,
-        mission_time=mission_time,
-        type=type
+        mission_time=mission_time
     )
 
 
@@ -95,13 +91,4 @@ def test_invalid_reconfigure_point_id(kw):
     )
 )
 def test_invalid_priority(kw):
-    xfail_construct_reconfigure(**kw)
-
-
-@given(
-    kw=st.fixed_dictionaries(
-        mapping={**VALID_MAP, "type": INVALID_MAP["type"]}
-    )
-)
-def test_invalid_type(kw):
     xfail_construct_reconfigure(**kw)

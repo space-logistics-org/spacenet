@@ -2,16 +2,14 @@ import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import MoveElements
-from .utilities import EVENT_INVALID_MAP, EVENT_VALID_MAP
+from .utilities import EVENT_INVALID_MAP, EVENT_VALID_MAP, VALID_PRIORITIES, INVALID_PRIORITIES
 from ..utilities import (
     INVALID_UUIDS,
     success_from_kw,
-    valid_invalid_from_allowed, xfail_from_kw,
+    xfail_from_kw,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
-
-VALID_TYPES, INVALID_TYPES = valid_invalid_from_allowed(["MoveElements"])
 
 VALID_MAP = {
     "to_move": st.lists(
@@ -19,28 +17,25 @@ VALID_MAP = {
     ),
     "origin_id": st.uuids(),
     "destination_id": st.uuids(),
-    **EVENT_VALID_MAP,
-    "type": VALID_TYPES
+    **EVENT_VALID_MAP
 }
 
 INVALID_MAP = {
     "to_move": st.lists(INVALID_UUIDS, min_size=1),
     "origin_id": INVALID_UUIDS,
     "destination_id": INVALID_UUIDS,
-    **EVENT_INVALID_MAP,
-    "type": INVALID_TYPES,
+    **EVENT_INVALID_MAP
 }
 
 
-def xfail_construct_move(to_move, origin_id, destination_id, priority, mission_time, type):
+def xfail_construct_move(to_move, origin_id, destination_id, priority, mission_time):
     xfail_from_kw(
         MoveElements,
         to_move=to_move,
         origin_id=origin_id,
         destination_id=destination_id,
         priority=priority,
-        mission_time=mission_time,
-        type=type
+        mission_time=mission_time
     )
 
 
@@ -75,20 +70,10 @@ def test_invalid_origin_id(kw):
 def test_invalid_destination_id(kw):
     xfail_construct_move(**kw)
 
-
 @given(
     kw=st.fixed_dictionaries(
         mapping={**VALID_MAP, "priority": INVALID_MAP["priority"]}
     )
 )
 def test_invalid_priority(kw):
-    xfail_construct_move(**kw)
-
-
-@given(
-    kw=st.fixed_dictionaries(
-        mapping={**VALID_MAP, "type": INVALID_MAP["type"]}
-    )
-)
-def test_invalid_type(kw):
     xfail_construct_move(**kw)
