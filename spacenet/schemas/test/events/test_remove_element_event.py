@@ -16,23 +16,26 @@ ALLOWED_REMOVAL_POINTS = ["Node", "Edge"]
 VALID_REMOVALS, INVALID_REMOVALS = valid_invalid_from_allowed(ALLOWED_REMOVAL_POINTS)
 
 VALID_MAP = {
-    "elements": st.lists(
-        st.uuids()
-    ),
+    "elements": st.lists(st.uuids()),
     "removal_point_id": st.uuids(),
-    **EVENT_VALID_MAP
+    **EVENT_VALID_MAP,
 }
 
 INVALID_MAP = {
     "elements": st.lists(INVALID_UUIDS, min_size=1),
     "removal_point_id": INVALID_UUIDS,
-    **EVENT_INVALID_MAP
+    **EVENT_INVALID_MAP,
 }
 
 
-def xfail_construct_remove(elements, removal_point_id, priority, mission_time):
+def xfail_construct_remove(elements, removal_point_id, priority, mission_time, type):
     xfail_from_kw(
-        RemoveElements, elements=elements, removal_point_id=removal_point_id, priority=priority, mission_time=mission_time
+        RemoveElements,
+        elements=elements,
+        removal_point_id=removal_point_id,
+        priority=priority,
+        mission_time=mission_time,
+        type=type,
     )
 
 
@@ -42,9 +45,7 @@ def test_valid(kw):
 
 
 @given(
-    kw=st.fixed_dictionaries(
-        mapping={**VALID_MAP, "elements": INVALID_MAP["elements"]}
-    )
+    kw=st.fixed_dictionaries(mapping={**VALID_MAP, "elements": INVALID_MAP["elements"]})
 )
 def test_invalid_elements(kw):
     xfail_construct_remove(**kw)
@@ -61,10 +62,7 @@ def test_invalid_removal_point_id(kw):
 
 @given(
     kw=st.fixed_dictionaries(
-        mapping={
-            **VALID_MAP,
-            "priority": INVALID_MAP["priority"],
-        }
+        mapping={**VALID_MAP, "priority": INVALID_MAP["priority"],}
     )
 )
 def test_invalid_priority(kw):
