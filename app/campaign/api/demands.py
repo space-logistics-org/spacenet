@@ -1,7 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter
+import json
+import datetime
 
 router = APIRouter()
 
+defaultMissionEvaCrewTime = "00:00:00"
+defaultReservesDuration = 0
+defaultwaterRecoveryRate = 0.42
+defaultclothingLifetime = 4
 defaultWaterRate = 3.6
 defaultEvaWaterRate = 0.6875
 defaultFoodSupportRate = 0.05556
@@ -25,9 +31,164 @@ defaultComputerEquipment = 5
 defaultTrashBagRate = 0.05
 defaultWasteContainmentRate = 0.05
 
+with open("spacenet/schemas/apollo_17/apollo_17.json") as json_file:
+    json_data = json.load(json_file)
+
+
+def getMissionExplorationDuration():
+    totalExpHours = 0
+    for i in json_data["missionList"]:
+        if i["type"] == "CrewedExploration":
+            dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
+            itDur = (
+                dur.time().hour
+                + (dur.time().minute / 60.0)
+                + (dur.time().second / 3600.0)
+            )
+            totalExpHours += itDur
+    return totalExpHours
+
+
+def getMissionTransitDuration():
+    totalTransportHours = 0
+    for i in json_data["missionList"]:
+        if i["type"] == "SpaceTransport":
+            dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
+            itDur = (
+                dur.time().hour
+                + (dur.time().minute / 60.0)
+                + (dur.time().second / 3600.0)
+            )
+            totalTransportHours += itDur
+    return totalTransportHours
+
+
+def getMissionEvaCrewTime():
+    totalHours = 0
+    for i in json_data["missionList"]:
+        if i["type"] == "CrewedExploration":
+            dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
+            itDur = (
+                dur.time().hour
+                + (dur.time().minute / 60.0)
+                + (dur.time().second / 3600.0)
+            )
+            totalHours += itDur
+    return totalHours
+
+
+def getMissionCrewSize():
+    count = 0
+
+    for i in json_data["elementList"]:
+        if i["type"] == "HumanAgent":
+            count += 1
+    return count
+
+
+def getReservesDuration():
+    return defaultReservesDuration
+
+
+def getWaterRate():
+    return defaultWaterRate
+
+
+def getWaterRecoveryRate():
+    return defaultwaterRecoveryRate
+
+
+def getEvaWaterRate():
+    return defaultEvaWaterRate
+
+
+def getFoodSupportRate():
+    return defaultFoodSupportRate
+
+
+def getAmbientFoodRate():
+    return defaultAmbientFoodRate
+
+
+def getRfFoodRate():
+    return defaultRfFoodRate
+
+
+def getOxygenRate():
+    return defaultOxygenRate
+
+
+def getEvaOxygenRate():
+    return defaultEvaOxygenRate
+
+
+def getNitrogenRate():
+    return defaultNitrogenRate
+
+
+def getHygieneRate():
+    return defaultHygieneRate
+
+
+def getHygieneKit():
+    return defaultHygieneKit
+
+
+def getClothingRate():
+    return defaultClothingRate
+
+
+def getClothingLifetime():
+    return defaultclothingLifetime
+
+
+def getPersonalItems():
+    return defaultPersonalItems
+
+
+def getOfficeEquipment():
+    return defaultOfficeEquipment
+
+
+def getEvaSuit():
+    return defaultEvaSuit
+
+
+def getEvaLithiumHydroxide():
+    return defaultEvaLithiumHydroxide
+
+
+def getHealthEquipment():
+    return defaultHealthEquipment
+
+
+def getHealthConsumables():
+    return defaultHealthConsumables
+
+
+def getSafetyEquipment():
+    return defaultSafetyEquipment
+
+
+def getCommEquipment():
+    return defaultCommEquipment
+
+
+def getComputerEquipment():
+    return defaultComputerEquipment
+
+
+def getTrashBagRate():
+    return defaultTrashBagRate
+
+
+def getWasteContainmentRate():
+    return defaultWasteContainmentRate
+
+
 @router.post("/analysis")
 def generateDemands():
-        """     
+    """
         water = (getMissionExplorationDuration()+getMissionTransitDuration()+getReservesDuration())*getWaterRate()*getMissionCrewSize()*(1-getWaterRecoveryRate())
         evaWater = getMissionEvaCrewTime()*getEvaWaterRate()
         totalWater = water + evaWater
@@ -68,6 +229,7 @@ def generateDemands():
 
         trashBags = (getMissionExplorationDuration()+getMissionTransitDuration())*getTrashBagRate()*getMissionCrewSize()
 
-        wasteEquipment = (getMissionExplorationDuration()+getMissionTransitDuration()+getReservesDuration())*getWasteContainmentRate()*getMissionCrewSize() """
-    
-    
+        wasteEquipment = (getMissionExplorationDuration()+getMissionTransitDuration()+getReservesDuration())*getWasteContainmentRate()*getMissionCrewSize()
+
+        return {totalWater, totalFood, gases, totalHygiene, clothing, personalItems, officeEquipment, totalEva, totalHealth, safetyEquipment, commEquipment, computerEquipment, trashBags, wasteEquipment}
+        """
