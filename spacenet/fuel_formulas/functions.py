@@ -52,4 +52,3 @@ def final_mass_from(delta_v: float, isp: float, m_0: float):
     
     m_f = m_0 * math.exp(-delta_v / (isp * G_0))
     return m_f
-"""

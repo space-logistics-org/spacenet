@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter
 import json
 import datetime
-from datetime import time
 
 router = APIRouter()
 
@@ -33,134 +32,163 @@ defaultTrashBagRate = 0.05
 defaultWasteContainmentRate = 0.05
 
 with open("spacenet/schemas/apollo_17/apollo_17.json") as json_file:
-        json_data = json.load(json_file)
-        for i in json_data:
-                print(i)
+    json_data = json.load(json_file)
+
 
 def getMissionExplorationDuration():
-    {   totalExpHours = 0
+    totalExpHours = 0
+    for i in json_data["missionList"]:
+        if i["type"] == "CrewedExploration":
+            dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
+            itDur = (
+                dur.time().hour
+                + (dur.time().minute / 60.0)
+                + (dur.time().second / 3600.0)
+            )
+            totalExpHours += itDur
+    return totalExpHours
 
-        for i in json_data['missionList']:
-                if i['type'] == "CrewedExploration": {
-                        dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
-                        itDur = dur.time().hour + (dur.time().minute/60.0) + (dur.time().second/3600.0)
-                        totalExpHours += itDur
-                        }
-        return totalExpHours
-    }
 
 def getMissionTransitDuration():
-    {   totalTransportHours = 0
+    totalTransportHours = 0
+    for i in json_data["missionList"]:
+        if i["type"] == "SpaceTransport":
+            dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
+            itDur = (
+                dur.time().hour
+                + (dur.time().minute / 60.0)
+                + (dur.time().second / 3600.0)
+            )
+            totalTransportHours += itDur
+    return totalTransportHours
 
-        for i in json_data['missionList']:
-                if i['type'] == "SpaceTransport": {
-                        dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
-                        itDur = dur.time().hour + (dur.time().minute/60.0) + (dur.time().second/3600.0)
-                        totalTransportHours += itDur
-                        }
-        return totalTransportHours
-    }
 
 def getMissionEvaCrewTime():
-    {   totalHours = 0
+    totalHours = 0
+    for i in json_data["missionList"]:
+        if i["type"] == "CrewedExploration":
+            dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
+            itDur = (
+                dur.time().hour
+                + (dur.time().minute / 60.0)
+                + (dur.time().second / 3600.0)
+            )
+            totalHours += itDur
+    return totalHours
 
-        for i in json_data['missionList']:
-                if i['type'] == "CrewedExploration": {
-                        dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
-                        itDur = dur.time().hour + (dur.time().minute/60.0) + (dur.time().second/3600.0)
-                        totalHours += itDur
-                        }
-        return totalHours
-    }
 
+def getMissionCrewSize():
+    count = 0
 
-def getMissionCrewSize(): {
-        count=0
+    for i in json_data["elementList"]:
+        if i["type"] == "HumanAgent":
+            count += 1
+    return count
 
-        for i in json_data['elementList']:
-                if i['type'] == "HumanAgent":
-                        count += 1
-        return count
-    }
 
 def getReservesDuration():
-        return defaultReservesDuration
+    return defaultReservesDuration
+
 
 def getWaterRate():
-        return defaultWaterRate
+    return defaultWaterRate
+
 
 def getWaterRecoveryRate():
-        return defaultwaterRecoveryRate
+    return defaultwaterRecoveryRate
+
 
 def getEvaWaterRate():
-        return defaultEvaWaterRate
+    return defaultEvaWaterRate
+
 
 def getFoodSupportRate():
-        return defaultFoodSupportRate
+    return defaultFoodSupportRate
+
 
 def getAmbientFoodRate():
-        return defaultAmbientFoodRate
+    return defaultAmbientFoodRate
+
 
 def getRfFoodRate():
-        return defaultRfFoodRate
+    return defaultRfFoodRate
+
 
 def getOxygenRate():
-        return defaultOxygenRate
+    return defaultOxygenRate
+
 
 def getEvaOxygenRate():
-        return defaultEvaOxygenRate
+    return defaultEvaOxygenRate
+
 
 def getNitrogenRate():
-        return defaultNitrogenRate
+    return defaultNitrogenRate
+
 
 def getHygieneRate():
-        return defaultHygieneRate
+    return defaultHygieneRate
+
 
 def getHygieneKit():
-        return defaultHygieneKit
+    return defaultHygieneKit
+
 
 def getClothingRate():
-        return defaultClothingRate
+    return defaultClothingRate
+
 
 def getClothingLifetime():
-        return defaultclothingLifetime
+    return defaultclothingLifetime
+
 
 def getPersonalItems():
-        return defaultPersonalItems
+    return defaultPersonalItems
+
 
 def getOfficeEquipment():
-        return defaultOfficeEquipment
+    return defaultOfficeEquipment
+
 
 def getEvaSuit():
-        return defaultEvaSuit
+    return defaultEvaSuit
+
 
 def getEvaLithiumHydroxide():
-        return defaultEvaLithiumHydroxide
+    return defaultEvaLithiumHydroxide
+
 
 def getHealthEquipment():
-        return defaultHealthEquipment
+    return defaultHealthEquipment
+
 
 def getHealthConsumables():
-        return defaultHealthConsumables
+    return defaultHealthConsumables
+
 
 def getSafetyEquipment():
-        return defaultSafetyEquipment
+    return defaultSafetyEquipment
+
 
 def getCommEquipment():
-        return defaultCommEquipment
+    return defaultCommEquipment
+
 
 def getComputerEquipment():
-        return defaultComputerEquipment
+    return defaultComputerEquipment
+
 
 def getTrashBagRate():
-        return defaultTrashBagRate
+    return defaultTrashBagRate
+
 
 def getWasteContainmentRate():
-        return defaultWasteContainmentRate
+    return defaultWasteContainmentRate
+
 
 @router.post("/analysis")
 def generateDemands():
-        """
+    """
         water = (getMissionExplorationDuration()+getMissionTransitDuration()+getReservesDuration())*getWaterRate()*getMissionCrewSize()*(1-getWaterRecoveryRate())
         evaWater = getMissionEvaCrewTime()*getEvaWaterRate()
         totalWater = water + evaWater
