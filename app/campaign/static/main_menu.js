@@ -33,7 +33,7 @@ function resDiv(){
   $("#resDirect").show();
   $("#visDirect").hide();
   $("#netDirect").hide();
-  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="consume_resources_formview.html" ></object>';
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="consume_resources.html" ></object>';
 }
 
 function visDiv(){
@@ -82,7 +82,7 @@ function consumeDiv(){
 function transferDiv(){
   $("#formSpace").show();
   $("#visSpace").hide();
-  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="transfer_resources_formview.html" ></object>';
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="transfer_resources.html" ></object>';
 }
 
 function batDiv(){

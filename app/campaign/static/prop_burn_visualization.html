@@ -8,7 +8,6 @@
   <meta name="description" content="A visualizer for a propulsive burn SpaceNet event.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="dataType" content="element" />
-  <meta name="dataType" content=COLUMNS />
   <link href="style.css" rel="stylesheet">
   <link href="propulsive_burn_formview.css" rel="stylesheet">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -19,7 +18,7 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.3.1/jszip-2.5.0/dt-1.10.25/af-2.3.7/b-1.7.1/b-colvis-1.7.1/b-html5-1.7.1/b-print-1.7.1/cr-1.5.4/date-1.1.0/fc-3.3.3/fh-3.1.9/kt-2.6.2/r-2.2.8/rg-1.1.3/rr-1.2.8/sc-2.0.4/sb-1.1.0/sp-1.3.0/sl-1.3.3/datatables.min.js"></script>
   <script src="prop_burn_visualization.js"></script>
-  <script src="table.js"></script>
+  <script src="dynamic_table.js"></script>
 </head>
 
 <body>
@@ -38,17 +37,17 @@
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="pickNode">Node</label>
-          <select id="pickNode" onChange = "setNode()" class="form-control" class="text-center">
+          <select id="pickNode" class="form-control" class="text-center" onChange = "loadSim()">
             <option selected id="def">Choose...</option>
           </select>
         </div>
         <div class="form-group col-md-6">
           <label for="inputTime">Time</label>
-          <input type="number" class="form-control" id="inputTime" placeholder="Time">
+          <input type="number" class="form-control" id="inputTime" placeholder="Time" onChange = "loadSim()">
         </div>
         <div class="form-group col-md-6">
           <label for="pickPriority">Priority</label>
-          <select id="pickPriority" onChange = "setPriority()" class="form-control" class="text-center">
+          <select id="pickPriority" class="form-control" class="text-center" onChange = "loadSim()">
             <option selected id="def">Choose...</option>
             <option id="One">1</option>
             <option id="Two">2</option>
