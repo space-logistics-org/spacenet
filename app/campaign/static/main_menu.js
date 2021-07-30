@@ -82,7 +82,7 @@ function consumeDiv(){
 function transferDiv(){
   $("#formSpace").show();
   $("#visSpace").hide();
-  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="transfer_resources_formview.html" ></object>';
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="transfer_resources.html" ></object>';
 }
 
 function batDiv(){

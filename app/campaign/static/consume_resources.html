@@ -35,13 +35,13 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="pickNode">Node</label>
-        <select id="pickNode" class="form-control" class="text-center">
+        <select id="pickNode" class="form-control" class="text-center" onChange="loadSim()">
           <option selected id="def">Choose...</option>
         </select>      
       </div>
       <div class="form-group col-md-6">
         <label for="inputTime">Time</label>
-        <input type="number" class="form-control" id="inputTime" placeholder="Time">
+        <input type="number" class="form-control"  onChange="loadSim()" id="inputTime" placeholder="Time">
       </div>
       <div class="form-group col-md-6">
         <label for="pickPriority">Priority</label>
