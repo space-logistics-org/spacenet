@@ -27,8 +27,6 @@ def decompose_remove(event: RemoveElements) -> List[RemoveElements]:
 def decompose_propulsive_burn(event: PropulsiveBurn) -> List[PropulsiveBurn]:
     return [event]
 
-# TODO: the below methods are really similar and should be able to be refactored
-
 
 def move_from_transport(
     transport_event: Union[FlightTransport, SurfaceTransport, SpaceTransport]
