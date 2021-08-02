@@ -40,7 +40,7 @@ from app.database.api.models.element import Element as ElementModel
 from app.database.test.utilities import test_engine
 from app.auth_dependencies import current_user
 from spacenet.schemas.element import ElementKind
-from spacenet.schemas.test.element_factories import *
+from .element_factories import *
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
