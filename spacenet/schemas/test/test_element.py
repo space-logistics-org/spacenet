@@ -93,6 +93,8 @@ VALID_ELEMENT_CARRIER_MAP = dict(
     VALID_ELEMENT_MAP,
     type=st.just(ElementKind.ElementCarrier),
     cargo_environment=st.sampled_from(Environment),
+    max_cargo_mass=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
+    max_cargo_volume=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
 )
 INVALID_ELEMENT_CARRIER_MAP = dict(
     INVALID_ELEMENT_MAP,
@@ -100,6 +102,8 @@ INVALID_ELEMENT_CARRIER_MAP = dict(
         lambda ty: ty != ElementKind.ElementCarrier
     ),
     cargo_environment=st.text().filter(lambda s: s not in ENVIRONMENT_VALUES),
+    max_cargo_mass=NEGATIVE_AND_INFINITE_FLOATS,
+    max_cargo_volume=NEGATIVE_AND_INFINITE_FLOATS,
 )
 
 
@@ -134,6 +138,8 @@ VALID_PROPULSIVE_VEHICLE_MAP = dict(
     isp=NON_NEGATIVE_FINITE_FLOATS,
     max_fuel=NON_NEGATIVE_FINITE_FLOATS,
     propellant_id=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+    max_cargo_mass=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
+    max_cargo_volume=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
 )
 INVALID_PROPULSIVE_VEHICLE_MAP = dict(
     INVALID_ELEMENT_MAP,
@@ -144,8 +150,9 @@ INVALID_PROPULSIVE_VEHICLE_MAP = dict(
     isp=NEGATIVE_AND_INFINITE_FLOATS,
     max_fuel=NEGATIVE_AND_INFINITE_FLOATS,
     propellant_id=UNSERIALIZABLE_INTS,
+    max_cargo_mass=NEGATIVE_AND_INFINITE_FLOATS,
+    max_cargo_volume=NEGATIVE_AND_INFINITE_FLOATS,
 )
-
 
 VALID_SURFACE_VEHICLE_MAP = dict(
     VALID_ELEMENT_MAP,
@@ -154,6 +161,8 @@ VALID_SURFACE_VEHICLE_MAP = dict(
     max_speed=NON_NEGATIVE_FINITE_FLOATS,
     max_fuel=NON_NEGATIVE_FINITE_FLOATS,
     fuel_id=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
+    max_cargo_mass=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
+    max_cargo_volume=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
 )
 INVALID_SURFACE_VEHICLE_MAP = dict(
     INVALID_ELEMENT_MAP,
@@ -164,6 +173,8 @@ INVALID_SURFACE_VEHICLE_MAP = dict(
     max_speed=NEGATIVE_AND_INFINITE_FLOATS,
     max_fuel=NEGATIVE_AND_INFINITE_FLOATS,
     fuel_id=UNSERIALIZABLE_INTS,
+    max_cargo_mass=NEGATIVE_AND_INFINITE_FLOATS,
+    max_cargo_volume=NEGATIVE_AND_INFINITE_FLOATS,
 )
 
 
