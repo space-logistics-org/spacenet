@@ -37,6 +37,7 @@ def move_from_transport(
 
     :param transport_event: event transporting elements
     :return: said event decomposed into multiple simpler move events
+    :raises OverflowError: if mission_time + exec_time > maximum timedelta
     """
     move_to_edge = MoveElements(
             priority=transport_event.priority,
@@ -46,17 +47,14 @@ def move_from_transport(
             mission_time=transport_event.mission_time,
             type="MoveElements",
         )
-    try:
-        move_from_edge = MoveElements(
-            priority=transport_event.priority,
-            to_move=transport_event.elements_id_list,
-            origin_id=transport_event.edge_id,
-            destination_id=transport_event.destination_node_id,
-            mission_time=transport_event.mission_time + transport_event.exec_time,
-            type="MoveElements",
-        )
-    except OverflowError as oe:
-        raise ValueError(oe)
+    move_from_edge = MoveElements(
+        priority=transport_event.priority,
+        to_move=transport_event.elements_id_list,
+        origin_id=transport_event.edge_id,
+        destination_id=transport_event.destination_node_id,
+        mission_time=transport_event.mission_time + transport_event.exec_time,
+        type="MoveElements",
+    )
     return [move_to_edge, move_from_edge]
 
 
@@ -90,6 +88,5 @@ def add_to_decompose_registry(ty: Type[E], fn: DecomposeFn[E]) -> None:
 
 def decompose_event(event: Event) -> List[PrimitiveEvent]:
     if type(event) not in DECOMPOSE_REGISTRY:
-        # fixme
         return []
     return DECOMPOSE_REGISTRY[type(event)](event)
