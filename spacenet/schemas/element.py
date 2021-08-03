@@ -5,7 +5,7 @@ from abc import ABC
 from enum import Enum
 from typing import Optional, Union
 
-from pydantic import BaseModel, Field, confloat
+from pydantic import BaseModel, Extra, Field, confloat
 from typing_extensions import Literal
 
 from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
@@ -63,6 +63,9 @@ class Element(BaseModel):
     )
     mass: SafeNonNegFloat = Field(..., title="Mass", description="mass in kg")
     volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
+
+    class Config:
+        extra = Extra.forbid
 
 
 class CargoCarrier(Element, ABC):
