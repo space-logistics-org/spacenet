@@ -77,7 +77,6 @@ def get_invalid_types(my_type: ElementKind) -> Tuple[ElementKind, ...]:
     return tuple(kind for kind in ElementKind if kind != my_type)
 
 
-
 def convert_enum_variants_to_values(v):
     return v.value if isinstance(v, Enum) else v
 
@@ -86,6 +85,13 @@ def equivalent_json(inp, response) -> bool:
     return {k: convert_enum_variants_to_values(v) for k, v in inp.items()} == {
         k: v for k, v in response.items() if k != "id"
     }
+
+
+def nan_in_iterable(iterable) -> bool:
+    for v in iterable:
+        if v != v:
+            return True
+    return False
 
 
 KIND_TO_STRATEGIES: Dict[ElementKind, Tuple[st.SearchStrategy, st.SearchStrategy]] = {
@@ -184,7 +190,9 @@ def test_create(data: st.DataObject, element_type: ElementKind):
             response = client.post("/element/", json=invalid_kw)
         except (ValueError, IOError):
             # in different versions of requests this throws different errors: catch both
-            assert {float("inf"), -float("inf")} & set(invalid_kw.values())
+            assert {float("inf"), -float("inf")} & set(
+                invalid_kw.values()
+            ) or nan_in_iterable(invalid_kw.values())
         else:
             assert (
                 response.status_code == 422
@@ -253,7 +261,9 @@ def test_update(data: st.DataObject, element_type: ElementKind):
             bad_patch = client.patch(f"/element/{id_}", json=invalid_kw)
         except (ValueError, IOError):
             # in different versions of requests this throws different errors: catch both
-            assert {float("inf"), -float("inf")} & set(invalid_kw.values())
+            assert {float("inf"), -float("inf")} & set(
+                invalid_kw.values()
+            ) or nan_in_iterable(invalid_kw.values())
         else:
             assert bad_patch.status_code == 422
         # GET that element: should not have changed
