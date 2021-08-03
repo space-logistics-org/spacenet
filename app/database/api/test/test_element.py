@@ -176,7 +176,7 @@ def test_empty():
 
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)
 @given(data=st.data())
-@settings(max_examples=5)
+@settings(max_examples=5, deadline=None)
 def test_create(data: st.DataObject, element_type: ElementKind):
     with clear_tables_scope():
         valid_st, invalid_st = KIND_TO_STRATEGIES[element_type]
@@ -218,7 +218,7 @@ def test_create(data: st.DataObject, element_type: ElementKind):
 
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)
 @given(data=st.data())
-@settings(max_examples=5)
+@settings(max_examples=5, deadline=None)
 def test_update(data: st.DataObject, element_type: ElementKind):
     def check_get():
         get_r = client.get(f"/element/{id_}")
@@ -272,7 +272,7 @@ def test_update(data: st.DataObject, element_type: ElementKind):
 
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)
 @given(data=st.data())
-@settings(max_examples=5)
+@settings(max_examples=5, deadline=None)
 def test_delete(data: st.DataObject, element_type: ElementKind):
     def check_get_all():
         read_all_r = client.get("/element/")
