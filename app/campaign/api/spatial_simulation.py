@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 
+from spacenet.analysis.exceptions import SimException
 from spacenet.schemas import Scenario
 from spacenet.analysis.simulation import Simulation, SimResult, SimError
 
@@ -21,9 +22,9 @@ def simulate_scenario(
 ) -> ResultAndErrors:
     try:
         sim = Simulation(scenario)
-    except ValueError as ve:
+    except SimException as se:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail=str(ve))  # TODO: format this better
+                            detail=str(se))  # TODO: format this better
     if days_to_run_for is None:
         sim.run()
     else:

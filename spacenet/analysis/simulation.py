@@ -357,7 +357,8 @@ class Simulation:
             for event in mission.events
             for atomic_event in Simulation._decompose_event(event, mission.start_date)
         ]
-        # TODO: can make a helper fn to figure out if should include the element
+        # TODO: can make a helper fn to figure out if should include the element and filter in
+        #  comprehension
         if not propulsive:
             events = [e for e in events if not isinstance(e, BurnEvent)]
         self.event_queue: MinHeap[SimEvent] = MinHeap(events)
@@ -387,7 +388,7 @@ class Simulation:
             try:
                 timestamp = mission_start_time + primitive.mission_time
             except OverflowError:
-                raise EventDateOverflowError(event)
+                raise EventDateOverflowError(event)  # TODO: format this better
             priority = primitive.priority
             if type(primitive) == PropulsiveBurn:
                 result.append(

@@ -4,7 +4,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 import pytest
 from hypothesis import assume, given, strategies as st
 
-from .utilities import DrawFn
+from .utilities import DrawFn, build_validating_scenario
+from ..exceptions import SimException
 from ..simulation import Simulation
 from spacenet.schemas import Scenario
 
@@ -46,7 +47,7 @@ def listener_dict_builder(
 
 
 @given(
-    scenario=st.builds(Scenario),
+    scenario=build_validating_scenario(),
     propulsive=st.booleans(),
     pre_listeners=listener_dict_builder(types=[int, float, str]),
     post_listeners=listener_dict_builder(types=[int, float, str]),
@@ -56,19 +57,19 @@ def listener_dict_builder(
 def test_fuzz_simulation(scenario, propulsive, pre_listeners, post_listeners):
     try:
         sim = Simulation(scenario, pre_listeners, post_listeners, propulsive=propulsive)
-    except ValueError:
+    except SimException:
         assume(False)
         return
     sim.run()
 
 
-@given(scenario=st.builds(Scenario), propulsive=st.booleans(),)
+@given(scenario=build_validating_scenario(), propulsive=st.booleans(),)
 @pytest.mark.slow
 @pytest.mark.xfail
 def test_simulation_returns_same(scenario, propulsive):
     try:
         sim = Simulation(scenario, propulsive=propulsive)
-    except ValueError:
+    except SimException:
         assume(False)
         return
     sim.run()
@@ -78,20 +79,21 @@ def test_simulation_returns_same(scenario, propulsive):
     assert sim.result() == other_sim.result()
 
 
-@given(scenario=st.builds(Scenario), propulsive=st.booleans(),)
+@given(scenario=build_validating_scenario(), propulsive=st.booleans(),)
 @pytest.mark.slow
 @pytest.mark.xfail
 def test_simulation_empties_queue(scenario, propulsive):
     try:
         sim = Simulation(scenario, propulsive=propulsive)
-    except ValueError:
+    except SimException:
         assume(False)
         return
     sim.run()
     assert not sim.event_queue
 
 # TODO: another property is that all MoveElements events end up with their constituent
-#  elements ending up at their final destinations by the end, regardless of errors
+#  elements ending up at their final destinations by the end, regardless of errors, unless
+#  removed
 
 # TODO: would like to have a way to construct Scenarios matching some constraints, sort of
 #  as partitions
