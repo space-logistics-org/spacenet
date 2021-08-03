@@ -27,6 +27,7 @@ from spacenet.schemas import (
 )
 from .decompose_events import decompose_event
 from .simulation_errors import SimError
+from .exceptions import *
 
 from spacenet.fuel_formulas.functions import *
 
@@ -106,7 +107,7 @@ class SimEvent(BaseModel, ABC):
         in the namespace of the provided simulation.
 
         :param sim: event to validate
-        :raise ValueError: if this event has referenced values not present
+        :raise UnrecognizedID: if this event has referenced values not present
         in the namespace
         """
         pass
@@ -131,12 +132,12 @@ class Move(SimEvent):
     def validate_ids_exist(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.origin_id):
-            raise ValueError(f"Origin id {event.origin_id} does not exist")
+            raise UnrecognizedID(f"Origin id {event.origin_id} does not exist")
         elif not sim._id_exists(event.destination_id):
-            raise ValueError(f"Destination id {event.destination_id} does not exist")
+            raise UnrecognizedID(f"Destination id {event.destination_id} does not exist")
         for id_ in event.to_move:
             if not sim._id_exists(id_):
-                raise ValueError(f"ID {id_} does not exist")
+                raise UnrecognizedID(f"ID {id_} does not exist")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Move all elements in the list to the new destination
@@ -178,10 +179,10 @@ class Create(SimEvent):
     def validate_ids_exist(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.entry_point_id):
-            raise ValueError(f"Entry point {event.entry_point_id} does not exist")
+            raise UnrecognizedID(f"Entry point {event.entry_point_id} does not exist")
         for id_ in event.elements:
             if not sim._id_exists(id_):
-                raise ValueError(f"ID {id_} does not exist")
+                raise UnrecognizedID(f"ID {id_} does not exist")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Create all elements in the list at the specified location
@@ -214,10 +215,10 @@ class Remove(SimEvent):
     def validate_ids_exist(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.removal_point_id):
-            raise ValueError(f"Removal point {event.removal_point_id} does not exist")
+            raise UnrecognizedID(f"Removal point {event.removal_point_id} does not exist")
         for id_ in event.elements:
             if not sim._id_exists(id_):
-                raise ValueError(f"ID {id_} does not exist")
+                raise UnrecognizedID(f"ID {id_} does not exist")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Remove all elements in the list at the specified location
@@ -311,14 +312,18 @@ class Simulation:
         propulsive: bool = False,
     ) -> None:
         """
-        Construct a new simulation, raising a ValueError if the provided scenario cannot be run
+        Construct a new simulation, raising errors if the provided scenario cannot be run
         without raising an exception.
 
         :param scenario: scenario defining network and events to simulate
         :param pre_listeners: listeners to run before each event
         :param post_listeners: listeners to run after each event
-        :raise ValueError: if an event references values not in the namespace,
-            or an edge references nodes not in the database
+        :raise EventDateOverflowError: if the time an event ends, relative to mission start,
+            cannot be represented as a timedelta, or the absolute time an event occurs cannot
+            be represented as a datetime
+        :raise UnrecognizedID: if an event references an ID that does not exist in the
+            namespace
+        :raise UnrecognizedEdgeEndpoint: if an edge has an endpoint which is not a network node
         """
         self.namespace: Dict[UUID, SimEntity] = {}
         for id_, node in scenario.network.nodes.items():
@@ -340,7 +345,7 @@ class Simulation:
             edge = self.namespace[id_]
             for endpoint in (edge.inner.origin_id, edge.inner.destination_id):
                 if endpoint not in scenario.network.nodes:
-                    raise ValueError(
+                    raise UnrecognizedEdgeEndpoint(
                         f"Edge {id_} has an endpoint {endpoint} not found in network"
                     )
             src = self.namespace[edge.inner.origin_id]
@@ -373,12 +378,16 @@ class Simulation:
     def _decompose_event(
         cls, event: Event, mission_start_time: datetime
     ) -> List[SimEvent]:
+        try:
+            primitives = decompose_event(event)
+        except OverflowError:
+            raise EventDateOverflowError(event)
         result = []
-        for primitive in decompose_event(event):
+        for primitive in primitives:
             try:
                 timestamp = mission_start_time + primitive.mission_time
-            except OverflowError as e:
-                raise ValueError(e)
+            except OverflowError:
+                raise EventDateOverflowError(event)
             priority = primitive.priority
             if type(primitive) == PropulsiveBurn:
                 result.append(
