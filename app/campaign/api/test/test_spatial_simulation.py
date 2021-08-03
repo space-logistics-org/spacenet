@@ -17,7 +17,7 @@ client = TestClient(app)
 @pytest.mark.xfail
 @given(scenario=st.builds(Scenario))
 def test_only_allowed_status_codes(scenario: Scenario):
-    response = client.post("/simulation", json=jsonable_encoder(scenario.dict()))
+    response = client.post("/simulation/", json=jsonable_encoder(scenario.dict()))
     assert 200 == response.status_code
     # for now 200 is the only acceptable status code;
     # may allow different status code for error case
@@ -27,7 +27,7 @@ def test_only_allowed_status_codes(scenario: Scenario):
 @pytest.mark.xfail
 @given(scenario=st.builds(Scenario))
 def test_same_result_as_analysis(scenario: Scenario):
-    response = client.post("/simulation", json=jsonable_encoder(scenario.dict()))
+    response = client.post("/simulation/", json=jsonable_encoder(scenario.dict()))
     response_json = response.json()
     try:
         sim = Simulation(scenario)

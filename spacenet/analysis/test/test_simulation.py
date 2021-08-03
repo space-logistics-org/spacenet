@@ -14,6 +14,9 @@ T = TypeVar("T")
 SimCallback = Callable[["Simulation", Optional[T]], T]
 
 
+# TODO: you need a better Network builder. Maybe use hypothesis-networkx for performance.
+
+
 @st.composite
 def listener_builder(
         draw: DrawFn, types: List[Type]
@@ -51,7 +54,12 @@ def listener_dict_builder(
 @pytest.mark.slow
 @pytest.mark.xfail
 def test_fuzz_simulation(scenario, propulsive, pre_listeners, post_listeners):
-    Simulation(scenario, pre_listeners, post_listeners, propulsive=propulsive)
+    try:
+        sim = Simulation(scenario, pre_listeners, post_listeners, propulsive=propulsive)
+    except ValueError:
+        assume(False)
+        return
+    sim.run()
 
 
 @given(scenario=st.builds(Scenario), propulsive=st.booleans(),)

@@ -82,6 +82,7 @@ class SimResult(BaseModel):
     """
     A type representing the result of a simulation.
     """
+
     nodes: List[SimNode]
     edges: List[SimEdge]
     end_time: datetime
@@ -303,11 +304,11 @@ class Simulation:
     )
 
     def __init__(
-            self,
-            scenario: Scenario,
-            pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
-            post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
-            propulsive: bool = False
+        self,
+        scenario: Scenario,
+        pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+        post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+        propulsive: bool = False,
     ) -> None:
         """
         Construct a new simulation, raising a ValueError if the provided scenario cannot be run
@@ -337,8 +338,12 @@ class Simulation:
             self.network.setdefault(node, set())
         for id_ in scenario.network.edges:
             edge = self.namespace[id_]
+            for endpoint in (edge.inner.origin_id, edge.inner.destination_id):
+                if endpoint not in scenario.network.nodes:
+                    raise ValueError(
+                        f"Edge {id_} has an endpoint {endpoint} not found in network"
+                    )
             src = self.namespace[edge.inner.origin_id]
-            assert src in self.network
             self.network[src].add(edge)
             # add edges to adj-list rep
         events = [
@@ -347,6 +352,7 @@ class Simulation:
             for event in mission.events
             for atomic_event in Simulation._decompose_event(event, mission.start_date)
         ]
+        # TODO: can make a helper fn to figure out if should include the element
         if not propulsive:
             events = [e for e in events if not isinstance(e, BurnEvent)]
         self.event_queue: MinHeap[SimEvent] = MinHeap(events)
@@ -365,7 +371,7 @@ class Simulation:
 
     @classmethod
     def _decompose_event(
-            cls, event: Event, mission_start_time: datetime
+        cls, event: Event, mission_start_time: datetime
     ) -> List[SimEvent]:
         result = []
         for primitive in decompose_event(event):
@@ -481,7 +487,7 @@ class Simulation:
 
 
 def _all_ids_are_elements(
-        ids: List[UUID], timestamp: datetime, sim: Simulation
+    ids: List[UUID], timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -494,7 +500,7 @@ def _all_ids_are_elements(
 
 
 def _all_ids_are_elements_at_location(
-        ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
+    ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -510,7 +516,7 @@ def _all_ids_are_elements_at_location(
 
 
 def _id_exists_and_is_container(
-        id_: UUID, timestamp: datetime, sim: Simulation
+    id_: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     if not sim._id_exists(id_):
