@@ -4,7 +4,6 @@ compose more specific mixins (such as RequiresOnlyType) is correct. Uses simple 
 partitions.
 """
 import copy
-import unittest
 
 import pytest
 from pydantic import BaseModel, Field, conint
@@ -15,7 +14,7 @@ from spacenet.schemas.mixins import OptionalFields, RequiresID
 pytestmark = [pytest.mark.unit, pytest.mark.schema]
 
 
-class TestOptionalFields(unittest.TestCase):
+class TestOptionalFields:
     """
     Tests for the OptionalFields class.
     Partition on number of excluded fields:
@@ -39,7 +38,7 @@ class TestOptionalFields(unittest.TestCase):
             exp_field.allow_none = True
             actual_field = OptionalModel.__fields__[field_name]
             # using repr b/c __eq__ isn't implemented for Field
-            self.assertEqual(repr(exp_field), repr(actual_field))
+            assert repr(exp_field) == repr(actual_field)
 
     def test_some_made_optional(self):
         class PartialOptionalModel(self.Model, OptionalFields, excluded_fields={"a"}):
@@ -56,14 +55,11 @@ class TestOptionalFields(unittest.TestCase):
             exp_field.default = None
             exp_field.allow_none = True
             actual_field = PartialOptionalModel.__fields__[field_name]
-            self.assertEqual(repr(exp_field), repr(actual_field))
-        self.assertEqual(
-            repr(TestOptionalFields.Model.__fields__["a"]),
-            repr(PartialOptionalModel.__fields__["a"]),
-        )
+            assert repr(exp_field) == repr(actual_field)
+        assert repr(self.Model.__fields__["a"]) == repr(PartialOptionalModel.__fields__["a"])
 
 
-class TestRequiresID(unittest.TestCase):
+class TestRequiresID:
     """
     Tests for the RequiresID class.
     """
@@ -75,9 +71,9 @@ class TestRequiresID(unittest.TestCase):
         class ModelWithID(self.Model, RequiresID):
             pass
 
-        self.assertEqual(len(ModelWithID.__fields__), 1)
+        assert len(ModelWithID.__fields__) == 1
         field_name, field = ModelWithID.__fields__.popitem()
-        self.assertEqual(field_name, "id")
-        self.assertIsInstance(field, ModelField)
-        self.assertEqual(int, field.type_)
-        self.assertTrue(field.required)
+        assert field_name == "id"
+        assert isinstance(field, ModelField)
+        assert int == field.type_
+        assert field.required
