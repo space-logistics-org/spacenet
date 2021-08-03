@@ -184,6 +184,10 @@ def test_create(data: st.DataObject, element_type: ElementKind):
             response = client.post("/element/", json=invalid_kw)
         except ValueError:
             assert {float("inf"), -float("inf")} & set(invalid_kw.values())
+        except Exception as e:
+            print(e)
+            print(f"e is subclass of ValueError: {isinstance(e, ValueError)}")
+            assert False
         else:
             assert (
                 response.status_code == 422
