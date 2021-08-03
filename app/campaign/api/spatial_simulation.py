@@ -19,7 +19,11 @@ class ResultAndErrors(BaseModel):
 def simulate_scenario(
     scenario: Scenario, days_to_run_for: Optional[float] = None
 ) -> ResultAndErrors:
-    sim = Simulation(scenario)
+    try:
+        sim = Simulation(scenario)
+    except ValueError as ve:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=str(ve))  # TODO: format this better
     if days_to_run_for is None:
         sim.run()
     else:
