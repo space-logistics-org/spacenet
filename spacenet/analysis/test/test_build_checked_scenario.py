@@ -11,6 +11,7 @@ from ...schemas import Scenario
 pytestmark = [pytest.mark.schema, pytest.mark.unit, pytest.mark.analysis]
 
 
+@pytest.mark.slow
 @given(scenario=build_validating_scenario())
 def test_build_validating_scenario_always_validates(scenario: Scenario) -> None:
     CheckedScenario.parse_obj(scenario.dict())
@@ -19,6 +20,7 @@ def test_build_validating_scenario_always_validates(scenario: Scenario) -> None:
 ALLOWED_ERRORS_WHEN_CONSTRUCTING_SIM = (EventDateOverflowError, UnrecognizedID)
 
 
+@pytest.mark.slow
 @given(scenario=build_validating_scenario())
 def test_build_validating_scenario_only_raises_some_errors(scenario: Scenario):
     try:
