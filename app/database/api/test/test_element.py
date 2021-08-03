@@ -18,7 +18,7 @@ from app.database.api.models.element import Element as ElementModel
 from app.database.test.utilities import test_engine
 from app.auth_dependencies import current_user
 from spacenet.schemas.element import ElementKind
-from spacenet.schemas.test.test_element import (
+from spacenet.schemas.test.element_maps import (
     VALID_ELEMENT_MAP,
     VALID_ELEMENT_CARRIER_MAP,
     VALID_HUMAN_AGENT_MAP,

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 from spacenet.schemas.constants import (
     ClassOfSupply,
@@ -26,11 +26,20 @@ __all__ = [
     "INVALID_RESOURCE_CONTAINER_MAP",
     "INVALID_SURFACE_VEHICLE_MAP",
     "INVALID_PROPULSIVE_VEHICLE_MAP",
+    "kw_strategy_from_maps_and_param"
 ]
 
 
 def enum_values(enum_) -> List:
     return [variant.value for variant in enum_]
+
+
+def kw_strategy_from_maps_and_param(
+    valid_map: Dict, invalid_map: Dict, invalid_param: str
+) -> st.SearchStrategy[Dict]:
+    return st.fixed_dictionaries(
+        mapping={**valid_map, invalid_param: invalid_map[invalid_param],}
+    )
 
 
 NON_NEGATIVE_FINITE_FLOATS = st.floats(min_value=0, allow_infinity=False)

@@ -23,14 +23,6 @@ from .element_maps import *
 pytestmark = [pytest.mark.schema, pytest.mark.element, pytest.mark.unit]
 
 
-def kw_strategy_from_maps_and_param(
-    valid_map: Dict, invalid_map: Dict, invalid_param: str
-) -> st.SearchStrategy[Dict]:
-    return st.fixed_dictionaries(
-        mapping={**valid_map, invalid_param: invalid_map[invalid_param],}
-    )
-
-
 def make_tests_from_type_and_maps(
     ty_: Type[BaseModel], valid_map: Dict, invalid_map: Dict
 ) -> Tuple[Callable[[Dict], None], Callable[[st.DataObject, str], None]]:
