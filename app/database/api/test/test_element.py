@@ -185,9 +185,7 @@ def test_create(data: st.DataObject, element_type: ElementKind):
         except ValueError:
             assert {float("inf"), -float("inf")} & set(invalid_kw.values())
         except Exception as e:
-            print(e)
-            print(f"e is subclass of ValueError: {isinstance(e, ValueError)}")
-            assert False
+            assert False, (e.__class__, e)
         else:
             assert (
                 response.status_code == 422
