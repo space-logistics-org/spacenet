@@ -182,10 +182,9 @@ def test_create(data: st.DataObject, element_type: ElementKind):
         )
         try:
             response = client.post("/element/", json=invalid_kw)
-        except ValueError:
+        except (ValueError, IOError):
+            # in different versions of requests this throws different errors: catch both
             assert {float("inf"), -float("inf")} & set(invalid_kw.values())
-        except Exception as e:
-            assert False, (e.__class__, e)
         else:
             assert (
                 response.status_code == 422
@@ -252,7 +251,8 @@ def test_update(data: st.DataObject, element_type: ElementKind):
         # if the type here is the conflict this can fail, as then invalid_kw should raise a 409
         try:
             bad_patch = client.patch(f"/element/{id_}", json=invalid_kw)
-        except ValueError:
+        except (ValueError, IOError):
+            # in different versions of requests this throws different errors: catch both
             assert {float("inf"), -float("inf")} & set(invalid_kw.values())
         else:
             assert bad_patch.status_code == 422
