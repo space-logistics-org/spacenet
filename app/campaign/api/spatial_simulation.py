@@ -18,10 +18,10 @@ class ResultAndErrors(BaseModel):
 
 @router.post("/", response_model=ResultAndErrors)
 def simulate_scenario(
-    scenario: Scenario, days_to_run_for: Optional[float] = None
+    scenario: Scenario, days_to_run_for: Optional[float] = None, propulsive: bool = False
 ) -> ResultAndErrors:
     try:
-        sim = Simulation(scenario)
+        sim = Simulation(scenario, propulsive=propulsive)
     except SimException as se:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=str(se))  # TODO: format this better
