@@ -307,6 +307,7 @@ class Simulation:
             scenario: Scenario,
             pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
             post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+            propulsive: bool = False
     ) -> None:
         """
         Construct a new simulation, raising a ValueError if the provided scenario cannot be run
@@ -315,7 +316,8 @@ class Simulation:
         :param scenario: scenario defining network and events to simulate
         :param pre_listeners: listeners to run before each event
         :param post_listeners: listeners to run after each event
-        :raise ValueError: if an event references values not in the namespace
+        :raise ValueError: if an event references values not in the namespace,
+            or an edge references nodes not in the database
         """
         self.namespace: Dict[UUID, SimEntity] = {}
         for id_, node in scenario.network.nodes.items():
@@ -345,6 +347,8 @@ class Simulation:
             for event in mission.events
             for atomic_event in Simulation._decompose_event(event, mission.start_date)
         ]
+        if not propulsive:
+            events = [e for e in events if not isinstance(e, BurnEvent)]
         self.event_queue: MinHeap[SimEvent] = MinHeap(events)
         self.errors: List[SimError] = []
         # Type annotations below aren't tight: Dict is a mapping of SimCallback[T] to T, but
