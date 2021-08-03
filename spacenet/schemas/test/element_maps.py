@@ -42,10 +42,11 @@ def kw_strategy_from_maps_and_param(
     )
 
 
-NON_NEGATIVE_FINITE_FLOATS = st.floats(min_value=0, allow_infinity=False)
+NON_NEGATIVE_FINITE_FLOATS = st.floats(min_value=0, allow_infinity=False, allow_nan=False)
 NEGATIVE_AND_INFINITE_FLOATS = st.one_of(
     st.just(-float("inf")),
     st.just(float("inf")),
+    st.just(float("nan")),
     st.floats(max_value=0, exclude_max=True),
 )
 
