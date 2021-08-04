@@ -43,6 +43,8 @@ class SimElement(ContainsElements):
     """
 
     inner: AllElements
+    # TODO: should not be able to carry self, even recursively: create Contains Graph and BFS
+    #  it from one element to itself, assert that only path is zero-length
 
 
 ContainsElements.update_forward_refs()
