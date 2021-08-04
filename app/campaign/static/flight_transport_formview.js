@@ -539,6 +539,8 @@ const scenario = {
 
 
 $(document).ready( function() {
+
+	//wont be able to retreive uuid for scenario json?
 	Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
 		$('#pickNode').append('<option value="' + node.name + '">' + node.name + '</option>')
 	  });

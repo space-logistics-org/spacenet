@@ -45,7 +45,7 @@
           width: 24%;
     }
     .demandUnit{
-          width: 24%;
+          width: 23%;
     }
 
   </style>
@@ -58,28 +58,28 @@
 
   <hr></hr>
     <form id="components">
-      <div class="form-row">
-        <div class="container">
+
+      <div class="form-group">
               <label for="inputName">Name</label>
               <input type="text" class="form-control" id="inputName" placeholder="Name">
-        </div>
     </div>
 
-    <div class="form-row">
 
-        <div class="container">
-            <label for="inputNodeID">Node ID</label>
-            <input type="text" class="form-control" id="inputNodeID" placeholder="Node ID">
+        <div class="form-group">
+            <label for="inputNode">Node</label>
+            <select id="inputNode" onchange="retreiveElements()" class="form-control" class="text-center">
+              <option selected id="def">Choose...</option>
+            </select>
         </div>
 
-        <div class="container">
+        <div class="form-group">
             <label for="inputTime">Time From Mission Start</label>
-            <input type="number" class="form-control" id="inputTime" placeholder="Time">
+            <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
         </div>
 
-        <div class="container">
+        <div class="form-group">
           <label for="inputPriority">Priority</label>
-          <select id="inputPriority" class="form-control" class="text-center">
+          <select id="inputPriority" onchange="retreiveElements()" class="form-control" class="text-center">
             <option selected id="def">Choose...</option>
             <option>1</option>
             <option>2</option>
@@ -89,24 +89,31 @@
           </select>
         </div>
 
-        <div class="container">
+        <hr>
+
+        <div class="form-group">
             <label for="inputEVADuration">EVA Duration</label>
             <input type="number" class="form-control" id="inputEVADuration" placeholder="EVA Duration">
         </div>
 
-        <div class="container">
+        <div class= "form-group">
+          <div class="elementSelector">
             <label for="inputCrewVehicle">Crew Vehicle</label>
-            <input type="text" class="form-control" id="inputCrewVehicle" placeholder="Crew Vehicle">
+            <select id="inputCrewVehicle" class="form-control" class="text-center">
+              <option selected id="def">Choose...</option>
+            </select>
+          </div>
         </div>
 
-        <div class="container">
+
+        <div class="form-group">
            <label for="crewAdd">Press to add a new crew member</label>
            <input type="button" id="crewAdd" value="Add Crew Member" class="btn btn-dark btn-sm"/>
          </div>
 
          <div id="crewmain"></div>
 
-         <div class="container">
+         <div class="form-group">
              <label for="demAdd">Press to add a new Demand</label>
              <input type="button" id="demAdd" value="Add Demand" class="btn btn-dark btn-sm"/>
          </div>
@@ -115,7 +122,6 @@
 
 
 
-    </div>
 
     <div class="button">
       <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
