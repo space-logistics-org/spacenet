@@ -1,5 +1,5 @@
-from datetime import timedelta
 from typing import List
+from typing_extensions import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -33,3 +33,4 @@ class SpaceTransport(ElementTransportEvent):
     burnStageProfile: List[BurnStageSequence] = Field(
         ..., title="Burn Sequence", description="List of separate Burn-Stage Sequences"
     )
+    type: Literal["SpaceTransport"]

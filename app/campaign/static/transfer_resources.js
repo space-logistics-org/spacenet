@@ -536,13 +536,40 @@ const scenario = {
 	"environmentConstrained": false
   }
 
+  $(document).ready( function() {
 
-$(document).ready( function() {
-  Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-    console.log(uuid, node)
-    $('#pickNode').append('<option value="' + node.name + '">' + node.name + '</option>')
-  });
-})
+    Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+        $('#pickNode').append('<option value="' + node.name + '">' + node.name + '</option>')
+    });
+  })
+
+
+
+function setNode(){
+  $('#pickFrom').find('option:not(:first)').remove()
+  $('#pickTo').find('option:not(:first)').remove()
+
+
+  var node = $('#pickNode').val()
+
+  campaign.elements.forEach( function(elt) {
+    if (elt.type === 'ResourceContainer') {
+      $('#pickFrom').append('<option value="' + elt.name + '">' + elt.name + '</option>')
+      $('#pickTo').append('<option value="' + elt.name + '">' + elt.name + '</option>')
+    }
+  })
+
+}
+
+function setTransfer() {
+
+  console.log('set transfer activated')
+
+  campaign.resources.forEach( function(resource) {
+    $('#transferResourcesTable > tbody').append('<tr><td>' + resource.name + '</td><td>' + 'x' + '</td><td>' + 'x' + '</td></tr>')
+  })
+
+}
 
 
 function loadSim() {
@@ -551,9 +578,9 @@ function loadSim() {
 		priority = $('#pickPriority').val();
 
 	if (node && time && priority !== 'Choose...') {
-		$('#moveTo').find('option:not(:first)').remove();
-		clearTable();
-		  
+		$('#pickFrom').find('option:not(:first)').remove();
+    $('#pickTo').find('option:not(:first)').remove();
+
 		$.ajax({
 			url: "/campaign/api/simulation/?days_to_run_for=" + time,
 			data: JSON.stringify(scenario),
@@ -561,11 +588,13 @@ function loadSim() {
 			success: function (simResult) {
 			simResult.result.nodes.forEach( function(simNode) {
 				if (simNode.inner.name === node) {
-					$('#moveTo').append('<option value="' + simNode.inner.name + '">' + simNode.inner.name + '</option>')
+          $('#pickFrom').append('<option value="' + simNode.inner.name + '">' + simNode.inner.name + '</option>')
+          $('#pickTo').append('<option value="' + simNode.inner.name + '">' + simNode.inner.name + '</option>')
+
 					simNode.contents.forEach( function(elementContained) {
-						$('#moveTo').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')
+            $('#pickFrom').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')
+            $('#pickTo').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')  
 					})
-					populateRows(simNode.contents)
 				}
 			})
 			}
@@ -575,22 +604,29 @@ function loadSim() {
 
 }
 
-
 function onComplete(){
 
-  var origin_id = $('#pickNode').val(),
-      destination_id = $('#moveTo').val(),
-      elements = getSelected();
+    name = $("#inputName").val();
+    node = $("#pickNode").val();
+    time = $("#inputTime").val();
+    priority = $("#pickPriority").val();
+    origin_id = $("#pickFrom").val();
+    destination_id = $("#pickTo").val();
 
-  document.getElementById("moveElements").reset();
+    document.getElementById("transferResources").reset();
+
+    to_transfer = []
 
     data = {
+      name: name,
+      node: node,
+      time: time,
+      priority: priority,
       origin_id: origin_id,
       destination_id: destination_id,
-      to_move: elements,
+      to_transfer: to_transfer
     }
 
     alert(JSON.stringify(data))
     location.reload()
-
 }

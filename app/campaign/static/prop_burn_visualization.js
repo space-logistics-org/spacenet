@@ -1,3 +1,5 @@
+var deltSum = 0;
+var masses = 0;
 const scenario = {
 	"name": "Apollo 17",
 	"description": "Apollo 17 Mission",
@@ -536,61 +538,137 @@ const scenario = {
 	"environmentConstrained": false
   }
 
+  const genericResources = ['Generic COS 1', 'Generic COS 2', 'Generic COS 3']
 
-$(document).ready( function() {
-  Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-    console.log(uuid, node)
-    $('#pickNode').append('<option value="' + node.name + '">' + node.name + '</option>')
-  });
-})
 
+
+  $(document).ready( function() {
+
+
+    $('#addBurn').on('click', function() {
+      console.log('add burn button clicked')
+
+      name = $('#inputName').val();
+      dv = $("#inputDelta").val();
+      deltSum += Number(dv);
+
+      $('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td>[Burn]</td><td>' + name + '</td><td>' + dv + '</td>' )
+    })
+
+    $('#addStage').on('click', function() {
+      console.log('add stage button clicked')
+
+      name = $("#inputName").val();
+      dv = $("#inputDelta").val();
+      deltSum += Number(dv);
+
+      $('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td>[Stage]</td><td>' + name + '</td><td>' + dv + '</td>' )
+    })
+
+    $('#delete').on('click', function() {
+        var tableRef = document.getElementById('propulsiveBurnTableBody');
+        var tableRows = tableRef.rows;
+
+        var checkedRows = [];
+        for (var i = 0; i < tableRows.length; i++) {
+            if (tableRows[i].querySelector('input').checked) {
+                checkedRows.push(tableRows[i]);
+            }
+        }
+
+        for (var k = 0; k < checkedRows.length; k++) {
+            checkedRows[k].parentNode.removeChild(checkedRows[k]);
+        }
+        deltSum = 0;
+    })
+
+    $('#prepBurn').on('click', function() {
+      var tableRef = document.getElementById('elementTableBody');
+      var tableRows = tableRef.rows;
+      var checkedRows = [];
+      for (var i = 0; i < tableRows.length; i++) {
+        m = Number(tableRows[i].cells[6].innerText);
+        masses = Number(masses + m);
+        document.getElementById('mass').innerHTML = masses + " kg";
+      }
+
+
+        // for (var k = 0; k < checkedRows.length; k++) {
+        //   checkedRows[k].parentNode.removeChild(checkedRows[k]);
+        // }
+    })
+
+    $('#calcDV').on('click', function() {
+      document.getElementById('Delta-V_Measure').max = deltSum;
+      document.getElementById('dispDV').innerHTML = deltSum;
+      // """
+      //   Find the delta-v resulting from the burn described by the
+      //   given specific impulse and masses.
+      //   :param isp: specific impulse in seconds
+      //   :param m_0: initial mass
+      //   :param m_f: final mass; must be same units as m_0
+      //   :return: change in velocity resulting from burning (m_0 - m_f) units of fuel
+      //   with given specific impulse
+      //   """
+      var calcVal =  2.14 * 9.80665 * Math.log(masses / 3);
+      document.getElementById('Delta-V_Measure').value = calcVal;
+      document.getElementById('dispDVVal').innerHTML = calcVal;
+    })
+
+
+    Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+        $('#pickNode').append('<option value="' + node.name + '">' + node.name + '</option>')
+    });
+
+  })
 
 function loadSim() {
-	let node = $('#pickNode').val(),
-		time = $('#inputTime').val(),
-		priority = $('#pickPriority').val();
+  let node = $('#pickNode').val(),
+    time = $('#inputTime').val(),
+    priority = $('#pickPriority').val();
 
-	if (node && time && priority !== 'Choose...') {
-		$('#moveTo').find('option:not(:first)').remove();
-		clearTable();
-		  
-		$.ajax({
-			url: "/campaign/api/simulation/?days_to_run_for=" + time,
-			data: JSON.stringify(scenario),
-			method: "POST",
-			success: function (simResult) {
-			simResult.result.nodes.forEach( function(simNode) {
-				if (simNode.inner.name === node) {
-					$('#moveTo').append('<option value="' + simNode.inner.name + '">' + simNode.inner.name + '</option>')
-					simNode.contents.forEach( function(elementContained) {
-						$('#moveTo').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')
-					})
-					populateRows(simNode.contents)
-				}
-			})
-			}
-		});
-	}
+  if (node && time && priority !== 'Choose...') {
+    clearTable();
+      
+    $.ajax({
+      url: "/campaign/api/simulation/?days_to_run_for=" + time,
+      data: JSON.stringify(scenario),
+      method: "POST",
+      success: function (simResult) {
+      simResult.result.nodes.forEach( function(simNode) {
+        if (simNode.inner.name === node) {
+          populateRows(simNode.contents)
+        }
+      })
+      }
+    });
+  }
 
 
 }
 
 
-function onComplete(){
 
-  var origin_id = $('#pickNode').val(),
-      destination_id = $('#moveTo').val(),
-      elements = getSelected();
+  function onComplete(){
 
-  document.getElementById("moveElements").reset();
+      document.getElementById("mass").innerHTML = "CHANGED :)"
 
-    data = {
-      origin_id: origin_id,
-      destination_id: destination_id,
-      to_move: elements,
-    }
+      name = $("#inputName").val();
+      node = $("#pickNode").val();
+      time = $("#inputTime").val();
+      priority = $("#pickPriority").val();
+      //sequnce
 
-    alert(JSON.stringify(data))
-    location.reload()
 
-}
+      data = {
+        name: name,
+        node: node,
+        time: time,
+        priority: priority,
+        //sequence
+      }
+
+      location.reload()
+      console.log(data)
+
+  }

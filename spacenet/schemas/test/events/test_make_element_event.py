@@ -25,13 +25,14 @@ INVALID_MAP = {
 }
 
 
-def xfail_construct_make(elements, entry_point_id, priority, mission_time):
+def xfail_construct_make(elements, entry_point_id, priority, mission_time, type):
     return xfail_from_kw(
         MakeElements,
         elements=elements,
         entry_point_id=entry_point_id,
         priority=priority,
         mission_time=mission_time,
+        type=type,
     )
 
 
