@@ -187,11 +187,12 @@ class SurfaceVehicle(Vehicle):
 
 AllElements = Union[
     Element,
+    Vehicle,
     ResourceContainer,
     ElementCarrier,
     HumanAgent,
     RoboticAgent,
     PropulsiveVehicle,
     SurfaceVehicle,
-    Vehicle
+
 ]
