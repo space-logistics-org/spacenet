@@ -14,6 +14,7 @@ from .constants import ClassOfSupply, Environment
 __all__ = [
     "Element",
     "Vehicle",
+    "CargoCarrier",
     "ResourceContainer",
     "ElementCarrier",
     "HumanAgent",
