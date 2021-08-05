@@ -13,6 +13,7 @@ from .constants import ClassOfSupply, Environment
 
 __all__ = [
     "Element",
+    "Vehicle",
     "ResourceContainer",
     "ElementCarrier",
     "HumanAgent",
@@ -30,6 +31,7 @@ class ElementKind(str, Enum):
     """
 
     Element = "Element"
+    Vehicle = "Vehicle"
     ResourceContainer = "ResourceContainer"
     ElementCarrier = "ElementCarrier"
     HumanAgent = "HumanAgent"
@@ -141,7 +143,9 @@ class Vehicle(CargoCarrier, ABC):
     """
     An abstract base class representing a generic Vehicle, surface or propulsive.
     """
-
+    type: Literal[ElementKind.Vehicle] = Field(
+        description="The element's type"
+    )
     max_crew: SafeNonNegInt = Field(
         ..., title="Maximum Crew Count", description="crew capacity constraint"
     )
@@ -189,4 +193,5 @@ AllElements = Union[
     RoboticAgent,
     PropulsiveVehicle,
     SurfaceVehicle,
+    Vehicle
 ]
