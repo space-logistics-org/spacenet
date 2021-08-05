@@ -123,13 +123,11 @@ VALID_VEHICLE_MAP = dict(
     type=st.just(ElementKind.Vehicle),
     max_crew=st.integers(min_value=0, max_value=SQLITE_MAX_INT),
 )
-
 INVALID_VEHICLE_MAP = dict(
     INVALID_CARGO_CARRIER_MAP,
     type=st.sampled_from(ElementKind).filter(lambda ty: ty != ElementKind.Vehicle),
     max_crew=st.one_of(UNSERIALIZABLE_INTS, st.integers(max_value=-1)),
 )
-
 VALID_HUMAN_AGENT_MAP = dict(
     VALID_ELEMENT_MAP,
     active_time_fraction=st.floats(min_value=0, max_value=1),
@@ -143,8 +141,6 @@ INVALID_HUMAN_AGENT_MAP = dict(
     ),
     type=st.sampled_from(ElementKind).filter(lambda ty: ty != ElementKind.HumanAgent),
 )
-
-
 VALID_ROBOTIC_AGENT_MAP = dict(
     VALID_HUMAN_AGENT_MAP, type=st.just(ElementKind.RoboticAgent),
 )
