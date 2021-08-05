@@ -74,18 +74,20 @@ INVALID_ELEMENT_MAP = {
     "mass": NEGATIVE_AND_INFINITE_FLOATS,
     "volume": NEGATIVE_AND_INFINITE_FLOATS,
 }
-VALID_VEHICLE_MAP = dict(
+VALID_CARGO_CARRIER_MAP = dict(
     VALID_ELEMENT_MAP,
-    type=st.just(ElementKind.Vehicle),
-    max_crew=st.integers(min_value=0, max_value=SQLITE_MAX_INT),
+    type=st.just(ElementKind.CargoCarrier),
+    max_cargo_mass=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
+    max_cargo_volume=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
 )
-
-INVALID_VEHICLE_MAP = dict(
+INVALID_CARGO_CARRIER_MAP = dict(
     INVALID_ELEMENT_MAP,
-    type=st.sampled_from(ElementKind).filter(lambda ty: ty != ElementKind.Vehicle),
-    max_crew=st.one_of(UNSERIALIZABLE_INTS, st.integers(max_value=-1)),
+    type=st.sampled_from(ElementKind).filter(
+        lambda ty: ty != ElementKind.CargoCarrier
+    ),
+    max_cargo_mass=NEGATIVE_AND_INFINITE_FLOATS,
+    max_cargo_volume=NEGATIVE_AND_INFINITE_FLOATS,
 )
-
 VALID_RESOURCE_CONTAINER_MAP = dict(
     VALID_ELEMENT_MAP,
     type=st.just(ElementKind.ResourceContainer),
@@ -100,8 +102,6 @@ INVALID_RESOURCE_CONTAINER_MAP = dict(
     max_cargo_mass=NEGATIVE_AND_INFINITE_FLOATS,
     max_cargo_volume=NEGATIVE_AND_INFINITE_FLOATS,
 )
-
-
 VALID_ELEMENT_CARRIER_MAP = dict(
     VALID_ELEMENT_MAP,
     type=st.just(ElementKind.ElementCarrier),
@@ -118,7 +118,17 @@ INVALID_ELEMENT_CARRIER_MAP = dict(
     max_cargo_mass=NEGATIVE_AND_INFINITE_FLOATS,
     max_cargo_volume=NEGATIVE_AND_INFINITE_FLOATS,
 )
+VALID_VEHICLE_MAP = dict(
+    VALID_CARGO_CARRIER_MAP,
+    type=st.just(ElementKind.Vehicle),
+    max_crew=st.integers(min_value=0, max_value=SQLITE_MAX_INT),
+)
 
+INVALID_VEHICLE_MAP = dict(
+    INVALID_CARGO_CARRIER_MAP,
+    type=st.sampled_from(ElementKind).filter(lambda ty: ty != ElementKind.Vehicle),
+    max_crew=st.one_of(UNSERIALIZABLE_INTS, st.integers(max_value=-1)),
+)
 
 VALID_HUMAN_AGENT_MAP = dict(
     VALID_ELEMENT_MAP,
