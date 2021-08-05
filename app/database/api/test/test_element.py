@@ -20,6 +20,7 @@ from app.auth_dependencies import current_user
 from spacenet.schemas.element import ElementKind
 from spacenet.schemas.test.element_maps import (
     VALID_ELEMENT_MAP,
+    VALID_VEHICLE_MAP,
     VALID_ELEMENT_CARRIER_MAP,
     VALID_HUMAN_AGENT_MAP,
     VALID_ROBOTIC_AGENT_MAP,
@@ -27,6 +28,7 @@ from spacenet.schemas.test.element_maps import (
     VALID_SURFACE_VEHICLE_MAP,
     VALID_PROPULSIVE_VEHICLE_MAP,
     INVALID_ELEMENT_MAP,
+    INVALID_VEHICLE_MAP,
     INVALID_ROBOTIC_AGENT_MAP,
     INVALID_HUMAN_AGENT_MAP,
     INVALID_ELEMENT_CARRIER_MAP,
@@ -108,6 +110,9 @@ KIND_TO_STRATEGIES: Dict[ElementKind, Tuple[st.SearchStrategy, st.SearchStrategy
                 ]
             ),
         ),
+    ),
+    ElementKind.Vehicle: valid_invalid_strategies_from_maps(
+        VALID_VEHICLE_MAP, INVALID_VEHICLE_MAP
     ),
     ElementKind.ElementCarrier: valid_invalid_strategies_from_maps(
         VALID_ELEMENT_CARRIER_MAP, INVALID_ELEMENT_CARRIER_MAP
