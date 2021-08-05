@@ -81,7 +81,7 @@ VALID_VEHICLE_MAP = {
 
 INVALID_VEHICLE_MAP = {
     "type": st.sampled_from(ElementKind).filter(lambda ty: ty != ElementKind.Vehicle),
-    "max_crew": st.integers(min_value=SQLITE_MIN_INT, max_value=-1)
+    "max_crew": st.one_of(UNSERIALIZABLE_INTS, st.integers(min_value=SQLITE_MIN_INT, max_value=0, exclude_max=True))
 }
 
 VALID_RESOURCE_CONTAINER_MAP = dict(
