@@ -20,18 +20,20 @@ from app.auth_dependencies import current_user
 from spacenet.schemas.element import ElementKind
 from spacenet.schemas.test.element_maps import (
     VALID_ELEMENT_MAP,
-    VALID_VEHICLE_MAP,
+    VALID_CARGO_CARRIER_MAP,
     VALID_ELEMENT_CARRIER_MAP,
+    VALID_VEHICLE_MAP,
     VALID_HUMAN_AGENT_MAP,
     VALID_ROBOTIC_AGENT_MAP,
     VALID_RESOURCE_CONTAINER_MAP,
     VALID_SURFACE_VEHICLE_MAP,
     VALID_PROPULSIVE_VEHICLE_MAP,
     INVALID_ELEMENT_MAP,
-    INVALID_VEHICLE_MAP,
+    INVALID_CARGO_CARRIER_MAP,
     INVALID_ROBOTIC_AGENT_MAP,
     INVALID_HUMAN_AGENT_MAP,
     INVALID_ELEMENT_CARRIER_MAP,
+    INVALID_VEHICLE_MAP,
     INVALID_RESOURCE_CONTAINER_MAP,
     INVALID_SURFACE_VEHICLE_MAP,
     INVALID_PROPULSIVE_VEHICLE_MAP,
@@ -111,14 +113,17 @@ KIND_TO_STRATEGIES: Dict[ElementKind, Tuple[st.SearchStrategy, st.SearchStrategy
             ),
         ),
     ),
-    ElementKind.Vehicle: valid_invalid_strategies_from_maps(
-        VALID_VEHICLE_MAP, INVALID_VEHICLE_MAP
-    ),
     ElementKind.ElementCarrier: valid_invalid_strategies_from_maps(
         VALID_ELEMENT_CARRIER_MAP, INVALID_ELEMENT_CARRIER_MAP
     ),
     ElementKind.ResourceContainer: valid_invalid_strategies_from_maps(
         VALID_RESOURCE_CONTAINER_MAP, INVALID_RESOURCE_CONTAINER_MAP
+    ),
+    ElementKind.CargoCarrier: valid_invalid_strategies_from_maps(
+        VALID_CARGO_CARRIER_MAP, INVALID_CARGO_CARRIER_MAP
+    ),
+    ElementKind.Vehicle: valid_invalid_strategies_from_maps(
+        VALID_VEHICLE_MAP, INVALID_VEHICLE_MAP
     ),
     ElementKind.RoboticAgent: valid_invalid_strategies_from_maps(
         VALID_ROBOTIC_AGENT_MAP,
