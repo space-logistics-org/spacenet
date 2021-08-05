@@ -32,6 +32,7 @@ class ElementKind(str, Enum):
 
     Element = "Element"
     Vehicle = "Vehicle"
+    CargoCarrier = "CargoCarrier"
     ResourceContainer = "ResourceContainer"
     ElementCarrier = "ElementCarrier"
     HumanAgent = "HumanAgent"
@@ -74,7 +75,9 @@ class CargoCarrier(Element, ABC):
     """
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
     """
-
+    type: Literal[ElementKind.CargoCarrier] = Field(
+        description="the element's type"
+    )
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
         0, title="Max Cargo Mass", description="cargo capacity constraint (kg)"
     )
@@ -188,11 +191,11 @@ class SurfaceVehicle(Vehicle):
 AllElements = Union[
     Element,
     Vehicle,
+    CargoCarrier,
     ResourceContainer,
     ElementCarrier,
     HumanAgent,
     RoboticAgent,
     PropulsiveVehicle,
     SurfaceVehicle,
-
 ]
