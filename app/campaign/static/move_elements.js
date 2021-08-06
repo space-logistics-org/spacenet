@@ -557,17 +557,29 @@ function loadSim() {
 		$.ajax({
 			url: "/campaign/api/simulation/?days_to_run_for=" + time,
 			data: JSON.stringify(scenario),
+			contentType: 'application/json',
+			dataType: "json",	  
 			method: "POST",
 			success: function (simResult) {
-			simResult.result.nodes.forEach( function(simNode) {
-				if (simNode.inner.name === node) {
-					$('#moveTo').append('<option value="' + simNode.inner.name + '">' + simNode.inner.name + '</option>')
-					simNode.contents.forEach( function(elementContained) {
-						$('#moveTo').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')
-					})
-					populateRows(simNode.contents)
-				}
-			})
+				simResult.result.nodes.forEach( function(simNode) {
+					if (simNode.inner.name === node) {
+						$('#moveTo').append('<option value="' + simNode.inner.name + '">' + simNode.inner.name + '</option>')
+						console.log(simNode.contents)
+						if (simNode.contents.length !== 0) {
+							simNode.contents.forEach( function(elementContained) {
+								$('#moveTo').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')
+							})
+							populateRows(simNode.contents)
+						} else {
+							alert("No elements available at given time, please choose a different mission time")
+						}
+					}
+				})
+			},
+			error: function (response, status, error) {
+				console.log(response)
+				console.log(error)
+				console.log(status)
 			}
 		});
 	}
