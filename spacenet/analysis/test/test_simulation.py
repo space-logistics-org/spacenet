@@ -1,17 +1,12 @@
 import typing
-from datetime import timedelta
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 
 import pytest
 from hypothesis import given, strategies as st
-from hypothesis.strategies import SearchStrategy
 
 from .utilities import DrawFn
 from ..simulation import Simulation
-from ...analysis.decompose_events import DECOMPOSE_REGISTRY
-from spacenet.schemas import Event, PropulsiveBurn, Scenario
-from ...schemas.mission import Mission
-from ...schemas.space_transport import BurnStageSequence
+from spacenet.schemas import Scenario
 
 pytestmark = [pytest.mark.analysis, pytest.mark.unit]
 
@@ -21,13 +16,13 @@ SimCallback = Callable[["Simulation", Optional[T]], T]
 
 @st.composite
 def listener_builder(
-    draw: DrawFn, types: List[Type]
+        draw: DrawFn, types: List[Type]
 ) -> Tuple[SimCallback[T], Optional[T]]:
     ty = draw(st.sampled_from(types))
     ty_strategy = st.from_type(ty)
     v = draw(st.one_of(st.none(), ty_strategy))
 
-    def example_fn(sim: Simulation, prev: Optional[T]):
+    def example_fn(_sim: Simulation, _prev: Optional[T]):
         pass
 
     fn = draw(st.functions(like=example_fn, returns=ty_strategy))
@@ -41,7 +36,7 @@ st.register_type_strategy(
 
 @st.composite
 def listener_dict_builder(
-    draw: DrawFn, types: List[Type], min_size: int = 0, max_size: Optional[int] = None
+        draw: DrawFn, types: List[Type], min_size: int = 0, max_size: Optional[int] = None
 ) -> Dict[SimCallback[Any], Any]:
     args = draw(st.lists(listener_builder(types), min_size=min_size, max_size=max_size))
     return dict(args)
@@ -58,23 +53,28 @@ def test_fuzz_simulation(scenario, pre_listeners, post_listeners):
     Simulation(scenario, pre_listeners, post_listeners)
 
 
-@given(scenario=st.builds(Scenario),)
+@given(scenario=st.builds(Scenario), )
 @pytest.mark.slow
 @pytest.mark.xfail
 def test_simulation_returns_same(scenario):
     sim = Simulation(scenario)
-    first_errors = sim.run()
+    sim.run()
     other_sim = Simulation(scenario)
-    second_errors = other_sim.run()
-    assert first_errors == second_errors
-    assert sim.network == other_sim.network
-    assert sim.current_time == other_sim.current_time
+    other_sim.run()
+    assert sim.errors == other_sim.errors
+    assert sim.result() == other_sim.result()
 
 
-@given(scenario=st.builds(Scenario),)
+@given(scenario=st.builds(Scenario), )
 @pytest.mark.slow
 @pytest.mark.xfail
 def test_simulation_empties_queue(scenario):
     sim = Simulation(scenario)
     sim.run()
     assert not sim.event_queue
+
+# TODO: another property is that all MoveElements events end up with their constituent
+#  elements ending up at their final destinations by the end, regardless of errors
+
+# TODO: would like to have a way to construct Scenarios matching some constraints, sort of
+#  as partitions

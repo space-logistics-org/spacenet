@@ -5,7 +5,7 @@ test.db
 userbase.db
 uvicorn.exe
 uvicorn-script.py
-.hypothesis/**
+**/.hypothesis/**
 .coverage
 **/__pycache__/*
 **/admin_user.json

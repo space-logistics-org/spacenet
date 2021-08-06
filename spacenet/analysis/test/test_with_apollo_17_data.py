@@ -1,7 +1,8 @@
+from datetime import datetime
+
 import pkg_resources
 import pytest
-
-from pydantic import parse_file_as
+from hypothesis import assume, given, strategies as st
 
 from spacenet.analysis.simulation import Simulation
 from spacenet.schemas import Scenario
@@ -10,8 +11,30 @@ from spacenet.schemas import Scenario
 pytestmark = [pytest.mark.analysis, pytest.mark.apollo_17]
 
 
-@pytest.mark.xfail(reason="apollo 17 data doesn't match schema at present")
-def test_scenario_parses():
+def test_scenario_runs_without_error():
     filename = pkg_resources.resource_filename("spacenet.schemas", "apollo_17/apollo_17.json")
-    scenario = parse_file_as(Scenario, filename)
-    assert len(Simulation(scenario).run()) == 0, "expected no errors"
+    scenario = Scenario.parse_file(filename)
+    sim = Simulation(scenario)
+    sim.run()
+    assert not sim.errors, "expected no errors"
+
+
+@given(st.datetimes())
+def test_scenario_runs_without_error_for_any_until(dt: datetime):
+    filename = pkg_resources.resource_filename("spacenet.schemas", "apollo_17/apollo_17.json")
+    scenario = Scenario.parse_file(filename)
+    sim = Simulation(scenario)
+    sim.run(until=dt)
+    assert not sim.errors, "expected no errors"
+
+
+@given(st.datetimes())
+def test_identical_result_for_datetime_after_last_event(dt: datetime):
+    filename = pkg_resources.resource_filename("spacenet.schemas", "apollo_17/apollo_17.json")
+    scenario = Scenario.parse_file(filename)
+    sim = Simulation(scenario)
+    sim.run()
+    assume(dt >= sim.current_time)
+    stopping_sim = Simulation(scenario)
+    stopping_sim.run(until=dt)
+    assert sim.result() == stopping_sim.result()
