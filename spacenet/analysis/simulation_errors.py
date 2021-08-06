@@ -1,11 +1,12 @@
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
 
 
 class SimError(BaseModel):
-    timestamp: datetime
+    timestamp: Optional[datetime] = None
     description: str
 
     @staticmethod

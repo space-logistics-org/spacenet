@@ -4,8 +4,20 @@
 # You can model a time-expanded graph in a memory-efficient way by having the contents be the
 # time-expanded part.
 from abc import ABC, abstractmethod
+from collections import deque
 from datetime import datetime
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, TypeVar, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    TypeVar,
+    Union,
+)
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -46,6 +58,34 @@ class SimElement(ContainsElements):
     inner: AllElements
     # TODO: should not be able to carry self, even recursively: create Contains Graph and BFS
     #  it from one element to itself, assert that only path is zero-length
+
+    def __hash__(self):
+        return hash(self.inner)
+
+    def total_mass(self) -> Tuple[float, List["SimError"]]:
+        total_mass = self.inner.mass
+        errors = []
+        visited = {self}  # fixme: elements can't be hashed
+        stack = list(self.contents)
+        # Iteratively depth-first search throughout this connected component of the containment
+        # graph, totalling the mass along the way.
+        while stack:
+            next_element = stack.pop()
+            total_mass += next_element.inner.mass
+            for e in next_element.contents:
+                # TODO: this is a pretty suboptimal solution at the moment. We only check that
+                #  self is not contained in a cycle, which does not guarantee a cycle doesn't
+                #  exist more generally.
+                if e == self:
+                    errors.append(
+                        SimError(
+                            description=f"Element {self.inner.name} cannot contain itself"
+                        )
+                    )
+                elif e not in visited:
+                    stack.append(e)
+            visited.add(next_element)
+        return total_mass, errors
 
 
 ContainsElements.update_forward_refs()
@@ -134,7 +174,9 @@ class Move(SimEvent):
         if not sim._id_exists(event.origin_id):
             raise UnrecognizedID(f"Origin id {event.origin_id} does not exist")
         elif not sim._id_exists(event.destination_id):
-            raise UnrecognizedID(f"Destination id {event.destination_id} does not exist")
+            raise UnrecognizedID(
+                f"Destination id {event.destination_id} does not exist"
+            )
         for id_ in event.to_move:
             if not sim._id_exists(id_):
                 raise UnrecognizedID(f"ID {id_} does not exist")
@@ -215,7 +257,9 @@ class Remove(SimEvent):
     def validate_ids_exist(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.removal_point_id):
-            raise UnrecognizedID(f"Removal point {event.removal_point_id} does not exist")
+            raise UnrecognizedID(
+                f"Removal point {event.removal_point_id} does not exist"
+            )
         for id_ in event.elements:
             if not sim._id_exists(id_):
                 raise UnrecognizedID(f"ID {id_} does not exist")
