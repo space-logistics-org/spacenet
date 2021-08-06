@@ -14,10 +14,6 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
   <script src="spaceTransport_formview.js"></script>
   <style>
-  .button{
-       margin-top:10px;
-       margin-left: 10px;
-  }
   input[type=text] {
 
         padding: 2px 10px;
@@ -28,10 +24,13 @@
         outline: none;
     }
 
-  .seqele{
-        width: 48%;
+  .elementSel{
+        width: 50%;
   }
   .burnstage{
+        width: 48%;
+  }
+  .seqele{
         width: 48%;
   }
   </style>
@@ -44,33 +43,33 @@
 
   <hr></hr>
     <form id="components">
-      <div class="form-row">
-        <div class="container">
+      <div class="form-group">
               <label for="inputName">Name</label>
               <input type="text" class="form-control" id="inputName" placeholder="Name">
-        </div>
     </div>
 
-    <div class="form-row">
-
-        <div class="container">
-            <label for="inputOriginNodeID">Origin Node ID</label>
-            <input type="text" class="form-control" id="inputOriginNodeID" placeholder="Origin Node ID">
+        <div class="form-group">
+            <label for="inputOriginNode">Origin Node</label>
+            <select id="inputOriginNode" onclick="retreiveElements()" class="form-control" class="text-center">
+              <option selected id="def">Choose...</option>
+            </select>
         </div>
 
-        <div class="container">
-            <label for="inputDestinationNodeID">Destination Node ID</label>
-            <input type="text" class="form-control" id="inputDestinationNodeID" placeholder="Destination Node ID">
+        <div class="form-group">
+            <label for="inputDestinationNode">Destination Node</label>
+            <select id="inputDestinationNode" class="form-control" class="text-center">
+              <option selected id="def">Choose...</option>
+            </select>
         </div>
 
-        <div class="container">
+        <div class="form-group">
             <label for="inputTime">Time from Mission Start</label>
-            <input type="number" class="form-control" id="inputTime" placeholder="Time">
+            <input type="number" onclick="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
         </div>
 
-        <div class="container">
+        <div class="form-group">
           <label for="inputPriority">Priority</label>
-          <select id="inputPriority" class="form-control" class="text-center">
+          <select id="inputPriority" onclick="retreiveElements()" class="form-control" class="text-center">
             <option selected id="def">Choose...</option>
             <option>1</option>
             <option>2</option>
@@ -80,22 +79,26 @@
           </select>
         </div>
 
-     <div class="container">
-        <label for="eleadd">Add Element ID</label>
-        <input type="button" id="eleAdd" value="Add Element ID" class="btn btn-dark btn-sm"/>
-      </div>
-
-      <div id="elementmain"></div>
 
 
-      <div class="container">
+        <div class="form-group">
+          <div class="elementSel">
+            <label for="ElementSel">Elements</label>
+            <select id="ElementSel" class="form-control" class="text-center" multiple>
+              <option selected id="def">Choose...</option>
+            </select>
+          </div>
+        </div>
+
+
+
+      <div class="form-group">
           <label for="seqadd">Press to add a new burn sequence</label>
           <input type="button" id="seqAdd" value="Add Burn Sequence" class="btn btn-dark btn-sm"/>
       </div>
 
     <div id="burnstagemain"></div>
 
-    </div>
       <div class="button">
       <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
   </form>
