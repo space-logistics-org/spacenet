@@ -85,6 +85,7 @@ class SimResult(BaseModel):
     nodes: List[SimNode]
     edges: List[SimEdge]
     end_time: datetime
+    namespace: Dict[UUID, Union[SimElement, SimNode, SimEdge]]
 
 
 class SimEvent(BaseModel, ABC):
@@ -473,6 +474,7 @@ class Simulation:
             nodes=list(self.network.keys()),
             edges=[e for adj in self.network.values() for e in adj],
             end_time=self.current_time,
+            namespace=self.namespace
         )
 
 
