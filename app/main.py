@@ -64,10 +64,12 @@ async def startup():
     await database.connect()
     try:
         ADMIN_EMAIL = os.getenv("SPACENET_ADMIN_EMAIL")
+        ADMIN_EMAIL = "email"
         if ADMIN_EMAIL is None:
             raise NameError("Administrator email not defined. "
                             "Set the environment variable SPACENET_ADMIN_EMAIL to continue.")
         ADMIN_PASSWORD = os.getenv("SPACENET_ADMIN_PASSWORD")
+        ADMIN_PASSWORD = "password"
         if ADMIN_PASSWORD is None:
             raise NameError("Administrator password not defined. "
                             "Set the environment variable SPACENET_ADMIN_PASSWORD to continue.")
