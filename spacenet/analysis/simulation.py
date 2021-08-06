@@ -4,7 +4,6 @@
 # You can model a time-expanded graph in a memory-efficient way by having the contents be the
 # time-expanded part.
 from abc import ABC, abstractmethod
-from collections import deque
 from datetime import datetime
 from typing import (
     Any,
@@ -65,7 +64,7 @@ class SimElement(ContainsElements):
     def total_mass(self) -> Tuple[float, List["SimError"]]:
         total_mass = self.inner.mass
         errors = []
-        visited = {self}  # fixme: elements can't be hashed
+        visited = {self}
         stack = list(self.contents)
         # Iteratively depth-first search throughout this connected component of the containment
         # graph, totalling the mass along the way.
@@ -82,7 +81,13 @@ class SimElement(ContainsElements):
                             description=f"Element {self.inner.name} cannot contain itself"
                         )
                     )
-                elif e not in visited:
+                elif e in visited:
+                    errors.append(
+                        SimError(
+                            description=f"Element {e.inner.name} has multiple containers"
+                        )
+                    )
+                else:
                     stack.append(e)
             visited.add(next_element)
         return total_mass, errors
@@ -286,10 +291,9 @@ class Remove(SimEvent):
             )
         )
         prev_contents = sim.namespace[removal_point_id].contents
-        # fixme Low-hanging fruit for optimization:
-        #  store UUIDs in elements and check those instead? Performance
+        elements_to_remove = set(self.event.elements)
         new_contents = [
-            element for element in prev_contents if element not in self.event.elements
+            element for element in prev_contents if element not in elements_to_remove
         ]
         sim.namespace[removal_point_id].contents = new_contents
 
