@@ -1,7 +1,7 @@
 import pytest
 from fastapi.encoders import jsonable_encoder
 from fastapi.testclient import TestClient
-from hypothesis import assume, given, strategies as st
+from hypothesis import assume, given
 
 from spacenet.analysis.exceptions import SimException
 from spacenet.analysis.simulation import Simulation

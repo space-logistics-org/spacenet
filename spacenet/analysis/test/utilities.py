@@ -12,10 +12,10 @@ DrawFn = Callable[[st.SearchStrategy[T]], T]
 
 
 @st.composite
-def build_validating_scenario(draw: DrawFn) -> Scenario:
+def build_validating_scenario(draw: DrawFn):
     base_scenario = draw(st.builds(Scenario))
     start_date = min(
-        [mission.start_date for mission in base_scenario.missionList],
+        (mission.start_date for mission in base_scenario.missionList),
         default=base_scenario.startDate,
     )
     base_scenario.startDate = start_date
