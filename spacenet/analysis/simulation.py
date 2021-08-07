@@ -211,6 +211,8 @@ class Move(SimEvent):
         new_contents = [
             element for element in prev_contents if element not in self.event.to_move
         ]
+        # TODO: maintain invariant that elements don't contain themselves or have
+        #  multiple containers
         sim.namespace[source].contents = new_contents
         sim.namespace[dest].contents.extend(
             sim.namespace[id_] for id_ in self.event.to_move
