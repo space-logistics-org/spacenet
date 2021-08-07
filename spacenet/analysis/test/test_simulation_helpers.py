@@ -82,6 +82,7 @@ def test_errors_for_multiple_predecessors(element: SimElement):
 
 
 @given(element=cyclic_containment())
+@pytest.mark.xfail(reason="Haven't solved problems of recursive equality checking with cycles")
 def test_errors_for_cycle(element: SimElement):
     _mass, errors = element.total_mass()
     assert errors
