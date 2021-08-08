@@ -193,7 +193,6 @@ class Move(SimEvent):
         #   source is not a container -> error for each moved element
         #   destination is not a container -> error for each moved element
         #   some element in the list is not actually an element
-        # TODO: can decompose a move into a remove and a create?
         prev_error_count = len(sim.errors)
         source = self.event.origin_id
         sim._add_errors(
@@ -206,16 +205,15 @@ class Move(SimEvent):
         sim._add_errors(_all_ids_are_elements(self.event.to_move, self.timestamp, sim))
         # Filter source contents and move them over
         prev_contents = sim.namespace[source].contents
-        # fixme Low-hanging fruit for optimization:
-        #  store UUIDs in elements and check those instead? Performance
+        to_move_set: Set[SimElement] = set(sim.namespace[id_] for id_ in self.event.to_move)
         new_contents = [
-            element for element in prev_contents if element not in self.event.to_move
+            element for element in prev_contents if element not in to_move_set
         ]
         # TODO: maintain invariant that elements don't contain themselves or have
         #  multiple containers
         sim.namespace[source].contents = new_contents
         sim.namespace[dest].contents.extend(
-            sim.namespace[id_] for id_ in self.event.to_move
+            to_move_set
         )
 
 
