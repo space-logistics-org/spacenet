@@ -2,7 +2,7 @@ from typing import List, Optional, Set
 from typing_extensions import get_args
 
 import pytest
-from hypothesis import assume, given, infer, strategies as st
+from hypothesis import given, strategies as st
 
 from spacenet.analysis.simulation import SimElement
 from spacenet.analysis.test.utilities import DrawFn
@@ -12,13 +12,13 @@ pytestmark = [pytest.mark.analysis, pytest.mark.unit]
 
 
 def _all_element_contents(
-    element: SimElement, visited: Optional[Set[SimElement]] = None
+    element: SimElement, visited: Optional[Set[AllElements]] = None
 ) -> List[SimElement]:
     if visited is None:
         visited = set()
-    if element in visited:
+    if element.inner in visited:
         return []
-    visited.add(element)
+    visited.add(element.inner)
     result = [element] + [
         e
         for contained in element.contents
@@ -82,7 +82,6 @@ def test_errors_for_multiple_predecessors(element: SimElement):
 
 
 @given(element=cyclic_containment())
-@pytest.mark.xfail(reason="Haven't solved problems of recursive equality checking with cycles")
 def test_errors_for_cycle(element: SimElement):
     _mass, errors = element.total_mass()
     assert errors

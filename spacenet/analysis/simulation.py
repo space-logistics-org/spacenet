@@ -40,7 +40,7 @@ from .decompose_events import decompose_event
 from .simulation_errors import SimError
 from .exceptions import *
 
-from spacenet.fuel_formulas.functions import *
+from spacenet.fuel_formulas.functions import delta_v_from, final_mass_from
 
 __all__ = ["Simulation", "SimResult", "SimError"]
 
@@ -55,42 +55,38 @@ class SimElement(ContainsElements):
     """
 
     inner: AllElements
-    # TODO: should not be able to carry self, even recursively: create Contains Graph and BFS
-    #  it from one element to itself, assert that only path is zero-length
 
     def __hash__(self):
         return hash(self.inner)
 
-    def total_mass(self) -> Tuple[float, List["SimError"]]:
-        total_mass = self.inner.mass
+    def all_contained(self) -> Tuple[Set[AllElements], List["SimError"]]:
+        visited = {self.inner}
         errors = []
-        visited = {self}
         stack = list(self.contents)
-        # Iteratively depth-first search throughout this connected component of the containment
-        # graph, totalling the mass along the way.
         while stack:
             next_element = stack.pop()
-            total_mass += next_element.inner.mass
-            for e in next_element.contents:
-                # TODO: this is a pretty suboptimal solution at the moment. We only check that
-                #  self is not contained in a cycle, which does not guarantee a cycle doesn't
-                #  exist more generally.
-                if e == self:
+            for contained in next_element.contents:
+                if contained.inner == self.inner:
                     errors.append(
                         SimError(
                             description=f"Element {self.inner.name} cannot contain itself"
                         )
                     )
-                elif e in visited:
+                elif contained.inner in visited:
                     errors.append(
                         SimError(
-                            description=f"Element {e.inner.name} has multiple containers"
+                            description=f"Element {contained.inner.name} "
+                                        f"has multiple containers"
                         )
                     )
                 else:
-                    stack.append(e)
-            visited.add(next_element)
-        return total_mass, errors
+                    stack.append(contained)
+            visited.add(next_element.inner)
+        return visited, errors
+
+    def total_mass(self) -> Tuple[float, List["SimError"]]:
+        all_contained, errors = self.all_contained()
+        return sum(contained.mass for contained in all_contained), errors
 
 
 ContainsElements.update_forward_refs()
@@ -271,9 +267,7 @@ class Create(SimEvent):
         sim.namespace[entry_point].contents.extend(
             sim.namespace[id_] for id_ in self.event.elements
         )
-        assert prev_error_count == len(
-            sim.errors
-        ), "Expected not to get new errors"
+        assert prev_error_count == len(sim.errors), "Expected not to get new errors"
 
 
 class Remove(SimEvent):
@@ -312,7 +306,9 @@ class Remove(SimEvent):
                 id_=self.event.removal_point_id, timestamp=self.timestamp, sim=sim
             )
         )
-        assert prev_error_count == len(sim.errors), "Expected no new errors from id existence"
+        assert prev_error_count == len(
+            sim.errors
+        ), "Expected no new errors from id existence"
         sim._add_errors(
             _all_ids_are_elements_at_location(
                 ids=self.event.elements,
@@ -351,6 +347,7 @@ class BurnEvent(SimEvent):
         assert set(event.burn_stage_sequence).issubset(event.elements)
 
     def process_with_ctx(self, sim: "Simulation") -> None:
+
         # TODO
         # Consume the fuel at the given elements until enough fuel has been consumed
         # to satisfy delta-v requirement
@@ -487,12 +484,7 @@ class Simulation:
             priority = primitive.priority
             if type(primitive) == PropulsiveBurn:
                 result.append(
-                    BurnEvent(
-                        timestamp=timestamp,
-                        priority=priority,
-                        event=primitive.burn,
-                        elements=primitive.elements,
-                    )
+                    BurnEvent(timestamp=timestamp, priority=priority, event=primitive,)
                 )
             else:
                 ty = EVENT_TO_SIM_EVENT[type(primitive)]
