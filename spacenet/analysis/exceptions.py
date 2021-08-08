@@ -1,5 +1,9 @@
 __all__ = [
-    "SimException", "EventDateOverflowError", "UnrecognizedEdgeEndpoint", "UnrecognizedID"
+    "SimException",
+    "EventDateOverflowError",
+    "UnrecognizedEdgeEndpoint",
+    "UnrecognizedID",
+    "MismatchedIDType",
 ]
 
 
@@ -16,4 +20,8 @@ class UnrecognizedEdgeEndpoint(SimException, ValueError):
 
 
 class UnrecognizedID(SimException, ValueError):
+    pass
+
+
+class MismatchedIDType(SimException, TypeError):
     pass

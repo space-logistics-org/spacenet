@@ -147,14 +147,16 @@ class SimEvent(BaseModel, ABC):
         return (self.timestamp, self.priority) < (other.timestamp, other.priority)
 
     @abstractmethod
-    def validate_ids_exist(self, sim: "Simulation") -> None:
+    def validate_ids(self, sim: "Simulation") -> None:
         """
         Validate this event, checking that its referenced values are present
-        in the namespace of the provided simulation.
+        in the namespace of the provided simulation, and have the correct types.
 
         :param sim: event to validate
-        :raise UnrecognizedID: if this event has referenced values not present
-        in the namespace
+        :raises UnrecognizedID: if this event has referenced values not present
+                in the namespace
+        :raises MismatchedIDType: if this event has referenced IDs, but they're the incorrect
+                type
         """
         pass
 
@@ -175,17 +177,27 @@ class Move(SimEvent):
 
     event: MoveElements
 
-    def validate_ids_exist(self, sim: "Simulation") -> None:
+    def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.origin_id):
             raise UnrecognizedID(f"Origin id {event.origin_id} does not exist")
+        elif not sim._id_is_of_container(event.origin_id):
+            raise MismatchedIDType(
+                f"Origin id {event.origin_id} should be a container, but is not"
+            )
         elif not sim._id_exists(event.destination_id):
             raise UnrecognizedID(
                 f"Destination id {event.destination_id} does not exist"
             )
+        elif not sim._id_is_of_container(event.destination_id):
+            raise MismatchedIDType(
+                f"Destination id {event.destination_id} should be a container, but is not"
+            )
         for id_ in event.to_move:
             if not sim._id_exists(id_):
                 raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType(f"ID {id_} should be an element, but is not")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Move all elements in the list to the new destination
@@ -203,18 +215,19 @@ class Move(SimEvent):
             _id_exists_and_is_container(id_=dest, timestamp=self.timestamp, sim=sim)
         )
         sim._add_errors(_all_ids_are_elements(self.event.to_move, self.timestamp, sim))
+        assert prev_error_count == len(sim.errors), "Expected not to get new errors"
         # Filter source contents and move them over
         prev_contents = sim.namespace[source].contents
-        to_move_set: Set[SimElement] = set(sim.namespace[id_] for id_ in self.event.to_move)
+        to_move_set: Set[SimElement] = set(
+            sim.namespace[id_] for id_ in self.event.to_move
+        )
         new_contents = [
             element for element in prev_contents if element not in to_move_set
         ]
         # TODO: maintain invariant that elements don't contain themselves or have
         #  multiple containers
         sim.namespace[source].contents = new_contents
-        sim.namespace[dest].contents.extend(
-            to_move_set
-        )
+        sim.namespace[dest].contents.extend(to_move_set)
 
 
 class Create(SimEvent):
@@ -224,13 +237,19 @@ class Create(SimEvent):
 
     event: MakeElements
 
-    def validate_ids_exist(self, sim: "Simulation") -> None:
+    def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.entry_point_id):
             raise UnrecognizedID(f"Entry point {event.entry_point_id} does not exist")
+        elif not sim._id_is_of_container(event.entry_point_id):
+            raise MismatchedIDType(
+                f"Entry point {event.entry_point_id} is not of container"
+            )
         for id_ in event.elements:
             if not sim._id_exists(id_):
                 raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType(f"ID {id_} is not of element")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Create all elements in the list at the specified location
@@ -238,6 +257,7 @@ class Create(SimEvent):
         #   location is not a container -> error for each created element
         #   values in the list don't correspond to actual elements
         entry_point = self.event.entry_point_id
+        prev_error_count = len(sim.errors)
         sim._add_errors(
             _id_exists_and_is_container(
                 id_=entry_point, timestamp=self.timestamp, sim=sim
@@ -251,6 +271,9 @@ class Create(SimEvent):
         sim.namespace[entry_point].contents.extend(
             sim.namespace[id_] for id_ in self.event.elements
         )
+        assert prev_error_count == len(
+            sim.errors
+        ), "Expected not to get new errors"
 
 
 class Remove(SimEvent):
@@ -260,15 +283,21 @@ class Remove(SimEvent):
 
     event: RemoveElements
 
-    def validate_ids_exist(self, sim: "Simulation") -> None:
+    def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.removal_point_id):
             raise UnrecognizedID(
                 f"Removal point {event.removal_point_id} does not exist"
             )
+        elif not sim._id_is_of_container(event.removal_point_id):
+            raise MismatchedIDType(
+                f"Removal point {event.removal_point_id} is not of container"
+            )
         for id_ in event.elements:
             if not sim._id_exists(id_):
                 raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType("ID {id_} is not of element")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Remove all elements in the list at the specified location
@@ -277,11 +306,13 @@ class Remove(SimEvent):
         #   values in the list don't correspond to actual elements
         #   elements provided aren't actually at the specified location
         removal_point_id = self.event.removal_point_id
+        prev_error_count = len(sim.errors)
         sim._add_errors(
             _id_exists_and_is_container(
                 id_=self.event.removal_point_id, timestamp=self.timestamp, sim=sim
             )
         )
+        assert prev_error_count == len(sim.errors), "Expected no new errors from id existence"
         sim._add_errors(
             _all_ids_are_elements_at_location(
                 ids=self.event.elements,
@@ -303,11 +334,21 @@ class BurnEvent(SimEvent):
     Represents a burn, one of the four primitive SimEvents.
     """
 
-    event: Burn
-    elements: List[UUID]  # ordered: last element is first to have delta-v consumed
+    event: PropulsiveBurn
 
-    def validate_ids_exist(self, sim: "Simulation") -> None:
-        raise NotImplementedError
+    def validate_ids(self, sim: "Simulation") -> None:
+        event = self.event
+        for id_ in event.elements:
+            if not sim._id_exists(id_):
+                raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType(f"ID {id_} is not of an element")
+        for id_ in (item.element_id for item in event.burn_stage_sequence):
+            if not sim._id_exists(id_):
+                raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType(f"ID {id_} is not of an element")
+        assert set(event.burn_stage_sequence).issubset(event.elements)
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # TODO
@@ -370,10 +411,15 @@ class Simulation:
         :raise EventDateOverflowError: if the time an event ends, relative to mission start,
             cannot be represented as a timedelta, or the absolute time an event occurs cannot
             be represented as a datetime
-        :raise UnrecognizedID: if an event references an ID that does not exist in the
+        :raises UnrecognizedID: if an event references an ID that does not exist in the
             namespace
-        :raise UnrecognizedEdgeEndpoint: if an edge has an endpoint which is not a network node
+        :raises UnrecognizedEdgeEndpoint: if an edge has an endpoint which is not
+            a network node
+        :raises MismatchedIDType: if an ID referenced as a certain type is not of the certain
+            type
         """
+        # TODO: keep documentation up to date, maybe keep error checking up to date in event
+        #  execution
         self.namespace: Dict[UUID, SimEntity] = {}
         for id_, node in scenario.network.nodes.items():
             self.namespace[id_] = SimNode(inner=node)
@@ -422,7 +468,7 @@ class Simulation:
         ] = {} if post_listeners is None else post_listeners
         self.current_time: datetime = scenario.startDate
         for event in self.event_queue:
-            event.validate_ids_exist(sim=self)
+            event.validate_ids(sim=self)
 
     @classmethod
     def _decompose_event(
@@ -542,7 +588,7 @@ class Simulation:
             nodes=list(self.network.keys()),
             edges=[e for adj in self.network.values() for e in adj],
             end_time=self.current_time,
-            namespace=self.namespace
+            namespace=self.namespace,
         )
 
 
