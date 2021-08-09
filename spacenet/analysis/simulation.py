@@ -23,7 +23,6 @@ from pydantic import BaseModel, Field, NonNegativeFloat, validator
 
 from spacenet.analysis.min_heap import MinHeap
 from spacenet.schemas import (
-    Burn,
     ElementCarrier,
     Event,
     PropulsiveBurn,
@@ -206,6 +205,7 @@ class Move(SimEvent):
                 raise MismatchedIDType(f"ID {id_} should be an element, but is not")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
+        print("move", self.timestamp)
         # Move all elements in the list to the new destination
         # Possible errors:
         #   source is not a container -> error for each moved element
@@ -234,6 +234,9 @@ class Move(SimEvent):
         #  multiple containers
         sim.namespace[source].contents = new_contents
         sim.namespace[dest].contents.extend(to_move_set)
+        if self.timestamp == datetime(year=2010, day=25, hour=4, month=9):
+            print("destination", dest)
+            print("contents", sim.namespace[dest].contents)
 
 
 class Create(SimEvent):
@@ -309,6 +312,7 @@ class Remove(SimEvent):
         #   location is not a container -> error for each created element
         #   values in the list don't correspond to actual elements
         #   elements provided aren't actually at the specified location
+        print("remove", self.timestamp)
         removal_point_id = self.event.removal_point_id
         prev_error_count = len(sim.errors)
         sim._add_errors(
@@ -328,6 +332,9 @@ class Remove(SimEvent):
             )
         )
         prev_contents = sim.namespace[removal_point_id].contents
+        if self.timestamp == datetime(year=2010, day=27, hour=4, month=9):
+            print("removal_point", removal_point_id)
+            print("prev_contents", prev_contents)
         elements_to_remove = set(self.event.elements)
         new_contents = [
             element for element in prev_contents if element not in elements_to_remove
@@ -391,34 +398,17 @@ class BurnEvent(SimEvent):
                 assert item.burnStage == "Stage"
                 m_0 -= element.total_mass()
 
-    def process_burn_stage_item(
-        self, sim: "Simulation", delta_v_so_far: float
-    ) -> float:
-
-        """
-        m_0 = sum of total masses
-        m_f = max(m_0 - fuel required, sum of total masses - all burnable fuel + empty mass)
-
-        """
-        pass
-
-        # delta_ve = event.delta_v
-        # for element in elements:
-        # init_mass = element.mass
-        # fin_mass = final_mass_from(delta_v: delta_ve, isp: 0, m_0: init_mass)
-        # req_deltav = delts_v_from(isp: 0, m_0: init_mass, m_f: fin_mass)
-        # if (req_deltav > delta_ve):
-        # subtract mass/fuel
-        # else:
-        # delta_ve -= req_deltav
-        # RemoveElement? stage
-
 
 T = TypeVar("T")
 SimCallback = Callable[["Simulation", Optional[T]], T]
 SimEntity = Union[SimEdge, SimElement, SimNode]
 
-EVENT_TO_SIM_EVENT = {MakeElements: Create, MoveElements: Move, RemoveElements: Remove}
+EVENT_TO_SIM_EVENT = {
+    MakeElements: Create,
+    MoveElements: Move,
+    RemoveElements: Remove,
+    PropulsiveBurn: BurnEvent,
+}
 
 
 class Simulation:
@@ -494,8 +484,6 @@ class Simulation:
             for event in mission.events
             for atomic_event in Simulation._decompose_event(event, mission.start_date)
         ]
-        # TODO: can make a helper fn to figure out if should include the element and filter in
-        #  comprehension
         if not propulsive:
             events = [e for e in events if not isinstance(e, BurnEvent)]
         self.event_queue: MinHeap[SimEvent] = MinHeap(events)
@@ -525,17 +513,10 @@ class Simulation:
             try:
                 timestamp = mission_start_time + primitive.mission_time
             except OverflowError:
-                raise EventDateOverflowError(event)  # TODO: format this better
+                raise EventDateOverflowError(event)
             priority = primitive.priority
-            if type(primitive) == PropulsiveBurn:
-                result.append(
-                    BurnEvent(timestamp=timestamp, priority=priority, event=primitive,)
-                )
-            else:
-                ty = EVENT_TO_SIM_EVENT[type(primitive)]
-                result.append(
-                    ty(event=primitive, timestamp=timestamp, priority=priority)
-                )
+            ty = EVENT_TO_SIM_EVENT[type(primitive)]
+            result.append(ty(event=primitive, timestamp=timestamp, priority=priority))
         return result
 
     def _add_event(self, event: SimEvent) -> None:
@@ -651,11 +632,12 @@ def _all_ids_are_elements(
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
+        name = sim.namespace[id_].inner.name
         if not sim._id_exists(id_):
-            ret.append(SimError.does_not_exist(timestamp, id_))
+            ret.append(SimError.does_not_exist(timestamp, id_, name))
             continue
         if not sim._id_is_of_element(id_):
-            ret.append(SimError.not_an_element(timestamp, id_))
+            ret.append(SimError.not_an_element(timestamp, id_, name))
     return ret
 
 
@@ -664,14 +646,15 @@ def _all_ids_are_elements_at_location(
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
+        name = sim.namespace[id_].inner.name
         if not sim._id_exists(id_):
-            ret.append(SimError.does_not_exist(timestamp, id_))
+            ret.append(SimError.does_not_exist(timestamp, id_, name))
             continue
         if not sim._id_is_of_element(id_):
-            ret.append(SimError.not_an_element(timestamp, id_))
+            ret.append(SimError.not_an_element(timestamp, id_, name))
             continue
         if not sim._id_is_at_location(id_, location):
-            ret.append(SimError.not_at_location(timestamp, id_, location))
+            ret.append(SimError.not_at_location(timestamp, id_, location, name))
     return ret
 
 
@@ -679,9 +662,10 @@ def _id_exists_and_is_container(
     id_: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
+    name = sim.namespace[id_].inner.name
     if not sim._id_exists(id_):
-        ret.append(SimError.does_not_exist(timestamp, id_))
+        ret.append(SimError.does_not_exist(timestamp, id_, name))
         return ret
     if not sim._id_is_of_container(id_):
-        ret.append(SimError.not_a_container(timestamp, id_))
+        ret.append(SimError.not_a_container(timestamp, id_, name))
     return ret
