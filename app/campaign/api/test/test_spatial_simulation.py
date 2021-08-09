@@ -19,6 +19,8 @@ client = TestClient(app)
 @pytest.mark.xfail
 @given(scenario=build_validating_scenario())
 def test_only_allowed_status_codes(scenario: Scenario):
+    # TODO: figure out the whole problem w/ providing unrealistically large floats. undo a
+    #  register_type_strategy?
     response = client.post("/simulation/", json=jsonable_encoder(scenario.dict()))
     if response.status_code == 422:  # TODO: change this when 422 is no longer returned
         try:

@@ -55,7 +55,6 @@ class SimElement(ContainsElements):
     """
 
     inner: AllElements
-    current_mass: NonNegativeFloat = 0
     fuel_mass: NonNegativeFloat = 0
 
     def __hash__(self):
@@ -90,12 +89,9 @@ class SimElement(ContainsElements):
         all_contained, errors = self.all_contained()
         return sum(contained.mass for contained in all_contained), errors
 
-    @validator("current_mass")
-    def _initialize_current_mass(cls, value, values, config, field) -> float:
-        # Field order is important here: inner must be before current mass
-        assert values.get("inner") is not None
-        inner: AllElements = values.get("inner")
-        return inner.mass + (inner.max_fuel if isinstance(inner, PropulsiveVehicle) else 0)
+    @property
+    def current_mass(self) -> float:
+        return self.inner.mass + self.fuel_mass
 
     @validator("fuel_mass")
     def _initialize_fuel_mass(cls, value, values, config, field) -> float:
@@ -363,7 +359,6 @@ class BurnEvent(SimEvent):
         assert set(event.burn_stage_sequence).issubset(event.elements)
 
     def process_with_ctx(self, sim: "Simulation") -> None:
-        # TODO: write a helper to process an individual Burn/Stage event
         # Consume the fuel at the given elements until enough fuel has been consumed
         # to satisfy delta-v requirement
         # Possible errors:
@@ -377,13 +372,13 @@ class BurnEvent(SimEvent):
             element: SimElement = sim.namespace[item.element_id]
             if item.burnStage == "Burn":
                 assert sim._id_is_of_propulsive_vehicle(item.element_id)
-                if not delta_v:
+                if delta_v == 0:
                     continue
                 min_final_mass = element.total_mass()[0] - element.fuel_mass
                 stage_delta_v = delta_v_from(element.inner.isp, m_0, min_final_mass)
                 if stage_delta_v > delta_v:
                     mass_change = m_0 - final_mass_from(delta_v, element.inner.isp, m_0)
-                    element.current_mass -= mass_change
+                    element.fuel_mass -= mass_change
                     m_0 -= mass_change
                     delta_v = 0
                     # It's safe to modify the element's current mass because we don't use
@@ -394,8 +389,7 @@ class BurnEvent(SimEvent):
                     delta_v -= stage_delta_v
             else:
                 assert item.burnStage == "Stage"
-                m_0 -= element.current_mass
-        raise NotImplementedError
+                m_0 -= element.total_mass()
 
     def process_burn_stage_item(
         self, sim: "Simulation", delta_v_so_far: float
