@@ -611,16 +611,13 @@ class Simulation:
             self._run_listeners(self.post_listeners)
 
     def result(self) -> SimResult:
-        inverse_network_namespace = {
-            v: id_ for id_, v in self.namespace.items() if not isinstance(v, SimElement)
-        }
+        inverse_namespace = {v: id_ for id_, v in self.namespace.items()}
         return SimResult(
             nodes=[
-                into_indirect_entity(n, inverse_network_namespace)
-                for n in self.network.keys()
+                into_indirect_entity(n, inverse_namespace) for n in self.network.keys()
             ],
             edges=[
-                into_indirect_entity(e, inverse_network_namespace)
+                into_indirect_entity(e, inverse_namespace)
                 for adj in self.network.values()
                 for e in adj
             ],
