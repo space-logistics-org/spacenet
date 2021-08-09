@@ -19,7 +19,7 @@ from typing import (
 )
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, NonNegativeFloat, validator
 
 from spacenet.analysis.min_heap import MinHeap
 from spacenet.schemas import (
@@ -55,6 +55,8 @@ class SimElement(ContainsElements):
     """
 
     inner: AllElements
+    current_mass: NonNegativeFloat = 0
+    fuel_mass: NonNegativeFloat = 0
 
     def __hash__(self):
         return hash(self.inner)
@@ -76,7 +78,7 @@ class SimElement(ContainsElements):
                     errors.append(
                         SimError(
                             description=f"Element {contained.inner.name} "
-                                        f"has multiple containers"
+                            f"has multiple containers"
                         )
                     )
                 else:
@@ -87,6 +89,18 @@ class SimElement(ContainsElements):
     def total_mass(self) -> Tuple[float, List["SimError"]]:
         all_contained, errors = self.all_contained()
         return sum(contained.mass for contained in all_contained), errors
+
+    @validator("current_mass")
+    def _initialize_current_mass(cls, value, values, config, field) -> float:
+        # Field order is important here: inner must be before current mass
+        assert values.get("inner") is not None
+        inner: AllElements = values.get("inner")
+        return inner.mass + (inner.max_fuel if isinstance(inner, PropulsiveVehicle) else 0)
+
+    @validator("fuel_mass")
+    def _initialize_fuel_mass(cls, value, values, config, field) -> float:
+        inner: AllElements = values.get("inner")
+        return inner.max_fuel if isinstance(inner, PropulsiveVehicle) else 0
 
 
 ContainsElements.update_forward_refs()
@@ -344,18 +358,55 @@ class BurnEvent(SimEvent):
                 raise UnrecognizedID(f"ID {id_} does not exist")
             elif not sim._id_is_of_element(id_):
                 raise MismatchedIDType(f"ID {id_} is not of an element")
+            elif not sim._id_is_of_propulsive_vehicle(id_):
+                raise MismatchedIDType(f"ID {id_} is not of a PropulsiveVehicle")
         assert set(event.burn_stage_sequence).issubset(event.elements)
 
     def process_with_ctx(self, sim: "Simulation") -> None:
-
-        # TODO
+        # TODO: write a helper to process an individual Burn/Stage event
         # Consume the fuel at the given elements until enough fuel has been consumed
         # to satisfy delta-v requirement
         # Possible errors:
         #   values in the list don't correspond to actual elements
         #   not enough fuel (if this is a problem depends, but it's probably more efficient to
         #    just not add burn events if there's no fuel constraint and just stage)
+        event = self.event
+        delta_v = event.burn.delta_v
+        m_0 = sum(sim.namespace[id_].total_mass()[0] for id_ in self.event.elements)
+        for item in event.burn_stage_sequence:
+            element: SimElement = sim.namespace[item.element_id]
+            if item.burnStage == "Burn":
+                assert sim._id_is_of_propulsive_vehicle(item.element_id)
+                if not delta_v:
+                    continue
+                min_final_mass = element.total_mass()[0] - element.fuel_mass
+                stage_delta_v = delta_v_from(element.inner.isp, m_0, min_final_mass)
+                if stage_delta_v > delta_v:
+                    mass_change = m_0 - final_mass_from(delta_v, element.inner.isp, m_0)
+                    element.current_mass -= mass_change
+                    m_0 -= mass_change
+                    delta_v = 0
+                    # It's safe to modify the element's current mass because we don't use
+                    # the outer current mass field as part of the hash, so h(x) cannot change
+                    # while x is in a dictionary by this mutation
+                else:
+                    m_0 -= element.fuel_mass
+                    delta_v -= stage_delta_v
+            else:
+                assert item.burnStage == "Stage"
+                m_0 -= element.current_mass
         raise NotImplementedError
+
+    def process_burn_stage_item(
+        self, sim: "Simulation", delta_v_so_far: float
+    ) -> float:
+
+        """
+        m_0 = sum of total masses
+        m_f = max(m_0 - fuel required, sum of total masses - all burnable fuel + empty mass)
+
+        """
+        pass
 
         # delta_ve = event.delta_v
         # for element in elements:
@@ -539,6 +590,16 @@ class Simulation:
         """
         assert self._id_exists(id_)
         return isinstance(self.namespace[id_], SimElement)
+
+    def _id_is_of_propulsive_vehicle(self, id_: UUID) -> bool:
+        """
+        Check if the provided ID is of a PropulsiveVehicle in this simulation.
+
+        :param id_: id to check; must be an element according to _id_is_of_element
+        :return: true if id_ corresponds to an element in this simulation, else false
+        """
+        assert self._id_is_of_element(id_)
+        return isinstance(self.namespace[id_].inner, PropulsiveVehicle)
 
     def _id_is_at_location(self, id_: UUID, location: UUID) -> bool:
         """
