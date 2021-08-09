@@ -36,6 +36,7 @@ from spacenet.schemas import (
     RemoveElements,
 )
 from .decompose_events import decompose_event
+from .indirect_entities import IndirectEntity
 from .simulation_errors import SimError
 from .exceptions import *
 
@@ -129,13 +130,19 @@ class SimEdge(ContainsElements):
 SimElement.update_forward_refs()
 
 
-class SimResult(BaseModel):
-    """
-    A type representing the result of a simulation.
-    """
+def into_indirect_entity(
+    entity: Union[SimElement, SimNode, SimEdge],
+    inverse_namespace: Dict[Union[SimElement, "SimNode", "SimEdge"], UUID],
+) -> IndirectEntity:
+    return IndirectEntity(
+        inner=inverse_namespace[entity],
+        contents=[inverse_namespace[element] for element in entity.contents],
+    )
 
-    nodes: List[UUID]
-    edges: List[UUID]
+
+class SimResult(BaseModel):
+    nodes: List[IndirectEntity]
+    edges: List[IndirectEntity]
     end_time: datetime
     namespace: Dict[UUID, Union[SimElement, SimNode, SimEdge]]
 
@@ -205,7 +212,6 @@ class Move(SimEvent):
                 raise MismatchedIDType(f"ID {id_} should be an element, but is not")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
-        print("move", self.timestamp)
         # Move all elements in the list to the new destination
         # Possible errors:
         #   source is not a container -> error for each moved element
@@ -234,9 +240,6 @@ class Move(SimEvent):
         #  multiple containers
         sim.namespace[source].contents = new_contents
         sim.namespace[dest].contents.extend(to_move_set)
-        if self.timestamp == datetime(year=2010, day=25, hour=4, month=9):
-            print("destination", dest)
-            print("contents", sim.namespace[dest].contents)
 
 
 class Create(SimEvent):
@@ -312,7 +315,6 @@ class Remove(SimEvent):
         #   location is not a container -> error for each created element
         #   values in the list don't correspond to actual elements
         #   elements provided aren't actually at the specified location
-        print("remove", self.timestamp)
         removal_point_id = self.event.removal_point_id
         prev_error_count = len(sim.errors)
         sim._add_errors(
@@ -332,9 +334,6 @@ class Remove(SimEvent):
             )
         )
         prev_contents = sim.namespace[removal_point_id].contents
-        if self.timestamp == datetime(year=2010, day=27, hour=4, month=9):
-            print("removal_point", removal_point_id)
-            print("prev_contents", prev_contents)
         elements_to_remove = set(self.event.elements)
         new_contents = [
             element for element in prev_contents if element not in elements_to_remove
@@ -612,13 +611,13 @@ class Simulation:
             self._run_listeners(self.post_listeners)
 
     def result(self) -> SimResult:
-        inverse_network_namespace = {
-            v: id_ for id_, v in self.namespace.items() if not isinstance(v, SimElement)
-        }
+        inverse_namespace = {v: id_ for id_, v in self.namespace.items()}
         return SimResult(
-            nodes=[inverse_network_namespace[n] for n in self.network],
+            nodes=[
+                into_indirect_entity(n, inverse_namespace) for n in self.network.keys()
+            ],
             edges=[
-                inverse_network_namespace[e]
+                into_indirect_entity(e, inverse_namespace)
                 for adj in self.network.values()
                 for e in adj
             ],
