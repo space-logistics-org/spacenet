@@ -82,8 +82,8 @@ class SimResult(BaseModel):
     """
     A type representing the result of a simulation.
     """
-    nodes: List[SimNode]
-    edges: List[SimEdge]
+    nodes: List[UUID]
+    edges: List[UUID]
     end_time: datetime
     namespace: Dict[UUID, Union[SimElement, SimNode, SimEdge]]
 
@@ -470,9 +470,12 @@ class Simulation:
             self._run_listeners(self.post_listeners)
 
     def result(self) -> SimResult:
+        inverse_namespace = {
+            v: id_ for id_, v in self.namespace.items()
+        }
         return SimResult(
-            nodes=list(self.network.keys()),
-            edges=[e for adj in self.network.values() for e in adj],
+            nodes=[inverse_namespace[n] for n in self.network],
+            edges=[inverse_namespace[e] for adj in self.network.values() for e in adj],
             end_time=self.current_time,
             namespace=self.namespace
         )
