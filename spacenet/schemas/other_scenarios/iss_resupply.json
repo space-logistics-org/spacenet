@@ -214,7 +214,7 @@
   },
   "elementList": {
     "c62bcade-abe1-4f6d-b89a-dc3bb33c1253": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "Progress-M",
       "description": "RSA Progress (M Configuration)",
       "class_of_supply": 9,
@@ -224,10 +224,10 @@
       "volume":0 ,
       "max_cargo_mass": 2350,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "b47788d8-b52e-43d4-9c2b-827647738b36": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "Progress-M-09M",
       "description": "RSA Progress (M Configuration)",
       "class_of_supply": 9,
@@ -237,10 +237,10 @@
       "volume":0 ,
       "max_cargo_mass": 2350,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "923ca5b6-3373-49ac-a181-00675afd31fe": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "Soyuz-TMA-1",
       "description": "RSA Soyuz (TMA Configuration)",
       "class_of_supply": 9,
@@ -250,10 +250,10 @@
       "volume":0 ,
       "max_cargo_mass": 100,
       "max_cargo_volume": 0,
-      "max_crew": 3
+      "cargo_environment": "Pressurized"
     },
     "98acfc76-002f-42d2-b6e2-669d78bb880f": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "Soyuz-TMA-2",
       "description": "RSA Soyuz (TMA Configuration)",
       "class_of_supply": 9,
@@ -263,10 +263,10 @@
       "volume":0 ,
       "max_cargo_mass": 100,
       "max_cargo_volume": 0,
-      "max_crew": 3
+      "cargo_environment": "Pressurized"
     },
     "32036030-4366-432d-95ea-e652697aeb72": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "Soyuz-TMA-01M",
       "description": "RSA Soyuz (TMA Configuration)",
       "class_of_supply": 9,
@@ -276,10 +276,10 @@
       "volume":0 ,
       "max_cargo_mass": 100,
       "max_cargo_volume": 0,
-      "max_crew": 3
+      "cargo_environment": "Pressurized"
     },
     "d3eee086-984a-40db-bd53-48301c789aae": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "Dragon",
       "description": "SpaceX Dragon",
       "class_of_supply": 9,
@@ -289,10 +289,10 @@
       "volume":0 ,
       "max_cargo_mass": 6000,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "f0ad16b0-353d-4a9b-b4a4-5aa9030f1126": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "Cygnus-M",
       "description": "Orbital Cygnus (Improved)",
       "class_of_supply": 9,
@@ -302,10 +302,10 @@
       "volume":0 ,
       "max_cargo_mass": 2700,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "e49f2857-6749-459f-8cc4-b688b28b1c92": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "ATV",
       "description": "ESA Automated Transfer Vehicle",
       "class_of_supply": 9,
@@ -315,10 +315,10 @@
       "volume":0 ,
       "max_cargo_mass": 7600,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "9232f410-06c8-4ded-9183-9b615132b313": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "Orion",
       "description": "NASA Orion Crew Exploration Vehicle",
       "class_of_supply": 9,
@@ -328,10 +328,10 @@
       "volume":0 ,
       "max_cargo_mass": 0,
       "max_cargo_volume": 0,
-      "max_crew": 4
+      "cargo_environment": "Pressurized"
     },
     "b8f27f7e-1091-4060-ba91-859814249e3d": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "STS Shuttle",
       "description": "NASA Space Transportation System Shuttle",
       "class_of_supply": 9,
@@ -341,7 +341,7 @@
       "volume":0 ,
       "max_cargo_mass": 16050,
       "max_cargo_volume": 0,
-      "max_crew": 8
+      "cargo_environment": "Pressurized"
     },
     "a2eed7a1-fe47-4bad-9076-7c2705035ef8": {
       "type": "ElementCarrier",
@@ -370,7 +370,7 @@
       "cargo_environment": "Pressurized"
     },
     "74d994a4-dace-4d26-a5d8-95b1b9af98d4": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "MLM",
       "description": "RSA Multifunctional Laboratory Module",
       "class_of_supply": 8,
@@ -380,10 +380,10 @@
       "volume":0 ,
       "max_cargo_mass": 0,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "493a93b3-8c16-47e6-b73b-1f3888ddd922": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "ELC 3",
       "description": "EXPRESS Logistics Carrier",
       "class_of_supply": 9,
@@ -393,10 +393,10 @@
       "volume":0 ,
       "max_cargo_mass": 2000,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "1e7d25a9-24d8-41fa-9c63-e6cb64f1fd73": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "ELC 4",
       "description": "EXPRESS Logistics Carrier",
       "class_of_supply": 9,
@@ -406,10 +406,10 @@
       "volume":0 ,
       "max_cargo_mass": 2000,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "43e4bdc6-69d8-4eec-842f-919025caa0fe": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "PMM",
       "description": "Pressurized Multipurpose Module",
       "class_of_supply": 9,
@@ -419,10 +419,10 @@
       "volume":0 ,
       "max_cargo_mass": 9070,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "afdc4e0a-9b3d-4e6e-add6-f258f6e6fad7": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "Leonardo",
       "description": "Pressurized Multipurpose Module",
       "class_of_supply": 9,
@@ -432,10 +432,10 @@
       "volume":0 ,
       "max_cargo_mass": 9070,
       "max_cargo_volume": 0,
-      "max_crew": 0
+      "cargo_environment": "Pressurized"
     },
     "378b453f-fa4c-4fc1-a378-607c22d92360": {
-      "type": "Vehicle",
+      "type": "ElementCarrier",
       "name": "ISS CM",
       "description": "International Space Station Crew Module",
       "class_of_supply": 8,
@@ -445,7 +445,7 @@
       "volume":0 ,
       "max_cargo_mass": 0,
       "max_cargo_volume": 0,
-      "max_crew": 6
+      "cargo_environment": "Pressurized"
     },
     "361d4d09-eca1-428b-aa53-4b5c8d487900": {
       "type": "ElementCarrier",
