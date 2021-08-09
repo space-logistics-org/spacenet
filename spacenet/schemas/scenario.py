@@ -24,16 +24,6 @@ class Network(BaseModel):
     nodes: Dict[UUID, AllNodes] = Field(..., title="Nodes")
     edges: Dict[UUID, AllUUIDEdges] = Field(..., title="Edges")
 
-    @root_validator(skip_on_failure=True)
-    def _no_common_ids(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        nodes = values.get("nodes")
-        edges = values.get("edges")
-        assert nodes is not None and edges is not None
-        assert not (
-            nodes.keys() & edges.keys()
-        ), "must not have common ids between nodes and edges"
-        return values
-
 
 class ScenarioType(str, Enum):
     iss = "ISS"
@@ -51,7 +41,6 @@ class Scenario(BaseModel):
     name: str = Field(..., title="Name", description="Name of Scenario")
     description: str = Field(None, title="Description", description="Short description")
     startDate: datetime = Field(..., title="Start Date")
-    # TODO: should be same as earliest mission start date?
     scenarioType: ScenarioType = Field(..., title="Type of Scenario")
 
     network: Network = Field(..., title="Network")
@@ -61,21 +50,6 @@ class Scenario(BaseModel):
 
     volumeConstrained: bool = Field(False, title="Volume Constrained")
     environmentConstrained: bool = Field(False, title="Environment Constrained")
-
-    @root_validator(skip_on_failure=True)
-    def _no_common_ids(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        network: Optional[Network] = values.get("network")
-        assert network is not None
-        network_ids = network.nodes.keys() | network.edges.keys()
-        elements = values.get("elementList")
-        assert elements is not None
-        assert not (
-            elements.keys() & network_ids
-        ), "must not have common ids between elements and network entities"
-        return values
-
-    # TODO: validator that events in missions and events in manifest agree?
-    #  or move to CheckedScenario event
 
     class Config:
         title: "Scenario"

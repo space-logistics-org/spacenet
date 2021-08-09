@@ -5,14 +5,24 @@
 # time-expanded part.
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, TypeVar, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    TypeVar,
+    Union,
+)
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, NonNegativeFloat, validator
 
 from spacenet.analysis.min_heap import MinHeap
 from spacenet.schemas import (
-    Burn,
     ElementCarrier,
     Event,
     PropulsiveBurn,
@@ -27,8 +37,9 @@ from spacenet.schemas import (
 )
 from .decompose_events import decompose_event
 from .simulation_errors import SimError
+from .exceptions import *
 
-from spacenet.fuel_formulas.functions import *
+from spacenet.fuel_formulas.functions import delta_v_from, final_mass_from
 
 __all__ = ["Simulation", "SimResult", "SimError"]
 
@@ -43,8 +54,48 @@ class SimElement(ContainsElements):
     """
 
     inner: AllElements
-    # TODO: should not be able to carry self, even recursively: create Contains Graph and BFS
-    #  it from one element to itself, assert that only path is zero-length
+    fuel_mass: NonNegativeFloat = 0
+
+    def __hash__(self):
+        return hash(self.inner)
+
+    def all_contained(self) -> Tuple[Set[AllElements], List["SimError"]]:
+        visited = {self.inner}
+        errors = []
+        stack = list(self.contents)
+        while stack:
+            next_element = stack.pop()
+            for contained in next_element.contents:
+                if contained.inner == self.inner:
+                    errors.append(
+                        SimError(
+                            description=f"Element {self.inner.name} cannot contain itself"
+                        )
+                    )
+                elif contained.inner in visited:
+                    errors.append(
+                        SimError(
+                            description=f"Element {contained.inner.name} "
+                            f"has multiple containers"
+                        )
+                    )
+                else:
+                    stack.append(contained)
+            visited.add(next_element.inner)
+        return visited, errors
+
+    def total_mass(self) -> Tuple[float, List["SimError"]]:
+        all_contained, errors = self.all_contained()
+        return sum(contained.mass for contained in all_contained), errors
+
+    @property
+    def current_mass(self) -> float:
+        return self.inner.mass + self.fuel_mass
+
+    @validator("fuel_mass")
+    def _initialize_fuel_mass(cls, value, values, config, field) -> float:
+        inner: AllElements = values.get("inner")
+        return inner.max_fuel if isinstance(inner, PropulsiveVehicle) else 0
 
 
 ContainsElements.update_forward_refs()
@@ -101,14 +152,16 @@ class SimEvent(BaseModel, ABC):
         return (self.timestamp, self.priority) < (other.timestamp, other.priority)
 
     @abstractmethod
-    def validate_ids_exist(self, sim: "Simulation") -> None:
+    def validate_ids(self, sim: "Simulation") -> None:
         """
         Validate this event, checking that its referenced values are present
-        in the namespace of the provided simulation.
+        in the namespace of the provided simulation, and have the correct types.
 
         :param sim: event to validate
-        :raise ValueError: if this event has referenced values not present
-        in the namespace
+        :raises UnrecognizedID: if this event has referenced values not present
+                in the namespace
+        :raises MismatchedIDType: if this event has referenced IDs, but they're the incorrect
+                type
         """
         pass
 
@@ -129,23 +182,35 @@ class Move(SimEvent):
 
     event: MoveElements
 
-    def validate_ids_exist(self, sim: "Simulation") -> None:
+    def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.origin_id):
-            raise ValueError(f"Origin id {event.origin_id} does not exist")
+            raise UnrecognizedID(f"Origin id {event.origin_id} does not exist")
+        elif not sim._id_is_of_container(event.origin_id):
+            raise MismatchedIDType(
+                f"Origin id {event.origin_id} should be a container, but is not"
+            )
         elif not sim._id_exists(event.destination_id):
-            raise ValueError(f"Destination id {event.destination_id} does not exist")
+            raise UnrecognizedID(
+                f"Destination id {event.destination_id} does not exist"
+            )
+        elif not sim._id_is_of_container(event.destination_id):
+            raise MismatchedIDType(
+                f"Destination id {event.destination_id} should be a container, but is not"
+            )
         for id_ in event.to_move:
             if not sim._id_exists(id_):
-                raise ValueError(f"ID {id_} does not exist")
+                raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType(f"ID {id_} should be an element, but is not")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
+        print("move", self.timestamp)
         # Move all elements in the list to the new destination
         # Possible errors:
         #   source is not a container -> error for each moved element
         #   destination is not a container -> error for each moved element
         #   some element in the list is not actually an element
-        # TODO: can decompose a move into a remove and a create?
         prev_error_count = len(sim.errors)
         source = self.event.origin_id
         sim._add_errors(
@@ -156,17 +221,22 @@ class Move(SimEvent):
             _id_exists_and_is_container(id_=dest, timestamp=self.timestamp, sim=sim)
         )
         sim._add_errors(_all_ids_are_elements(self.event.to_move, self.timestamp, sim))
+        assert prev_error_count == len(sim.errors), "Expected not to get new errors"
         # Filter source contents and move them over
         prev_contents = sim.namespace[source].contents
-        # fixme Low-hanging fruit for optimization:
-        #  store UUIDs in elements and check those instead? Performance
-        new_contents = [
-            element for element in prev_contents if element not in self.event.to_move
-        ]
-        sim.namespace[source].contents = new_contents
-        sim.namespace[dest].contents.extend(
+        to_move_set: Set[SimElement] = set(
             sim.namespace[id_] for id_ in self.event.to_move
         )
+        new_contents = [
+            element for element in prev_contents if element not in to_move_set
+        ]
+        # TODO: maintain invariant that elements don't contain themselves or have
+        #  multiple containers
+        sim.namespace[source].contents = new_contents
+        sim.namespace[dest].contents.extend(to_move_set)
+        if self.timestamp == datetime(year=2010, day=25, hour=4, month=9):
+            print("destination", dest)
+            print("contents", sim.namespace[dest].contents)
 
 
 class Create(SimEvent):
@@ -176,13 +246,19 @@ class Create(SimEvent):
 
     event: MakeElements
 
-    def validate_ids_exist(self, sim: "Simulation") -> None:
+    def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.entry_point_id):
-            raise ValueError(f"Entry point {event.entry_point_id} does not exist")
+            raise UnrecognizedID(f"Entry point {event.entry_point_id} does not exist")
+        elif not sim._id_is_of_container(event.entry_point_id):
+            raise MismatchedIDType(
+                f"Entry point {event.entry_point_id} is not of container"
+            )
         for id_ in event.elements:
             if not sim._id_exists(id_):
-                raise ValueError(f"ID {id_} does not exist")
+                raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType(f"ID {id_} is not of element")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Create all elements in the list at the specified location
@@ -190,6 +266,7 @@ class Create(SimEvent):
         #   location is not a container -> error for each created element
         #   values in the list don't correspond to actual elements
         entry_point = self.event.entry_point_id
+        prev_error_count = len(sim.errors)
         sim._add_errors(
             _id_exists_and_is_container(
                 id_=entry_point, timestamp=self.timestamp, sim=sim
@@ -203,6 +280,7 @@ class Create(SimEvent):
         sim.namespace[entry_point].contents.extend(
             sim.namespace[id_] for id_ in self.event.elements
         )
+        assert prev_error_count == len(sim.errors), "Expected not to get new errors"
 
 
 class Remove(SimEvent):
@@ -212,13 +290,21 @@ class Remove(SimEvent):
 
     event: RemoveElements
 
-    def validate_ids_exist(self, sim: "Simulation") -> None:
+    def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         if not sim._id_exists(event.removal_point_id):
-            raise ValueError(f"Removal point {event.removal_point_id} does not exist")
+            raise UnrecognizedID(
+                f"Removal point {event.removal_point_id} does not exist"
+            )
+        elif not sim._id_is_of_container(event.removal_point_id):
+            raise MismatchedIDType(
+                f"Removal point {event.removal_point_id} is not of container"
+            )
         for id_ in event.elements:
             if not sim._id_exists(id_):
-                raise ValueError(f"ID {id_} does not exist")
+                raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType("ID {id_} is not of element")
 
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Remove all elements in the list at the specified location
@@ -226,12 +312,17 @@ class Remove(SimEvent):
         #   location is not a container -> error for each created element
         #   values in the list don't correspond to actual elements
         #   elements provided aren't actually at the specified location
+        print("remove", self.timestamp)
         removal_point_id = self.event.removal_point_id
+        prev_error_count = len(sim.errors)
         sim._add_errors(
             _id_exists_and_is_container(
                 id_=self.event.removal_point_id, timestamp=self.timestamp, sim=sim
             )
         )
+        assert prev_error_count == len(
+            sim.errors
+        ), "Expected no new errors from id existence"
         sim._add_errors(
             _all_ids_are_elements_at_location(
                 ids=self.event.elements,
@@ -241,10 +332,12 @@ class Remove(SimEvent):
             )
         )
         prev_contents = sim.namespace[removal_point_id].contents
-        # fixme Low-hanging fruit for optimization:
-        #  store UUIDs in elements and check those instead? Performance
+        if self.timestamp == datetime(year=2010, day=27, hour=4, month=9):
+            print("removal_point", removal_point_id)
+            print("prev_contents", prev_contents)
+        elements_to_remove = set(self.event.elements)
         new_contents = [
-            element for element in prev_contents if element not in self.event.elements
+            element for element in prev_contents if element not in elements_to_remove
         ]
         sim.namespace[removal_point_id].contents = new_contents
 
@@ -254,39 +347,68 @@ class BurnEvent(SimEvent):
     Represents a burn, one of the four primitive SimEvents.
     """
 
-    event: Burn
-    elements: List[UUID]  # ordered: last element is first to have delta-v consumed
+    event: PropulsiveBurn
 
-    def validate_ids_exist(self, sim: "Simulation") -> None:
-        raise NotImplementedError
+    def validate_ids(self, sim: "Simulation") -> None:
+        event = self.event
+        for id_ in event.elements:
+            if not sim._id_exists(id_):
+                raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType(f"ID {id_} is not of an element")
+        for id_ in (item.element_id for item in event.burn_stage_sequence):
+            if not sim._id_exists(id_):
+                raise UnrecognizedID(f"ID {id_} does not exist")
+            elif not sim._id_is_of_element(id_):
+                raise MismatchedIDType(f"ID {id_} is not of an element")
+            elif not sim._id_is_of_propulsive_vehicle(id_):
+                raise MismatchedIDType(f"ID {id_} is not of a PropulsiveVehicle")
+        assert set(event.burn_stage_sequence).issubset(event.elements)
 
     def process_with_ctx(self, sim: "Simulation") -> None:
-        # TODO
         # Consume the fuel at the given elements until enough fuel has been consumed
         # to satisfy delta-v requirement
         # Possible errors:
         #   values in the list don't correspond to actual elements
         #   not enough fuel (if this is a problem depends, but it's probably more efficient to
         #    just not add burn events if there's no fuel constraint and just stage)
-        raise NotImplementedError
-
-        # delta_ve = event.delta_v
-        # for element in elements:
-        # init_mass = element.mass
-        # fin_mass = final_mass_from(delta_v: delta_ve, isp: 0, m_0: init_mass)
-        # req_deltav = delts_v_from(isp: 0, m_0: init_mass, m_f: fin_mass)
-        # if (req_deltav > delta_ve):
-        # subtract mass/fuel
-        # else:
-        # delta_ve -= req_deltav
-        # RemoveElement? stage
+        event = self.event
+        delta_v = event.burn.delta_v
+        m_0 = sum(sim.namespace[id_].total_mass()[0] for id_ in self.event.elements)
+        for item in event.burn_stage_sequence:
+            element: SimElement = sim.namespace[item.element_id]
+            if item.burnStage == "Burn":
+                assert sim._id_is_of_propulsive_vehicle(item.element_id)
+                if delta_v == 0:
+                    continue
+                min_final_mass = element.total_mass()[0] - element.fuel_mass
+                stage_delta_v = delta_v_from(element.inner.isp, m_0, min_final_mass)
+                if stage_delta_v > delta_v:
+                    mass_change = m_0 - final_mass_from(delta_v, element.inner.isp, m_0)
+                    element.fuel_mass -= mass_change
+                    m_0 -= mass_change
+                    delta_v = 0
+                    # It's safe to modify the element's current mass because we don't use
+                    # the outer current mass field as part of the hash, so h(x) cannot change
+                    # while x is in a dictionary by this mutation
+                else:
+                    m_0 -= element.fuel_mass
+                    delta_v -= stage_delta_v
+            else:
+                assert item.burnStage == "Stage"
+                m_0 -= element.total_mass()
 
 
 T = TypeVar("T")
 SimCallback = Callable[["Simulation", Optional[T]], T]
 SimEntity = Union[SimEdge, SimElement, SimNode]
 
-EVENT_TO_SIM_EVENT = {MakeElements: Create, MoveElements: Move, RemoveElements: Remove}
+EVENT_TO_SIM_EVENT = {
+    MakeElements: Create,
+    MoveElements: Move,
+    RemoveElements: Remove,
+    PropulsiveBurn: BurnEvent,
+}
 
 
 class Simulation:
@@ -309,16 +431,27 @@ class Simulation:
         scenario: Scenario,
         pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
         post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+        propulsive: bool = False,
     ) -> None:
         """
-        Construct a new simulation, raising a ValueError if the provided scenario cannot be run
+        Construct a new simulation, raising errors if the provided scenario cannot be run
         without raising an exception.
 
         :param scenario: scenario defining network and events to simulate
         :param pre_listeners: listeners to run before each event
         :param post_listeners: listeners to run after each event
-        :raise ValueError: if an event references values not in the namespace
+        :raise EventDateOverflowError: if the time an event ends, relative to mission start,
+            cannot be represented as a timedelta, or the absolute time an event occurs cannot
+            be represented as a datetime
+        :raises UnrecognizedID: if an event references an ID that does not exist in the
+            namespace
+        :raises UnrecognizedEdgeEndpoint: if an edge has an endpoint which is not
+            a network node
+        :raises MismatchedIDType: if an ID referenced as a certain type is not of the certain
+            type
         """
+        # TODO: keep documentation up to date, maybe keep error checking up to date in event
+        #  execution
         self.namespace: Dict[UUID, SimEntity] = {}
         for id_, node in scenario.network.nodes.items():
             self.namespace[id_] = SimNode(inner=node)
@@ -337,8 +470,12 @@ class Simulation:
             self.network.setdefault(node, set())
         for id_ in scenario.network.edges:
             edge = self.namespace[id_]
+            for endpoint in (edge.inner.origin_id, edge.inner.destination_id):
+                if endpoint not in scenario.network.nodes:
+                    raise UnrecognizedEdgeEndpoint(
+                        f"Edge {id_} has an endpoint {endpoint} not found in network"
+                    )
             src = self.namespace[edge.inner.origin_id]
-            assert src in self.network
             self.network[src].add(edge)
             # add edges to adj-list rep
         events = [
@@ -347,6 +484,8 @@ class Simulation:
             for event in mission.events
             for atomic_event in Simulation._decompose_event(event, mission.start_date)
         ]
+        if not propulsive:
+            events = [e for e in events if not isinstance(e, BurnEvent)]
         self.event_queue: MinHeap[SimEvent] = MinHeap(events)
         self.errors: List[SimError] = []
         # Type annotations below aren't tight: Dict is a mapping of SimCallback[T] to T, but
@@ -359,33 +498,25 @@ class Simulation:
         ] = {} if post_listeners is None else post_listeners
         self.current_time: datetime = scenario.startDate
         for event in self.event_queue:
-            event.validate_ids_exist(sim=self)
+            event.validate_ids(sim=self)
 
     @classmethod
     def _decompose_event(
         cls, event: Event, mission_start_time: datetime
     ) -> List[SimEvent]:
+        try:
+            primitives = decompose_event(event)
+        except OverflowError:
+            raise EventDateOverflowError(event)
         result = []
-        for primitive in decompose_event(event):
+        for primitive in primitives:
             try:
                 timestamp = mission_start_time + primitive.mission_time
-            except OverflowError as e:
-                raise ValueError(e)
+            except OverflowError:
+                raise EventDateOverflowError(event)
             priority = primitive.priority
-            if type(primitive) == PropulsiveBurn:
-                result.append(
-                    BurnEvent(
-                        timestamp=timestamp,
-                        priority=priority,
-                        event=primitive.burn,
-                        elements=primitive.elements,
-                    )
-                )
-            else:
-                ty = EVENT_TO_SIM_EVENT[type(primitive)]
-                result.append(
-                    ty(event=primitive, timestamp=timestamp, priority=priority)
-                )
+            ty = EVENT_TO_SIM_EVENT[type(primitive)]
+            result.append(ty(event=primitive, timestamp=timestamp, priority=priority))
         return result
 
     def _add_event(self, event: SimEvent) -> None:
@@ -434,6 +565,16 @@ class Simulation:
         """
         assert self._id_exists(id_)
         return isinstance(self.namespace[id_], SimElement)
+
+    def _id_is_of_propulsive_vehicle(self, id_: UUID) -> bool:
+        """
+        Check if the provided ID is of a PropulsiveVehicle in this simulation.
+
+        :param id_: id to check; must be an element according to _id_is_of_element
+        :return: true if id_ corresponds to an element in this simulation, else false
+        """
+        assert self._id_is_of_element(id_)
+        return isinstance(self.namespace[id_].inner, PropulsiveVehicle)
 
     def _id_is_at_location(self, id_: UUID, location: UUID) -> bool:
         """
@@ -491,11 +632,12 @@ def _all_ids_are_elements(
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
+        name = sim.namespace[id_].inner.name
         if not sim._id_exists(id_):
-            ret.append(SimError.does_not_exist(timestamp, id_))
+            ret.append(SimError.does_not_exist(timestamp, id_, name))
             continue
         if not sim._id_is_of_element(id_):
-            ret.append(SimError.not_an_element(timestamp, id_))
+            ret.append(SimError.not_an_element(timestamp, id_, name))
     return ret
 
 
@@ -504,14 +646,15 @@ def _all_ids_are_elements_at_location(
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
+        name = sim.namespace[id_].inner.name
         if not sim._id_exists(id_):
-            ret.append(SimError.does_not_exist(timestamp, id_))
+            ret.append(SimError.does_not_exist(timestamp, id_, name))
             continue
         if not sim._id_is_of_element(id_):
-            ret.append(SimError.not_an_element(timestamp, id_))
+            ret.append(SimError.not_an_element(timestamp, id_, name))
             continue
         if not sim._id_is_at_location(id_, location):
-            ret.append(SimError.not_at_location(timestamp, id_, location))
+            ret.append(SimError.not_at_location(timestamp, id_, location, name))
     return ret
 
 
@@ -519,9 +662,10 @@ def _id_exists_and_is_container(
     id_: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
+    name = sim.namespace[id_].inner.name
     if not sim._id_exists(id_):
-        ret.append(SimError.does_not_exist(timestamp, id_))
+        ret.append(SimError.does_not_exist(timestamp, id_, name))
         return ret
     if not sim._id_is_of_container(id_):
-        ret.append(SimError.not_a_container(timestamp, id_))
+        ret.append(SimError.not_a_container(timestamp, id_, name))
     return ret
