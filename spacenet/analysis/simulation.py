@@ -82,6 +82,7 @@ class SimResult(BaseModel):
     """
     A type representing the result of a simulation.
     """
+
     nodes: List[UUID]
     edges: List[UUID]
     end_time: datetime
@@ -304,10 +305,10 @@ class Simulation:
     )
 
     def __init__(
-            self,
-            scenario: Scenario,
-            pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
-            post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+        self,
+        scenario: Scenario,
+        pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
+        post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
     ) -> None:
         """
         Construct a new simulation, raising a ValueError if the provided scenario cannot be run
@@ -362,7 +363,7 @@ class Simulation:
 
     @classmethod
     def _decompose_event(
-            cls, event: Event, mission_start_time: datetime
+        cls, event: Event, mission_start_time: datetime
     ) -> List[SimEvent]:
         result = []
         for primitive in decompose_event(event):
@@ -470,19 +471,23 @@ class Simulation:
             self._run_listeners(self.post_listeners)
 
     def result(self) -> SimResult:
-        inverse_namespace = {
-            v: id_ for id_, v in self.namespace.items()
+        inverse_network_namespace = {
+            v: id_ for id_, v in self.namespace.items() if not isinstance(v, SimElement)
         }
         return SimResult(
-            nodes=[inverse_namespace[n] for n in self.network],
-            edges=[inverse_namespace[e] for adj in self.network.values() for e in adj],
+            nodes=[inverse_network_namespace[n] for n in self.network],
+            edges=[
+                inverse_network_namespace[e]
+                for adj in self.network.values()
+                for e in adj
+            ],
             end_time=self.current_time,
-            namespace=self.namespace
+            namespace=self.namespace,
         )
 
 
 def _all_ids_are_elements(
-        ids: List[UUID], timestamp: datetime, sim: Simulation
+    ids: List[UUID], timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -495,7 +500,7 @@ def _all_ids_are_elements(
 
 
 def _all_ids_are_elements_at_location(
-        ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
+    ids: List[UUID], location: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     for id_ in ids:
@@ -511,7 +516,7 @@ def _all_ids_are_elements_at_location(
 
 
 def _id_exists_and_is_container(
-        id_: UUID, timestamp: datetime, sim: Simulation
+    id_: UUID, timestamp: datetime, sim: Simulation
 ) -> List[SimError]:
     ret = []
     if not sim._id_exists(id_):
