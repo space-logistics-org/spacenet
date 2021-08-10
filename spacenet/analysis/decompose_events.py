@@ -68,13 +68,13 @@ def move_from_transport(
     :raises OverflowError: if mission_time + exec_time > maximum timedelta
     """
     move_to_edge = MoveElements(
-            priority=transport_event.priority,
-            to_move=transport_event.elements_id_list,
-            origin_id=transport_event.origin_node_id,
-            destination_id=transport_event.edge_id,
-            mission_time=transport_event.mission_time,
-            type="MoveElements",
-        )
+        priority=transport_event.priority,
+        to_move=transport_event.elements_id_list,
+        origin_id=transport_event.origin_node_id,
+        destination_id=transport_event.edge_id,
+        mission_time=transport_event.mission_time,
+        type="MoveElements",
+    )
     move_from_edge = MoveElements(
         priority=transport_event.priority,
         to_move=transport_event.elements_id_list,

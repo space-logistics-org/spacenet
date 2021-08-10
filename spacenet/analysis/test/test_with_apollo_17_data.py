@@ -12,7 +12,9 @@ pytestmark = [pytest.mark.analysis, pytest.mark.apollo_17]
 
 
 def test_scenario_runs_without_error():
-    filename = pkg_resources.resource_filename("spacenet.schemas", "apollo_17/apollo_17.json")
+    filename = pkg_resources.resource_filename(
+        "spacenet.schemas", "apollo_17/apollo_17.json"
+    )
     scenario = Scenario.parse_file(filename)
     sim = Simulation(scenario)
     sim.run()
@@ -21,7 +23,9 @@ def test_scenario_runs_without_error():
 
 @given(st.datetimes())
 def test_scenario_runs_without_error_for_any_until(dt: datetime):
-    filename = pkg_resources.resource_filename("spacenet.schemas", "apollo_17/apollo_17.json")
+    filename = pkg_resources.resource_filename(
+        "spacenet.schemas", "apollo_17/apollo_17.json"
+    )
     scenario = Scenario.parse_file(filename)
     sim = Simulation(scenario)
     sim.run(until=dt)
@@ -30,7 +34,9 @@ def test_scenario_runs_without_error_for_any_until(dt: datetime):
 
 @given(st.datetimes())
 def test_identical_result_for_datetime_after_last_event(dt: datetime):
-    filename = pkg_resources.resource_filename("spacenet.schemas", "apollo_17/apollo_17.json")
+    filename = pkg_resources.resource_filename(
+        "spacenet.schemas", "apollo_17/apollo_17.json"
+    )
     scenario = Scenario.parse_file(filename)
     sim = Simulation(scenario)
     sim.run()

@@ -11,6 +11,7 @@ class SimError(BaseModel):
     are recovered from by assuming the triggering event is successful. If that is not the case,
     the simulation may fail with an actual exception.
     """
+
     timestamp: Optional[datetime] = None
     description: str
 
@@ -43,6 +44,7 @@ class EntityDoesNotExist(SimError):
     """
     An error representing that an entity does not exist.
     """
+
     @staticmethod
     def new(timestamp: datetime, id_: UUID, name: str) -> "EntityDoesNotExist":
         return EntityDoesNotExist(
@@ -55,6 +57,7 @@ class EntityNotAnElement(SimError):
     """
     An error representing that an entity is not an element.
     """
+
     @staticmethod
     def new(timestamp: datetime, id_: UUID, name: str) -> "EntityNotAnElement":
         return EntityNotAnElement(
@@ -74,6 +77,7 @@ class ElementNotAtLocation(SimError):
     """
     An error representing that an entity is not present at a location it was expected to be at.
     """
+
     @staticmethod
     def new(
         timestamp: datetime, id_: UUID, location: UUID, name: str

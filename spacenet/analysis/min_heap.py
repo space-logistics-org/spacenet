@@ -9,6 +9,7 @@ class MinHeap(Generic[T]):
     A wrapper around the procedural methods provided in the heapq library. Provides a minimal
     priority queue implementation via an array-backed binary heap.
     """
+
     __slots__ = ["_inner"]
 
     def __init__(self, initial: Optional[Iterable[T]] = None):
@@ -56,4 +57,4 @@ class MinHeap(Generic[T]):
         yield from self._inner
 
     def __repr__(self) -> str:
-        return repr(f'MinHeap({self._inner})')
+        return repr(f"MinHeap({self._inner})")

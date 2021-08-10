@@ -17,6 +17,7 @@ class ContainsElements(BaseModel):
     """
     A mixin for entities which contain elements under simulation.
     """
+
     contents: List["SimElement"] = Field(default_factory=list)
 
 
@@ -123,9 +124,9 @@ class SimResult(BaseModel):
     A representation of the outcome of a simulation. Uses indirection and namespace together
     to simplify queries on the network in the result.
     """
+
     nodes: List[IndirectEntity]
     edges: List[IndirectEntity]
     elements: List[IndirectEntity]
     end_time: datetime
     namespace: Dict[UUID, Union[SimEdge, SimElement, SimNode]]
-

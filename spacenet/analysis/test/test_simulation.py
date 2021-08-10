@@ -20,7 +20,7 @@ SimCallback = Callable[["Simulation", Optional[T]], T]
 
 @st.composite
 def listener_builder(
-        draw: DrawFn, types: List[Type]
+    draw: DrawFn, types: List[Type]
 ) -> Tuple[SimCallback[T], Optional[T]]:
     ty = draw(st.sampled_from(types))
     ty_strategy = st.from_type(ty)
@@ -40,7 +40,7 @@ st.register_type_strategy(
 
 @st.composite
 def listener_dict_builder(
-        draw: DrawFn, types: List[Type], min_size: int = 0, max_size: Optional[int] = None
+    draw: DrawFn, types: List[Type], min_size: int = 0, max_size: Optional[int] = None
 ) -> Dict[SimCallback[Any], Any]:
     args = draw(st.lists(listener_builder(types), min_size=min_size, max_size=max_size))
     return dict(args)
@@ -63,7 +63,9 @@ def test_fuzz_simulation(scenario, propulsive, pre_listeners, post_listeners):
     sim.run()
 
 
-@given(scenario=build_validating_scenario(), propulsive=st.booleans(),)
+@given(
+    scenario=build_validating_scenario(), propulsive=st.booleans(),
+)
 @pytest.mark.slow
 @pytest.mark.xfail
 def test_simulation_returns_same(scenario, propulsive):
@@ -79,7 +81,9 @@ def test_simulation_returns_same(scenario, propulsive):
     assert sim.result() == other_sim.result()
 
 
-@given(scenario=build_validating_scenario(), propulsive=st.booleans(),)
+@given(
+    scenario=build_validating_scenario(), propulsive=st.booleans(),
+)
 @pytest.mark.slow
 @pytest.mark.xfail
 def test_simulation_empties_queue(scenario, propulsive):
@@ -90,6 +94,7 @@ def test_simulation_empties_queue(scenario, propulsive):
         return
     sim.run()
     assert not sim.event_queue
+
 
 # TODO: another property is that all MoveElements events end up with their constituent
 #  elements ending up at their final destinations by the end, regardless of errors, unless
