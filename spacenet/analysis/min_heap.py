@@ -19,14 +19,29 @@ class MinHeap(Generic[T]):
             heapify(self._inner)
 
     def peek(self) -> Optional[T]:
+        """
+        View a smallest item on the heap, or return None if no items are present.
+
+        :return: a smallest element in the heap, or None if no items are present
+        """
         if not self._inner:
             return None
         return self._inner[0]
 
     def push(self, item: T):
+        """
+        Push item onto the heap, maintaining the heap invariant.
+
+        :param item: item to add to the heap
+        """
         heappush(self._inner, item)
 
     def pop(self) -> Optional[T]:
+        """
+        Pop a smallest element from the heap, or return None if no elements are present.
+
+        :return: a smallest element in the heap, or None if no items are present
+        """
         if not self._inner:
             return None
         return heappop(self._inner)
