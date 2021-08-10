@@ -1,14 +1,14 @@
 from typing import List
 from uuid import UUID
 
-from pydantic import Field
+from pydantic import Field, NonNegativeFloat
 
+from spacenet.schemas import AllElements, AllNodes, AllUUIDEdges
 from spacenet.schemas.mixins import ImmutableBaseModel
 
 
 __all__ = [
-    "ContainsElementRefs",
-    "IndirectEntity"
+    "IndirectEntity",
 ]
 
 
