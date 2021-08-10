@@ -8,6 +8,10 @@ from spacenet.schemas.scenario import Network
 
 
 class CheckedScenario(Scenario):
+    """
+    A validated scenario which guarantees some invariants which Simulation requires of the
+    input scenario.
+    """
     @root_validator(skip_on_failure=True)
     def _same_start_date_as_earliest_mission_start_date(
         cls, values: Dict[str, Any]
