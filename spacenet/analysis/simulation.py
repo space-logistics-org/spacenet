@@ -23,7 +23,8 @@ from pydantic import BaseModel
 from spacenet.schemas import (
     ElementCarrier,
     Event,
-    PrimitiveEvent, PropulsiveBurn,
+    PrimitiveEvent,
+    PropulsiveBurn,
     PropulsiveVehicle,
     Scenario,
     MoveElements,
@@ -408,7 +409,6 @@ class Simulation:
             raise EventDateOverflowError(event)
         result = []
         for primitive in primitives:
-            assert isinstance(primitive, PrimitiveEvent)
             try:
                 timestamp = mission_start_time + primitive.mission_time
                 queued_at = mission_start_time + primitive.queued_at

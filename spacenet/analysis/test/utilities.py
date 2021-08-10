@@ -3,9 +3,7 @@ from typing import Callable, TypeVar
 
 from spacenet.schemas import Scenario
 
-__all__ = [
-    "T", "DrawFn", "build_validating_scenario"
-]
+__all__ = ["T", "DrawFn", "build_validating_scenario"]
 
 T = TypeVar("T")
 DrawFn = Callable[[st.SearchStrategy[T]], T]

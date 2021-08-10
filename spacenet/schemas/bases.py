@@ -7,6 +7,9 @@ __all__ = ["Event", "ElementTransportEvent", "PrimitiveEvent"]
 
 
 class Event(BaseModel):
+    """
+    The base event schema.
+    """
     type: str = Field(
         ...,
         title="Type",
@@ -27,6 +30,9 @@ class Event(BaseModel):
 
 
 class ElementTransportEvent(Event):
+    """
+    A schema representing a basic event transporting elements from one node to another.
+    """
     origin_node_id: UUID = Field(
         ...,
         title="Origin Node ID",
@@ -51,6 +57,9 @@ class ElementTransportEvent(Event):
 
 
 class PrimitiveEvent(Event):
+    """
+    A schema representing events which other events are decomposed into.
+    """
     queued_at: timedelta = None
 
     @validator("queued_at", always=True)

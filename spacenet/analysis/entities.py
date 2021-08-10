@@ -14,6 +14,10 @@ InvRichNamespace = Dict[Union["SimElement", "SimNode", "SimEdge"], UUID]
 
 
 class ContainsElements(BaseModel):
+    """
+    A mixin for entities which contain elements under simulation.
+    """
+
     contents: List["SimElement"] = Field(default_factory=list)
 
 
@@ -101,6 +105,14 @@ SimElement.update_forward_refs()
 def into_indirect_entity(
     entity: Union[SimElement, SimNode, SimEdge], inverse_namespace: InvRichNamespace,
 ) -> IndirectEntity:
+    """
+    Convert a richly represented entity into the equivalent entity.
+
+    :param entity: entity to convert into indirect equivalent
+    :param inverse_namespace: namespace mapping rich representations of entities
+        (not using UUID references) to the UUIDs of those entities
+    :return: the indirect entity which is equivalent to entity
+    """
     return IndirectEntity(
         inner=inverse_namespace[entity],
         contents=[inverse_namespace[element] for element in entity.contents],
@@ -108,9 +120,13 @@ def into_indirect_entity(
 
 
 class SimResult(BaseModel):
+    """
+    A representation of the outcome of a simulation. Uses indirection and namespace together
+    to simplify queries on the network in the result.
+    """
+
     nodes: List[IndirectEntity]
     edges: List[IndirectEntity]
     elements: List[IndirectEntity]
     end_time: datetime
     namespace: Dict[UUID, Union[SimEdge, SimElement, SimNode]]
-
