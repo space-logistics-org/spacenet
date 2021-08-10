@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, root_validator
 
-from . import Event, PrimitiveEvent
+from . import PrimitiveEvent
 from .burn import Burn
 
 __all__ = ["BurnStage", "PropulsiveBurn", "BurnStageItem"]
