@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import Field
 
-from .bases import Event
+from .bases import Event, PrimitiveEvent
 
 __all__ = [
     "MakeElements",
@@ -13,7 +13,7 @@ __all__ = [
 ]
 
 
-class MakeElements(Event):
+class MakeElements(PrimitiveEvent):
     """
     An event which brings elements "into" a simulation
     at a specific time and location (node, edge, or inside an element carrier).
@@ -27,7 +27,7 @@ class MakeElements(Event):
     )
 
 
-class MoveElements(Event):
+class MoveElements(PrimitiveEvent):
     """
     An event which moves elements at a specific time and location (node or edge)
     to a new location (node, edge, or element carrier).
@@ -47,7 +47,7 @@ class MoveElements(Event):
     )
 
 
-class RemoveElements(Event):
+class RemoveElements(PrimitiveEvent):
     """
     An event which deletes elements from the simulation
     at a specific time and location (node or edge).

@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, root_validator
 
-from . import Event
+from . import Event, PrimitiveEvent
 from .burn import Burn
 
 __all__ = ["BurnStage", "PropulsiveBurn", "BurnStageItem"]
@@ -36,7 +36,7 @@ class BurnStageItem(BaseModel):
     )
 
 
-class PropulsiveBurn(Event):  # MoveElements, RemoveElements
+class PropulsiveBurn(PrimitiveEvent):
     """
     Event that represents a propulsive maneuver that may be composed of one or
     more burns or stages of individual elements.

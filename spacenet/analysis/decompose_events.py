@@ -53,6 +53,7 @@ def move_from_transport(
         origin_id=transport_event.edge_id,
         destination_id=transport_event.destination_node_id,
         mission_time=transport_event.mission_time + transport_event.exec_time,
+        queued_at=transport_event.mission_time,
         type="MoveElements",
     )
     return [move_to_edge, move_from_edge]

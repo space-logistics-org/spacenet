@@ -23,7 +23,7 @@ from pydantic import BaseModel
 from spacenet.schemas import (
     ElementCarrier,
     Event,
-    PropulsiveBurn,
+    PrimitiveEvent, PropulsiveBurn,
     PropulsiveVehicle,
     Scenario,
     MoveElements,
@@ -48,9 +48,14 @@ class SimEvent(BaseModel, ABC):
 
     timestamp: datetime
     priority: int
+    queued_at: datetime
 
     def __lt__(self, other: "SimEvent") -> bool:
-        return (self.timestamp, self.priority) < (other.timestamp, other.priority)
+        return (self.timestamp, self.priority, self.queued_at) < (
+            other.timestamp,
+            other.priority,
+            other.queued_at,
+        )
 
     @abstractmethod
     def validate_ids(self, sim: "Simulation") -> None:
@@ -403,13 +408,22 @@ class Simulation:
             raise EventDateOverflowError(event)
         result = []
         for primitive in primitives:
+            assert isinstance(primitive, PrimitiveEvent)
             try:
                 timestamp = mission_start_time + primitive.mission_time
+                queued_at = mission_start_time + primitive.queued_at
             except OverflowError:
                 raise EventDateOverflowError(event)
             priority = primitive.priority
             ty = EVENT_TO_SIM_EVENT[type(primitive)]
-            result.append(ty(event=primitive, timestamp=timestamp, priority=priority))
+            result.append(
+                ty(
+                    event=primitive,
+                    timestamp=timestamp,
+                    priority=priority,
+                    queued_at=queued_at,
+                )
+            )
         return result
 
     def _add_event(self, event: SimEvent) -> None:

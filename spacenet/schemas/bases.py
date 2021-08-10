@@ -1,10 +1,9 @@
-from abc import ABC
 from datetime import timedelta
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
-__all__ = ["Event", "ElementTransportEvent"]
+__all__ = ["Event", "ElementTransportEvent", "PrimitiveEvent"]
 
 
 class Event(BaseModel):
@@ -49,3 +48,14 @@ class ElementTransportEvent(Event):
         ...,
         description="The time this transport event runs for"
     )
+
+
+class PrimitiveEvent(Event):
+    queued_at: timedelta = None
+
+    @validator("queued_at", always=True)
+    def _initialize_queued_at(cls, v, values, **kwargs) -> timedelta:
+        if v is None:
+            assert values.get("mission_time") is not None
+            return values.get("mission_time")
+        return v
