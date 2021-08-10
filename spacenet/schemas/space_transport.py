@@ -27,7 +27,7 @@ class SpaceTransport(ElementTransportEvent):
     elements_id_list: List[UUID] = Field(
         ...,
         title="Element ID List",
-        description="A list of the IDs of elements that may used in the Burn-Stage Sequence",
+        description="A list of the IDs of elements that will be transported",
     )
 
     burnStageProfile: List[BurnStageSequence] = Field(
