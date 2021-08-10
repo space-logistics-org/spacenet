@@ -1,9 +1,8 @@
 from typing import List
 from uuid import UUID
 
-from pydantic import Field, NonNegativeFloat
+from pydantic import Field
 
-from spacenet.schemas import AllElements, AllNodes, AllUUIDEdges
 from spacenet.schemas.mixins import ImmutableBaseModel
 
 

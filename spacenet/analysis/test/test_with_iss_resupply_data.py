@@ -11,7 +11,6 @@ from spacenet.schemas import Scenario
 pytestmark = [pytest.mark.analysis, pytest.mark.iss_resupply]
 
 
-@pytest.mark.xfail(reason="flaky error generation due to event priority ties")
 def test_scenario_runs_without_error():
     filename = pkg_resources.resource_filename("spacenet.schemas", "other_scenarios/iss_resupply.json")
     scenario = Scenario.parse_file(filename)
@@ -21,7 +20,6 @@ def test_scenario_runs_without_error():
 
 
 @given(st.datetimes())
-@pytest.mark.xfail(reason="flaky error generation due to event priority ties")
 def test_scenario_runs_without_error_for_any_until(dt: datetime):
     filename = pkg_resources.resource_filename("spacenet.schemas", "other_scenarios/iss_resupply.json")
     scenario = Scenario.parse_file(filename)
