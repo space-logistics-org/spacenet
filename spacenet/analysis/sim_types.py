@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List, Set, Tuple, Union
 from uuid import UUID
 
@@ -7,7 +8,7 @@ from spacenet.analysis.indirect_entities import IndirectEntity
 from spacenet.analysis.simulation_errors import SimError
 from spacenet.schemas import AllElements, AllNodes, AllUUIDEdges, PropulsiveVehicle
 
-__all__ = ["SimElement", "SimNode", "SimEdge", "into_indirect_entity"]
+__all__ = ["SimElement", "SimNode", "SimEdge", "SimResult", "into_indirect_entity"]
 
 InvRichNamespace = Dict[Union["SimElement", "SimNode", "SimEdge"], UUID]
 
@@ -104,3 +105,12 @@ def into_indirect_entity(
         inner=inverse_namespace[entity],
         contents=[inverse_namespace[element] for element in entity.contents],
     )
+
+
+class SimResult(BaseModel):
+    nodes: List[IndirectEntity]
+    edges: List[IndirectEntity]
+    elements: List[IndirectEntity]
+    end_time: datetime
+    namespace: Dict[UUID, Union[SimEdge, SimElement, SimNode]]
+

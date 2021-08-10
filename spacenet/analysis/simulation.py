@@ -31,7 +31,6 @@ from spacenet.schemas import (
     RemoveElements,
 )
 from .decompose_events import decompose_event
-from .indirect_entities import IndirectEntity
 from .min_heap import MinHeap
 from .sim_types import *
 from .simulation_errors import SimError
@@ -40,14 +39,6 @@ from .exceptions import *
 from spacenet.fuel_formulas.functions import delta_v_from, final_mass_from
 
 __all__ = ["Simulation", "SimResult", "SimError"]
-
-
-class SimResult(BaseModel):
-    nodes: List[IndirectEntity]
-    edges: List[IndirectEntity]
-    elements: List[IndirectEntity]
-    end_time: datetime
-    namespace: Dict[UUID, Union[SimEdge, SimElement, SimNode]]
 
 
 class SimEvent(BaseModel, ABC):
