@@ -32,7 +32,7 @@ from spacenet.schemas import (
 )
 from .decompose_events import decompose_event
 from .min_heap import MinHeap
-from .sim_types import *
+from .entities import *
 from .simulation_errors import SimError
 from .exceptions import *
 
