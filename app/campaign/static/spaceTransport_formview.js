@@ -539,20 +539,73 @@ const scenario = {
 
 $(document).ready(function () {
 
-	//wont be able to retreive uuid for scenario json?
+	//Append Nodes to destination and origin selectors nased on scenario object.
   Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-    $('#inputOriginNode').append('<option value="' + node.name + '">' + node.name + '</option>')
-  }
-);
+		$('#inputOriginNode').append('<option value="' + uuid + '">' + node.name + '</option>')
+		}
+	);
 
   Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-    $('#inputDestinationNode').append('<option value="' + node.name + '">' + node.name + '</option>')
-}
-);
+		$('#inputDestinationNode').append('<option value="' + uuid + '">' + node.name + '</option>')
+		}
+	);
 
-    BurnsStages();
-});
 
+	//Add/Burn/Delete rows from tables
+	$('#addBurn').on('click', function() {
+		elementName = $("#ElementSel option:selected").text();
+    name = $('#inputName').val()
+
+    $('#myTabContent div.tab-pane.active div table').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>[Burn]</td><td>' + name + '</td>')
+  })
+
+  $('#addStage').on('click', function() {
+    elementName = $("#ElementSel option:selected").text();
+    name = $('#inputName').val()
+
+    $('#myTabContent div.tab-pane.active div table').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>[Stage]</td><td>' + name + '</td>')
+	})
+
+  $('#delete').on('click', function() {
+		tagger=$('#myTabContent').find('div.tab-pane.active div tbody').attr('id')
+    var tableRef = document.getElementById(tagger);
+    var tableRows = tableRef.rows;
+
+    var checkedRows = [];
+    for (var i = 0; i < tableRows.length; i++) {
+			if (tableRows[i].querySelector('input').checked) {
+				checkedRows.push(tableRows[i]);
+			}
+		}
+
+    for (var k = 0; k < checkedRows.length; k++) {
+    	checkedRows[k].parentNode.removeChild(checkedRows[k]);
+		}
+  })
+
+
+	//Creating a tab and appending a table to tab.
+	var tab = 1;
+	function createTab() {
+		//Creates tab
+		$("#myTab").append('<li class="nav-item" role="presentation"><a class="nav-link" id="tab-'+tab+'" data-toggle="tab" href="#content'+tab+'" role="tab" aria-controls="content'+tab+' aria-selected="false">Propulsive Burn '+tab+'</a></li>');
+
+		//Creates tab content(table).
+		var content = $('<div class="tab-pane fade" id="content'+tab+'" role="tabpanel" aria-labelledby="tab-'+tab+'"></div>');
+		content.append('<div class="text-center"><label for="propulsiveBurnTable'+tab+'">Sequence</label><table id="propulsiveBurnTable'+tab+'" class="table table-striped table-bordered col-md-12"><thead class="thead-dark"><tr><th class="col-md-"></th><th class="col-md-">Element Name</th><th class="col-md-">Type</th><th class="col-md-">Name</th></tr></thead><tbody id="propulsiveBurnTableBody'+tab+'"></tbody></table></div>');
+		$("#myTabContent").append(content);
+		$('#tab-'+tab).tab('show')
+		tab += 1;
+	}
+	$("#createTab").click(createTab);
+	//Creates a single tab automatically.
+	createTab();
+
+})
+
+
+
+//Populate Element selector with elements based on simulation filter.
 function retreiveElements(){
 	let node = $('#inputOriginNode').val(),
   time = $('#inputTime').val(),
@@ -560,6 +613,8 @@ function retreiveElements(){
 
   if (node && time && priority !== 'Choose...') {
     $('#ElementSel').empty();
+		$('#elementTableBody tr').remove();
+
 
 
     $.ajax({
@@ -569,84 +624,38 @@ function retreiveElements(){
       dataType: "json",
       method: "POST",
       success: function (simResult) {
-							simResult.result.nodes.forEach( function(simNode) {
-									if (simNode.inner.name == node) {
-													simNode.contents.forEach( function(elementContained) {
-														$('#ElementSel').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')
-														})
-													}
-									})
+				simResult.result.nodes.forEach( function(simNode) {
+					if (simNode.inner == node) {
+						simNode.contents.forEach( function(nodeElementUuidContained) {
+							for (let i = 0; i < Object.keys(simResult.result.namespace).length; i++){
+								if (Object.keys(simResult.result.namespace)[i] == nodeElementUuidContained){
+									$('#ElementSel').append('<option value="' + nodeElementUuidContained + '">' + Object.values(simResult.result.namespace)[i].inner.name + '</option>');
+								}
 							}
-					});
-			}
-}
+						});
+					}
+				});
+				//Sorts elements in element selector
+				var options = $("#ElementSel option");
+				options.detach().sort(function(a,b) {
+					var at = $(a).text();
+					var bt = $(b).text();
+					return (at > bt)?1:((at < bt)?-1:0);
+				});
+				options.appendTo("#ElementSel");
 
-
-
-
-function BurnsStages() {
-
-    var itxtCnt = 0;    // COUNTER TO SET ELEMENT IDs.
-
-    // CREATE A DIV DYNAMICALLY TO SERVE A CONTAINER TO THE ELEMENTS.
-    var container = $(document.createElement('div')).css({
-        width: '100%',
-        clear: 'both',
-        'margin-top': '10px',
-        'margin-bottom': '10px'
-        });
-
-        // CREATE THE ELEMENTS.
-    $('#seqAdd').click(function () {
-        itxtCnt = itxtCnt ;
-
-        $(container).append('<input type="text"' +' placeholder="Element ID"  class="seqele" id=tb1 value="" />');
-        $(container).append('<input type="text"' +' placeholder="burn/stage"  class="burnstage" class= "second" id=tb2  value="" />');
-
-        // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
-        $('#burnstagemain').after(container);
-    });
-}
+				$("#ElementSel > option").each(function() {
+					$('#elementTable').append('<tr><td><input type="checkbox" value="' + this.value + '"></td><td>' + this.text + '</td>');
+				});
+				}
+			});
+		}
+	}
 
 
 
 function onComplete() {
-    name = document.getElementById("inputName").value;
-    origin_node = document.getElementById("inputOriginNode").value;
-    destination_node = document.getElementById("inputDestinationNode").value;
-    time = document.getElementById("inputTime").value;
-    priority = document.getElementById("inputPriority").value;
 
-    elementvalues = document.getElementById("ElementSel").value;
-
-    var arr = [];
-    $("#elementSel").each(function(){
-        arr.push(this.value);
-    });
-
-    var burnStageStr = new Array();
-    var eleList = new Array();
-
-    $('.burnstage').each(function () {
-      if (this.value != '')
-          burnStageStr.push(this.value);
-    });
-
-    $('.seqele').each(function () {
-      if (this.value != '')
-          eleList.push(this.value);
-    });
-
-    max = eleList.length
-    var burnStageProfile = [];
-
-    for ( var i=0 ; i < max ; i++ ){
-        burnStageProfile[i] = [JSON.stringify({
-          element : eleList[i],
-          burnStage : burnStageStr[i]
-        })
-      ];
-    }
 
     message= JSON.stringify({
       name : name,

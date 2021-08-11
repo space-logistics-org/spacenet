@@ -540,7 +540,7 @@ const scenario = {
 
 $(document).ready( function() {
 	Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-		$('#pickNode').append('<option value="' + node.name + '">' + node.name + '</option>')
+		$('#pickNode').append('<option value="' + uuid + '">' + node.name + '</option>')
 	  });
 })
 
@@ -550,10 +550,10 @@ function retreiveElements(){
   let node = $('#pickNode').val(),
   time = $('#inputTime').val(),
   priority = $('#pickPriority').val();
-	elementCounter = 1
 
   if (node && time && priority !== 'Choose...') {
-    $('#ElementSel').find('option:not(:first)').remove();
+    $('#ElementSel').empty();
+		$("#elementTableBody tr").remove();
 
     $.ajax({
       url: "/campaign/api/simulation/?days_to_run_for=" + time,
@@ -562,32 +562,33 @@ function retreiveElements(){
       dataType: "json",
       method: "POST",
       success: function (simResult) {
-								$("#elementTableBody tr").remove();
-								simResult.result.nodes.forEach( function(simNode) {
-
-									if (simNode.inner.name == node) {
-														simNode.contents.forEach( function(elementContained) {
-
-															if (elementContained.inner.type !== 'HumanAgent' && elementContained.inner.type !== 'RoboticAgent') {
-
-															//finding uuid
-																for (let elementCounter = 0; elementCounter < simNode.contents.length; elementCounter++){
-																	if (elementContained.inner.name == Object.values(scenario.elementList)[elementCounter].name) {//changed to .name
-																		elementUuid = Object.keys(scenario.elementList)[elementCounter];
-																		break
-																	}
-																}
-																$('#elementTable').append('<tr><td><input type="checkbox"></td><td> '+ elementContained.inner.name +  '</td><td>' + elementUuid + '</td>');
-																$('#ElementSel').append($('<option/>').attr("value", elementUuid).text(elementContained.inner.name));
-													}
-												})
-									}
+				simResult.result.nodes.forEach( function(simNode) {
+					if (simNode.inner == node) {
+						simNode.contents.forEach( function(nodeElementUuidContained) {
+							for (let i = 0; i < Object.keys(simResult.result.namespace).length; i++){
+								if (Object.keys(simResult.result.namespace)[i] == nodeElementUuidContained){
+									$('#ElementSel').append('<option value="' + nodeElementUuidContained + '">' + Object.values(simResult.result.namespace)[i].inner.name + '</option>');
 								}
-							)
-						}
-					});
-			}
-}
+							}
+						});
+					}
+				});
+				//Sorts elements in element selector
+				var options = $("#ElementSel option");
+				options.detach().sort(function(a,b) {
+					var at = $(a).text();
+					var bt = $(b).text();
+					return (at > bt)?1:((at < bt)?-1:0);
+				});
+				options.appendTo("#ElementSel");
+
+				$("#ElementSel > option").each(function() {
+					$('#elementTable').append('<tr><td><input type="checkbox" value="' + this.value + '"></td><td>' + this.text + '</td>');
+				});
+				}
+			});
+		}
+	}
 
 
 
