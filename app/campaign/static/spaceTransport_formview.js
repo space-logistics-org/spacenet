@@ -553,14 +553,14 @@ $(document).ready(function () {
 
 	//Add/Burn/Delete rows from tables
 	$('#addBurn').on('click', function() {
-		elementName = $("#ElementSel option:selected").text();
+		elementName = $("#elementSeqSel option:selected").text();
     name = $('#inputName').val()
 
     $('#myTabContent div.tab-pane.active div table').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>[Burn]</td><td>' + name + '</td>')
   })
 
   $('#addStage').on('click', function() {
-    elementName = $("#ElementSel option:selected").text();
+    elementName = $("#elementSeqSel option:selected").text();
     name = $('#inputName').val()
 
     $('#myTabContent div.tab-pane.active div table').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>[Stage]</td><td>' + name + '</td>')
@@ -612,8 +612,9 @@ function retreiveElements(){
   priority = $('#inputPriority').val();
 
   if (node && time && priority !== 'Choose...') {
-    $('#ElementSel').empty();
-		$('#elementTableBody tr').remove();
+		console.log("success")
+    $('#elementSeqSel').empty();
+		$('#elementTransportSelector').empty();
 
 
 
@@ -624,28 +625,29 @@ function retreiveElements(){
       dataType: "json",
       method: "POST",
       success: function (simResult) {
+				console.log("success")
 				simResult.result.nodes.forEach( function(simNode) {
 					if (simNode.inner == node) {
 						simNode.contents.forEach( function(nodeElementUuidContained) {
 							for (let i = 0; i < Object.keys(simResult.result.namespace).length; i++){
 								if (Object.keys(simResult.result.namespace)[i] == nodeElementUuidContained){
-									$('#ElementSel').append('<option value="' + nodeElementUuidContained + '">' + Object.values(simResult.result.namespace)[i].inner.name + '</option>');
+									$('#elementSeqSel').append('<option value="' + nodeElementUuidContained + '">' + Object.values(simResult.result.namespace)[i].inner.name + '</option>');
 								}
 							}
 						});
 					}
 				});
 				//Sorts elements in element selector
-				var options = $("#ElementSel option");
+				var options = $("#elementSeqSel option");
 				options.detach().sort(function(a,b) {
 					var at = $(a).text();
 					var bt = $(b).text();
 					return (at > bt)?1:((at < bt)?-1:0);
 				});
-				options.appendTo("#ElementSel");
+				options.appendTo("#elementSeqSel");
 
-				$("#ElementSel > option").each(function() {
-					$('#elementTable').append('<tr><td><input type="checkbox" value="' + this.value + '"></td><td>' + this.text + '</td>');
+				$("#elementSeqSel > option").each(function() {
+					$('#elementTransportSelector').append('<option value="' + this.value + '">' + this.text + '</option>');
 				});
 				}
 			});
