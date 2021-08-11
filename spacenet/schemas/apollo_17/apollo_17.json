@@ -64,7 +64,8 @@
         "description": "Kennedy Space Center to Low-Earth Orbit",
         "origin_id": "cb3aa87b-893c-4dbd-9acb-d1c5b7017644",
         "destination_id": "a2e22fe6-7f6b-48d0-8049-93a7fac9069b",
-        "duration": 0.25
+        "duration": 0.25,
+        "delta_v": 9400
       },
       "710e4e69-e70c-4fc1-9216-8c8e0fb763f2": {
         "type": "SpaceEdge",
@@ -72,7 +73,8 @@
         "description": "Low-Earth Orbit to 28km lunar orbit",
         "origin_id": "a2e22fe6-7f6b-48d0-8049-93a7fac9069b",
         "destination_id": "53fc1b8b-33c1-4b0f-b380-9436de076162",
-        "duration": 3.5
+        "duration": 3.5,
+        "delta_v": 4040
       },
       "22e72f69-8e84-4c5e-ac65-6d7d0e228f76": {
         "type": "SpaceEdge",
@@ -80,7 +82,8 @@
         "description": "Decent from a 28 km orbit to an 11.5 km orbit",
         "origin_id": "53fc1b8b-33c1-4b0f-b380-9436de076162",
         "destination_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
-        "duration": 0.1
+        "duration": 0.1,
+        "delta_v": 900
       },
       "6c2f54ef-a4ba-444a-b0af-4cdd4f31aba2": {
         "type": "SpaceEdge",
@@ -88,7 +91,8 @@
         "description": "Decent from lunar orbit to the surface of the moon",
         "origin_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
         "destination_id": "0c9814e1-3b9e-42fd-82cb-c979bca0ba6c",
-        "duration": 0.1
+        "duration": 0.1,
+        "delta_v": 900
       },
       "ff2715a9-c93c-4c60-870b-00e177b9c2ec": {
         "type": "SpaceEdge",
@@ -96,7 +100,8 @@
         "description": "Ascent from the lunar surface to orbit",
         "origin_id": "0c9814e1-3b9e-42fd-82cb-c979bca0ba6c",
         "destination_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
-        "duration": 0.1
+        "duration": 0.1,
+        "delta_v": 900
       },
       "32615681-1c5e-4231-8f89-ba2c556a108c": {
         "type": "SpaceEdge",
@@ -104,7 +109,8 @@
         "description": "Return trip from lunar orbit to the Pacific Ocean",
         "origin_id": "e8eb8492-9158-488e-9265-90e98f8b5eb6",
         "destination_id": "f49db8a6-6cac-48f6-9d27-6276ae08faf8",
-        "duration": 2.83
+        "duration": 2.83,
+        "delta_v": 2740
       }
     }
   },

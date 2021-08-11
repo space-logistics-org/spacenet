@@ -96,6 +96,9 @@ class SpaceEdge(Edge):
     duration: SafeNonNegFloat = Field(
         ..., title="Duration", description="Duration of space edge"
     )
+    delta_v: SafeNonNegFloat = Field(
+        ..., title="Delta-V", description="Acceleration required to traverse this edge in m/s"
+    )
 
 
 class UUIDSpaceEdge(UUID_IDs, SpaceEdge):

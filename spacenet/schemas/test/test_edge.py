@@ -12,7 +12,7 @@ pytestmark = [pytest.mark.unit, pytest.mark.edge, pytest.mark.schema]
 
 
 class TestEdge(unittest.TestCase):
-    def testSurEdge(self):
+    def testSurfaceEdge(self):
         goodData = {
             "name": "FL-GA",
             "id": 1,
@@ -30,6 +30,7 @@ class TestEdge(unittest.TestCase):
             "origin_id": 1,
             "destination_id": 2,
             "distance": 100,
+            "delta_v": 100
         }
         badDistanceData = {
             "name": "FL-GA",
@@ -66,7 +67,7 @@ class TestEdge(unittest.TestCase):
         with self.assertRaises(ValidationError):
             badIDEdge = SurfaceEdge.parse_obj(badIDData)
 
-    def testSpaEdge(self):
+    def testSpaceEdge(self):
         goodData = {
             "name": "Earth-Moon",
             "id": 1,
@@ -75,6 +76,7 @@ class TestEdge(unittest.TestCase):
             "origin_id": 1,
             "destination_id": 2,
             "duration": 100,
+            "delta_v": 100
         }
         badDurationData = {
             "name": "Earth-Moon",
@@ -84,6 +86,7 @@ class TestEdge(unittest.TestCase):
             "origin_id": 1,
             "destination_id": 2,
             "duration": -100,
+            "delta_v": 100
         }
         goodEdge = SpaceEdge.parse_obj(goodData)
         self.assertEqual(goodEdge.name, goodData.get("name"))
@@ -96,7 +99,7 @@ class TestEdge(unittest.TestCase):
         with self.assertRaises(ValidationError):
             badDurationEdge = SurfaceEdge.parse_obj(badDurationData)
 
-    def testFltEdge(self):
+    def testFlightEdge(self):
         goodData = {
             "name": "Earth-Moon",
             "id": 1,

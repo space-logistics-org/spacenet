@@ -55,7 +55,8 @@
     "origin_id": 6,
     "destination_id": 3,
     "duration": 0.25,
-    "description": "Earth Ascent"
+    "description": "Earth Ascent",
+    "delta_v": 9400
   },
   {
     "type": "SpaceEdge",
@@ -63,7 +64,8 @@
     "origin_id": 3,
     "destination_id": 2,
     "duration": 4,
-    "description": "Lunar Orbit Injection"
+    "description": "Lunar Orbit Injection",
+    "delta_v": 500
   },
   {
     "type": "SpaceEdge",
@@ -71,7 +73,8 @@
     "origin_id": 2,
     "destination_id": 8,
     "duration": 0.5,
-    "description": "Lunar Descent"
+    "description": "Lunar Descent",
+    "delta_v": 500
   },
   {
     "type": "SpaceEdge",
@@ -79,7 +82,8 @@
     "origin_id": 3,
     "destination_id": 4,
     "duration": 202,
-    "description": "Trans-Mars Injection/ Mars Orbit Insertion(Aerocapture)"
+    "description": "Trans-Mars Injection/ Mars Orbit Insertion(Aerocapture)",
+    "delta_v": 500
   },
   {
     "type": "SpaceEdge",
@@ -87,7 +91,8 @@
     "origin_id": 4,
     "destination_id": 11,
     "duration": 0.1,
-    "description": "Descent to Gale Crater"
+    "description": "Descent to Gale Crater",
+    "delta_v": 500
   },
   {
     "type": "SurfaceEdge",
