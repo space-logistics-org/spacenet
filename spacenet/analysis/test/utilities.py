@@ -1,7 +1,7 @@
-from hypothesis import strategies as st
+from hypothesis import assume, strategies as st
 from typing import Callable, TypeVar
 
-from spacenet.schemas import Scenario
+from spacenet.schemas import ElementTransportEvent, Scenario, UUIDSpaceEdge
 
 __all__ = ["T", "DrawFn", "build_validating_scenario"]
 
@@ -39,4 +39,22 @@ def build_validating_scenario(draw: DrawFn):
             new_edge = edge.parse_obj(new_edge_dict)
             new_edges[edge_id] = new_edge
     base_scenario.network.edges = new_edges
+    mission_list = base_scenario.missionList
+    new_edge_ids = list(new_edges.keys())
+    for mission in mission_list:
+        for event in mission.events:
+            if isinstance(event, ElementTransportEvent):
+                assume(new_edge_ids)
+                edge = draw(
+                    st.builds(
+                        UUIDSpaceEdge,
+                        origin_id=st.sampled_from(node_id_list),
+                        destination_id=st.sampled_from(node_id_list),
+                    )
+                )
+                edge_id = draw(st.uuids().filter(lambda id_: id_ not in new_edges))
+                new_edges[edge_id] = edge
+                event.edge_id = edge_id
+                event.origin_node_id = edge.origin_id
+                event.destination_node_id = edge.destination_id
     return base_scenario

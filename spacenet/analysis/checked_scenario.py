@@ -2,7 +2,8 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import root_validator, validator
 
-from spacenet.schemas import Scenario, SpaceTransport
+from spacenet.schemas import ElementTransportEvent, FlightTransport, Scenario, SpaceEdge, \
+    SpaceTransport, SurfaceTransport, UUIDSpaceEdge
 from spacenet.schemas.mission import Mission
 from spacenet.schemas.scenario import Network
 
@@ -51,7 +52,8 @@ class CheckedScenario(Scenario):
             ), f"Edge {edge_id}'s destination is not a node"
         return values
 
-    # Initialization occurs here because we do validation that edges actually exist here
+    # Initialization occurs in this schema because we do validation that edges actually exist
+    # in this schema
 
     @validator("missionList")
     def _initialize_default_delta_v(cls, v, values, **kwargs) -> List[Mission]:
@@ -61,8 +63,25 @@ class CheckedScenario(Scenario):
         for mission in missions:
             for event in mission.events:
                 if isinstance(event, SpaceTransport) and event.delta_v is None:
+                    assert event.edge_id in edges
+                    edge = edges[event.edge_id]
+                    assert isinstance(edge, UUIDSpaceEdge)
                     event.delta_v = edges[event.edge_id].delta_v
         return missions
+
+    @root_validator(skip_on_failure=True)
+    def _transport_events_reference_real_edges(
+        cls, values: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        edges = values["network"].edges
+        missions: List[Mission] = values["missionList"]
+        for mission in missions:
+            for event in mission.events:
+                if isinstance(event, (SpaceTransport, FlightTransport, SurfaceTransport)):
+                    assert (
+                        event.edge_id in edges
+                    ), f"event {event.name} referenced nonexistent edge {event.edge_id}"
+        return values
 
     # TODO: validate events too somehow? that would require being able to decompose events
     # TODO: check that no additions will overflow as well?
