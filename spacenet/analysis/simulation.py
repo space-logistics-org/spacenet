@@ -23,7 +23,6 @@ from pydantic import BaseModel
 from spacenet.schemas import (
     ElementCarrier,
     Event,
-    PrimitiveEvent,
     PropulsiveBurn,
     PropulsiveVehicle,
     Scenario,
