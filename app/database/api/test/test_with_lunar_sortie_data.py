@@ -63,7 +63,6 @@ def object_to_prefix(obj: dict) -> str:
 def test_routers_with_lunar_sortie_data(domain_objects):
     for obj in domain_objects:
         prefix = object_to_prefix(obj)
-        print(prefix)
         post_response = client.post(f"/{prefix}/", json=obj)
         assert 201 == post_response.status_code
         result = post_response.json()

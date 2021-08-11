@@ -76,7 +76,7 @@ T = TypeVar("T")
 
 @st.composite
 def iterable_and_list(
-        draw: DrawFn, elements: st.SearchStrategy[T]
+    draw: DrawFn, elements: st.SearchStrategy[T]
 ) -> Tuple[Iterable[T], List[T]]:
     xs = draw(st.iterables(elements))
     xs, xs_cpy = tee(xs)
@@ -106,8 +106,8 @@ def test_min_heap(xs_and_copy):
 @given(
     xs_and_copy=st.one_of(
         *(
-                iterable_and_list(t)
-                for t in (st.integers(), st.floats(allow_nan=False), st.text())
+            iterable_and_list(t)
+            for t in (st.integers(), st.floats(allow_nan=False), st.text())
         )
     )
 )

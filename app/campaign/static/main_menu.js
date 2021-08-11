@@ -156,3 +156,9 @@ function burnDiv(){
   $("#visSpace").hide();
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="prop_burn_visualization.html" ></object>';
 }
+
+function surfTranDiv(){
+  $("#formSpace").show();
+  $("#visSpace").hide();
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="surface_transport_formview.html" ></object>';
+}

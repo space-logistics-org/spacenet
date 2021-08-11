@@ -1,0 +1,957 @@
+{
+  "name": "ISS Resupply",
+  "description": "ISS Resupply Mission",
+  "startDate": "2010-09-01T04:00",
+  "scenarioType": "ISS",
+  "network": {
+    "nodes": {
+      "d17b893d-af31-47fe-9a47-9512c4de41a3": {
+        "type": "OrbitalNode",
+        "name": "ISSO",
+        "description": "International Space Station Orbit",
+        "body_1": "Earth",
+        "apoapsis": 360,
+        "periapsis": 347,
+        "inclination": 51.6
+      },
+      "d180458e-d6d0-45d6-b0a8-86ace094b68a": {
+        "type": "SurfaceNode",
+        "name": "KSC",
+        "description": "Kennedy Space Center",
+        "body_1": "Earth",
+        "latitude": 28.6,
+        "longitude": -80.6
+      },
+      "cc1153a4-d4f0-405c-bb0c-dbb05ee26b91": {
+        "type": "SurfaceNode",
+        "name": "CCAS",
+        "description": "Cape Canaveral Air Station",
+        "body_1": "Earth",
+        "latitude": 28.4,
+        "longitude": -80.6
+      },
+      "cdfd22b5-fd12-47c5-8a2d-dd537f761f0b": {
+        "type": "SurfaceNode",
+        "name": "WFF",
+        "description": "Wallops Flight Facility",
+        "body_1": "Earth",
+        "latitude": 37.9,
+        "longitude": -75.5
+      },
+      "cc8362dd-bb09-465c-966e-ea9eb617b275": {
+        "type": "SurfaceNode",
+        "name": "TSC",
+        "description": "Tanegashima Space Center",
+        "body_1": "Earth",
+        "latitude": 30.4,
+        "longitude": 131
+      },
+      "0d63fccc-d65c-4162-9a28-5ef03293fbb8": {
+        "type": "SurfaceNode",
+        "name": "GSC",
+        "description": "Guiana Space Center",
+        "body_1": "Earth",
+        "latitude": 5,
+        "longitude": -52.8
+      },
+      "6cf28cc6-d156-41a4-b594-fff8762ef292": {
+        "type": "SurfaceNode",
+        "name": "BCD",
+        "description": "Baikonur Cosmodrome",
+        "body_1": "Earth",
+        "latitude": 45.9,
+        "longitude": 63.3
+      },
+      "585236e1-ab4b-4160-b059-f88e7d73d667": {
+        "type": "SurfaceNode",
+        "name": "SLZ",
+        "description": "Soyuz Landing Zone",
+        "body_1": "Earth",
+        "latitude": 50,
+        "longitude": 67.5
+      },
+      "6be94baf-03fb-424d-9499-75b0bce13516": {
+        "type": "SurfaceNode",
+        "name": "PSZ",
+        "description": "Pacific Splashdown Zone",
+        "body_1": "Earth",
+        "latitude": 13,
+        "longitude": -169
+      }
+    },
+    "edges": {
+      "4838c926-911c-48aa-96e0-71778ed26a59": {
+        "type": "FlightEdge",
+        "name": "Soyuz-FG LV to ISS",
+        "description": "Soyuz-FG LV to ISS",
+        "origin_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+        "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "duration": 2,
+        "max_crew": 3,
+        "max_cargo": 7200
+      },
+      "1fca67a4-00d5-4bea-8d64-1a4e625c7cb7": {
+        "type": "FlightEdge",
+        "name": "Soyuz-2 LV to ISS",
+        "description": "Soyuz-2 LV to ISS",
+        "origin_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+        "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "duration": 2,
+        "max_crew": 3,
+        "max_cargo": 8500
+      },
+      "b68ebb63-90dd-453b-82c1-327fd086e60e": {
+        "type": "FlightEdge",
+        "name": "Falcon 9 LV to ISS",
+        "description": "Falcon 9 LV to ISS",
+        "origin_id": "cc1153a4-d4f0-405c-bb0c-dbb05ee26b91",
+        "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "duration": 2,
+        "max_crew": 0,
+        "max_cargo": 10450
+      },
+      "e92bf026-9b84-4b2c-9482-511a450c5c4b": {
+        "type": "FlightEdge",
+        "name": "H-IIB LV to ISS",
+        "description": "H-IIB LV to ISS",
+        "origin_id": "cc8362dd-bb09-465c-966e-ea9eb617b275",
+        "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "duration": 2,
+        "max_crew": 0,
+        "max_cargo": 16500
+      },
+      "da70ce6c-1ced-4f2b-b33e-133baa5ecd1d": {
+        "type": "FlightEdge",
+        "name": "Ariane 5 ES LV to ISS",
+        "description": "Ariane 5 ES LV to ISS",
+        "origin_id": "0d63fccc-d65c-4162-9a28-5ef03293fbb8",
+        "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "duration": 2,
+        "max_crew": 0,
+        "max_cargo": 19300
+      },
+      "b842fbf8-0781-4656-a284-60d9ad925e25": {
+        "type": "FlightEdge",
+        "name": "Proton-M LV to ISS",
+        "description": "Proton-M LV to ISS",
+        "origin_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+        "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "duration": 2,
+        "max_crew": 0,
+        "max_cargo": 21600
+      },
+      "addc0d14-b7ba-472e-ad3a-fff22da539ce": {
+        "type": "FlightEdge",
+        "name": "STS LV to ISS",
+        "description": "STS LV to ISS",
+        "origin_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+        "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "duration": 2,
+        "max_crew": 7,
+        "max_cargo": 16050
+      },
+      "502c27eb-96a7-4fbf-914f-309c4e59e35a": {
+        "type": "FlightEdge",
+        "name": "Delta IV-H LV to ISS",
+        "description": "Delta IV-H LV to ISS",
+        "origin_id": "cc1153a4-d4f0-405c-bb0c-dbb05ee26b91",
+        "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "duration": 2,
+        "max_crew": 0,
+        "max_cargo": 22500
+      },
+      "2f8b7e36-55a6-484c-992b-e04a41771c99": {
+        "type": "FlightEdge",
+        "name": "Taurus II LV to ISS",
+        "description": "Taurus II LV to ISS",
+        "origin_id": "cdfd22b5-fd12-47c5-8a2d-dd537f761f0b",
+        "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "duration": 2,
+        "max_crew": 0,
+        "max_cargo": 6600
+      },
+      "0f8d1bdb-bdde-4a8e-8371-e597c16bb620": {
+        "type": "FlightEdge",
+        "name": "Soyuz Landing at SLZ",
+        "description": "Soyuz Landing at SLZ",
+        "origin_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "destination_id": "585236e1-ab4b-4160-b059-f88e7d73d667",
+        "duration": 2,
+        "max_crew": 3,
+        "max_cargo": 150
+      },
+      "a1420c76-230d-4836-ad42-e4227f6ef445": {
+        "type": "FlightEdge",
+        "name": "STS Landing at KSC",
+        "description": "STS Landing at KSC",
+        "origin_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "destination_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+        "duration": 2,
+        "max_crew": 10,
+        "max_cargo": 9500
+      },
+      "b68c3309-7d99-4644-a705-5c7c21c91fc2": {
+        "type": "FlightEdge",
+        "name": "Dragon Splashdown at PSZ",
+        "description": "Dragon Splashdown at PSZ",
+        "origin_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "destination_id": "6be94baf-03fb-424d-9499-75b0bce13516",
+        "duration": 2,
+        "max_crew": 0,
+        "max_cargo": 3000
+      },
+      "7b6bf49c-f114-4db1-a732-e3cb3073259c": {
+        "type": "FlightEdge",
+        "name": "Orion Splashdown at PSZ",
+        "description": "Orion Splashdown at PSZ",
+        "origin_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+        "destination_id": "6be94baf-03fb-424d-9499-75b0bce13516",
+        "duration": 2,
+        "max_crew": 4,
+        "max_cargo": 0
+      }
+    }
+  },
+  "elementList": {
+    "c62bcade-abe1-4f6d-b89a-dc3bb33c1253": {
+      "type": "ElementCarrier",
+      "name": "Progress-M",
+      "description": "RSA Progress (M Configuration)",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 4900,
+      "volume":0 ,
+      "max_cargo_mass": 2350,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "b47788d8-b52e-43d4-9c2b-827647738b36": {
+      "type": "ElementCarrier",
+      "name": "Progress-M-09M",
+      "description": "RSA Progress (M Configuration)",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 4900,
+      "volume":0 ,
+      "max_cargo_mass": 2350,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "923ca5b6-3373-49ac-a181-00675afd31fe": {
+      "type": "ElementCarrier",
+      "name": "Soyuz-TMA-1",
+      "description": "RSA Soyuz (TMA Configuration)",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 6085,
+      "volume":0 ,
+      "max_cargo_mass": 100,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "98acfc76-002f-42d2-b6e2-669d78bb880f": {
+      "type": "ElementCarrier",
+      "name": "Soyuz-TMA-2",
+      "description": "RSA Soyuz (TMA Configuration)",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 6085,
+      "volume":0 ,
+      "max_cargo_mass": 100,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "32036030-4366-432d-95ea-e652697aeb72": {
+      "type": "ElementCarrier",
+      "name": "Soyuz-TMA-01M",
+      "description": "RSA Soyuz (TMA Configuration)",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 6085,
+      "volume":0 ,
+      "max_cargo_mass": 100,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "d3eee086-984a-40db-bd53-48301c789aae": {
+      "type": "ElementCarrier",
+      "name": "Dragon",
+      "description": "SpaceX Dragon",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 4200,
+      "volume":0 ,
+      "max_cargo_mass": 6000,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "f0ad16b0-353d-4a9b-b4a4-5aa9030f1126": {
+      "type": "ElementCarrier",
+      "name": "Cygnus-M",
+      "description": "Orbital Cygnus (Improved)",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 3500,
+      "volume":0 ,
+      "max_cargo_mass": 2700,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "e49f2857-6749-459f-8cc4-b688b28b1c92": {
+      "type": "ElementCarrier",
+      "name": "ATV",
+      "description": "ESA Automated Transfer Vehicle",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 11700,
+      "volume":0 ,
+      "max_cargo_mass": 7600,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "9232f410-06c8-4ded-9183-9b615132b313": {
+      "type": "ElementCarrier",
+      "name": "Orion",
+      "description": "NASA Orion Crew Exploration Vehicle",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 21500,
+      "volume":0 ,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "b8f27f7e-1091-4060-ba91-859814249e3d": {
+      "type": "ElementCarrier",
+      "name": "STS Shuttle",
+      "description": "NASA Space Transportation System Shuttle",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 0,
+      "volume":0 ,
+      "max_cargo_mass": 16050,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "a2eed7a1-fe47-4bad-9076-7c2705035ef8": {
+      "type": "ElementCarrier",
+      "name": "Discovery",
+      "description": "NASA Space Transportation System Shuttle",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 0,
+      "volume":0 ,
+      "max_cargo_mass": 16050,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "fe4dcd40-1187-4094-901a-0d879d98c157": {
+      "type": "ElementCarrier",
+      "name": "Endeavor",
+      "description": "NASA Space Transportation System Shuttle",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 0,
+      "volume":0 ,
+      "max_cargo_mass": 16050,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "74d994a4-dace-4d26-a5d8-95b1b9af98d4": {
+      "type": "ElementCarrier",
+      "name": "MLM",
+      "description": "RSA Multifunctional Laboratory Module",
+      "class_of_supply": 8,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 20300,
+      "volume":0 ,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "493a93b3-8c16-47e6-b73b-1f3888ddd922": {
+      "type": "ElementCarrier",
+      "name": "ELC 3",
+      "description": "EXPRESS Logistics Carrier",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 4400,
+      "volume":0 ,
+      "max_cargo_mass": 2000,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "1e7d25a9-24d8-41fa-9c63-e6cb64f1fd73": {
+      "type": "ElementCarrier",
+      "name": "ELC 4",
+      "description": "EXPRESS Logistics Carrier",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 4400,
+      "volume":0 ,
+      "max_cargo_mass": 2000,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "43e4bdc6-69d8-4eec-842f-919025caa0fe": {
+      "type": "ElementCarrier",
+      "name": "PMM",
+      "description": "Pressurized Multipurpose Module",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 4080,
+      "volume":0 ,
+      "max_cargo_mass": 9070,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "afdc4e0a-9b3d-4e6e-add6-f258f6e6fad7": {
+      "type": "ElementCarrier",
+      "name": "Leonardo",
+      "description": "Pressurized Multipurpose Module",
+      "class_of_supply": 9,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 4080,
+      "volume":0 ,
+      "max_cargo_mass": 9070,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "378b453f-fa4c-4fc1-a378-607c22d92360": {
+      "type": "ElementCarrier",
+      "name": "ISS CM",
+      "description": "International Space Station Crew Module",
+      "class_of_supply": 8,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 167500,
+      "volume":0 ,
+      "max_cargo_mass": 0,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "361d4d09-eca1-428b-aa53-4b5c8d487900": {
+      "type": "ElementCarrier",
+      "name": "ISS SM",
+      "description": "International Space Station Science Module",
+      "class_of_supply": 8,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 167500,
+      "volume":0 ,
+      "max_cargo_mass": 35000,
+      "max_cargo_volume": 0,
+      "cargo_environment": "Pressurized"
+    },
+    "4d9860ca-12ad-4baf-945c-589c7a5bee8f": {
+      "type": "Element",
+      "name": "AMS",
+      "description": "Atomic Magnetic Spectrometer",
+      "class_of_supply": 6,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 6700,
+      "volume": 0
+    },
+    "85a75087-520a-40d4-b010-87dd1ccd8baf": {
+      "type": "Element",
+      "name": "AMS-02",
+      "description": "Atomic Magnetic Spectrometer",
+      "class_of_supply": 6,
+      "environment": "Unpressurized",
+      "accommodation_mass": 0,
+      "mass": 6700,
+      "volume": 0
+    },
+    "6a79115d-a2b1-454d-bf6d-8b1d4267840c": {
+      "type": "Element",
+      "name": "AWRS",
+      "description": "Advanced Water Recovery System",
+      "class_of_supply": 702,
+      "environment": "Pressurized",
+      "accommodation_mass": 0,
+      "mass": 5000,
+      "volume": 0
+    },
+    "3ed087e5-0540-4f65-8950-d26436f1561a": {
+      "type": "HumanAgent",
+      "name": "Astronaut-1",
+      "description": "Generic Astronaut",
+      "class_of_supply": 0,
+      "environment": "Pressurized",
+      "accommodation_mass": 0,
+      "mass": 80,
+      "volume": 0,
+      "active_time_fraction": 0.67
+    },
+    "647782a2-505d-41bb-b628-b398f63c81a8": {
+      "type": "HumanAgent",
+      "name": "Astronaut-2",
+      "description": "Generic Astronaut",
+      "class_of_supply": 0,
+      "environment": "Pressurized",
+      "accommodation_mass": 0,
+      "mass": 80,
+      "volume": 0,
+      "active_time_fraction": 0.67
+    },
+    "617f397d-e22c-40b7-bb4d-3e32cbbbc731": {
+      "type": "HumanAgent",
+      "name": "Astronaut-3",
+      "description": "Generic Astronaut",
+      "class_of_supply": 0,
+      "environment": "Pressurized",
+      "accommodation_mass": 0,
+      "mass": 80,
+      "volume": 0,
+      "active_time_fraction": 0.67
+    },
+    "04f9ac28-a3f7-45a7-8c64-b89cfffa742f": {
+      "type": "HumanAgent",
+      "name": "Astronaut-4",
+      "description": "Generic Astronaut",
+      "class_of_supply": 0,
+      "environment": "Pressurized",
+      "accommodation_mass": 0,
+      "mass": 80,
+      "volume": 0,
+      "active_time_fraction": 0.67
+    },
+    "9841021f-d05d-4b16-9309-8d2746590652": {
+      "type": "HumanAgent",
+      "name": "Astronaut-5",
+      "description": "Generic Astronaut",
+      "class_of_supply": 0,
+      "environment": "Pressurized",
+      "accommodation_mass": 0,
+      "mass": 80,
+      "volume": 0,
+      "active_time_fraction": 0.67
+    },
+    "346c8ba1-18e6-4aec-a94e-26d48dacac49": {
+      "type": "HumanAgent",
+      "name": "Astronaut-6",
+      "description": "Generic Astronaut",
+      "class_of_supply": 0,
+      "environment": "Pressurized",
+      "accommodation_mass": 0,
+      "mass": 80,
+      "volume": 0,
+      "active_time_fraction": 0.67
+    }
+  },
+  "missionList": [
+    {
+      "name": "M.00 ISS Initialization",
+      "start_date": "2010-09-01T04:00",
+      "events": [
+        {
+          "name": "M.00 | Create ISS",
+          "mission_time": "00",
+          "type": "MakeElements",
+          "priority": 1,
+          "entry_point_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "elements": [
+            "923ca5b6-3373-49ac-a181-00675afd31fe",
+            "98acfc76-002f-42d2-b6e2-669d78bb880f",
+            "378b453f-fa4c-4fc1-a378-607c22d92360",
+            "361d4d09-eca1-428b-aa53-4b5c8d487900"
+          ]
+        },
+        {
+          "name": "M.00 | Create Crew",
+          "mission_time": "00",
+          "type": "MakeElements",
+          "priority": 2,
+          "entry_point_id": "361d4d09-eca1-428b-aa53-4b5c8d487900",
+          "elements": [
+            "3ed087e5-0540-4f65-8950-d26436f1561a",
+            "647782a2-505d-41bb-b628-b398f63c81a8",
+            "617f397d-e22c-40b7-bb4d-3e32cbbbc731",
+            "04f9ac28-a3f7-45a7-8c64-b89cfffa742f",
+            "9841021f-d05d-4b16-9309-8d2746590652",
+            "346c8ba1-18e6-4aec-a94e-26d48dacac49"
+          ]
+        },
+        {
+          "name": "M.00 | Soyuz Landing",
+          "mission_time": "21 00:00:00",
+          "type": "FlightTransport",
+          "priority": 1,
+          "origin_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "destination_node_id": "585236e1-ab4b-4160-b059-f88e7d73d667",
+          "edge_id": "0f8d1bdb-bdde-4a8e-8371-e597c16bb620",
+          "exec_time": "2 00:00:00",
+          "elements_id_list": [
+            "923ca5b6-3373-49ac-a181-00675afd31fe"
+          ]
+        },
+        {
+          "name": "M.00 | Remove Soyuz",
+          "mission_time": "23 00:00:00",
+          "type": "RemoveElements",
+          "priority": 2,
+          "removal_point_id": "585236e1-ab4b-4160-b059-f88e7d73d667",
+          "elements": [
+            "923ca5b6-3373-49ac-a181-00675afd31fe"
+          ]
+        },
+        {
+          "name": "M.00 | Soyuz Landing",
+          "mission_time": "84 00:00:00",
+          "type": "FlightTransport",
+          "priority": 1,
+          "origin_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "destination_node_id": "585236e1-ab4b-4160-b059-f88e7d73d667",
+          "edge_id": "0f8d1bdb-bdde-4a8e-8371-e597c16bb620",
+          "exec_time": "2 00:00:00",
+          "elements_id_list": [
+            "98acfc76-002f-42d2-b6e2-669d78bb880f"
+          ]
+        },
+        {
+          "name": "M.00 | Remove Soyuz",
+          "mission_time": "86 00:00:00",
+          "type": "RemoveElements",
+          "priority": 2,
+          "removal_point_id": "585236e1-ab4b-4160-b059-f88e7d73d667",
+          "elements": [
+            "98acfc76-002f-42d2-b6e2-669d78bb880f"
+          ]
+        }
+      ],
+      "demand_models": [],
+      "origin": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "destination": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_origin": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_destination": "d17b893d-af31-47fe-9a47-9512c4de41a3"
+    },
+    {
+      "name": "M.01 Progress M-08M",
+      "start_date": "2010-09-08T04:00",
+      "events": [
+        {
+          "name": "M.01 | Create Progress",
+          "mission_time": "00",
+          "type": "MakeElements",
+          "priority": 1,
+          "entry_point_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+          "elements": [
+            "c62bcade-abe1-4f6d-b89a-dc3bb33c1253"
+          ]
+        },
+        {
+          "name": "M.01 | Soyuz-FG Launch",
+          "mission_time": "00",
+          "type": "FlightTransport",
+          "priority": 2,
+          "origin_node_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+          "destination_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "edge_id": "4838c926-911c-48aa-96e0-71778ed26a59",
+          "exec_time": "2 00:00:00",
+          "elements_id_list": [
+            "c62bcade-abe1-4f6d-b89a-dc3bb33c1253"
+          ]
+        },
+        {
+          "name": "M.01 | Deorbit Progress",
+          "mission_time": "62 00:00:00",
+          "type": "RemoveElements",
+          "priority": 1,
+          "removal_point_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "elements": [
+            "c62bcade-abe1-4f6d-b89a-dc3bb33c1253"
+          ]
+        }
+      ],
+      "demand_models": [],
+      "origin": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+      "destination": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_origin": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_destination": "6cf28cc6-d156-41a4-b594-fff8762ef292"
+    },
+    {
+      "name": "M.02 | STS 133",
+      "start_date": "2010-09-16T04:00:00",
+      "events": [
+        {
+          "name": "M.02 | Create Shuttle",
+          "mission_time": "00",
+          "type": "MakeElements",
+          "priority": 1,
+          "entry_point_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+          "elements": [
+            "a2eed7a1-fe47-4bad-9076-7c2705035ef8"
+          ]
+        },
+        {
+          "name": "M.02 | Create Shuttle Payload",
+          "mission_time": "00",
+          "type": "MakeElements",
+          "priority": 2,
+          "entry_point_id": "a2eed7a1-fe47-4bad-9076-7c2705035ef8",
+          "elements": [
+            "493a93b3-8c16-47e6-b73b-1f3888ddd922",
+            "afdc4e0a-9b3d-4e6e-add6-f258f6e6fad7"
+          ]
+        },
+        {
+          "name": "M.02 | STS Launch",
+          "mission_time": "00",
+          "type": "FlightTransport",
+          "priority": 3,
+          "origin_node_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+          "destination_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "edge_id": "addc0d14-b7ba-472e-ad3a-fff22da539ce",
+          "exec_time": "2 00:00:00",
+          "elements_id_list": [
+            "a2eed7a1-fe47-4bad-9076-7c2705035ef8"
+          ]
+        },
+        {
+          "name": "M.02 | Move Payload to ISS",
+          "mission_time": "2 00:00:00",
+          "type": "MoveElements",
+          "priority": 1,
+          "origin_id": "a2eed7a1-fe47-4bad-9076-7c2705035ef8",
+          "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "to_move": [
+            "493a93b3-8c16-47e6-b73b-1f3888ddd922",
+            "afdc4e0a-9b3d-4e6e-add6-f258f6e6fad7"
+          ]
+        },
+        {
+          "name": "M.02 | STS Landing",
+          "mission_time": "9 00:00:00",
+          "type": "FlightTransport",
+          "priority": 1,
+          "origin_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "destination_node_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+          "edge_id": "a1420c76-230d-4836-ad42-e4227f6ef445",
+          "exec_time": "2 00:00:00",
+          "elements_id_list": [
+            "a2eed7a1-fe47-4bad-9076-7c2705035ef8"
+          ]
+        },
+        {
+          "name": "M.02 | Remove Discovery",
+          "mission_time": "11 00:00:00",
+          "type": "RemoveElements",
+          "priority": 1,
+          "removal_point_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+          "elements": [
+            "a2eed7a1-fe47-4bad-9076-7c2705035ef8"
+          ]
+        }
+      ],
+      "demand_models": [],
+      "origin": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+      "destination": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_origin": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_destination": "d180458e-d6d0-45d6-b0a8-86ace094b68a"
+    },
+    {
+      "name": "M.03 Soyuz TMA-01M",
+      "start_date": "2010-09-29T04:00:00",
+      "events": [
+        {
+          "name": "M.03 | Create Soyuz",
+          "mission_time": "00",
+          "type": "MakeElements",
+          "priority": 1,
+          "entry_point_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+          "elements": [
+            "32036030-4366-432d-95ea-e652697aeb72"
+          ]
+        },
+        {
+          "name": "M.03 | Soyuz-FG Launch",
+          "mission_time": "00",
+          "type": "FlightTransport",
+          "priority": 2,
+          "origin_node_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+          "destination_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "edge_id": "4838c926-911c-48aa-96e0-71778ed26a59",
+          "exec_time": "2 00:00:00",
+          "elements_id_list": [
+            "32036030-4366-432d-95ea-e652697aeb72"
+          ]
+        },
+        {
+          "name": "M.03 | Soyuz Landing",
+          "mission_time": "182 00:00:00",
+          "type": "FlightTransport",
+          "priority": 1,
+          "origin_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "destination_node_id": "585236e1-ab4b-4160-b059-f88e7d73d667",
+          "edge_id": "0f8d1bdb-bdde-4a8e-8371-e597c16bb620",
+          "exec_time": "2 00:00:00",
+          "elements_id_list": [
+            "32036030-4366-432d-95ea-e652697aeb72"
+          ]
+        },
+        {
+          "name": "M.03 | Remove Soyuz",
+          "mission_time": "184 00:00:00",
+          "type": "RemoveElements",
+          "priority": 2,
+          "removal_point_id": "585236e1-ab4b-4160-b059-f88e7d73d667",
+          "elements": [
+            "32036030-4366-432d-95ea-e652697aeb72"
+          ]
+        }
+      ],
+      "demand_models": [],
+      "origin": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+      "destination": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_origin": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_destination": "585236e1-ab4b-4160-b059-f88e7d73d667"
+    },
+    {
+      "name": "M.04 Progress M-09M",
+      "start_date": "2010-10-27T04:00:00",
+      "events": [
+        {
+          "name": "M.04 | Create Progress",
+          "mission_time": "00",
+          "type": "MakeElements",
+          "priority": 1,
+          "entry_point_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+          "elements": [
+            "b47788d8-b52e-43d4-9c2b-827647738b36"
+          ]
+        },
+        {
+          "name": "M.04 | Soyuz-FG Launch",
+          "mission_time": "00",
+          "type": "FlightTransport",
+          "priority": 2,
+          "origin_node_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+          "destination_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "edge_id": "4838c926-911c-48aa-96e0-71778ed26a59",
+          "exec_time": "2",
+          "elements_id_list": [
+            "b47788d8-b52e-43d4-9c2b-827647738b36"
+          ]
+        },
+        {
+          "name": "M.04 | Deorbit Progress",
+          "mission_time": "62",
+          "type": "RemoveElements",
+          "priority": 1,
+          "removal_point_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "elements": [
+            "b47788d8-b52e-43d4-9c2b-827647738b36"
+          ]
+        }
+      ],
+      "demand_models": [],
+      "origin": "6cf28cc6-d156-41a4-b594-fff8762ef292",
+      "destination": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_origin": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_destination": "6cf28cc6-d156-41a4-b594-fff8762ef292"
+    },
+    {
+      "name": "M.05 STS 134",
+      "start_date": "2010-11-10T04:00:00",
+      "events": [
+        {
+          "name": "M.05 | Create Shuttle",
+          "mission_time": "00",
+          "type": "MakeElements",
+          "priority": 1,
+          "entry_point_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+          "elements": [
+            "fe4dcd40-1187-4094-901a-0d879d98c157"
+          ]
+        },
+        {
+          "name": "M.05 | Create Shuttle Payload",
+          "mission_time": "00",
+          "type": "MakeElements",
+          "priority": 2,
+          "entry_point_id": "fe4dcd40-1187-4094-901a-0d879d98c157",
+          "elements": [
+            "85a75087-520a-40d4-b010-87dd1ccd8baf",
+            "1e7d25a9-24d8-41fa-9c63-e6cb64f1fd73"
+          ]
+        },
+        {
+          "name": "M.05 | STS Launch",
+          "mission_time": "00",
+          "type": "FlightTransport",
+          "priority": 3,
+          "origin_node_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+          "destination_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "edge_id": "addc0d14-b7ba-472e-ad3a-fff22da539ce",
+          "exec_time": "2",
+          "elements_id_list": [
+            "fe4dcd40-1187-4094-901a-0d879d98c157"
+          ]
+        },
+        {
+          "name": "M.05 | Move Payload to ISS",
+          "mission_time": "2 00:00:00",
+          "type": "MoveElements",
+          "priority": 1,
+          "origin_id": "fe4dcd40-1187-4094-901a-0d879d98c157",
+          "destination_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "to_move": [
+            "85a75087-520a-40d4-b010-87dd1ccd8baf",
+            "1e7d25a9-24d8-41fa-9c63-e6cb64f1fd73"
+          ]
+        },
+        {
+          "name": "M.05 | STS Landing",
+          "mission_time": "9 00:00:00",
+          "type": "FlightTransport",
+          "priority": 1,
+          "origin_node_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+          "destination_node_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+          "edge_id": "a1420c76-230d-4836-ad42-e4227f6ef445",
+          "exec_time": "2",
+          "elements_id_list": [
+            "fe4dcd40-1187-4094-901a-0d879d98c157"
+          ]
+        },
+        {
+          "name": "M.05 | Remove Endeavor",
+          "mission_time": "11 00:00:00",
+          "type": "RemoveElements",
+          "priority": 1,
+          "removal_point_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+          "elements": [
+            "fe4dcd40-1187-4094-901a-0d879d98c157"
+          ]
+        }
+      ],
+      "demand_models": [],
+      "origin": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
+      "destination": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_origin": "d17b893d-af31-47fe-9a47-9512c4de41a3",
+      "return_destination": "d180458e-d6d0-45d6-b0a8-86ace094b68a"
+    }
+  ],
+  "manifest": {
+    "container_events": []
+  },
+  "volumeConstrained": false,
+  "environmentConstrained": true
+}

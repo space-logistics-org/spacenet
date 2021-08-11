@@ -536,207 +536,105 @@ const scenario = {
 	"environmentConstrained": false
   }
 
-
-$(document).ready(function () {
-
-  //wont be able to retreive uuid for scenario json?
-	  Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-		   $('#inputNode').append('<option value="' + node.name + '">' + node.name + '</option>')
-	     });
-
-    CrewList();
-    DemandList();
-});
-
-
-function retreiveElements(){
-  let node = $('#inputNode').val(),
-  time = $('#inputTime').val(),
-  priority = $('#pickPriority').val();
-
-  if (node && time && priority !== 'Choose...') {
-    $('#inputCrewVehicle').find('option:not(:first)').remove();
-
-    $.ajax({
-      url: "/campaign/api/simulation/?days_to_run_for=" + time,
-      data: JSON.stringify(scenario),
-      contentType: 'application/json; charset=utf-8',
-      dataType: "json",
-      method: "POST",
-      success: function (simResult) {
-        simResult.result.nodes.forEach( function(simNode) {
-						if (simNode.inner.name == node) {
-										simNode.contents.forEach( function(elementContained) {
-											if (elementContained.inner.type !== 'HumanAgent' && elementContained.inner.type !== 'RoboticAgent') {
-											$('#inputCrewVehicle').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')
-											}
-										})
-									}
-						})
-				}
-		});
-}
+function populateNodes () {
+    Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+        console.log(uuid, node)
+        $('#pickNode').append('<option value=' + uuid + '>' + node.name + '</option>')
+      });
 }
 
-
-function CrewList() {
-
-    var itxtCnt = 0;    // COUNTER TO SET ELEMENT IDs.
-
-    // CREATE A DIV DYNAMICALLY TO SERVE A CONTAINER TO THE ELEMENTS.
-    var container = $(document.createElement('div')).css({
-        width: '100%',
-        clear: 'both',
-        'margin-top': '10px',
-        'margin-bottom': '10px'
-        });
-
-        // CREATE THE ELEMENTS.
-    $('#crewAdd').click(function () {
-        itxtCnt = itxtCnt + 1;
-
-        $(container).append('<input type="text"' +'placeholder="name" class="crewName" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="available time fraction" class="crewTimeFraction" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="EVA State" class="crewState" id=tb' + itxtCnt + ' value="" />');
-
-        // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
-        $('#crewmain').after(container);
-    });
+function findEltContents(uuid, simResult) {
+    var contents;
+    simResult.result.elements.forEach( function (elt) {
+        if (elt.inner === uuid) {
+            contents = elt.contents
+        }
+    })
+    return contents
 }
 
-
-
-function DemandList() {
-
-    var itxtCnt = 0;    // COUNTER TO SET ELEMENT IDs.
-
-    // CREATE A DIV DYNAMICALLY TO SERVE A CONTAINER TO THE ELEMENTS.
-    var container = $(document.createElement('div')).css({
-        width: '100%',
-        clear: 'both',
-        'margin-top': '10px',
-        'margin-bottom': '10px'
-        });
-
-        // CREATE THE ELEMENTS.
-    $('#demAdd').click(function () {
-        itxtCnt = itxtCnt + 1;
-
-        $(container).append('<input type="text"' +'placeholder="Resource Type" class="demandType" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="Resource ID" class="demandResource" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="Amount" class="demandAmount" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="Units" class="demandUnit" id=tb' + itxtCnt + ' value="" />');
-
-        // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
-        $('#demandmain').after(container);
-    });
+function findNodeContents(uuid, simResult) {
+    var contents;
+    simResult.result.nodes.forEach( function (node) {
+        if (node.inner === uuid) {
+            contents = node.contents
+        }
+    })
+    return contents
 }
 
+function getAllContents (initialContents, simResult) {
+	var finalContents = initialContents
+	if (!initialContents) {
+		return
+	}
+	else {
+		initialContents.forEach( function(elt) {
+			finalContents = [...finalContents, ...(getAllContents(findEltContents(elt, simResult), simResult))]
+		})
+		return finalContents
+	}
+}
 
-function onComplete(){
-    name = document.getElementById("inputName").value;
-    node = document.getElementById("inputNodeID").value;
-    time = document.getElementById("inputTime").value;
-    priority = document.getElementById("inputPriority").value;
-    eva_duration = document.getElementById("inputEVADuration").value;
-    crew_vehicle = document.getElementById("inputCrewVehicle").value
+function createTree(simResult, startingNodeUUID) {
+    var namespace = simResult.result.namespace
 
-
-    var demandTypeList = new Array();
-    var demandResourceList = new Array();
-    var demandAmountList = new Array();
-    var demandUnitList = new Array();
-
-    $('.demandType').each(function () {
-      if (this.value != '')
-          demandTypeList.push(this.value);
-    });
-
-    $('.demandResource').each(function () {
-      if (this.value != '')
-          demandResourceList.push(this.value);
-    });
-    $('.demandAmount').each(function () {
-      if (this.value != '')
-          demandAmountList.push(this.value);
-    });
-    $('.demandUnit').each(function () {
-      if (this.value != '')
-          demandUnitList.push(this.value);
-    });
-
-    max = demandTypeList.length
-    var evaDemandList = [];
-
-    for ( var i=0 ; i < max ; i++ ){
-        evaDemandList[i] = [JSON.stringify({
-          resourceType : demandTypeList[i],
-          resource : demandResourceList[i],
-          amount : demandAmountList[i],
-          units : demandUnitList[i]
-        })
-      ];
-    }
-
-
-
-
-    var crewNameList = new Array();
-    var crewTimeFractionList = new Array();
-    var crewStateList = new Array();
-
-    $('.crewName').each(function () {
-      if (this.value != '')
-          crewNameList.push(this.value);
-    });
-
-    $('.crewTimeFraction').each(function () {
-      if (this.value != '')
-          crewTimeFractionList.push(this.value);
-    });
-    $('.crewState').each(function () {
-      if (this.value != '')
-          crewStateList.push(this.value);
-    });
-
-    max = crewNameList.length
-    var crewMemEVAList = [];
-
-    for ( var i=0 ; i < max ; i++ ){
-        crewMemEVAList[i] = [JSON.stringify({
-          name : crewNameList[i],
-          active_time_fraction : crewTimeFractionList[i],
-          type : "HumanAgent",
-          eva_state : crewStateList[i]
-        })
-      ];
-    }
-
-
-
-    message= JSON.stringify({
-      name : name,
-      node : node,
-      time : time,
-      priority : priority,
-      eva_duration : eva_duration,
-      crew_vehicle : crew_vehicle,
-      crew : JSON.parse(crewMemEVAList),
-      additional_demand : JSON.parse(evaDemandList)
-    });
-
-
-    console.log(message)
-    $.ajax({
-      url: "/database/api/edge/",
-      data: message,
-      contentType: 'application/json; charset=utf-8',
-      dataType: "json",
-      method: "POST",
-      success: function() {
-        document.getElementById("edge").reset()
-        document.getElementById("components").reset()
-        location.href = 'edge_table.html'
+    function makeTreeObj (UUID, contents) {
+        if (contents === []) {
+            return {
+                "text": namespace[UUID].inner.name,
+                "id": UUID
             }
-    });
-  }
+        } else {
+
+            var children = []
+            contents.forEach( function (elt) {
+                children.push(makeTreeObj(elt, findEltContents(elt, simResult)))
+            })
+            var treeObj = {
+                "text": namespace[UUID].inner.name,
+                "id": UUID,
+                "children": children  
+            }
+
+            return treeObj
+        }
+    }
+
+    var startingNodeContents = findNodeContents(startingNodeUUID, simResult)
+    var data = []
+
+    startingNodeContents.forEach( function (elt) {
+        data.push(makeTreeObj(elt, findEltContents(elt, simResult)))
+    })
+
+    $('#elementsTree').jstree({
+        "core" : {
+        //   'data' : makeTreeObj(startingNodeUUID, startingNodeContents),
+            'data': data,
+            "themes":{
+                'name': 'proton',
+                'responsive': true,
+                'icons': false
+            }
+        },
+        "plugins" : [
+          "checkbox",
+          "state", "wholerow"
+        ],
+        "checkbox": {
+            'three_state': 'false'
+        },
+      });
+
+    //   $('#elementsTree').on('ready.jstree', function () {
+    //       console.log('it opened')
+    //     $('#elementsTree').jstree('open_all')
+    //   })
+    
+}
+
+function getTreeSelected () {
+    return $("#elementsTree").jstree("get_checked")
+}
+
