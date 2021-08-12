@@ -550,7 +550,6 @@ $(document).ready(function () {
 		}
 	);
 
-
 	//Add/Burn/Delete rows from tables
 	$('#addBurn').on('click', function() {
 		elementName = $("#elementSeqSel option:selected").text();
@@ -607,12 +606,13 @@ $(document).ready(function () {
 
 //Populate Element selector with elements based on simulation filter.
 function retreiveElements(){
+
 	let node = $('#inputOriginNode').val(),
   time = $('#inputTime').val(),
   priority = $('#inputPriority').val();
 
-  if (node && time && priority !== 'Choose...') {
-		console.log("success")
+
+  	if (node !== 'def' && time && priority !== 'def'){
     $('#elementSeqSel').empty();
 		$('#elementTransportSelector').empty();
 
