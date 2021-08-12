@@ -118,19 +118,25 @@ def _decompose_space_transport(event: SpaceTransport) -> List[PrimitiveEvents]:
     :param event: event to decompose
     :return: list of primitive events representing the same action
     """
-    assert event.delta_v is not None, f"Expected event {event.name} to have a defined delta-v"
+    assert (
+        event.delta_v is not None
+    ), f"Expected event {event.name} to have a defined delta-v"
     burn = Burn(edge_id=event.edge_id, time=event.mission_time, delta_v=event.delta_v)
+    burn_stage_sequence = [
+        burn_or_stage
+        for sequence in event.burnStageProfile
+        for burn_or_stage in sequence.burn_stage_sequence
+    ]
+    involved_elements = list(set(event.elements_id_list + [
+        burn_or_stage.element_id for burn_or_stage in burn_stage_sequence
+    ]))
     burn_event = PropulsiveBurn(
         type="PropulsiveBurn",
         priority=event.priority,
         mission_time=event.mission_time,
-        elements=event.elements_id_list,
+        elements=involved_elements,
         burn=burn,
-        burn_stage_sequence=[
-            burn_or_stage
-            for sequence in event.burnStageProfile
-            for burn_or_stage in sequence.burn_stage_sequence
-        ],
+        burn_stage_sequence=burn_stage_sequence,
     )
     moves: List[PrimitiveEvents] = [
         e for move in move_from_transport(event) for e in _decompose_move(move)
