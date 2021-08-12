@@ -53,7 +53,6 @@ def listener_dict_builder(
     post_listeners=listener_dict_builder(types=[int, float, str]),
 )
 @pytest.mark.slow
-@pytest.mark.xfail
 def test_fuzz_simulation(scenario, propulsive, pre_listeners, post_listeners):
     try:
         sim = Simulation(scenario, pre_listeners, post_listeners, propulsive=propulsive)
@@ -68,7 +67,6 @@ def test_fuzz_simulation(scenario, propulsive, pre_listeners, post_listeners):
     propulsive=st.booleans(),
 )
 @pytest.mark.slow
-@pytest.mark.xfail
 def test_simulation_returns_same(scenario, propulsive):
     try:
         sim = Simulation(scenario, propulsive=propulsive)
@@ -87,7 +85,6 @@ def test_simulation_returns_same(scenario, propulsive):
     propulsive=st.booleans(),
 )
 @pytest.mark.slow
-@pytest.mark.xfail
 def test_simulation_empties_queue(scenario, propulsive):
     try:
         sim = Simulation(scenario, propulsive=propulsive)

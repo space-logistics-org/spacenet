@@ -2,7 +2,6 @@ import pytest
 from fastapi.encoders import jsonable_encoder
 from fastapi.testclient import TestClient
 from hypothesis import assume, given, strategies as st
-from pydantic import ValidationError
 
 from spacenet.analysis.checked_scenario import CheckedScenario
 from spacenet.analysis.exceptions import SimException
@@ -17,7 +16,6 @@ client = TestClient(app)
 
 
 @pytest.mark.slow
-@pytest.mark.xfail
 @given(scenario=build_checked_scenario)
 def test_only_allowed_status_codes(scenario: CheckedScenario):
     response = client.post("/simulation/", json=jsonable_encoder(scenario.dict()))
@@ -25,7 +23,6 @@ def test_only_allowed_status_codes(scenario: CheckedScenario):
 
 
 @pytest.mark.slow
-@pytest.mark.xfail
 @given(scenario=build_checked_scenario, propulsive=st.booleans())
 def test_same_result_as_analysis(scenario: CheckedScenario, propulsive: bool):
     try:
