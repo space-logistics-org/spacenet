@@ -1,23 +1,3 @@
-const COLOR_MAPPINGS = {
-    'MakeElements': 'green',
-    'FlightTransport': 'red',
-    'SpaceTransport': 'yellow',
-    'CrewedExploration': 'blue',
-    'RemoveElements': 'black',
-    'ReconfigureGroup': 'orange',
-    'MoveElements': 'orange'
-}
-
-const POINT_SIZES = {
-    'MakeElements': 4,
-    'FlightTransport': 1,
-    'CrewedExploration': 1,
-    'RemoveElements': 3.5,
-    'ReconfigureGroup': 3,
-    'MoveElements': 5
-}
-var DateTime = luxon.DateTime;
-
 const scenario = {
 	"name": "Apollo 17",
 	"description": "Apollo 17 Mission",
@@ -556,212 +536,105 @@ const scenario = {
 	"environmentConstrained": false
   }
 
-
-const oneNodeEvents = ['MakeElements', 'MoveElements', 'RemoveElements', 'ReconfigureElements', 'ReconfigureGroup', 'ConsumeResources', 'TransferResources']
-
-let nodeLocations = {};
-let ind = 0;
-Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-    nodeLocations[uuid] = ind
-    nodeLocations[ind] = uuid
-    ind += 1
-});
-
-console.log('node locations:', nodeLocations)
-
-function getNodeLocation (uuid) {
-    if (Object.keys(nodeLocations).includes(uuid)) {
-        return nodeLocations[uuid]
-    } else {
-        return null
-    }
+function populateNodes () {
+    Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+        console.log(uuid, node)
+        $('#pickNode').append('<option value=' + uuid + '>' + node.name + '</option>')
+      });
 }
 
-function parseTime(timestring) {
-    let hours = '0',
-        minutes = '0',
-        seconds = '0',
-        milliseconds = '0';
-
-    var times = [hours, minutes, seconds, milliseconds];
-
-    let ind = 0;
-
-    for (let i=0; i < timestring.length; i++) {
-        let val = timestring[i]
-        if (val !== ':') {
-            times[ind] += val
-        } else {
-            ind += 1
+function findEltContents(uuid, simResult) {
+    var contents;
+    simResult.result.elements.forEach( function (elt) {
+        if (elt.inner === uuid) {
+            contents = elt.contents
         }
-    }
-    return times
-}
-
-
-function parseMission(mission) {
-    var startDate = DateTime.fromISO(mission.start_date);
-    var datasets = [];
-    var lastLocation = 0;
-
-
-    mission.events.forEach(function (event) {
-        var addedTime = parseTime(event.mission_time)
-        var newDate = startDate.plus({hours: addedTime[0], minutes: addedTime[1], seconds: addedTime[2]})
-
-        var dataset = {
-            label: event.name,
-            borderColor: COLOR_MAPPINGS[event.type],
-            backgroundColor: COLOR_MAPPINGS[event.type],
-        }
-
-        if (oneNodeEvents.includes(event.type)) {
-            //if event occurs in only one node
-            if (event.type === 'MoveElements') {
-                var node = event.origin_id
-            } else {
-                var node = event.entry_point_id
-            }
-
-            if (getNodeLocation(node)) {
-                newLocation = getNodeLocation(node)
-                lastLocation = newLocation
-            } else {
-                newLocation = lastLocation
-            }
-            
-
-            var info = [{
-                x: newDate,
-                y: newLocation
-            }]
-            dataset.pointRadius = POINT_SIZES[event.type]
-        } else {
-
-            if (event.type === 'CrewedExploration') {
-                evaAddedTime = parseTime(event.eva_duration)
-
-
-                if (getNodeLocation(event.node)) {
-                    newLocation = getNodeLocation(event.node)
-                    lastLocation = newLocation
-                } else {
-                    newLocation = lastLocation
-                }
-    
-
-                var info = [{
-                    x: newDate,
-                    y: newLocation
-                }, {
-                    x: newDate.plus({hours: evaAddedTime[0], minutes: evaAddedTime[1], seconds: evaAddedTime[2]}),
-                    y: newLocation
-                }
-                ]
-            } else {
-                //if event occurs in two nodes connected by an edge
-                var edge = scenario.network.edges[event.edge_id]
-
-                var info = [{
-                    x: newDate,
-                    y: getNodeLocation(event.origin_node_id)
-                }, {
-                    x: newDate.plus({days: edge.duration}),
-                    y: getNodeLocation(event.destination_node_id)
-                }
-                ]
-                lastLocation = getNodeLocation(event.destination_node_id)
-            }
-
-        }
-        dataset.data = info
-        datasets.push(dataset)
-    });
-    return datasets
-}
-
-
-
-var missions = scenario.missionList
-
-var all_data = [];
-missions.forEach(function(item) {
-    var parsed = parseMission(item);
-    parsed.forEach(function (dataset) {
-        all_data.push(dataset)
     })
-})
+    return contents
+}
 
-const data = {
-    datasets: all_data
-};
+function findNodeContents(uuid, simResult) {
+    var contents;
+    simResult.result.nodes.forEach( function (node) {
+        if (node.inner === uuid) {
+            contents = node.contents
+        }
+    })
+    return contents
+}
 
+function getAllContents (initialContents, simResult) {
+	var finalContents = initialContents
+	if (!initialContents) {
+		return
+	}
+	else {
+		initialContents.forEach( function(elt) {
+			finalContents = [...finalContents, ...(getAllContents(findEltContents(elt, simResult), simResult))]
+		})
+		return finalContents
+	}
+}
 
-const config = {
-    type: 'line',
-    data: data,
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: false,
-            },
-            title: {
-                display: false,
-                text: 'Scenario'
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        var label = context.dataset.label || '';
-                        var nodeUUID = nodeLocations[context.parsed.y]
-                        var nodeName = scenario.network.nodes[nodeUUID].name
+function createTree(simResult, startingNodeUUID) {
+    var namespace = simResult.result.namespace
 
-                        if (label) {
-                            label += ' (';
-                        }
-                        if (context.parsed.y !== null) {
-                            label += nodeName;
-                            label += ')'
-                        }
-                        return label;
-                    }
-                }
+    function makeTreeObj (UUID, contents) {
+        if (contents === []) {
+            return {
+                "text": namespace[UUID].inner.name,
+                "id": UUID
             }
-        },
-        scales: {
-            x: {
-                type: 'time',
-                time: {
-                    // Luxon format string
-                    tooltipFormat: 'DD T'
-                },
-                title: {
-                    display: true,
-                    text: 'Date'
-                },
-            },
-            y: {
-                title: {
-                display: true,
-                text: 'Location'
-                },
-                ticks: {
-                    stepSize: 1.0,
-                    callback: function(value, index, values) {
-                        console.log(index)
-                        var nodeUUID = nodeLocations[index]
-                        console.log(nodeUUID)
-                        var nodeName = scenario.network.nodes[nodeUUID].name
-                        return nodeName
-                    }
-                }
+        } else {
+
+            var children = []
+            contents.forEach( function (elt) {
+                children.push(makeTreeObj(elt, findEltContents(elt, simResult)))
+            })
+            var treeObj = {
+                "text": namespace[UUID].inner.name,
+                "id": UUID,
+                "children": children  
             }
-        },
+
+            return treeObj
+        }
     }
-};
 
-var myChart = new Chart(
-    document.getElementById('batChart'),
-    config
-);
+    var startingNodeContents = findNodeContents(startingNodeUUID, simResult)
+    var data = []
+
+    startingNodeContents.forEach( function (elt) {
+        data.push(makeTreeObj(elt, findEltContents(elt, simResult)))
+    })
+
+    $('#elementsTree').jstree({
+        "core" : {
+        //   'data' : makeTreeObj(startingNodeUUID, startingNodeContents),
+            'data': data,
+            "themes":{
+                'name': 'proton',
+                'responsive': true,
+                'icons': false
+            }
+        },
+        "plugins" : [
+          "checkbox",
+          "state", "wholerow"
+        ],
+        "checkbox": {
+            'three_state': 'false'
+        },
+      });
+
+    //   $('#elementsTree').on('ready.jstree', function () {
+    //       console.log('it opened')
+    //     $('#elementsTree').jstree('open_all')
+    //   })
+    
+}
+
+function getTreeSelected () {
+    return $("#elementsTree").jstree("get_checked")
+}
+

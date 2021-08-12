@@ -36,6 +36,8 @@ class EdgeWithDuration(Edge):
 
 class SpaceEdge(EdgeWithDuration):
 
+    delta_v = Column(Float)
+
     __mapper_args__ = {"polymorphic_identity": EdgeType.Space.value}
 
 

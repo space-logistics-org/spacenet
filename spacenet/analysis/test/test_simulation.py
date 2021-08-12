@@ -4,10 +4,10 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 import pytest
 from hypothesis import assume, given, strategies as st
 
-from .utilities import DrawFn, build_validating_scenario
+from .utilities import DrawFn, build_checked_scenario, build_validating_scenario
+from ..checked_scenario import CheckedScenario
 from ..exceptions import SimException
 from ..simulation import Simulation
-from spacenet.schemas import Scenario
 
 pytestmark = [pytest.mark.analysis, pytest.mark.unit]
 
@@ -47,13 +47,12 @@ def listener_dict_builder(
 
 
 @given(
-    scenario=build_validating_scenario(),
+    scenario=build_checked_scenario,
     propulsive=st.booleans(),
     pre_listeners=listener_dict_builder(types=[int, float, str]),
     post_listeners=listener_dict_builder(types=[int, float, str]),
 )
 @pytest.mark.slow
-@pytest.mark.xfail
 def test_fuzz_simulation(scenario, propulsive, pre_listeners, post_listeners):
     try:
         sim = Simulation(scenario, pre_listeners, post_listeners, propulsive=propulsive)
@@ -64,10 +63,10 @@ def test_fuzz_simulation(scenario, propulsive, pre_listeners, post_listeners):
 
 
 @given(
-    scenario=build_validating_scenario(), propulsive=st.booleans(),
+    scenario=build_checked_scenario,
+    propulsive=st.booleans(),
 )
 @pytest.mark.slow
-@pytest.mark.xfail
 def test_simulation_returns_same(scenario, propulsive):
     try:
         sim = Simulation(scenario, propulsive=propulsive)
@@ -82,10 +81,10 @@ def test_simulation_returns_same(scenario, propulsive):
 
 
 @given(
-    scenario=build_validating_scenario(), propulsive=st.booleans(),
+    scenario=build_checked_scenario,
+    propulsive=st.booleans(),
 )
 @pytest.mark.slow
-@pytest.mark.xfail
 def test_simulation_empties_queue(scenario, propulsive):
     try:
         sim = Simulation(scenario, propulsive=propulsive)

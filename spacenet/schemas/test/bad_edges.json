@@ -25,6 +25,7 @@
     "origin_id": 3,
     "destination_id": 2.5,
     "duration": 25,
+    "delta_v": 500,
     "description": "Invalid destination_id input."
   },
   {
@@ -32,6 +33,7 @@
     "name": "Test4",
     "origin_id": 1,
     "destination_id": 3,
+    "delta_v": 500,
     "description": "Invalid duration type."
   },
   {
