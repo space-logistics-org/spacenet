@@ -3,10 +3,10 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.testclient import TestClient
 from hypothesis import assume, given, strategies as st
 
+from spacenet.analysis.checked_scenario import CheckedScenario
 from spacenet.analysis.exceptions import SimException
 from spacenet.analysis.simulation import Simulation
-from spacenet.analysis.test.utilities import build_validating_scenario
-from spacenet.schemas import Scenario
+from spacenet.analysis.test.utilities import build_checked_scenario
 from ..main import app
 from ..spatial_simulation import ResultAndErrors
 
@@ -17,8 +17,8 @@ client = TestClient(app)
 
 @pytest.mark.slow
 @pytest.mark.xfail
-@given(scenario=build_validating_scenario())
-def test_only_allowed_status_codes(scenario: Scenario):
+@given(scenario=build_checked_scenario)
+def test_only_allowed_status_codes(scenario: CheckedScenario):
     # TODO: figure out the whole problem w/ providing unrealistically large floats. undo a
     #  register_type_strategy?
     response = client.post("/simulation/", json=jsonable_encoder(scenario.dict()))
@@ -34,8 +34,8 @@ def test_only_allowed_status_codes(scenario: Scenario):
 
 @pytest.mark.slow
 @pytest.mark.xfail
-@given(scenario=build_validating_scenario(), propulsive=st.booleans())
-def test_same_result_as_analysis(scenario: Scenario, propulsive: bool):
+@given(scenario=build_checked_scenario, propulsive=st.booleans())
+def test_same_result_as_analysis(scenario: CheckedScenario, propulsive: bool):
     try:
         sim = Simulation(scenario, propulsive=propulsive)
     except SimException:
