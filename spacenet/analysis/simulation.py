@@ -30,10 +30,11 @@ from spacenet.schemas import (
     MakeElements,
     RemoveElements,
 )
+from .checked_scenario import CheckedScenario
 from .decompose_events import decompose_event
 from .min_heap import MinHeap
 from .entities import *
-from .simulation_errors import SimError
+from .errors import SimError
 from .exceptions import *
 
 from spacenet.fuel_formulas.functions import delta_v_from, final_mass_from
@@ -326,7 +327,7 @@ class Simulation:
 
     def __init__(
         self,
-        scenario: Scenario,
+        scenario: CheckedScenario,
         pre_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
         post_listeners: Optional[Dict[SimCallback[Any], Any]] = None,
         propulsive: bool = False,
@@ -347,6 +348,7 @@ class Simulation:
             a network node
         :raises MismatchedIDType: if an ID referenced as a certain type is not of the certain
             type
+        :raises ValidationError: if the pro
         """
         # TODO: keep documentation up to date, maybe keep error checking up to date in event
         #  execution

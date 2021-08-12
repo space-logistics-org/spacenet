@@ -2,8 +2,13 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import root_validator, validator
 
-from spacenet.schemas import ElementTransportEvent, FlightTransport, Scenario, SpaceEdge, \
-    SpaceTransport, SurfaceTransport, UUIDSpaceEdge
+from spacenet.schemas import (
+    FlightTransport,
+    Scenario,
+    SpaceTransport,
+    SurfaceTransport,
+    UUIDSpaceEdge,
+)
 from spacenet.schemas.mission import Mission
 from spacenet.schemas.scenario import Network
 
@@ -77,7 +82,9 @@ class CheckedScenario(Scenario):
         missions: List[Mission] = values["missionList"]
         for mission in missions:
             for event in mission.events:
-                if isinstance(event, (SpaceTransport, FlightTransport, SurfaceTransport)):
+                if isinstance(
+                    event, (SpaceTransport, FlightTransport, SurfaceTransport)
+                ):
                     assert (
                         event.edge_id in edges
                     ), f"event {event.name} referenced nonexistent edge {event.edge_id}"

@@ -1,5 +1,6 @@
 from typing import Callable, Dict, List, Type, TypeVar, Union
 
+from spacenet.schemas import Burn
 from spacenet.schemas.events import *
 
 PrimitiveEvents = Union[MoveElements, MakeElements, RemoveElements, PropulsiveBurn]
@@ -117,8 +118,25 @@ def _decompose_space_transport(event: SpaceTransport) -> List[PrimitiveEvents]:
     :param event: event to decompose
     :return: list of primitive events representing the same action
     """
-    # TODO: splice in burn into middle later
-    return [e for move in move_from_transport(event) for e in _decompose_move(move)]
+    assert event.delta_v is not None, f"Expected event {event.name} to have a defined delta-v"
+    burn = Burn(edge_id=event.edge_id, time=event.mission_time, delta_v=event.delta_v)
+    burn_event = PropulsiveBurn(
+        type="PropulsiveBurn",
+        priority=event.priority,
+        mission_time=event.mission_time,
+        elements=event.elements_id_list,
+        burn=burn,
+        burn_stage_sequence=[
+            burn_or_stage
+            for sequence in event.burnStageProfile
+            for burn_or_stage in sequence.burn_stage_sequence
+        ],
+    )
+    moves: List[PrimitiveEvents] = [
+        e for move in move_from_transport(event) for e in _decompose_move(move)
+    ]
+    moves.insert(1, burn_event)
+    return moves
 
 
 DECOMPOSE_REGISTRY: Dict[Type[E], DecomposeFn[E]] = {

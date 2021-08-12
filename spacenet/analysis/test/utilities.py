@@ -1,9 +1,10 @@
 from hypothesis import assume, strategies as st
 from typing import Callable, TypeVar
 
+from spacenet.analysis.checked_scenario import CheckedScenario
 from spacenet.schemas import ElementTransportEvent, Scenario, UUIDSpaceEdge
 
-__all__ = ["T", "DrawFn", "build_validating_scenario"]
+__all__ = ["T", "DrawFn", "build_validating_scenario", "build_checked_scenario"]
 
 T = TypeVar("T")
 DrawFn = Callable[[st.SearchStrategy[T]], T]
@@ -58,3 +59,8 @@ def build_validating_scenario(draw: DrawFn):
                 event.origin_node_id = edge.origin_id
                 event.destination_node_id = edge.destination_id
     return base_scenario
+
+
+build_checked_scenario = build_validating_scenario().map(
+    lambda scenario: CheckedScenario.parse_obj(scenario.dict())
+)
