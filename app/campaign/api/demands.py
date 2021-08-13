@@ -38,42 +38,45 @@ with open("spacenet/schemas/apollo_17/apollo_17.json") as json_file:
 def getMissionExplorationDuration():
     totalExpHours = 0
     for i in json_data["missionList"]:
-        if i["type"] == "CrewedExploration":
-            dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
-            itDur = (
-                dur.time().hour
-                + (dur.time().minute / 60.0)
-                + (dur.time().second / 3600.0)
-            )
-            totalExpHours += itDur
+        for j in i["events"]:
+            if j["type"] == "CrewedExploration":
+                dur = datetime.datetime.strptime(j["eva_duration"], "%H:%M:%S")
+                itDur = (
+                    dur.time().hour
+                    + (dur.time().minute / 60.0)
+                    + (dur.time().second / 3600.0)
+                )
+                totalExpHours += itDur
     return totalExpHours
 
 
 def getMissionTransitDuration():
     totalTransportHours = 0
     for i in json_data["missionList"]:
-        if i["type"] == "SpaceTransport":
-            dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
-            itDur = (
-                dur.time().hour
-                + (dur.time().minute / 60.0)
-                + (dur.time().second / 3600.0)
-            )
-            totalTransportHours += itDur
+        for j in i["events"]:
+            if j["type"] == "SpaceTransport":
+                dur = datetime.datetime.strptime(j["exec_time"], "%H:%M:%S")
+                itDur = (
+                    dur.time().hour
+                    + (dur.time().minute / 60.0)
+                    + (dur.time().second / 3600.0)
+                )
+                totalTransportHours += itDur
     return totalTransportHours
 
 
 def getMissionEvaCrewTime():
     totalHours = 0
     for i in json_data["missionList"]:
-        if i["type"] == "CrewedExploration":
-            dur = datetime.datetime.strptime(i["eva_duration"], "%H:%M:%S")
-            itDur = (
-                dur.time().hour
-                + (dur.time().minute / 60.0)
-                + (dur.time().second / 3600.0)
-            )
-            totalHours += itDur
+        for j in i["events"]:
+            if j["type"] == "CrewedExploration":
+                dur = datetime.datetime.strptime(j["eva_duration"], "%H:%M:%S")
+                itDur = (
+                    dur.time().hour
+                    + (dur.time().minute / 60.0)
+                    + (dur.time().second / 3600.0)
+                )
+                totalHours += itDur
     return totalHours
 
 
