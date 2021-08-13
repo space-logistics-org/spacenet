@@ -1,14 +1,16 @@
-from typing import List
+from typing import List, Optional
 from typing_extensions import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from . import ElementTransportEvent, Event
+from . import ElementTransportEvent
 from .propulsive_burn import BurnStageItem
 
 
 __all__ = ["SpaceTransport"]
+
+from .types import SafeNonNegFloat
 
 
 class BurnStageSequence(BaseModel):
@@ -34,3 +36,4 @@ class SpaceTransport(ElementTransportEvent):
         ..., title="Burn Sequence", description="List of separate Burn-Stage Sequences"
     )
     type: Literal["SpaceTransport"]
+    delta_v: Optional[SafeNonNegFloat] = None

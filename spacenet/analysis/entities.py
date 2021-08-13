@@ -5,7 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field, NonNegativeFloat, validator
 
 from spacenet.analysis.indirect_entities import IndirectEntity
-from spacenet.analysis.simulation_errors import SimError
+from spacenet.analysis.errors import SimError
 from spacenet.schemas import AllElements, AllNodes, AllUUIDEdges, PropulsiveVehicle
 
 __all__ = ["SimElement", "SimNode", "SimEdge", "SimResult", "into_indirect_entity"]
@@ -27,7 +27,7 @@ class SimElement(ContainsElements):
     """
 
     inner: AllElements
-    fuel_mass: NonNegativeFloat = 0
+    fuel_mass: NonNegativeFloat = None
 
     def __hash__(self):
         return hash(self.inner)
@@ -65,7 +65,7 @@ class SimElement(ContainsElements):
     def current_mass(self) -> float:
         return self.inner.mass + self.fuel_mass
 
-    @validator("fuel_mass")
+    @validator("fuel_mass", always=True)
     def _initialize_fuel_mass(cls, value, values, config, field) -> float:
         inner: AllElements = values.get("inner")
         return inner.max_fuel if isinstance(inner, PropulsiveVehicle) else 0
