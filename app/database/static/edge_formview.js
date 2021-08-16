@@ -6,6 +6,7 @@ dist = 0;
 max_crew = 0;
 max_cargo = 0;
 desc = "";
+deltaV=0;
 
 
 function formSet(modalType) {
@@ -26,6 +27,9 @@ function formSet(modalType) {
     let inputMax_CargoLabel = $("#" + modalType + "InputMax_CargoLabel");
     let inputDescription = $("#" + modalType + "InputDescription");
     let inputDescriptionLabel = $("#" + modalType + "InputDescriptionLabel");
+    let inputDeltaV = $("#" + modalType + "InputDeltaV");
+    let inputDeltaVLabel = $("#" + modalType + "InputDeltaVLabel");
+
     inputName.hide();
     inputNameLabel.hide();
     inputOrigin_ID.hide();
@@ -42,6 +46,8 @@ function formSet(modalType) {
     inputMax_CargoLabel.hide();
     inputDescription.hide();
     inputDescriptionLabel.hide();
+    inputDeltaV.hide();
+    inputDeltaVLabel.hide();
 
     const edgeType = $('#' + modalType + 'DropPick').val();
     console.log('in formset')
@@ -65,6 +71,8 @@ function formSet(modalType) {
             inputMax_CargoLabel.hide();
             inputDescription.hide();
             inputDescriptionLabel.hide();
+            inputDeltaV.hide();
+            inputDeltaVLabel.hide()
             break;
         }
         case 'FlightEdge':
@@ -109,6 +117,9 @@ function formSet(modalType) {
             inputDescription.show();
             inputDescriptionLabel.show();
 
+            inputDeltaV.show();
+            inputDeltaVLabel.show()
+
             break;
         }
 
@@ -145,6 +156,7 @@ function getMessage(modalType) {
     let max_crew = $("#" + modalType + "InputMax_Crew").val();
     let max_cargo = $("#" + modalType + "InputMax_Cargo").val();
     let desc = $("#" + modalType + "InputDescription").val();
+    let deltaV = $("#" + modalType + "InputDeltaV").val();
     let message;
     switch (type) {
 
@@ -171,6 +183,7 @@ function getMessage(modalType) {
                 destination_id: parseInt(dest_id),
                 duration: parseInt(dur),
                 description: desc,
+                delta_v: deltaV
             });
             break;
         }
