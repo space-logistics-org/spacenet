@@ -65,7 +65,9 @@ function onComplete(){
       	removal_point_id: removal_point_id
     }
 
-    alert(JSON.stringify(data))
-    location.reload()
+	addEvent(data)
+	alert('Event added')
+	location.reload()
+	console.log(compileScenario())
 
 }

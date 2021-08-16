@@ -62,7 +62,9 @@ function onComplete(){
       	reconfigure_point_id: reconfigure_point_id
     }
 
-    alert(JSON.stringify(data))
-    location.reload()
+	addEvent(data)
+	alert('Event added')
+	location.reload()
+	console.log(compileScenario())
   
 }

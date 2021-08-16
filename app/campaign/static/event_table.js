@@ -1,11 +1,10 @@
 const COLUMNS = {
     'edge': [
         {data: null},
-        {data: 'name'},
         {data: 'type'},
+        {data: 'name'},
         {data: 'origin_id'},
-        {data: 'destination_id'},
-        {data: 'description'}
+        {data: 'destination_id'}
     ],
     'element': [
         {data: null},
@@ -20,10 +19,10 @@ const COLUMNS = {
     ],
     'node': [
         {data: null},
-        {data: 'name'},
         {data: 'type'},
+        {data: 'name'},
         {data: 'body_1'},
-        {data: 'description'},
+        // {data: 'description'},
     ],
     'resource': [
         {data: null},
@@ -45,8 +44,9 @@ const COLUMNS = {
 };
 
 var getSelected;
-$(document).ready(function () {
-    const dataType = document.getElementsByName('dataType')[0].content;
+
+function buildTable(dataType) {
+    console.log(dataType)
 
     $('#' + dataType + '_table tfoot th').each(function () {
         if ($(this).index() !== 0) {
@@ -123,5 +123,4 @@ $(document).ready(function () {
         }
         return selectedElts
     }
-});
-
+}

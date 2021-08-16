@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Mission</title>
+  <meta name="author" content="SpaceNet Team">
+  <meta name="description" content="A formview editor for a SpaceNet campaign.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.3.1/jszip-2.5.0/dt-1.10.25/af-2.3.7/b-1.7.1/b-colvis-1.7.1/b-html5-1.7.1/b-print-1.7.1/cr-1.5.4/date-1.1.0/fc-3.3.3/fh-3.1.9/kt-2.6.2/r-2.2.8/rg-1.1.3/rr-1.2.8/sc-2.0.4/sb-1.1.0/sp-1.3.0/sl-1.3.3/datatables.min.css"/>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.3.1/jszip-2.5.0/dt-1.10.25/af-2.3.7/b-1.7.1/b-colvis-1.7.1/b-html5-1.7.1/b-print-1.7.1/cr-1.5.4/date-1.1.0/fc-3.3.3/fh-3.1.9/kt-2.6.2/r-2.2.8/rg-1.1.3/rr-1.2.8/sc-2.0.4/sb-1.1.0/sp-1.3.0/sl-1.3.3/datatables.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="style.css" rel="stylesheet">
+    <script src="create_mission.js"></script>
+</head>
+
+<body onload="populateNodes()">
+  <div class="container-fluid py-4">
+    <h1 class= "text-center">Create a Mission</h1>
+
+    <form id="createMission">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="inputName">Name</label>
+          <input type="text" class="form-control" id="inputName" placeholder="Name">
+        </div>
+      </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="pickStartDate">Start Date</label>
+        <input type="datetime" class="form-control" id="pickStartDate" placeholder="Date">    
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="pickOrigin">Origin</label>
+        <select id="pickOrigin" class="form-control" class="text-center">
+          <option selected value="def">Choose...</option>
+        </select>      
+      </div>
+      <div class="form-group col-md-6">
+        <label for="pickDest">Destination</label>
+        <select id="pickDest" class="form-control" class="text-center">
+          <option selected value="def">Choose...</option>
+        </select>      
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="pickReturnOrigin">Origin</label>
+        <select id="pickReturnOrigin" class="form-control" class="text-center">
+          <option selected value="def">Choose...</option>
+        </select>      
+      </div>
+      <div class="form-group col-md-6">
+        <label for="pickReturnDest">Destination</label>
+        <select id="pickReturnDest" class="form-control" class="text-center">
+          <option selected value="def">Choose...</option>
+        </select>      
+      </div>
+    </div>
+
+    <input id="submitButton" type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
+    <input id="deleteMissionButton" type="button" value="Delete Current Mission" onClick="deleteMission()" class="btn btn-danger">
+    <!-- <input id="addMissionButton" type="button" value="Add New Mission" onClick="addNewMission()" class="btn btn-danger"> -->
+
+  </form>
+  </div>
+</body>
+
+
+</html>

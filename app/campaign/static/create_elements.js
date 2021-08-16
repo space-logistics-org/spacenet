@@ -8,6 +8,9 @@ function showUnselectedInstructions () {
 $(document).ready( function() {
 	populateNodes();
 	showUnselectedInstructions()
+	Object.entries(scenario.elementList).forEach(function ([UUID, elt]) {
+		addRow(UUID, elt)
+	})
 })
 
 function loadSim() {
@@ -22,7 +25,7 @@ function loadSim() {
 		$('#createIn').find('option:not(:first)').remove();
 		  
 		$.ajax({
-			url: "/campaign/api/simulation/?days_to_run_for=" + time,
+			url: "/campaign/api/simulation/?days_to_run_for=" + time + "&propulsive=false",
 			data: JSON.stringify(scenario),
 			contentType: 'application/json',
 			dataType: "json",	  
@@ -31,12 +34,9 @@ function loadSim() {
 				var namespace = simResult.result.namespace
 
 				var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+				$('#createIn').append('<option value=' + node + '>' + namespace[node].inner.name + '</option>')
 
-				if (allContents.length === 0) {
-					alert("No elements available at given time, please choose a different mission time")
-
-				} else {
-					$('#createIn').append('<option value=' + node + '>' + namespace[node].inner.name + '</option>')
+				if (allContents.length !== 0) {
 					allContents.forEach( function (contentUUID) {
 						var eltObj = namespace[contentUUID].inner
 						if (eltObj.type !== 'HumanAgent' && eltObj.type !== 'RoboticAgent') {
@@ -71,7 +71,9 @@ function onComplete(){
       	entry_point_id: entry_point_id
     }
 
-    alert(JSON.stringify(data))
-    location.reload()
+	addEvent(data)
+	alert('Event added')
+	location.reload()
+	console.log(compileScenario())
 
 }

@@ -141,7 +141,9 @@ function onComplete(){
       quantity: quantities
     }
 
-    alert(JSON.stringify(data))
+    addEvent(data)
+    alert('Event added')
     location.reload()
+    console.log(compileScenario())
 
 }
