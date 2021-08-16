@@ -65,60 +65,66 @@ $(document).ready(function () {
 
 
 
-//Populate Element selector with elements based on simulation filter.
-// //function retreiveElements(){
-//
-// 	let node = $('#inputOriginNode').val(),
-//   time = $('#inputTime').val(),
-//   priority = $('#inputPriority').val();
-//
-//
-//   	if (node !== 'def' && time && priority !== 'def'){
-//     $('#elementSeqSel').empty();
-// 		$('#elementTransportSelector').empty();
-//
-//
-//
-//     $.ajax({
-//       url: "/campaign/api/simulation/?days_to_run_for=" + time,
-//       data: JSON.stringify(scenario),
-//       contentType: 'application/json; charset=utf-8',
-//       dataType: "json",
-//       method: "POST",
-//       success: function (simResult) {
-//
-// 								var namespace = simResult.result.namespace
-//
-// 								var allContents = getAllContents(findNodeContents(node, simResult), simResult)
-//
-// 								if (allContents.length === 0) {
-// 									alert("No elements available at given time, please choose a different mission time")
-//
-// 								} else {
-// 									allContents.forEach( function (contentUUID) {
-// 										var eltObj = namespace[contentUUID].inner
-// 										$('#elementTransportSelector').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
-//
-// 									});
-// 								}
-// 								//Sorts elements in element selector
-// 								var options = $("#elementTransportSelector option");
-// 								options.detach().sort(function(a,b) {
-// 									var at = $(a).text();
-// 									var bt = $(b).text();
-// 									return (at > bt)?1:((at < bt)?-1:0);
-// 								});
-// 								options.appendTo("#elementTransportSelector");
-//
-// 								$("#elementTransportSelector > option").each(function() {
-// 									if (namespace[this.value].inner.type !== 'HumanAgent' && namespace[this.value].inner.type !== 'RoboticAgent') {
-// 										$('#elementSeqSel').append('<option value="' + this.value + '">' + this.text + '</option>');
-// 									}
-// 								});
-// 							}
-// 						})
-// 					}
-// 				}
+// Populate Element selector with elements based on simulation filter.
+function retreiveElements(){
+
+	let node = $('#inputOriginNode').val(),
+  time = $('#inputTime').val(),
+  priority = $('#inputPriority').val();
+
+
+  	if (node !== 'def' && time && priority !== 'def'){
+    $('#elementSeqSel').empty();
+		$('#elementTransportSelector').empty();
+
+
+
+    $.ajax({
+      url: "/campaign/api/simulation/?days_to_run_for=" + time,
+      data: JSON.stringify(scenario),
+      contentType: 'application/json; charset=utf-8',
+      dataType: "json",
+      method: "POST",
+      success: function (simResult) {
+        console.log(simResult);
+
+								var namespace = simResult.result.namespace
+
+								var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+
+								if (allContents.length === 0) {
+									alert("No elements available at given time, please choose a different mission time")
+
+								} else {
+									allContents.forEach( function (contentUUID) {
+										var eltObj = namespace[contentUUID].inner
+                    if (eltObj.type !== 'HumanAgent') {
+                      $('#elementTransportSelector').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
+                    } else {
+                      $('#elementTransportSelector').append('<option value=' + contentUUID + '>' + eltObj.name+"(active time fraction:" + eltObj.active_time_fraction+ ")" + '</option>')
+                    }
+
+
+									});
+								}
+								//Sorts elements in element selector
+								var options = $("#elementTransportSelector option");
+								options.detach().sort(function(a,b) {
+									var at = $(a).text();
+									var bt = $(b).text();
+									return (at > bt)?1:((at < bt)?-1:0);
+								});
+								options.appendTo("#elementTransportSelector");
+
+								$("#elementTransportSelector > option").each(function() {
+									if (namespace[this.value].inner.type !== 'HumanAgent' && namespace[this.value].inner.type !== 'RoboticAgent') {
+										$('#elementSeqSel').append('<option value="' + this.value + '">' + this.text + '</option>');
+									}
+								});
+							}
+						})
+					}
+				}
 
 
 

@@ -80,12 +80,6 @@ function retreiveElements(){
 									return (at > bt)?1:((at < bt)?-1:0);
 								});
 								options.appendTo("#elementTransportSelector");
-
-								$("#elementTransportSelector > option").each(function() {
-									if (namespace[this.value].inner.type !== 'HumanAgent' && namespace[this.value].inner.type !== 'RoboticAgent') {
-										$('#elementSeqSel').append('<option value="' + this.value + '">' + this.text + '</option>');
-									}
-								});
 							}
 						})
 					}
