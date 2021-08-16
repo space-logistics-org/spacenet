@@ -34,7 +34,7 @@ The default address is http://localhost:8000.
 
 ## Running Tests
 
-The `spacenet` and `app` modules both have separate `test` submodules. All tests can be run via `pytest`,
+Modules within `spacenet` and `app` have separate `test` submodules. All tests can be run via `pytest`,
 and most supported markers are described in the top-level `pytest.ini` file. In addition to the markers
 supported by pytest, an additional `hypothesis` marker exists for running property-based tests.
 

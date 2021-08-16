@@ -8,68 +8,45 @@
   <meta name="description" content="A formview editor for SpaceNet Edge objects.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="style.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="spaceTransport_formview.js"></script>
+  <script src="event_forms.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
-  input[type=text] {
-
-        padding: 2px 10px;
-        margin: 3px;
-        display: inline-block;
-        border: 1px solid #CCC;
-        box-sizing: border-box;
-        outline: none;
-    }
-
-  .elementSel{
-        width: 50%;
+  .burnStageButtons{
+    margin-bottom: 15px;
   }
-  .burnstage{
-        width: 48%;
-  }
-  .seqele{
-        width: 48%;
+  .nav {
+    margin-bottom: 18px;
+    list-style: none;
   }
   </style>
 
 </head>
 
 <body>
+
   <div class="container">
-  <h1 class= "text-center">Space Transport Form</h1>
+    <h1 class= "text-center">Space Transport Form</h1>
 
-  <hr></hr>
+    <hr>
+
     <form id="components">
-      <div class="form-group">
-              <label for="inputName">Name</label>
-              <input type="text" class="form-control" id="inputName" placeholder="Name">
-    </div>
 
-        <div class="form-group">
-            <label for="inputOriginNode">Origin Node</label>
-            <select id="inputOriginNode" onclick="retreiveElements()" class="form-control" class="text-center">
-              <option selected id="def">Choose...</option>
-            </select>
+      <div class="form-row">
+        <div class="form-group col">
+          <label for="inputName">Name</label>
+          <input type="text" class="form-control" id="inputName" placeholder="Name">
         </div>
-
-        <div class="form-group">
-            <label for="inputDestinationNode">Destination Node</label>
-            <select id="inputDestinationNode" class="form-control" class="text-center">
-              <option selected id="def">Choose...</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="inputTime">Time from Mission Start</label>
-            <input type="number" onclick="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
-        </div>
-
-        <div class="form-group">
+        <div class="form-group col">
           <label for="inputPriority">Priority</label>
-          <select id="inputPriority" onclick="retreiveElements()" class="form-control" class="text-center">
+          <select id="inputPriority" onchange="retreiveElements()" class="form-control" class="text-center">
             <option selected id="def">Choose...</option>
             <option>1</option>
             <option>2</option>
@@ -78,31 +55,77 @@
             <option>5</option>
           </select>
         </div>
-
-
-
-        <div class="form-group">
-          <div class="elementSel">
-            <label for="ElementSel">Elements</label>
-            <select id="ElementSel" class="form-control" class="text-center" multiple>
-              <option selected id="def">Choose...</option>
-            </select>
-          </div>
-        </div>
-
-
-
-      <div class="form-group">
-          <label for="seqadd">Press to add a new burn sequence</label>
-          <input type="button" id="seqAdd" value="Add Burn Sequence" class="btn btn-dark btn-sm"/>
       </div>
 
-    <div id="burnstagemain"></div>
+      <div class="form-row">
+        <div class="form-group col">
+          <label for="inputOriginNode">Origin Node</label>
+            <select id="inputOriginNode" onchange="retreiveElements()" class="form-control" class="text-center">
+              <option selected id="def">Choose...</option>
+            </select>
+        </div>
+        <div class="form-group col">
+          <label for="inputDestinationNode">Destination Node</label>
+          <select id="inputDestinationNode" class="form-control" class="text-center">
+            <option selected id="def">Choose...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col">
+          <label for="inputTime">Time from Mission Start</label>
+          <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
+        </div>
+        <div class= "form-group col">
+            <label for="elementTransportSelector">Elements to Transport</label>
+            <select id="elementTransportSelector" class="form-control" class="text-center" multiple>
+              <option>S-IC</option>
+              <option>S-II</option>
+              <option>S-IVB</option>
+              <option>Crew Member</option>
+              <option>Crew Member</option>
+            </select>
+        </div>
+      </div>
+
+      <hr>
+
+      <div>
+        <button  type="button" id='createTab' class="btn btn-dark btn-sm" style="margin-bottom:15px">Press to Add a new Sequence</button>
+      </div>
+
+      <div class="form-group">
+          <label for="elementSeqSel">Elements</label>
+          <select id="elementSeqSel" class="form-control" class="text-center">
+            <option>S-IC</option>
+            <option>S-II</option>
+            <option>S-IVB</option>
+          </select>
+      </div>
+
+      <div class="burnStageButtons">
+        <input id="addBurn" type="button" value="Burn" class="btn btn-outline-dark ">
+        <input id="addStage" type="button" value="Stage" class="btn btn-outline-dark ">
+      </div>
+
+      <div>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+        </ul>
+
+        <div id="myTabContent" class="tab-content">
+        </div>
+      </div>
+
+      <input id="delete" type="button" class="btn btn-danger" value="Delete Selected">
+
+      <hr>
 
       <div class="button">
-      <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
-  </form>
-</div>
+        <input type="button" value="Submit" onClick="onComplete()" class="btn btn-primary">
+      </div>
+    </form>
+  </div>
 </div>
 </body>
 

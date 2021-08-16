@@ -45,7 +45,12 @@ $(document).ready(function () {
                 defaultContent: '',
                 className: 'select-checkbox',
                 width: '8%',
-            }],
+            },
+            {
+                targets: 9,
+                visible: false
+            }
+        ],
         select: {
             style: 'multi',
             selector: 'td:first-child'
@@ -53,22 +58,20 @@ $(document).ready(function () {
         order: [[1, 'asc']],
     });
 
-    populateRows = function(elements) {
-        elements.forEach( function(elt) {
-            var eltRow = [
-                null,
-                elt.inner.name,
-                elt.inner.type,
-                elt.inner.class_of_supply,
-                elt.inner.environment,
-                elt.inner.accommodation_mass,
-                elt.inner.mass,
-                elt.inner.volume,
-                elt.inner.description
-            ]
-            console.log(eltRow)
-            table.row.add(eltRow).draw()
-        })
+    addRow = function(uuid, elt) {
+        var eltRow = [
+            null,
+            elt.name,
+            elt.type,
+            elt.class_of_supply,
+            elt.environment,
+            elt.accommodation_mass,
+            elt.mass,
+            elt.volume,
+            elt.description,
+            uuid
+        ]
+        table.row.add(eltRow).draw()
     }
 
     clearTable = function() {
@@ -92,7 +95,7 @@ $(document).ready(function () {
         const record = table.rows({selected: true}).data();
         let selectedElts = []
         for (i=0; i<record.length; i++) {
-            selectedElts.push(record[i])
+            selectedElts.push(record[i][9])
         }
         return selectedElts
     }

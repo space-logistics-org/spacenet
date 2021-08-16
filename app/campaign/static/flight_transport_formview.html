@@ -18,40 +18,22 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.3.1/jszip-2.5.0/dt-1.10.25/af-2.3.7/b-1.7.1/b-colvis-1.7.1/b-html5-1.7.1/b-print-1.7.1/cr-1.5.4/date-1.1.0/fc-3.3.3/fh-3.1.9/kt-2.6.2/r-2.2.8/rg-1.1.3/rr-1.2.8/sc-2.0.4/sb-1.1.0/sp-1.3.0/sl-1.3.3/datatables.min.js"></script>
-  <script src="flight_transport_formview_duplicate.js"></script>
+  <script src="flight_transport_formview.js"></script>
+  <script src="event_forms.js"></script>
   <script src="table.js"></script>
 
 </head>
 
 <body>
   <div class="container py-4">
-    <header class="pb-3 mb-4 border-bottom">
-      <a class="d-flex align-items-center text-dark text-decoration-none"></a>
-      <a href=".">
-        <img src = "SpaceNetLogo.jpg" height="30px">
-      </a>
-        <span class="fs-4">SpaceNet</span>
-    </header>
   <h1 class= "text-center">Flight Transport Event</h1>
 
-    <div class="form-group col-md-6">
+  <div class="form-row">
+    <div class="form-group col">
       <label for="inputName">Name</label>
       <input type="text" class="form-control" id="inputName" placeholder="Name">
     </div>
-
-    <div class="form-group col-md-6">
-      <label for="pickNode">Node</label>
-      <select id="pickNode" onchange="retreiveElements()" class="form-control" class="text-center">
-        <option selected id="def">Choose...</option>
-      </select>
-    </div>
-
-    <div class="form-group col-md-6">
-      <label for="inputTime">Time</label>
-      <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Days">
-    </div>
-
-    <div class="form-group col-md-6">
+    <div class="form-group col">
       <label for="pickPriority">Priority</label>
       <select id="pickPriority" onchange="retreiveElements()" class="form-control" class="text-center">
         <option selected id="def">Choose...</option>
@@ -62,37 +44,38 @@
         <option id="Five">5</option>
       </select>
     </div>
+  </div>
 
-    <div class= "form-group col-md-6">
-      <div class="ElementButton">
-        <input type="button" value="Submit" onClick="retreiveElements()" class="btn btn-dark btn-sm" >
-      </div>
+  <div class="form-row">
+    <div class="form-group col">
+      <label for="pickOriginNode">Origin Node</label>
+      <select id="pickOriginNode" onchange="retreiveElements()" class="form-control" class="text-center">
+        <option selected id="def">Choose...</option>
+      </select>
     </div>
+    <div class="form-group col">
+      <label for="pickDestNode">Destination Node</label>
+      <select id="pickDestNode" onchange="retreiveElements()" class="form-control" class="text-center">
+        <option selected id="def">Choose...</option>
+      </select>
+    </div>
+  </div>
 
-    <div class= "form-group col-md-6">
+  <div class="form-row">
+    <div class="form-group col">
+      <label for="inputTime">Time</label>
+      <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Days">
+    </div>
+    <div class="form-group col">
       <div class="elementSelector">
         <label for="ElementSel">Elements</label>
         <select id="ElementSel" class="form-control" class="text-center" multiple>
+          <option selected id="def">Choose...</option>
         </select>
       </div>
     </div>
+  </div>
 
-    <div class="form-group col-md-6">
-      <label for="pickFlight">Flight</label>
-        <select id="pickFlight" onChange = "setFlight()" class="form-control">
-          <option selected id="def">Choose...</option>
-        </select>
-    </div>
-
-    <div class="form-group col-md-6">
-      <label for="Destination">Destination:</label>
-      <h5 id="destinationNode">Node</h5>
-    </div>
-
-    <div class="form-group col-md-6">
-      <label for="Duration">Duration:</label>
-      <h5>Time</h5>
-    </div>
 
     <label for="Capacity">Capacity</label>
 
