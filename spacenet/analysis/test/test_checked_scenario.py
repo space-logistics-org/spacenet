@@ -8,6 +8,9 @@ from pydantic import ValidationError
 from spacenet.analysis.checked_scenario import CheckedScenario
 
 
+pytestmark = [pytest.mark.unit, pytest.mark.analysis]
+
+
 @pytest.fixture
 def checked_scenario_regression_inputs() -> None:
     filename = pkg_resources.resource_filename(
