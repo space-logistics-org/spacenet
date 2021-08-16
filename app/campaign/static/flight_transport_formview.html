@@ -26,33 +26,14 @@
 
 <body>
   <div class="container py-4">
-    <header class="pb-3 mb-4 border-bottom">
-      <a class="d-flex align-items-center text-dark text-decoration-none"></a>
-      <a href=".">
-        <img src = "SpaceNetLogo.jpg" height="30px">
-      </a>
-        <span class="fs-4">SpaceNet</span>
-    </header>
   <h1 class= "text-center">Flight Transport Event</h1>
 
-    <div class="form-group col-md-6">
+  <div class="form-row">
+    <div class="form-group col">
       <label for="inputName">Name</label>
       <input type="text" class="form-control" id="inputName" placeholder="Name">
     </div>
-
-    <div class="form-group col-md-6">
-      <label for="pickNode">Node</label>
-      <select id="pickNode" onchange="retreiveElements()" class="form-control" class="text-center">
-        <option selected id="def">Choose...</option>
-      </select>
-    </div>
-
-    <div class="form-group col-md-6">
-      <label for="inputTime">Time</label>
-      <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Days">
-    </div>
-
-    <div class="form-group col-md-6">
+    <div class="form-group col">
       <label for="pickPriority">Priority</label>
       <select id="pickPriority" onchange="retreiveElements()" class="form-control" class="text-center">
         <option selected id="def">Choose...</option>
@@ -63,31 +44,38 @@
         <option id="Five">5</option>
       </select>
     </div>
+  </div>
 
-    <div class= "form-group col-md-6">
+  <div class="form-row">
+    <div class="form-group col">
+      <label for="pickOriginNode">Origin Node</label>
+      <select id="pickOriginNode" onchange="retreiveElements()" class="form-control" class="text-center">
+        <option selected id="def">Choose...</option>
+      </select>
+    </div>
+    <div class="form-group col">
+      <label for="pickDestNode">Destination Node</label>
+      <select id="pickDestNode" onchange="retreiveElements()" class="form-control" class="text-center">
+        <option selected id="def">Choose...</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col">
+      <label for="inputTime">Time</label>
+      <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Days">
+    </div>
+    <div class="form-group col">
       <div class="elementSelector">
         <label for="ElementSel">Elements</label>
         <select id="ElementSel" class="form-control" class="text-center" multiple>
+          <option selected id="def">Choose...</option>
         </select>
       </div>
     </div>
+  </div>
 
-    <div class="form-group col-md-6">
-      <label for="pickFlight">Flight</label>
-        <select id="pickFlight" onchange = "setFlight()" class="form-control">
-          <option selected id="def">Choose...</option>
-        </select>
-    </div>
-
-    <div class="form-group col-md-6">
-      <label for="Destination">Destination:</label>
-      <h5 id="destinationNode">Node</h5>
-    </div>
-
-    <div class="form-group col-md-6">
-      <label for="Duration">Duration:</label>
-      <h5>Time</h5>
-    </div>
 
     <label for="Capacity">Capacity</label>
 

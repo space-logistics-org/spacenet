@@ -58,53 +58,56 @@
   <h1 class= "text-center">Crewed EVA Form</h1>
 
   <hr></hr>
-    <form id="components">
 
-      <div class="form-group">
-              <label for="inputName">Name</label>
-              <input type="text" class="form-control" id="inputName" placeholder="Name">
+  <form id="components">
+
+    <div class="form-row">
+      <div class="form-group col">
+        <label for="inputName">Name</label>
+        <input type="text" class="form-control" id="inputName" placeholder="Name">
+      </div>
+      <div class="form-group col">
+        <label for="inputPriority">Priority</label>
+        <select id="inputPriority" onchange="retreiveElements()" class="form-control" class="text-center">
+          <option selected id="def">Choose...</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
     </div>
 
+    <div class="form-row">
+      <div class="form-group col">
+        <label for="inputNode">Node</label>
+        <select id="inputNode" onchange="retreiveElements()" class="form-control" class="text-center">
+          <option selected id="def">Choose...</option>
+        </select>
+      </div>
+      <div class="form-group col">
+        <label for="inputTime">Time From Mission Start</label>
+        <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
+      </div>
+    </div>
 
-        <div class="form-group">
-            <label for="inputNode">Node</label>
-            <select id="inputNode" onchange="retreiveElements()" class="form-control" class="text-center">
-              <option selected id="def">Choose...</option>
-            </select>
-        </div>
+    <hr>
 
-        <div class="form-group">
-            <label for="inputTime">Time From Mission Start</label>
-            <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
-        </div>
-
-        <div class="form-group">
-          <label for="inputPriority">Priority</label>
-          <select id="inputPriority" onchange="retreiveElements()" class="form-control" class="text-center">
+    <div class="form-row">
+      <div class="form-group col">
+        <label for="inputEVADuration">EVA Duration</label>
+        <input type="number" class="form-control" id="inputEVADuration" placeholder="EVA Duration">
+      </div>
+      <div class="form-group col">
+        <div class="elementSelector">
+          <label for="inputCrewVehicle">Crew Vehicle</label>
+          <select id="inputCrewVehicle" class="form-control" class="text-center">
             <option selected id="def">Choose...</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
           </select>
         </div>
-
-        <hr>
-
-        <div class="form-group">
-            <label for="inputEVADuration">EVA Duration</label>
-            <input type="number" class="form-control" id="inputEVADuration" placeholder="EVA Duration">
-        </div>
-
-        <div class= "form-group">
-          <div class="elementSelector">
-            <label for="inputCrewVehicle">Crew Vehicle</label>
-            <select id="inputCrewVehicle" class="form-control" class="text-center">
-              <option selected id="def">Choose...</option>
-            </select>
-          </div>
-        </div>
+      </div>
+    </div>
 
 
         <div class="form-group">
