@@ -1,15 +1,15 @@
-import json
-import unittest
+# import json
+# import unittest
 
-import pkg_resources
-import pytest
-from pydantic import ValidationError
+# import pkg_resources
+# import pytest
+# from pydantic import ValidationError
 
-from spacenet.schemas.scenario import (
-    Manifest,
-    Network,
-    ScenarioType,
-    Scenario,
+# from spacenet.schemas.scenario import (
+    # Manifest,
+    # Network,
+    # ScenarioType,
+    # Scenario,
 )
 
 # pytestmark = [pytest.mark.unit, pytest.mark.resource, pytest.mark.schema]
