@@ -13,15 +13,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="spaceTransport_formview.js"></script>
+  <script src="event_forms.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
-
-  .elementSel{
-        width: 50%;
-  }
   .burnStageButtons{
     margin-bottom: 15px;
   }
@@ -43,14 +40,13 @@
     <form id="components">
 
       <div class="form-row">
-
         <div class="form-group col">
           <label for="inputName">Name</label>
           <input type="text" class="form-control" id="inputName" placeholder="Name">
         </div>
         <div class="form-group col">
           <label for="inputPriority">Priority</label>
-          <select id="inputPriority" onclick="retreiveElements()" class="form-control" class="text-center">
+          <select id="inputPriority" onchange="retreiveElements()" class="form-control" class="text-center">
             <option selected id="def">Choose...</option>
             <option>1</option>
             <option>2</option>
@@ -64,7 +60,7 @@
       <div class="form-row">
         <div class="form-group col">
           <label for="inputOriginNode">Origin Node</label>
-            <select id="inputOriginNode" onclick="retreiveElements()" class="form-control" class="text-center">
+            <select id="inputOriginNode" onchange="retreiveElements()" class="form-control" class="text-center">
               <option selected id="def">Choose...</option>
             </select>
         </div>
@@ -79,12 +75,16 @@
       <div class="form-row">
         <div class="form-group col">
           <label for="inputTime">Time from Mission Start</label>
-          <input type="number" onclick="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
+          <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
         </div>
         <div class= "form-group col">
-            <label for="elementTransportSelector">Elements</label>
+            <label for="elementTransportSelector">Elements to Transport</label>
             <select id="elementTransportSelector" class="form-control" class="text-center" multiple>
-              <option selected id="def">Choose...</option>
+              <option>S-IC</option>
+              <option>S-II</option>
+              <option>S-IVB</option>
+              <option>Crew Member</option>
+              <option>Crew Member</option>
             </select>
         </div>
       </div>
@@ -98,7 +98,9 @@
       <div class="form-group">
           <label for="elementSeqSel">Elements</label>
           <select id="elementSeqSel" class="form-control" class="text-center">
-            <option selected id="def">Choose...</option>
+            <option>S-IC</option>
+            <option>S-II</option>
+            <option>S-IVB</option>
           </select>
       </div>
 

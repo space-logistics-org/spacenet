@@ -1,72 +1,96 @@
-$(document).ready(function() {
-    ElementList();
-});
+$(document).ready(function () {
+
+	//Append Nodes to destination and origin selectors nased on scenario object.
+  Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+		$('#inputOriginNode').append('<option value="' + uuid + '">' + node.name + '</option>')
+		}
+	);
+
+  Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+		$('#inputDestinationNode').append('<option value="' + uuid + '">' + node.name + '</option>')
+		}
+	);
+})
 
 
-function ElementList() {
 
-    var count = 0; 
+//Populate Element selector with elements based on simulation filter.
+function retreiveElements(){
 
-    var container = $(document.createElement('div')).css({
-        width: '100%',
-        clear: 'both',
-        'margin-top': '10px',
-        'margin-bottom': '10px'
-        });
-
-    $('#eleAdd').click(function () {
-
-        count = count + 1;
-
-        $(container).append('<input type="text"' + 'placeholder="Element ID" class="elements" id=tb' + count + ' value="" />');
-
-        $('#elementmain').after(container);
-    });
-}
+	let node = $('#inputOriginNode').val(),
+  time = $('#inputTime').val(),
+  priority = $('#inputPriority').val();
 
 
-function onComplete() {
+  	if (node !== 'def' && time && priority !== 'def'){
+    $('#elementSeqSel').empty();
+		$('#elementTransportSelector').empty();
 
-    name = document.getElementById("inputName").value;
-    origin_node = document.getElementById("inputOriginNodeID").value;
-    destination_node = document.getElementById("inputDestinationNodeID").value;
-    time = document.getElementById("inputTime").value;
-    priority = document.getElementById("inputPriority").value;
 
-    var elementvalues = new Array();
 
-    $('.elements').each(function () {
-        if (this.value != '')
-            elementvalues.push(this.value);
-    });
-
-    var eleList = new Array();
-
-    $('.seqele').each(function () {
-      if (this.value != '')
-          eleList.push(this.value);
-    });
-
-    message = JSON.stringify({
-      name : name,
-      origin_node : origin_node,
-      destination_node : destination_node,
-      time : time,
-      priority : priority,
-      elements : elementvalues,
-    });
-
-    console.log(message)
     $.ajax({
-      url: "/database/api/edge/",
-      data: message,
+      url: "/campaign/api/simulation/?days_to_run_for=" + time,
+      data: JSON.stringify(scenario),
       contentType: 'application/json; charset=utf-8',
       dataType: "json",
       method: "POST",
-      success: function() {
-        document.getElementById("edge").reset()
-        document.getElementById("components").reset()
-        location.href = 'edge_table.html'
-            }
-    });
+      success: function (simResult) {
+
+								var namespace = simResult.result.namespace
+
+								var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+
+								if (allContents.length === 0) {
+									alert("No elements available at given time, please choose a different mission time")
+
+								} else {
+									allContents.forEach( function (contentUUID) {
+										var eltObj = namespace[contentUUID].inner
+										$('#elementTransportSelector').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
+
+									});
+								}
+								//Sorts elements in element selector
+								var options = $("#elementTransportSelector option");
+								options.detach().sort(function(a,b) {
+									var at = $(a).text();
+									var bt = $(b).text();
+									return (at > bt)?1:((at < bt)?-1:0);
+								});
+								options.appendTo("#elementTransportSelector");
+							}
+						});
+					}
+        }
+
+
+
+function onComplete() {
+    location.reload()
+
+
+    // message= JSON.stringify({
+    //   name : name,
+    //   origin_node : origin_node,
+    //   destination_node : destination_node,
+    //   time : time,
+    //   priority : priority,
+    //   elements : JSON.parse(arr),
+    //   burnStageProfile : JSON.parse(burnStageProfile)
+    // });
+    //
+    //
+    // console.log(message)
+    // $.ajax({
+    //   url: "/database/api/edge/",
+    //   data: message,
+    //   contentType: 'application/json; charset=utf-8',
+    //   dataType: "json",
+    //   method: "POST",
+    //   success: function() {
+    //     document.getElementById("edge").reset()
+    //     document.getElementById("components").reset()
+    //     location.href = 'edge_table.html'
+    //         }
+    // });
   }
