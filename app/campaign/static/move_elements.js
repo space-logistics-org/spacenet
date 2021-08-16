@@ -37,12 +37,12 @@ function loadSim() {
 				console.log(namespace)
 
 				var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+				$('#moveTo').append('<option value=' + node + '>' + namespace[node].inner.name + '</option>')
 
 				if (allContents.length === 0) {
 					alert("No elements available at given time, please choose a different mission time")
 
 				} else {
-					$('#moveTo').append('<option value=' + node + '>' + namespace[node].inner.name + '</option>')
 					allContents.forEach( function (contentUUID) {
 						var eltObj = namespace[contentUUID].inner
 						if (eltObj.type === 'ElementCarrier' || eltObj.type === 'PropulsiveVehicle') {
@@ -85,7 +85,9 @@ function onComplete(){
 		destination_id: destination_id
 	}
 
-    alert(JSON.stringify(data))
-    location.reload()
+	addEvent(data)
+	alert('Event added')
+	location.reload()
+	console.log(compileScenario())
 
 }

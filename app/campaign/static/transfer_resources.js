@@ -96,6 +96,8 @@ function onComplete(){
       to_transfer: to_transfer
     }
 
-    alert(JSON.stringify(data))
-    location.reload()
+	addEvent(data)
+	alert('Event added')
+	location.reload()
+	console.log(compileScenario())
 }

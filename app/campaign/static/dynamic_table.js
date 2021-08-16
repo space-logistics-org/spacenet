@@ -61,14 +61,14 @@ $(document).ready(function () {
     addRow = function(uuid, elt) {
         var eltRow = [
             null,
-            elt.inner.name,
-            elt.inner.type,
-            elt.inner.class_of_supply,
-            elt.inner.environment,
-            elt.inner.accommodation_mass,
-            elt.inner.mass,
-            elt.inner.volume,
-            elt.inner.description,
+            elt.name,
+            elt.type,
+            elt.class_of_supply,
+            elt.environment,
+            elt.accommodation_mass,
+            elt.mass,
+            elt.volume,
+            elt.description,
             uuid
         ]
         table.row.add(eltRow).draw()
