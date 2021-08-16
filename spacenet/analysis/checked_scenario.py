@@ -62,6 +62,7 @@ class CheckedScenario(Scenario):
 
     @validator("missionList")
     def _initialize_default_delta_v(cls, v, values, **kwargs) -> List[Mission]:
+        assert "network" in values, "prior errors raised for network being invalid"
         network: Network = values["network"]
         edges = network.edges
         missions: List[Mission] = v
