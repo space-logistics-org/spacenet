@@ -1,3 +1,7 @@
+"""
+This module enumerates all of the schema variants and subtypes from the api documentation.
+"""
+
 import doctest
 
 from .edge import *
