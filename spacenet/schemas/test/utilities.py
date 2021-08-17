@@ -1,3 +1,6 @@
+"""
+This module contains utilities for testing schemas.
+"""
 import json
 import pkg_resources
 import pytest
@@ -32,6 +35,11 @@ __all__ = [
 
 @pytest.fixture(params=["altair", "ares_1", "ares_5", "orion", "sortie_elements"])
 def lunar_sortie_elements(request):
+    """
+    A fixture providing lunar sortie elements as a string.
+
+    :param request: parameter allowing for loading multiple files; error to provide manually
+    """
     yield json.loads(
         pkg_resources.resource_string(
             schemas.__name__, f"lunar_sortie/{request.param}.json"
@@ -41,6 +49,9 @@ def lunar_sortie_elements(request):
 
 @pytest.fixture()
 def lunar_sortie_edges():
+    """
+    A fixture providing lunar sortie edges as a string.
+    """
     yield json.loads(
         pkg_resources.resource_string(
             schemas.__name__, "lunar_sortie/sortie_edges.json"
@@ -50,6 +61,9 @@ def lunar_sortie_edges():
 
 @pytest.fixture()
 def lunar_sortie_nodes():
+    """
+    A fixture providing lunar sortie nodes as a string.
+    """
     yield json.loads(
         pkg_resources.resource_string(
             schemas.__name__, "lunar_sortie/sortie_nodes.json"
@@ -59,6 +73,9 @@ def lunar_sortie_nodes():
 
 @pytest.fixture()
 def lunar_sortie_resources():
+    """
+    A fixture providing lunar sortie resources as a string.
+    """
     yield json.loads(
         pkg_resources.resource_string(schemas.__name__, "lunar_sortie/fuels.json")
     )

@@ -1,3 +1,6 @@
+"""
+This module contains tests for the validation checked scenarios run on instantiation.
+"""
 import json
 from typing import Dict, Iterable
 
@@ -13,6 +16,11 @@ pytestmark = [pytest.mark.unit, pytest.mark.analysis]
 
 @pytest.fixture
 def checked_scenario_regression_inputs() -> None:
+    """
+    Provide an iterator over regression testing inputs for CheckedScenario.
+
+    :return: None
+    """
     filename = pkg_resources.resource_filename(
         __name__, "checked_scenario_regression_inputs.json"
     )

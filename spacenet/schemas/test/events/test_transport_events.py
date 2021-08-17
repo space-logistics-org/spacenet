@@ -1,3 +1,6 @@
+"""
+This module contains tests for events which transport elements from one node to another.
+"""
 import pytest
 from hypothesis import given, strategies as st
 

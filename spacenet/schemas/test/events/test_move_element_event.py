@@ -1,3 +1,6 @@
+"""
+This module contains tests for MoveElements event schemas.
+"""
 import pytest
 from hypothesis import given, strategies as st
 
@@ -5,8 +8,6 @@ from spacenet.schemas.element_events import MoveElements
 from .utilities import (
     EVENT_INVALID_MAP,
     EVENT_VALID_MAP,
-    VALID_PRIORITIES,
-    INVALID_PRIORITIES,
 )
 from ..utilities import (
     INVALID_UUIDS,
@@ -33,7 +34,18 @@ INVALID_MAP = {
 
 def xfail_construct_move(
     to_move, origin_id, destination_id, priority, mission_time, type
-):
+) -> None:
+    """
+    Construct a MoveElements event, expecting construction to fail.
+
+    :param to_move: UUIDs of elements to move
+    :param origin_id: UUID of starting location of elements
+    :param destination_id: UUID of destination of elements
+    :param priority: event priority
+    :param mission_time: time event will occur relative to mission start
+    :param type: kind of event
+    """
+
     xfail_from_kw(
         MoveElements,
         to_move=to_move,

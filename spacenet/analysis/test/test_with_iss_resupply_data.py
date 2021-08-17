@@ -1,3 +1,6 @@
+"""
+This module contains tests that the ISS resupply schema can be simulated without errors.
+"""
 from datetime import datetime
 
 import pkg_resources

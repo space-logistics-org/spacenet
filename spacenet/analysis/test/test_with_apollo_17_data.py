@@ -1,3 +1,6 @@
+"""
+This module contains tests that the Apollo 17 schema can be simulated without errors.
+"""
 from datetime import datetime
 
 import pkg_resources

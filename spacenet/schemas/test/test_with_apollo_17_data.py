@@ -1,3 +1,6 @@
+"""
+This module contains tests that the Apollo 17 schema parses.
+"""
 import pkg_resources
 import pytest
 
