@@ -1,3 +1,6 @@
+"""
+This module defines schemas for specifying resources.
+"""
 from enum import Enum
 from typing import Optional
 

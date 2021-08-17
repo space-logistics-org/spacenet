@@ -1,3 +1,7 @@
+"""
+This module defines entities which are to be simulated, most of which are wrappers around other
+schema to add additional fields or methods.
+"""
 from datetime import datetime
 from typing import Dict, List, Set, Tuple, Union
 from uuid import UUID

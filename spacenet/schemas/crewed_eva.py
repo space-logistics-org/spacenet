@@ -1,3 +1,6 @@
+"""
+This module defines an event for a single crewed extravehicular activity.
+"""
 from datetime import timedelta
 from typing import List
 from uuid import UUID

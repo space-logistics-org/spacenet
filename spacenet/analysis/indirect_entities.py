@@ -1,3 +1,7 @@
+"""
+This module defines simulation entities using identifiers references rather than values
+directly.
+"""
 from typing import List
 from uuid import UUID
 

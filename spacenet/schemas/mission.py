@@ -3,6 +3,7 @@
 Created on Fri Jul  9 06:55:31 2021
 
 @author: jredm
+This module defines schemas for specifying missions which compose campaigns.
 """
 from datetime import datetime
 from typing import List, Union
@@ -30,6 +31,11 @@ AllEvents = Union[
     MakeElements,
     CrewedExploration
 ]  # TODO: AllEvents should be expanded to include all the types of Event
+
+
+__all__ = [
+    "Mission"
+]
 
 
 class Mission(BaseModel):

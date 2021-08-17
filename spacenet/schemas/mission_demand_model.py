@@ -1,3 +1,6 @@
+"""
+This module defines schemas for specifying mission-wide demand models.
+"""
 from math import inf
 
 from pydantic import BaseModel, Field

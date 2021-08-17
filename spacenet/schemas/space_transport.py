@@ -1,3 +1,8 @@
+"""
+This module defines schemas for specifying events that transport elements through space along
+edges, where the transported elements must verify they have enough fuel to provide the required
+velocity change.
+"""
 from typing import List, Optional
 from typing_extensions import Literal
 from uuid import UUID

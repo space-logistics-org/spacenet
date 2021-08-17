@@ -1,4 +1,7 @@
-
+"""
+This module defines functions for computing fuel consumption and corresponding velocity change
+of rockets in flight.
+"""
 import math
 
 import deal

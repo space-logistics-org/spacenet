@@ -1,3 +1,6 @@
+"""
+This module defines a generic binary heap priority queue class.
+"""
 from heapq import heapify, heappop, heappush
 from typing import Generator, Generic, Iterable, Optional, TypeVar
 
