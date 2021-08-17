@@ -443,6 +443,11 @@ class Simulation:
         self.errors.append(error)
 
     def add_errors(self, errors: Iterable[SimError]) -> None:
+        """
+        Record the errors in ``errors`` into this simulation.
+
+        :param errors: errors to record
+        """
         self.errors.extend(errors)
 
     def id_exists(self, id_: UUID) -> bool:
@@ -518,7 +523,12 @@ class Simulation:
             self.current_time = next_event.timestamp
             self._run_listeners(self.post_listeners)
 
+    @property
     def result(self) -> SimResult:
+        """
+        :return: a representation of the current state of this simulation;
+                mutation will modify simulation
+        """
         inverse_namespace = {v: id_ for id_, v in self.namespace.items()}
         return SimResult(
             nodes=[

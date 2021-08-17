@@ -38,6 +38,9 @@ class EVADemand(MissionDemand):
 
 
 class CrewedEVA(Event):
+    """
+    An event for a single crewed extravehicular activity.
+    """
 
     name: str = Field(..., title="Name", description="Crewed EVA name")
 

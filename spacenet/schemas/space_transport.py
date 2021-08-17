@@ -19,6 +19,9 @@ from .types import SafeNonNegFloat
 
 
 class BurnStageSequence(BaseModel):
+    """
+    A sequence of burn/stage events.
+    """
     burn_stage_sequence: List[BurnStageItem] = Field(
         ..., description="List of the burns and stages to be performed in the event"
     )

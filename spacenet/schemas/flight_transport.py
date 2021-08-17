@@ -15,8 +15,9 @@ __all__ = ["FlightTransport"]
 
 
 class FlightTransport(ElementTransportEvent):
-
-    # Schema for Flight Transport
+    """
+    Schema for Flight Transport
+    """
 
     name: str = Field(..., title="Name", description="The flight transport name")
 

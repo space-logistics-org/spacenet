@@ -87,6 +87,9 @@ class ClassOfSupply(int, Enum):
 
     @property
     def name(self) -> str:
+        """
+        :return: the name of this class of supply
+        """
         return COS_TO_NAME[self]
 
 

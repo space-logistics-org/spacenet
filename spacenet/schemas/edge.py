@@ -37,6 +37,9 @@ class EdgeType(str, Enum):
 
 
 class UUID_IDs(ImmutableBaseModel):
+    """
+    A mixin schema which uses UUIDs for origin and destination IDs.
+    """
 
     origin_id: UUID = Field(
         ..., title="Origin ID", description="ID of the origin node"
@@ -67,6 +70,9 @@ class Edge(BaseModel):
 
 
 class UUIDEdge(UUID_IDs, Edge):
+    """
+    Base class for edges using UUIDs for origin and destination IDs.
+    """
     # This ordering matters, reverse it and the types of ID fields are wrong
     pass
 
@@ -85,6 +91,9 @@ class SurfaceEdge(Edge):
 
 
 class UUIDSurfaceEdge(UUID_IDs, SurfaceEdge):
+    """
+    An edge between two surface nodes, using UUIDs for origin and destination IDs.
+    """
     pass
 
 
@@ -105,6 +114,10 @@ class SpaceEdge(Edge):
 
 
 class UUIDSpaceEdge(UUID_IDs, SpaceEdge):
+    """
+    An edge between two nodes using a specified list of propulsive burns,
+    using UUIDs for origin and destination IDs.
+    """
     pass
 
 
@@ -129,6 +142,10 @@ class FlightEdge(Edge):
     
     
 class UUIDFlightEdge(UUID_IDs, FlightEdge):
+    """
+    An edge between two nodes using flight architectures that are known to close
+    with a given cargo and crew capacity, using UUIDs for origin and destination IDs.
+    """
     pass
 
 
