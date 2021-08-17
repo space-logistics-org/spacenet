@@ -13,6 +13,7 @@ from spacenet.schemas.element import AllElements
 from spacenet.schemas.element_events import MakeElements, MoveElements
 from spacenet.schemas.mission import Mission
 from spacenet.schemas.node import AllNodes
+from spacenet.schemas.resource import ContinuousResource, DiscreteResource
 
 __all__ = ["ScenarioType", "Scenario", "Manifest"]
 
@@ -59,10 +60,13 @@ class Scenario(BaseModel):
     description: str = Field(None, title="Description", description="Short description")
     startDate: datetime = Field(..., title="Start Date")
     scenarioType: ScenarioType = Field(..., title="Type of Scenario")
-
+    # TODO: case convention?
     network: Network = Field(..., title="Network")
     missionList: List[Mission] = Field(..., title="Mission List")
     elementList: Dict[UUID, AllElements] = Field(..., title="Element List")
+    resourceList: Dict[UUID, Union[ContinuousResource, DiscreteResource]] = Field(
+        default_factory=dict
+    )
     manifest: Manifest = Field(..., title="Manifest")
 
     volumeConstrained: bool = Field(False, title="Volume Constrained")
