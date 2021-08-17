@@ -1,5 +1,6 @@
 function statusSet() {
   $("#navbar").hide()
+  $("#evbar").hide()
   $("#elDirect").hide();
   $("#missionDirect").hide();
   $("#resDirect").hide();
@@ -46,12 +47,19 @@ function createMiss(){
   $("#navbar").show();
 }
 
+function evDiv(){
+  $("#evbar").show();
+
+  document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="create_elements.html" ></object>';
+}
+
 function elDiv(){
   $("#elDirect").show();
   $("#missionDirect").hide();
   $("#resDirect").hide();
   $("#visDirect").hide();
   $("#netDirect").hide();
+
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="create_elements.html" ></object>';
 }
 
@@ -90,6 +98,7 @@ function networkDiv(){
   $("#resDirect").hide();
   $("#visDirect").hide();
   $("#netDirect").show();
+  $("#evbar").hide();
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="network_selection.html" ></object>';
 }
 
@@ -133,6 +142,7 @@ function batDiv(){
 function netDiv(){
   $("#formSpace").hide();
   $("#visSpace").show();
+  $("#evbar").hide()
   document.getElementById("visSpace").innerHTML='<object id = formSpace type="text/html" data="network_visualization.html" ></object>';
 }
 
@@ -151,6 +161,7 @@ function sptrDiv(){
 function netSelectDiv(){
   $("#formSpace").show();
   $("#visSpace").hide();
+  $("#evbar").hide()
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="network_selection.html" ></object>';
 }
 
