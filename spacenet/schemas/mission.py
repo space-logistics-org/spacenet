@@ -39,6 +39,9 @@ __all__ = [
 
 
 class Mission(BaseModel):
+    """
+    A schema representing a single mission, which is represented as a list of events.
+    """
     name: str = Field(..., title="Name", description="name of mission")
     start_date: datetime = Field(
         ..., title="Start Date", description="date of mission start"

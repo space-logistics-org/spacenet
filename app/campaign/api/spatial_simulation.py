@@ -39,4 +39,4 @@ def simulate_scenario(
                 detail='provided "days_to_run_for" causes overflow',
             )
         sim.run(until=stop_date)
-    return ResultAndErrors(result=sim.result(), errors=sim.errors)
+    return ResultAndErrors(result=sim.result, errors=sim.errors)

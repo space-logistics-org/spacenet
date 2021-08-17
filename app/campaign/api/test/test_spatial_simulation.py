@@ -36,5 +36,5 @@ def test_same_result_as_analysis(scenario: CheckedScenario, propulsive: bool):
     )
     response_result = ResultAndErrors.parse_obj(response.json())
     assert ResultAndErrors(
-        result=sim.result(), errors=sim.errors
+        result=sim.result, errors=sim.errors
     ) == response_result

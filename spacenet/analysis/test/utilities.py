@@ -1,3 +1,6 @@
+"""
+This module contains utilities for testing spacenet's analysis and simulation components.
+"""
 from hypothesis import assume, strategies as st
 from typing import Callable, TypeVar
 
@@ -12,6 +15,12 @@ DrawFn = Callable[[st.SearchStrategy[T]], T]
 
 @st.composite
 def build_validating_scenario(draw: DrawFn):
+    """
+    Construct a scenario which would validate if converted to a checked scenario.
+
+    :param draw: function to use for drawing samples; error to provide manually
+    :return: a scenario which would validate if converted to a checked scenario
+    """
     base_scenario = draw(st.builds(Scenario))
     start_date = min(
         (mission.start_date for mission in base_scenario.missionList),

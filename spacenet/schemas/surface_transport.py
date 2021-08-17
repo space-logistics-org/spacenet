@@ -15,6 +15,9 @@ __all__ = ["SurfaceTransport"]
 
 
 class SurfaceTransport(ElementTransportEvent):
+    """
+    Schema for Surface Transport
+    """
 
     name: str = Field(..., title="Name", description="The surface transport name")
 

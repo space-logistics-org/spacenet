@@ -1,3 +1,6 @@
+"""
+This module contains tests for edge schemas.
+"""
 import json
 import unittest
 

@@ -1,3 +1,6 @@
+"""
+This module contains tests that the lunar sortie schema parses.
+"""
 import pytest
 
 from .utilities import (
