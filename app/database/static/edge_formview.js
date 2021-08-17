@@ -222,6 +222,8 @@ function formFill(data) {
 
     } else if (edgeType === 'SpaceEdge') {
         $("#editInputDuration").val(data.duration);
+        $("#editInputDeltaV").val(data.delta_v);
+
     } else if (edgeType === 'SurfaceEdge') {
         $("#editInputDistance").val(data.distance);
     }

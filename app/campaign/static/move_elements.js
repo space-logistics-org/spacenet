@@ -64,7 +64,8 @@ function loadSim() {
 
 function onComplete(){
 
-  var origin_id = $('#pickNode').val(),
+  var name = $('#inputName').val(),
+  	  origin_id = $('#pickNode').val(),
       destination_id = $('#moveTo').val(),
 	  to_move = getTreeSelected(),
 	  type = 'MoveElements',
@@ -77,6 +78,7 @@ function onComplete(){
   document.getElementById("moveElements").reset();
 
 	data = {
+		name: name,
 		type: type,
 		priority: parseInt(priority),
 		mission_time: mission_time,

@@ -1,3 +1,6 @@
+function setElt (itemName, obj) {
+    window.localStorage.setItem(itemName, JSON.stringify(obj))
+}
 
 function addEvent (eventJSON) {
     var events = getElt('scenarioEvents')
@@ -6,7 +9,7 @@ function addEvent (eventJSON) {
     } else {
         var events = [eventJSON]
     }
-    window.localStorage.setItem('scenarioEvents', JSON.stringify(events))
+    setElt('scenarioEvents', events)
 }
 
 function getElt (itemName) {
@@ -51,3 +54,4 @@ function compileScenario() {
         environmentConstrained: scenarioInfo.environmentConstrained
     }
 }
+

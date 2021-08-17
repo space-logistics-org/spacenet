@@ -50,7 +50,8 @@ function loadSim() {
 function onComplete(){
 
 
-  var removal_point_id = $('#pickNode').val(),
+  var name = $('#inputName').val()
+  	removal_point_id = $('#pickNode').val(),
 	priority = $('#pickPriority').val(),
 	mission_time = $('#inputTime').val(),
     elements = getTreeSelected();
@@ -58,7 +59,8 @@ function onComplete(){
 	document.getElementById("removeElements").reset();
 
     data = {
-		type: 'MakeElements',
+		name: name,
+		type: 'RemoveElements',
 		priority: parseInt(priority),
 		mission_time: mission_time,
 		elements: elements,
