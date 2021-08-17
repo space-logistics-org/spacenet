@@ -18,6 +18,7 @@ INVALID_PRIORITIES = st.one_of(st.integers(max_value=0), st.integers(min_value=6
 
 
 EVENT_VALID_MAP = {
+    "name": st.text(),
     "priority": VALID_PRIORITIES,
     "mission_time": VALID_MISSION_TIMES,
     "type": st.text(),
