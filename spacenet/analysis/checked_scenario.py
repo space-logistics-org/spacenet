@@ -1,3 +1,7 @@
+"""
+This module defines a schema for scenarios which validates that some properties required for
+making a scenario run without exceptions are true.
+"""
 from typing import Any, Dict, List, Optional
 
 from pydantic import root_validator, validator

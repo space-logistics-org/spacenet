@@ -1,3 +1,6 @@
+"""
+This module defines errors which can be accumulated while running a simulation.
+"""
 from datetime import datetime
 from typing import Optional
 from uuid import UUID

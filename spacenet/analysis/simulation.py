@@ -1,8 +1,7 @@
-# Simulators have networks and event queues, they take from the event queue, which is sorted
-# by time, and re-populate the event queue with new generated events.
-
-# You can model a time-expanded graph in a memory-efficient way by having the contents be the
-# time-expanded part.
+"""
+This module defines mechanisms for simulating a provided scenario either with or without
+propulsive constraints.
+"""
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import (
