@@ -42,7 +42,7 @@ def delta_v_from(isp: float, m_0: float, m_f: float):
     lambda delta_v, isp, m_0, result: result <= m_0
 )  # for real numbers, this is <
 def final_mass_from(delta_v: float, isp: float, m_0: float):
-    
+
     """
     Find the final mass after a burn with the given velocity change, specific impulse,
     and initial mass.
@@ -52,6 +52,6 @@ def final_mass_from(delta_v: float, isp: float, m_0: float):
     :param m_0: initial mass
     :return: final mass, in same units as initial mass
     """
-    
+
     m_f = m_0 * math.exp(-delta_v / (isp * G_0))
     return m_f

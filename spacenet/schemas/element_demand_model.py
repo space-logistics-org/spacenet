@@ -11,7 +11,7 @@ __all__ = [
     "CrewConsumablesDemandModel",
     "TimedImpulseDemandModel",
     "RatedDemandModel",
-    "SparingByMassDemandModel"
+    "SparingByMassDemandModel",
 ]
 
 
@@ -20,15 +20,21 @@ class DemandModelType(str, Enum):
     timed_impulse = "Timed Impulse Demand Model"
     rated = "Rated Demand Model"
     sparing_by_mass = "Sparing by Mass Demand Model"
+
     class Config:
         title: "Demand Model Type"
+
 
 class DemandModel(BaseModel):
     name: str = Field(..., title="Name")
 
 
 class CrewConsumablesDemandModel(DemandModel):
-    type: DemandModelType = Field(default=DemandModelType.crew_consumables, title="Type", description="Demand model type")
+    type: DemandModelType = Field(
+        default=DemandModelType.crew_consumables,
+        title="Type",
+        description="Demand model type",
+    )
 
     reservesDuration: float = Field(..., title="Reserves Duration")
     waterRecoveryRate: float = Field(..., title="Water Recovery Rate")
@@ -64,6 +70,7 @@ class TimedImpulseDemandModel(DemandModel):
 
 class RatedDemandModel(DemandModel):
     pass
+
 
 class SparingByMassDemandModel(DemandModel):
     unpressurizedSparesRates: float = Field(..., title="Unpressurized Spares Rates")

@@ -37,9 +37,7 @@ class MoveElements(PrimitiveEvent):
     to a new location (node, edge, or element carrier).
     """
 
-    to_move: List[UUID] = Field(
-        ..., description="the list of IDs of elements to move"
-    )
+    to_move: List[UUID] = Field(..., description="the list of IDs of elements to move")
     origin_id: UUID = Field(
         ...,
         description="the ID of the original time and location "

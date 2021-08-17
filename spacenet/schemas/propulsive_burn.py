@@ -66,8 +66,8 @@ class PropulsiveBurn(PrimitiveEvent):
         assert sequence is not None
         element_set = set(elements)
         for burn_stage_item in sequence:
-            assert burn_stage_item.element_id in element_set, \
-                f"burn_stage_sequence involves {burn_stage_item.element_id} but " \
+            assert burn_stage_item.element_id in element_set, (
+                f"burn_stage_sequence involves {burn_stage_item.element_id} but "
                 f"{burn_stage_item.element_id} is not included in burn event"
+            )
         return values
-

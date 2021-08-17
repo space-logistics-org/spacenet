@@ -35,6 +35,7 @@ class HeapModel(RuleBasedStateMachine):
     """
     A class defining a stateful test for MinHeap.
     """
+
     def __init__(self):
         super().__init__()
         self.model = []

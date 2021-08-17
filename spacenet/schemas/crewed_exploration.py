@@ -11,9 +11,7 @@ from .constants import SQLITE_MAX_INT
 from spacenet.schemas import Event
 
 
-__all__ = [
-    "CrewedExploration"
-]
+__all__ = ["CrewedExploration"]
 
 
 class CrewedExploration(Event):

@@ -83,8 +83,7 @@ def test_fuzz_simulation(scenario, propulsive, pre_listeners, post_listeners):
 
 
 @given(
-    scenario=build_checked_scenario,
-    propulsive=st.booleans(),
+    scenario=build_checked_scenario, propulsive=st.booleans(),
 )
 @pytest.mark.slow
 def test_simulation_returns_same(scenario, propulsive):
@@ -101,8 +100,7 @@ def test_simulation_returns_same(scenario, propulsive):
 
 
 @given(
-    scenario=build_checked_scenario,
-    propulsive=st.booleans(),
+    scenario=build_checked_scenario, propulsive=st.booleans(),
 )
 @pytest.mark.slow
 def test_simulation_empties_queue(scenario, propulsive):
