@@ -35,11 +35,12 @@ INVALID_MAP = {
 
 
 def xfail_construct_reconfigure(
-    to_reconfigure, reconfigure_point_id, priority, mission_time, type
+    name, to_reconfigure, reconfigure_point_id, priority, mission_time, type
 ):
     """
     Construct a ReconfigureElements event, expecting construction to fail.
 
+    :param name: event name
     :param to_reconfigure: UUIDs of elements to reconfigure
     :param reconfigure_point_id: UUID of location to reconfigure elements at
     :param priority: event priority
@@ -48,6 +49,7 @@ def xfail_construct_reconfigure(
     """
     xfail_from_kw(
         ReconfigureElements,
+        name=name,
         to_reconfigure=to_reconfigure,
         reconfigure_point_id=reconfigure_point_id,
         priority=priority,

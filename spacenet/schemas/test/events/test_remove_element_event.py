@@ -31,10 +31,11 @@ INVALID_MAP = {
 }
 
 
-def xfail_construct_remove(elements, removal_point_id, priority, mission_time, type):
+def xfail_construct_remove(name, elements, removal_point_id, priority, mission_time, type):
     """
     Construct a RemoveElements event, expecting construction to fail.
 
+    :param name: event name
     :param elements: UUIDs of elements to remove
     :param removal_point_id: UUID of location to remove elements at
     :param priority: event priority
@@ -43,6 +44,7 @@ def xfail_construct_remove(elements, removal_point_id, priority, mission_time, t
     """
     xfail_from_kw(
         RemoveElements,
+        name=name,
         elements=elements,
         removal_point_id=removal_point_id,
         priority=priority,

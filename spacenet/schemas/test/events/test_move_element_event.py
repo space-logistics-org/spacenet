@@ -33,11 +33,12 @@ INVALID_MAP = {
 
 
 def xfail_construct_move(
-    to_move, origin_id, destination_id, priority, mission_time, type
+    name, to_move, origin_id, destination_id, priority, mission_time, type
 ) -> None:
     """
     Construct a MoveElements event, expecting construction to fail.
 
+    :param name: event name
     :param to_move: UUIDs of elements to move
     :param origin_id: UUID of starting location of elements
     :param destination_id: UUID of destination of elements
@@ -48,6 +49,7 @@ def xfail_construct_move(
 
     xfail_from_kw(
         MoveElements,
+        name=name,
         to_move=to_move,
         origin_id=origin_id,
         destination_id=destination_id,

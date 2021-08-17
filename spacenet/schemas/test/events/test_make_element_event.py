@@ -29,11 +29,12 @@ INVALID_MAP = {
 
 
 def xfail_construct_make(
-    elements, entry_point_id, priority, mission_time, type
+    name, elements, entry_point_id, priority, mission_time, type
 ) -> None:
     """
     Construct a MakeElements event, expecting construction to fail.
 
+    :param name: event name
     :param elements: UUIDs of elements to create
     :param entry_point_id: UUID of location to create elements at
     :param priority: event priority
@@ -42,6 +43,7 @@ def xfail_construct_make(
     """
     xfail_from_kw(
         MakeElements,
+        name=name,
         elements=elements,
         entry_point_id=entry_point_id,
         priority=priority,
