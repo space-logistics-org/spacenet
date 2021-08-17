@@ -40,11 +40,9 @@ def getMissionExplorationDuration():
     for i in json_data["missionList"]:
         for j in i["events"]:
             if j["type"] == "CrewedExploration":
-                dur = datetime.datetime.strptime(j["eva_duration"], "%H:%M:%S")
+                dur = j["eva_duration"]
                 itDur = (
-                    dur.time().hour
-                    + (dur.time().minute / 60.0)
-                    + (dur.time().second / 3600.0)
+                    ((dur.days) * 24) + (dur.seconds // 3600)
                 )
                 totalExpHours += itDur
     return totalExpHours
@@ -55,11 +53,9 @@ def getMissionTransitDuration():
     for i in json_data["missionList"]:
         for j in i["events"]:
             if j["type"] == "SpaceTransport":
-                dur = datetime.datetime.strptime(j["exec_time"], "%H:%M:%S")
+                dur = j["exec_time"]
                 itDur = (
-                    dur.time().hour
-                    + (dur.time().minute / 60.0)
-                    + (dur.time().second / 3600.0)
+                    ((dur.days) * 24) + (dur.seconds // 3600)
                 )
                 totalTransportHours += itDur
     return totalTransportHours
@@ -70,11 +66,9 @@ def getMissionEvaCrewTime():
     for i in json_data["missionList"]:
         for j in i["events"]:
             if j["type"] == "CrewedExploration":
-                dur = datetime.datetime.strptime(j["eva_duration"], "%H:%M:%S")
+                dur = j["eva_duration"]
                 itDur = (
-                    dur.time().hour
-                    + (dur.time().minute / 60.0)
-                    + (dur.time().second / 3600.0)
+                    ((dur.days) * 24) + (dur.seconds // 3600)
                 )
                 totalHours += itDur
     return totalHours

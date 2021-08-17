@@ -48,7 +48,6 @@ function onComplete(){
 
     document.getElementById('createScenario').reset()
     fillScenario()
-
 }
 
 function showDeleteModal() {

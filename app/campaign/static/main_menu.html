@@ -22,6 +22,11 @@
         <span class="fs-4">SpaceNet</span>
     </header>
     </div>
+    <div class="d-flex align-items-center container py-4 btn-group" role="group" aria-label="Scenario Creation Schema">
+      <button type="button" id = "scenButton" class="btn btn-primary" onClick = "createScen()">Scenario Creation --></button>
+      <button type="button" id = "netButton" class="btn btn-primary" onClick = "createNet()">Network Selection --></button>
+      <button type="button" id = "missButton" class="btn btn-primary" onClick = "createMiss()">Mission Additions</button>
+    </div>
     <div class="container border-bottom" id = "navbar">
       <nav class="nav nav-tabs">
         <a class="nav-link" aria-current="page" onClick = "elDiv()" href="#">Element Management</a>
@@ -61,6 +66,8 @@
         <a class="nav-link" href="#" onclick = "batDiv()" >Bat Chart</a>
         <a class="nav-link" href="#" onclick = "netDiv()">Network Visualization</a>
         <a class="nav-link" href="#" onclick = "burnDiv()">Propulsive Burn Visualizer</a>
+        <a class="nav-link" href="#" onclick = "consDiv()">Consumable Demands Analysis Visualizer</a>
+        <a class="nav-link" href="#" onclick = "equipDiv()">Equipment Demands Analysis Visualizer</a>
       </nav>
     </div>
     <div class="container" id = "netDirect">
