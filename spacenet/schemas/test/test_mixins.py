@@ -59,7 +59,9 @@ class TestOptionalFields:
             exp_field.allow_none = True
             actual_field = PartialOptionalModel.__fields__[field_name]
             assert repr(exp_field) == repr(actual_field)
-        assert repr(self.Model.__fields__["a"]) == repr(PartialOptionalModel.__fields__["a"])
+        assert repr(self.Model.__fields__["a"]) == repr(
+            PartialOptionalModel.__fields__["a"]
+        )
 
 
 class TestRequiresID:

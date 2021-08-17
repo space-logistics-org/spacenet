@@ -69,6 +69,7 @@ class Element(ImmutableBaseModel):
         """
         Configuration inner class forbidding additional fields
         """
+
         extra = Extra.forbid
 
 

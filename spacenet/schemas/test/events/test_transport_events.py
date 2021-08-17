@@ -22,4 +22,3 @@ def test_space(transport: SpaceTransport):
 @given(st.builds(SurfaceTransport))
 def test_surface(transport: SurfaceTransport):
     assert "SurfaceTransport" == transport.type
-

@@ -9,6 +9,7 @@ class DeltaVTestCase(BaseModel):
     """
     A test case for functions computing delta-v.
     """
+
     isp: SafePosFloat
     m_0: SafePosFloat
     m_f: SafePosFloat
@@ -20,6 +21,7 @@ class FinalMassTestCase(BaseModel):
     """
     A test case for functions computing final mass.
     """
+
     dv: SafePosFloat
     isp: SafePosFloat
     m_0: SafePosFloat

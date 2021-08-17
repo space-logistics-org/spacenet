@@ -20,6 +20,7 @@ class ResourceType(str, Enum):
     """
     An enumeration of the different kinds of resource.
     """
+
     Discrete = "Discrete"
     Continuous = "Continuous"
 
@@ -29,6 +30,7 @@ class Resource(BaseModel):
     A resource with a given class of supply as a general category, as well as specified
     physical properties such as mass and volume.
     """
+
     name: str = Field(..., title="Name", description="Resource name")
     class_of_supply: ClassOfSupply = Field(
         ..., title="Class of Supply", description="Class of supply number"
@@ -47,6 +49,7 @@ class DiscreteResource(Resource):
     """
     A resource which can only be replaced in discrete increments.
     """
+
     type: Literal[ResourceType.Discrete] = Field(
         ..., title="Type", description="Resource type"
     )
@@ -56,6 +59,7 @@ class ContinuousResource(Resource):
     """
     A resource which can be replaced in continuous increments.
     """
+
     type: Literal[ResourceType.Continuous] = Field(
         ..., title="Type", description="Resource type"
     )

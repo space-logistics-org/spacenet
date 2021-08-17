@@ -33,7 +33,7 @@ class TestEdge(unittest.TestCase):
             "origin_id": 1,
             "destination_id": 2,
             "distance": 100,
-            "delta_v": 100
+            "delta_v": 100,
         }
         badDistanceData = {
             "name": "FL-GA",
@@ -79,7 +79,7 @@ class TestEdge(unittest.TestCase):
             "origin_id": 1,
             "destination_id": 2,
             "duration": 100,
-            "delta_v": 100
+            "delta_v": 100,
         }
         badDurationData = {
             "name": "Earth-Moon",
@@ -89,7 +89,7 @@ class TestEdge(unittest.TestCase):
             "origin_id": 1,
             "destination_id": 2,
             "duration": -100,
-            "delta_v": 100
+            "delta_v": 100,
         }
         goodEdge = SpaceEdge.parse_obj(goodData)
         self.assertEqual(goodEdge.name, goodData.get("name"))

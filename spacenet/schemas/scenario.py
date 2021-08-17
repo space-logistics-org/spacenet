@@ -21,6 +21,7 @@ class Manifest(BaseModel):
     """
     A manifest of events manipulating resources.
     """
+
     container_events: List[Union[MakeElements, MoveElements]] = Field(  # TODO: types?
         ..., title="Resource Event Sequence"
     )
@@ -31,6 +32,7 @@ class Network(BaseModel):
     A network representation specified via nodes and edges mapped from the UUIDs which are
     used to refer to them.
     """
+
     nodes: Dict[UUID, AllNodes] = Field(..., title="Nodes")
     edges: Dict[UUID, AllUUIDEdges] = Field(..., title="Edges")
 
@@ -39,6 +41,7 @@ class ScenarioType(str, Enum):
     """
     An enumeration of the different kinds of scenario.
     """
+
     iss = "ISS"
     lunar = "Lunar"
     moon_only = "Moon-only"
@@ -51,6 +54,7 @@ class Scenario(BaseModel):
     """
     A scenario describing a space mission campaign.
     """
+
     name: str = Field(..., title="Name", description="Name of Scenario")
     description: str = Field(None, title="Description", description="Short description")
     startDate: datetime = Field(..., title="Start Date")

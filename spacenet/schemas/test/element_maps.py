@@ -30,7 +30,7 @@ __all__ = [
     "INVALID_RESOURCE_CONTAINER_MAP",
     "INVALID_SURFACE_VEHICLE_MAP",
     "INVALID_PROPULSIVE_VEHICLE_MAP",
-    "kw_strategy_from_maps_and_param"
+    "kw_strategy_from_maps_and_param",
 ]
 
 
@@ -64,7 +64,9 @@ def kw_strategy_from_maps_and_param(
     )
 
 
-NON_NEGATIVE_FINITE_FLOATS = st.floats(min_value=0, allow_infinity=False, allow_nan=False)
+NON_NEGATIVE_FINITE_FLOATS = st.floats(
+    min_value=0, allow_infinity=False, allow_nan=False
+)
 NEGATIVE_AND_INFINITE_FLOATS = st.one_of(
     st.just(-float("inf")),
     st.just(float("inf")),

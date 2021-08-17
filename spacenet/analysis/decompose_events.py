@@ -131,9 +131,12 @@ def _decompose_space_transport(event: SpaceTransport) -> List[PrimitiveEvents]:
         for sequence in event.burnStageProfile
         for burn_or_stage in sequence.burn_stage_sequence
     ]
-    involved_elements = list(set(event.elements_id_list + [
-        burn_or_stage.element_id for burn_or_stage in burn_stage_sequence
-    ]))
+    involved_elements = list(
+        set(
+            event.elements_id_list
+            + [burn_or_stage.element_id for burn_or_stage in burn_stage_sequence]
+        )
+    )
     burn_event = PropulsiveBurn(
         type="PropulsiveBurn",
         priority=event.priority,

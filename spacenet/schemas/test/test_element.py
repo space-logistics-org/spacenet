@@ -41,6 +41,7 @@ def make_tests_from_type_and_maps(
     :return: test case functions for success on validating valid inputs and failing to validate
             invalid ones
     """
+
     @given(kw=st.fixed_dictionaries(valid_map))
     def success(kw: Dict) -> None:
         """

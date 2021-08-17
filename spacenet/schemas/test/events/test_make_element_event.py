@@ -28,7 +28,9 @@ INVALID_MAP = {
 }
 
 
-def xfail_construct_make(elements, entry_point_id, priority, mission_time, type) -> None:
+def xfail_construct_make(
+    elements, entry_point_id, priority, mission_time, type
+) -> None:
     """
     Construct a MakeElements event, expecting construction to fail.
 

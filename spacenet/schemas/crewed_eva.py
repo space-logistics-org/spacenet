@@ -13,9 +13,7 @@ from .mission_demand_model import MissionDemand
 from .types import SafeFloat
 
 
-__all__ = [
-    "CrewedEVA"
-]
+__all__ = ["CrewedEVA"]
 
 
 class EVACrew(HumanAgent):
