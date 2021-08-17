@@ -1,3 +1,6 @@
+"""
+This module defines an event for a single crewed extravehicular activity.
+"""
 from datetime import timedelta
 from typing import List
 from uuid import UUID
@@ -10,9 +13,7 @@ from .mission_demand_model import MissionDemand
 from .types import SafeFloat
 
 
-__all__ = [
-    "CrewedEVA"
-]
+__all__ = ["CrewedEVA"]
 
 
 class EVACrew(HumanAgent):
@@ -35,6 +36,9 @@ class EVADemand(MissionDemand):
 
 
 class CrewedEVA(Event):
+    """
+    An event for a single crewed extravehicular activity.
+    """
 
     name: str = Field(..., title="Name", description="Crewed EVA name")
 

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+This module defines a schema for consuming resources from a given point.
+"""
 from uuid import UUID
 
 from pydantic import Field
@@ -8,12 +11,14 @@ from .resource import Resource
 from .types import SafeFloat
 
 
-__all__ = [
-    "ConsumeResource"
-]
+__all__ = ["ConsumeResource"]
 
 
 class ConsumeResource(Event):
+    """
+    Schema for consuming resources from a point
+    """
+
     removal_point_id: UUID = Field(
         ...,
         title="Location ID",

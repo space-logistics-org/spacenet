@@ -1,29 +1,40 @@
+"""
+This module defines a schema for specifying how various element types require continual
+resources.
+"""
 from enum import Enum
 
 from pydantic import BaseModel, Field
 
+__all__ = [
+    "DemandModel",
+    "CrewConsumablesDemandModel",
+    "TimedImpulseDemandModel",
+    "RatedDemandModel",
+    "SparingByMassDemandModel",
+]
 
-# import spacenet.domain.resource.Demand
-# import spacenet.domain.resource.DemandSet
-# from spacenet.schemas.Mission import *
-# import spacenet.simulator.I_Simulator
 
 class DemandModelType(str, Enum):
     crew_consumables = "Crew Consumables Demand Model"
     timed_impulse = "Timed Impulse Demand Model"
     rated = "Rated Demand Model"
     sparing_by_mass = "Sparing by Mass Demand Model"
+
     class Config:
         title: "Demand Model Type"
+
 
 class DemandModel(BaseModel):
     name: str = Field(..., title="Name")
 
 
 class CrewConsumablesDemandModel(DemandModel):
-    type: DemandModelType = Field(default=DemandModelType.crew_consumables, title="Type", description="Demand model type")
-
-    # mission: Mission = Field(..., title="Mission")
+    type: DemandModelType = Field(
+        default=DemandModelType.crew_consumables,
+        title="Type",
+        description="Demand model type",
+    )
 
     reservesDuration: float = Field(..., title="Reserves Duration")
     waterRecoveryRate: float = Field(..., title="Water Recovery Rate")
@@ -54,16 +65,14 @@ class CrewConsumablesDemandModel(DemandModel):
 
 
 class TimedImpulseDemandModel(DemandModel):
-    # demands: DemandSet = Field(..., title="Demands")
     flag: bool = Field(default=False, title="flag")
 
 
 class RatedDemandModel(DemandModel):
-    # demandRates: DemandSet = Field(..., title="Demand Rates")
     pass
 
+
 class SparingByMassDemandModel(DemandModel):
-    # element: I_Element = Field(..., title="Element")
     unpressurizedSparesRates: float = Field(..., title="Unpressurized Spares Rates")
     pressurizedSparesRates: float = Field(..., title="Pressurized Spares Rates")
     partsListEnabled: bool = Field(..., title="Parts List Enabled")

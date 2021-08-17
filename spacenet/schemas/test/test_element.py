@@ -1,3 +1,6 @@
+"""
+This module contains tests for element schemas.
+"""
 from typing import Callable, Dict, Tuple
 
 import pytest
@@ -26,13 +29,37 @@ pytestmark = [pytest.mark.schema, pytest.mark.element, pytest.mark.unit]
 def make_tests_from_type_and_maps(
     ty_: Type[BaseModel], valid_map: Dict, invalid_map: Dict
 ) -> Tuple[Callable[[Dict], None], Callable[[st.DataObject, str], None]]:
+    """
+    Construct tests for a given type, checking both that valid values validate properly and
+    that invalid values do not validate properly.
+
+    :param ty_: type to construct tests for
+    :param valid_map: mapping of field names of ty_ to hypothesis strategies for generating
+            valid values
+    :param invalid_map: mapping of field names of ty_ to hypothesis strategies for generating
+            invalid values
+    :return: test case functions for success on validating valid inputs and failing to validate
+            invalid ones
+    """
+
     @given(kw=st.fixed_dictionaries(valid_map))
-    def success(kw: Dict):
+    def success(kw: Dict) -> None:
+        """
+        A test case checking that valid inputs validate.
+
+        :param kw: keyword arguments which will validate
+        """
         success_from_kw(ty_, **kw)
 
     @pytest.mark.parametrize("invalid_param", list(invalid_map.keys()))
     @given(data=st.data())
-    def failure(data: st.DataObject, invalid_param: str):
+    def failure(data: st.DataObject, invalid_param: str) -> None:
+        """
+        A test case checking that invalid inputs fail to validate.
+
+        :param data: hypothesis data object to draw from
+        :param invalid_param: parameter to use as invalid
+        """
         kw = data.draw(
             kw_strategy_from_maps_and_param(valid_map, invalid_map, invalid_param)
         )

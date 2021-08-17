@@ -1,3 +1,6 @@
+"""
+This module contains tests for state schemas.
+"""
 import pytest
 from hypothesis import given, strategies as st
 from .utilities import INVALID_INTS, success_from_kw, xfail_from_kw
@@ -31,6 +34,14 @@ INVALID_MAP = {
 
 
 def xfail_construct_state(element_id, name, state_type, is_initial_state):
+    """
+    Construct a state, expecting construction to fail.
+
+    :param element_id: id of element this state is with regard to
+    :param name: name of state
+    :param state_type: kind of state
+    :param is_initial_state: if the state is the initial state for the element
+    """
     xfail_from_kw(
         State,
         element_id=element_id,

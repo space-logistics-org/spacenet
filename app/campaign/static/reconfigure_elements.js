@@ -47,7 +47,8 @@ function loadSim() {
 }
   
 function onComplete(){
-	var reconfigure_point_id = $('#pickNode').val(),
+	var name = $('#inputName').val(),
+	reconfigure_point_id = $('#pickNode').val(),
 	priority = $('#pickPriority').val(),
 	mission_time = $('#inputTime').val(),
     elements = getTreeSelected();
@@ -55,6 +56,7 @@ function onComplete(){
 	document.getElementById("reconfigureElements").reset();
 
     data = {
+		name: name,
 		type: 'ReconfigureElements',
 		priority: parseInt(priority),
 		mission_time: mission_time,

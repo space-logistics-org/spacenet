@@ -75,11 +75,11 @@ function loadSim() {
 
 function onComplete(){
 
-    name = $("#inputName").val();
-    node = $("#pickNode").val();
-    time = $("#inputTime").val();
-    priority = $("#pickPriority").val();
-    origin_id = $("#pickFrom").val();
+    var name = $("#inputName").val(),
+    node = $("#pickNode").val(),
+    time = $("#inputTime").val(),
+    priority = $("#pickPriority").val(),
+    origin_id = $("#pickFrom").val(),
     destination_id = $("#pickTo").val();
 
     document.getElementById("transferResources").reset();

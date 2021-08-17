@@ -147,21 +147,21 @@ $(document).ready( function() {
   showNodeTable()
 })
 
-var IDstoUUIDs;
 function submitNodes() {
   var nodes = addUUIDS(getSelected(nodeTable))
-  IDstoUUIDs = {}
+  var IDstoUUIDs = {}
   Object.entries(nodes).forEach( function ([uuid, node]) {
     IDstoUUIDs[node.id] = uuid
     delete node.id
   })
-  console.log(nodes)
-  window.localStorage.setItem('scenarioNetworkNodes', JSON.stringify(nodes))
+  setElt('NodeIDstoUUIDs', IDstoUUIDs)
+  setElt('scenarioNetworkNodes', nodes)
 }
 
 
 function submitEdges() {
-  if (!IDstoUUIDs) {
+  var IDstoUUIDs = getElt('NodeIDstoUUIDs')
+  if (IDstoUUIDs === []) {
     alert("Please choose nodes before edges")
   } else {
     var edges = getSelected(edgeTable)
@@ -172,7 +172,7 @@ function submitEdges() {
     })
     var edgeUUIDs = addUUIDS(edges)
     console.log(edgeUUIDs)
-    window.localStorage.setItem('scenarioNetworkEdges', JSON.stringify(edgeUUIDs))  
+    setElt('scenarioNetworkEdges', edges)  
   }
 }
 
@@ -183,7 +183,7 @@ function submitElements() {
   })
   var elementUUIDs = addUUIDS(elements)
   console.log(elementUUIDs)
-  window.localStorage.setItem('scenarioElementsList', JSON.stringify(elementUUIDs))
+  setElt('scenarioElementsList', elementUUIDs)
 }
 
 function submitResources() {
@@ -193,7 +193,7 @@ function submitResources() {
   })
   var resourceUUIDs = addUUIDS(resources)
   console.log(resourceUUIDs)
-  window.localStorage.setItem('scenarioResourceTypes', JSON.stringify(resourceUUIDs))
+  setElt('scenarioResourceTypes', resourceUUIDs)
 }
 
 function showNodeTable() {

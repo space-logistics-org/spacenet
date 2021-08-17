@@ -56,7 +56,8 @@ function loadSim() {
 
 function onComplete(){
 
-  var entry_point_id = $('#createIn').val(),
+  var name = $('#inputName').val(),
+  	entry_point_id = $('#createIn').val(),
 	priority = $('#pickPriority').val(),
 	mission_time = $('#inputTime').val(),
     elements = getSelected();
@@ -64,6 +65,7 @@ function onComplete(){
   document.getElementById("createElements").reset();
 
     data = {
+		name: name,
 		type: 'MakeElements',
 		priority: parseInt(priority),
 		mission_time: mission_time,

@@ -1,3 +1,7 @@
+"""
+This module defines schemas for specifying propulsive maneuvers composed of at least one burn
+or stage event.
+"""
 from enum import Enum
 from typing import List
 from uuid import UUID
@@ -55,15 +59,15 @@ class PropulsiveBurn(PrimitiveEvent):
     )
 
     @root_validator(skip_on_failure=True)
-    def sequence_references_included_ids(cls, values):
+    def _sequence_references_included_ids(cls, values):
         elements: List[UUID] = values.get("elements")
         assert elements is not None
         sequence: List[BurnStageItem] = values.get("burn_stage_sequence")
         assert sequence is not None
         element_set = set(elements)
         for burn_stage_item in sequence:
-            assert burn_stage_item.element_id in element_set, \
-                f"burn_stage_sequence involves {burn_stage_item.element_id} but " \
+            assert burn_stage_item.element_id in element_set, (
+                f"burn_stage_sequence involves {burn_stage_item.element_id} but "
                 f"{burn_stage_item.element_id} is not included in burn event"
+            )
         return values
-

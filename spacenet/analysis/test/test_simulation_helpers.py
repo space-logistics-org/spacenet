@@ -1,3 +1,6 @@
+"""
+This module contains tests for helper functions used by the Simulation class.
+"""
 from typing import List, Optional, Set
 from typing_extensions import get_args
 
@@ -52,6 +55,12 @@ def test_total_mass(element: SimElement):
 
 @st.composite
 def multiple_predecessors(draw: DrawFn) -> SimElement:
+    """
+    Construct a SimElement where one element contained has multiple containers.
+
+    :param draw: function to use for drawing samples; error to provide manually
+    :return: uppermost containing element, containing all others
+    """
     element = draw(recursive_elements)
     first, second = draw(st.tuples(st.builds(SimElement), st.builds(SimElement)))
     element.contents.append(first)
@@ -62,16 +71,18 @@ def multiple_predecessors(draw: DrawFn) -> SimElement:
 
 @st.composite
 def cyclic_containment(draw: DrawFn) -> SimElement:
+    """
+    Construct a SimElement where one element contained also contains itself.
+
+    :param draw: function to use for drawing samples; error to provide manually
+    :return: the uppermost containing element, containing all others
+    """
     element = draw(recursive_elements)
     if not element.contents:
         first, second = draw(st.lists(st.builds(SimElement), min_size=2, max_size=2))
         element.contents.append(first)
         element.contents.append(second)
     element.contents[0].contents.append(element)
-    # TODO: this leads to a recursion depth error when using element inside a set. Maybe just
-    #  worth verifying that move events don't generate cyclic containment, and raising a 422
-    #  if they do (honestly that's a hard-to-recover-from error unless you just don't take the
-    #  action).
     return element
 
 

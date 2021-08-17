@@ -1,3 +1,7 @@
+"""
+This module contains mappings which can be used by hypothesis' st.fixed_dictionaries strategy
+to generate valid and invalid instances of the different types of elements.
+"""
 from typing import Dict, List
 
 from spacenet.schemas.constants import (
@@ -26,23 +30,43 @@ __all__ = [
     "INVALID_RESOURCE_CONTAINER_MAP",
     "INVALID_SURFACE_VEHICLE_MAP",
     "INVALID_PROPULSIVE_VEHICLE_MAP",
-    "kw_strategy_from_maps_and_param"
+    "kw_strategy_from_maps_and_param",
 ]
 
 
 def enum_values(enum_) -> List:
+    """
+    Return all values corresponding to this enum's variants.
+
+    :param enum_: enum to enumerate the values of
+    :return:  list of values of the enum
+    """
     return [variant.value for variant in enum_]
 
 
 def kw_strategy_from_maps_and_param(
     valid_map: Dict, invalid_map: Dict, invalid_param: str
 ) -> st.SearchStrategy[Dict]:
+    """
+    Construct a strategy for keyword arguments as specified via two maps from field names to
+    valid and invalid values respectively, and the parameter to draw invalid values for.
+
+    :param valid_map: mapping of field names to hypothesis strategies which provide valid
+        values for that field
+    :param invalid_map: mapping of field names to hypothesis strategies which provide invalid
+        values for that field
+    :param invalid_param: the parameter to set as invalid when constructing the schema
+    :return: a hypothesis strategy generating an invalid schema for the desired type by one
+        field not matching the schema
+    """
     return st.fixed_dictionaries(
         mapping={**valid_map, invalid_param: invalid_map[invalid_param],}
     )
 
 
-NON_NEGATIVE_FINITE_FLOATS = st.floats(min_value=0, allow_infinity=False, allow_nan=False)
+NON_NEGATIVE_FINITE_FLOATS = st.floats(
+    min_value=0, allow_infinity=False, allow_nan=False
+)
 NEGATIVE_AND_INFINITE_FLOATS = st.one_of(
     st.just(-float("inf")),
     st.just(float("inf")),

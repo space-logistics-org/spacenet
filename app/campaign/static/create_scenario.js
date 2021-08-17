@@ -1,4 +1,5 @@
 function deleteScenario() {
+    $('#deleteModal').modal('hide');
     window.localStorage.clear()
     location.reload()
 }
@@ -48,4 +49,8 @@ function onComplete(){
     document.getElementById('createScenario').reset()
     fillScenario()
 
+}
+
+function showDeleteModal() {
+    $('#deleteModal').modal('show');
 }

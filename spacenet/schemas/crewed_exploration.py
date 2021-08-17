@@ -1,3 +1,6 @@
+"""
+This module defines an event for a recurring crewed extravehicular activity.
+"""
 from datetime import timedelta
 from typing import List
 from uuid import UUID
@@ -8,9 +11,8 @@ from .constants import SQLITE_MAX_INT
 from spacenet.schemas import Event
 
 
-__all__ = [
-    "CrewedExploration"
-]
+__all__ = ["CrewedExploration"]
+
 
 class CrewedExploration(Event):
     """

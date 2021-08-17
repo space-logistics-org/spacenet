@@ -1,3 +1,8 @@
+"""
+This module defines schemas for specifying events that transport elements through space along
+edges, where the transported elements must verify they have enough fuel to provide the required
+velocity change.
+"""
 from typing import List, Optional
 from typing_extensions import Literal
 from uuid import UUID
@@ -14,6 +19,10 @@ from .types import SafeNonNegFloat
 
 
 class BurnStageSequence(BaseModel):
+    """
+    A sequence of burn/stage events.
+    """
+
     burn_stage_sequence: List[BurnStageItem] = Field(
         ..., description="List of the burns and stages to be performed in the event"
     )

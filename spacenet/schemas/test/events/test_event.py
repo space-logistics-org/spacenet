@@ -1,3 +1,6 @@
+"""
+This module contains tests for event schemas.
+"""
 import pytest
 from hypothesis import given, strategies as st
 
@@ -9,8 +12,16 @@ from spacenet.schemas import Event
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 
-def xfail_construct_event(priority, mission_time, type):
-    return xfail_from_kw(Event, priority=priority, mission_time=mission_time, type=type)
+def xfail_construct_event(name, priority, mission_time, type) -> None:
+    """
+    Construct an event, expecting construction to fail.
+
+    :param name: event name
+    :param priority: event priority
+    :param mission_time: time event will occur relative to mission start
+    :param type: kind of event
+    """
+    xfail_from_kw(Event, name=name, priority=priority, mission_time=mission_time, type=type)
 
 
 @given(kw=st.fixed_dictionaries(mapping=VALID_MAP),)

@@ -1,3 +1,7 @@
+"""
+This module defines a function for turning events into multiple "simpler" events,
+and a mechanism for registering types of events with a function to do so.
+"""
 from typing import Callable, Dict, List, Type, TypeVar, Union
 
 from spacenet.schemas import Burn
@@ -69,6 +73,7 @@ def move_from_transport(
     :raises OverflowError: if mission_time + exec_time > maximum timedelta
     """
     move_to_edge = MoveElements(
+        name=f"Move from {transport_event.origin_node_id} to {transport_event.edge_id}",
         priority=transport_event.priority,
         to_move=transport_event.elements_id_list,
         origin_id=transport_event.origin_node_id,
@@ -77,6 +82,7 @@ def move_from_transport(
         type="MoveElements",
     )
     move_from_edge = MoveElements(
+        name=f"Move from {transport_event.edge_id} to {transport_event.destination_node_id}",
         priority=transport_event.priority,
         to_move=transport_event.elements_id_list,
         origin_id=transport_event.edge_id,
@@ -127,10 +133,14 @@ def _decompose_space_transport(event: SpaceTransport) -> List[PrimitiveEvents]:
         for sequence in event.burnStageProfile
         for burn_or_stage in sequence.burn_stage_sequence
     ]
-    involved_elements = list(set(event.elements_id_list + [
-        burn_or_stage.element_id for burn_or_stage in burn_stage_sequence
-    ]))
+    involved_elements = list(
+        set(
+            event.elements_id_list
+            + [burn_or_stage.element_id for burn_or_stage in burn_stage_sequence]
+        )
+    )
     burn_event = PropulsiveBurn(
+        name=f"Burn @ {event.edge_id}",
         type="PropulsiveBurn",
         priority=event.priority,
         mission_time=event.mission_time,

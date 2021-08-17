@@ -66,6 +66,10 @@ class Element(ImmutableBaseModel):
     volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
 
     class Config:
+        """
+        Configuration inner class forbidding additional fields
+        """
+
         extra = Extra.forbid
 
 

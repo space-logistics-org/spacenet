@@ -1,3 +1,7 @@
+"""
+This module contains tests for the MinHeap implementation provided, ensuring that it works
+the same way as the procedural methods provided in the heapq module.
+"""
 from heapq import heapify, heappop, heappush
 from itertools import tee
 from typing import Iterable, List, Tuple, TypeVar
@@ -13,6 +17,12 @@ pytestmark = [pytest.mark.analysis, pytest.mark.unit]
 
 
 def check_heap_invariant(heap: MinHeap) -> None:
+    """
+    Verify that the heap invariant holds for the provided MinHeap.
+
+    :param heap: heap to verify heap invariant of
+    :raises AssertionError: if heap invariant does not hold
+    """
     n = len(heap)
     for i in range(n):
         if 2 * i + 1 < n:
@@ -22,24 +32,28 @@ def check_heap_invariant(heap: MinHeap) -> None:
 
 
 class HeapModel(RuleBasedStateMachine):
+    """
+    A class defining a stateful test for MinHeap.
+    """
+
     def __init__(self):
         super().__init__()
         self.model = []
         self.heap = MinHeap()
 
     @rule(xs=st.lists(st.integers()))
-    def init_from_existing(self, xs):
+    def _init_from_existing(self, xs):
         self.model = xs
         heapify(self.model)
         self.heap = MinHeap(xs)
 
     @rule(item=st.integers())
-    def push(self, item):
+    def _push(self, item):
         heappush(self.model, item)
         self.heap.push(item)
 
     @rule()
-    def pop(self):
+    def _pop(self):
         if not self.model:
             assert 0 == len(self.heap)
             assert not self.heap
@@ -48,15 +62,15 @@ class HeapModel(RuleBasedStateMachine):
         assert item == self.heap.pop()
 
     @invariant()
-    def same_len(self):
+    def _same_len(self):
         assert len(self.model) == len(self.heap)
 
     @invariant()
-    def heap_invariant(self):
+    def _heap_invariant(self):
         check_heap_invariant(self.heap)
 
     @invariant()
-    def correct_min(self):
+    def _correct_min(self):
         if not self.model:
             assert 0 == len(self.heap)
             assert not self.heap
@@ -65,7 +79,7 @@ class HeapModel(RuleBasedStateMachine):
         assert item == self.heap.peek() == self.heap[0]
 
     @invariant()
-    def iter_contains_all(self):
+    def _iter_contains_all(self):
         assert set(self.model) == set(self.heap)
 
 
@@ -78,6 +92,14 @@ T = TypeVar("T")
 def iterable_and_list(
     draw: DrawFn, elements: st.SearchStrategy[T]
 ) -> Tuple[Iterable[T], List[T]]:
+    """
+    Provide an iterable and list over the same elements, drawn from ``elements``, in the same
+    order.
+
+    :param draw: function to use for drawing samples; error to provide manually
+    :param elements: elements of iterable / list
+    :return: iterable and list over the same elements in the same order
+    """
     xs = draw(st.iterables(elements))
     xs, xs_cpy = tee(xs)
     xs_cpy = list(xs_cpy)

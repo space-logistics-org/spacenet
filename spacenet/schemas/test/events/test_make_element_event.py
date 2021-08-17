@@ -1,3 +1,6 @@
+"""
+This module contains tests for MakeElements event schemas.
+"""
 import pytest
 from hypothesis import given, strategies as st
 
@@ -25,9 +28,22 @@ INVALID_MAP = {
 }
 
 
-def xfail_construct_make(elements, entry_point_id, priority, mission_time, type):
-    return xfail_from_kw(
+def xfail_construct_make(
+    name, elements, entry_point_id, priority, mission_time, type
+) -> None:
+    """
+    Construct a MakeElements event, expecting construction to fail.
+
+    :param name: event name
+    :param elements: UUIDs of elements to create
+    :param entry_point_id: UUID of location to create elements at
+    :param priority: event priority
+    :param mission_time: time event will occur relative to mission start
+    :param type: kind of event
+    """
+    xfail_from_kw(
         MakeElements,
+        name=name,
         elements=elements,
         entry_point_id=entry_point_id,
         priority=priority,

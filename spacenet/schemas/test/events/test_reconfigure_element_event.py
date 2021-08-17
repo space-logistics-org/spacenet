@@ -1,8 +1,11 @@
+"""
+This module contains tests for ReconfigureElements event schemas.
+"""
 import pytest
 from hypothesis import given, strategies as st
 
 from spacenet.schemas.element_events import ReconfigureElements
-from .utilities import EVENT_VALID_MAP, INVALID_PRIORITIES, VALID_PRIORITIES
+from .utilities import EVENT_VALID_MAP, INVALID_PRIORITIES
 from ..utilities import (
     INVALID_UUIDS,
     success_from_kw,
@@ -32,10 +35,21 @@ INVALID_MAP = {
 
 
 def xfail_construct_reconfigure(
-    to_reconfigure, reconfigure_point_id, priority, mission_time, type
+    name, to_reconfigure, reconfigure_point_id, priority, mission_time, type
 ):
+    """
+    Construct a ReconfigureElements event, expecting construction to fail.
+
+    :param name: event name
+    :param to_reconfigure: UUIDs of elements to reconfigure
+    :param reconfigure_point_id: UUID of location to reconfigure elements at
+    :param priority: event priority
+    :param mission_time: time event will occur relative to mission start
+    :param type: kind of event
+    """
     xfail_from_kw(
         ReconfigureElements,
+        name=name,
         to_reconfigure=to_reconfigure,
         reconfigure_point_id=reconfigure_point_id,
         priority=priority,

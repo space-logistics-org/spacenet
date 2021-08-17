@@ -1,3 +1,6 @@
+"""
+This module defines commonly useful types used by various schema.
+"""
 from math import inf
 
 from pydantic import confloat, conint

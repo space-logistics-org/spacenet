@@ -1,3 +1,6 @@
+"""
+This module defines common constants and enumerations used in other schema modules.
+"""
 from enum import Enum
 
 __all__ = [
@@ -84,6 +87,9 @@ class ClassOfSupply(int, Enum):
 
     @property
     def name(self) -> str:
+        """
+        :return: the name of this class of supply
+        """
         return COS_TO_NAME[self]
 
 

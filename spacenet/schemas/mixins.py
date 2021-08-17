@@ -58,12 +58,29 @@ class RequiresOnlyType(OptionalFields):
 
 
 class ReadSchema(RequiresID):
+    """
+    A mixin which requires an ID field as in RequiresID but also allows construction from
+    arbitrary class instances via the ``from_orm`` method.
+    """
+
     class Config:
+        """
+        Configuration inner class allowing construction from arbitrary class instances
+        """
+
         orm_mode = True
 
 
 class ImmutableBaseModel(BaseModel):
+    """
+    A mixin which forbids mutation of the schema after instantiation.
+    """
+
     class Config:
+        """
+        Configuration inner class forbidding mutation of the schema after instantiation.
+        """
+
         allow_mutation = False
         frozen = True
 

@@ -1,3 +1,6 @@
+"""
+This module contains tests for events which transport elements from one node to another.
+"""
 import pytest
 from hypothesis import given, strategies as st
 
@@ -19,4 +22,3 @@ def test_space(transport: SpaceTransport):
 @given(st.builds(SurfaceTransport))
 def test_surface(transport: SurfaceTransport):
     assert "SurfaceTransport" == transport.type
-

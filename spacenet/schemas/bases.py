@@ -1,3 +1,6 @@
+"""
+This module defines base classes for events.
+"""
 from datetime import timedelta
 from uuid import UUID
 
@@ -10,11 +13,8 @@ class Event(BaseModel):
     """
     The base event schema.
     """
-    type: str = Field(
-        ...,
-        title="Type",
-        description="The type of event"
-    )
+    name: str = Field(..., description="The name of the event")
+    type: str = Field(..., title="Type", description="The type of event")
     priority: int = Field(
         ...,
         title="Priority",
@@ -33,6 +33,7 @@ class ElementTransportEvent(Event):
     """
     A schema representing a basic event transporting elements from one node to another.
     """
+
     origin_node_id: UUID = Field(
         ...,
         title="Origin Node ID",
@@ -46,13 +47,11 @@ class ElementTransportEvent(Event):
     )
 
     edge_id: UUID = Field(
-        ...,
-        description="The ID of the edge between origin and destination nodes"
+        ..., description="The ID of the edge between origin and destination nodes"
     )
 
     exec_time: timedelta = Field(
-        ...,
-        description="The time this transport event runs for"
+        ..., description="The time this transport event runs for"
     )
 
 
@@ -60,6 +59,7 @@ class PrimitiveEvent(Event):
     """
     A schema representing events which other events are decomposed into.
     """
+
     queued_at: timedelta = None
 
     @validator("queued_at", always=True)
