@@ -13,7 +13,7 @@ class Event(BaseModel):
     """
     The base event schema.
     """
-
+    name: str = Field(..., description="The name of the event")
     type: str = Field(..., title="Type", description="The type of event")
     priority: int = Field(
         ...,

@@ -73,6 +73,7 @@ def move_from_transport(
     :raises OverflowError: if mission_time + exec_time > maximum timedelta
     """
     move_to_edge = MoveElements(
+        name=f"Move from {transport_event.origin_node_id} to {transport_event.edge_id}",
         priority=transport_event.priority,
         to_move=transport_event.elements_id_list,
         origin_id=transport_event.origin_node_id,
@@ -81,6 +82,7 @@ def move_from_transport(
         type="MoveElements",
     )
     move_from_edge = MoveElements(
+        name=f"Move from {transport_event.edge_id} to {transport_event.destination_node_id}",
         priority=transport_event.priority,
         to_move=transport_event.elements_id_list,
         origin_id=transport_event.edge_id,
@@ -138,6 +140,7 @@ def _decompose_space_transport(event: SpaceTransport) -> List[PrimitiveEvents]:
         )
     )
     burn_event = PropulsiveBurn(
+        name=f"Burn @ {event.edge_id}",
         type="PropulsiveBurn",
         priority=event.priority,
         mission_time=event.mission_time,
