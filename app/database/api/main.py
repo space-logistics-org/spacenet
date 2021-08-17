@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from .database import Base, engine
-from .routers import edge, element, hello_world, node, resource, state
+from .routers import edge, element, node, resource, state
 
 # create the database if it does not yet exist
 Base.metadata.create_all(bind=engine)
@@ -14,11 +14,6 @@ app = FastAPI(
 )
 
 # include any application routers
-app.include_router(
-    hello_world.router,
-    prefix="/hello",
-)
-
 app.include_router(
     element.router,
     prefix="/element"
