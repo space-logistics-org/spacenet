@@ -1,3 +1,7 @@
+"""
+This module defines schemas for specifying events which transport elements on the surface of
+a body.
+"""
 from typing import List
 from typing_extensions import Literal
 from uuid import UUID

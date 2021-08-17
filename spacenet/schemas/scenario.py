@@ -1,3 +1,6 @@
+"""
+This module defines schemas for specifying scenarios, which describe space mission campaigns.
+"""
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Union

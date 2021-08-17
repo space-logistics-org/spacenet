@@ -1,3 +1,7 @@
+"""
+This module defines schemas usable for validating and interfacing with other parts of the
+spacenet module.
+"""
 from .burn import *
 from .edge import *
 from .element import *

@@ -1,3 +1,6 @@
+"""
+This module defines schemas for network nodes.
+"""
 from enum import Enum
 from typing import Union
 

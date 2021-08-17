@@ -1,3 +1,6 @@
+"""
+This module defines common constants and enumerations used in other schema modules.
+"""
 from enum import Enum
 
 __all__ = [

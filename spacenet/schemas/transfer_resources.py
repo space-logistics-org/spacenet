@@ -1,3 +1,6 @@
+"""
+This module defines schemas for transferring resources between locations.
+"""
 from typing import List
 from uuid import UUID
 

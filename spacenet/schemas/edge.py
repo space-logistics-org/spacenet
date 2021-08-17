@@ -1,3 +1,6 @@
+"""
+This module defines schemas for network edges.
+"""
 from enum import Enum
 from typing import Union
 from uuid import UUID
