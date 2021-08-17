@@ -1,3 +1,7 @@
+"""
+This module defines exceptions which can be raised during simulation initialization and
+validation.
+"""
 __all__ = [
     "SimException",
     "EventDateOverflowError",

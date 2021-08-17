@@ -1,3 +1,6 @@
+"""
+This module contains tests that the Apollo 17 schema can be simulated without errors.
+"""
 from datetime import datetime
 
 import pkg_resources
@@ -43,4 +46,4 @@ def test_identical_result_for_datetime_after_last_event(dt: datetime):
     assume(dt >= sim.current_time)
     stopping_sim = Simulation(scenario)
     stopping_sim.run(until=dt)
-    assert sim.result() == stopping_sim.result()
+    assert sim.result == stopping_sim.result

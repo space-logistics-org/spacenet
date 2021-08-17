@@ -1,3 +1,7 @@
+"""
+This module defines schemas for specifying events which transport elements on the surface of
+a body.
+"""
 from typing import List
 from typing_extensions import Literal
 from uuid import UUID
@@ -11,6 +15,9 @@ __all__ = ["SurfaceTransport"]
 
 
 class SurfaceTransport(ElementTransportEvent):
+    """
+    Schema for Surface Transport
+    """
 
     name: str = Field(..., title="Name", description="The surface transport name")
 

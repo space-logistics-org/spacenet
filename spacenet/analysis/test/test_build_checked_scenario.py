@@ -1,3 +1,6 @@
+"""
+This module contains tests for the hypothesis strategy constructing checked scenarios.
+"""
 import pytest
 
 from hypothesis import given
@@ -6,7 +9,6 @@ from .utilities import build_checked_scenario
 from ..checked_scenario import CheckedScenario
 from ..simulation import Simulation
 from ..exceptions import EventDateOverflowError, UnrecognizedID
-from ...schemas import Scenario
 
 pytestmark = [pytest.mark.schema, pytest.mark.unit, pytest.mark.analysis]
 

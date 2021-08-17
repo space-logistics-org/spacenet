@@ -1,3 +1,7 @@
+"""
+This module defines schemas for specifying events that create, move, update, or delete
+elements.
+"""
 from typing import Dict, List
 from uuid import UUID
 

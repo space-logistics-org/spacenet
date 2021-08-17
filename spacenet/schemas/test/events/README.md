@@ -1,4 +1,4 @@
-# Spacenet Event Schema Test Suite
+# SpaceNet Event Schema Test Suite
 
 This module contains unit tests for schemas defining events.
 

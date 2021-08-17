@@ -1,8 +1,7 @@
-# Simulators have networks and event queues, they take from the event queue, which is sorted
-# by time, and re-populate the event queue with new generated events.
-
-# You can model a time-expanded graph in a memory-efficient way by having the contents be the
-# time-expanded part.
+"""
+This module defines mechanisms for simulating a provided scenario either with or without
+propulsive constraints.
+"""
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import (
@@ -89,6 +88,7 @@ class Move(SimEvent):
 
     event: MoveElements
 
+    # noinspection PyMissingOrEmptyDocstring
     def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         if not sim.id_exists(event.origin_id):
@@ -111,6 +111,7 @@ class Move(SimEvent):
             elif not sim.id_is_of_element(id_):
                 raise MismatchedIDType(f"ID {id_} should be an element, but is not")
 
+    # noinspection PyMissingOrEmptyDocstring
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Move all elements in the list to the new destination
         # Possible errors:
@@ -149,6 +150,7 @@ class Create(SimEvent):
 
     event: MakeElements
 
+    # noinspection PyMissingOrEmptyDocstring
     def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         if not sim.id_exists(event.entry_point_id):
@@ -163,6 +165,7 @@ class Create(SimEvent):
             elif not sim.id_is_of_element(id_):
                 raise MismatchedIDType(f"ID {id_} is not of element")
 
+    # noinspection PyMissingOrEmptyDocstring
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Create all elements in the list at the specified location
         # Possible errors:
@@ -193,6 +196,7 @@ class Remove(SimEvent):
 
     event: RemoveElements
 
+    # noinspection PyMissingOrEmptyDocstring
     def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         if not sim.id_exists(event.removal_point_id):
@@ -209,6 +213,7 @@ class Remove(SimEvent):
             elif not sim.id_is_of_element(id_):
                 raise MismatchedIDType("ID {id_} is not of element")
 
+    # noinspection PyMissingOrEmptyDocstring
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Remove all elements in the list at the specified location
         # Possible errors:
@@ -248,6 +253,7 @@ class BurnEvent(SimEvent):
 
     event: PropulsiveBurn
 
+    # noinspection PyMissingOrEmptyDocstring
     def validate_ids(self, sim: "Simulation") -> None:
         event = self.event
         for id_ in event.elements:
@@ -264,6 +270,7 @@ class BurnEvent(SimEvent):
                 raise MismatchedIDType(f"ID {id_} is not of a PropulsiveVehicle")
         assert set(event.burn_stage_sequence).issubset(event.elements)
 
+    # noinspection PyMissingOrEmptyDocstring
     def process_with_ctx(self, sim: "Simulation") -> None:
         # Consume the fuel at the given elements until enough fuel has been consumed
         # to satisfy delta-v requirement
@@ -444,6 +451,11 @@ class Simulation:
         self.errors.append(error)
 
     def add_errors(self, errors: Iterable[SimError]) -> None:
+        """
+        Record the errors in ``errors`` into this simulation.
+
+        :param errors: errors to record
+        """
         self.errors.extend(errors)
 
     def id_exists(self, id_: UUID) -> bool:
@@ -519,7 +531,12 @@ class Simulation:
             self.current_time = next_event.timestamp
             self._run_listeners(self.post_listeners)
 
+    @property
     def result(self) -> SimResult:
+        """
+        :return: a representation of the current state of this simulation;
+                mutation will modify simulation
+        """
         inverse_namespace = {v: id_ for id_, v in self.namespace.items()}
         return SimResult(
             nodes=[

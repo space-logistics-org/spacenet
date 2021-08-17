@@ -1,3 +1,6 @@
+"""
+This module contains utilities for testing event schemas.
+"""
 from datetime import timedelta
 
 from hypothesis import strategies as st

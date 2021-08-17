@@ -1,3 +1,8 @@
+"""
+This module contains tests that formulas for fuel consumption satisfy their postconditions
+given inputs valid via preconditions, and produce results within a close margin of the expected
+result for selected examples.
+"""
 import json
 import math
 from typing import List, Tuple

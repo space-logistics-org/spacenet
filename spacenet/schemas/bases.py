@@ -1,3 +1,6 @@
+"""
+This module defines base classes for events.
+"""
 from datetime import timedelta
 from uuid import UUID
 

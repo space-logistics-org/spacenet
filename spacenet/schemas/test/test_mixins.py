@@ -22,12 +22,14 @@ class TestOptionalFields:
         > 0
     """
 
+    # noinspection PyMissingOrEmptyDocstring
     class Model(BaseModel):
         a: int
         b: float = Field(description="test")
         c: conint(ge=0)
 
     def test_all_made_optional(self):
+        # noinspection PyMissingOrEmptyDocstring
         class OptionalModel(self.Model, OptionalFields):
             pass
 
@@ -41,6 +43,7 @@ class TestOptionalFields:
             assert repr(exp_field) == repr(actual_field)
 
     def test_some_made_optional(self):
+        # noinspection PyMissingOrEmptyDocstring
         class PartialOptionalModel(self.Model, OptionalFields, excluded_fields={"a"}):
             pass
 
@@ -64,10 +67,12 @@ class TestRequiresID:
     Tests for the RequiresID class.
     """
 
+    # noinspection PyMissingOrEmptyDocstring
     class Model(BaseModel):
         pass
 
     def test_requires_uuid(self):
+        # noinspection PyMissingOrEmptyDocstring
         class ModelWithID(self.Model, RequiresID):
             pass
 

@@ -1,3 +1,6 @@
+"""
+This module contains tests for RemoveElements event schemas.
+"""
 import pytest
 from hypothesis import given, strategies as st
 
@@ -29,6 +32,15 @@ INVALID_MAP = {
 
 
 def xfail_construct_remove(elements, removal_point_id, priority, mission_time, type):
+    """
+    Construct a RemoveElements event, expecting construction to fail.
+
+    :param elements: UUIDs of elements to remove
+    :param removal_point_id: UUID of location to remove elements at
+    :param priority: event priority
+    :param mission_time: time event will occur relative to mission start
+    :param type: kind of event
+    """
     xfail_from_kw(
         RemoveElements,
         elements=elements,

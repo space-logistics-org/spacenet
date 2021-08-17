@@ -1,3 +1,6 @@
+"""
+This module defines schemas for specifying scenarios, which describe space mission campaigns.
+"""
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Union
@@ -15,17 +18,27 @@ __all__ = ["ScenarioType", "Scenario", "Manifest"]
 
 
 class Manifest(BaseModel):
-    container_events: List[Union[MakeElements, MoveElements]] = Field(
+    """
+    A manifest of events manipulating resources.
+    """
+    container_events: List[Union[MakeElements, MoveElements]] = Field(  # TODO: types?
         ..., title="Resource Event Sequence"
     )
 
 
 class Network(BaseModel):
+    """
+    A network representation specified via nodes and edges mapped from the UUIDs which are
+    used to refer to them.
+    """
     nodes: Dict[UUID, AllNodes] = Field(..., title="Nodes")
     edges: Dict[UUID, AllUUIDEdges] = Field(..., title="Edges")
 
 
 class ScenarioType(str, Enum):
+    """
+    An enumeration of the different kinds of scenario.
+    """
     iss = "ISS"
     lunar = "Lunar"
     moon_only = "Moon-only"
@@ -33,11 +46,11 @@ class ScenarioType(str, Enum):
     mars_only = "Mars-only"
     solar_system = "Solar System"
 
-    class Config:
-        title: "Scenario Type"
-
 
 class Scenario(BaseModel):
+    """
+    A scenario describing a space mission campaign.
+    """
     name: str = Field(..., title="Name", description="Name of Scenario")
     description: str = Field(None, title="Description", description="Short description")
     startDate: datetime = Field(..., title="Start Date")
@@ -50,6 +63,3 @@ class Scenario(BaseModel):
 
     volumeConstrained: bool = Field(False, title="Volume Constrained")
     environmentConstrained: bool = Field(False, title="Environment Constrained")
-
-    class Config:
-        title: "Scenario"

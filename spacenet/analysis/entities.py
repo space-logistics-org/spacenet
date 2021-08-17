@@ -1,3 +1,7 @@
+"""
+This module defines entities which are to be simulated, most of which are wrappers around other
+schema to add additional fields or methods.
+"""
 from datetime import datetime
 from typing import Dict, List, Set, Tuple, Union
 from uuid import UUID
@@ -33,6 +37,10 @@ class SimElement(ContainsElements):
         return hash(self.inner)
 
     def all_contained(self) -> Tuple[Set[AllElements], List["SimError"]]:
+        """
+        :return: the set of all elements contained in this element, and any errors found
+                relating to invariant violations in the containment relationship
+        """
         visited = {self.inner}
         errors = []
         stack = list(self.contents)
@@ -58,11 +66,18 @@ class SimElement(ContainsElements):
         return visited, errors
 
     def total_mass(self) -> Tuple[float, List["SimError"]]:
+        """
+        :return: the total mass of all elements contained in this element, and any errors
+            found relating to invariant violations in the containment relationship
+        """
         all_contained, errors = self.all_contained()
         return sum(contained.mass for contained in all_contained), errors
 
     @property
     def current_mass(self) -> float:
+        """
+        :return: the current mass of this element
+        """
         return self.inner.mass + self.fuel_mass
 
     @validator("fuel_mass", always=True)

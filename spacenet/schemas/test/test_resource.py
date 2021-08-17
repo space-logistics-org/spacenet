@@ -1,3 +1,6 @@
+"""
+This module contains tests for resources.
+"""
 import unittest
 
 import pytest

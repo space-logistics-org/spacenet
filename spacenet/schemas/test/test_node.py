@@ -1,3 +1,6 @@
+"""
+This module contains tests for nodes.
+"""
 import json
 import unittest
 

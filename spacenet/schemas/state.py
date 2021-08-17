@@ -1,3 +1,6 @@
+"""
+This module defines schemas for specifying the operational state of elements.
+"""
 from enum import Enum
 
 from pydantic import BaseModel, Field, StrictBool, conint

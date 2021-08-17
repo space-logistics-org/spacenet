@@ -1,3 +1,7 @@
+"""
+This module defines a function for turning events into multiple "simpler" events,
+and a mechanism for registering types of events with a function to do so.
+"""
 from typing import Callable, Dict, List, Type, TypeVar, Union
 
 from spacenet.schemas import Burn

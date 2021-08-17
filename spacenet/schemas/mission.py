@@ -3,6 +3,7 @@
 Created on Fri Jul  9 06:55:31 2021
 
 @author: jredm
+This module defines schemas for specifying missions which compose campaigns.
 """
 from datetime import datetime
 from typing import List, Union
@@ -32,7 +33,15 @@ AllEvents = Union[
 ]  # TODO: AllEvents should be expanded to include all the types of Event
 
 
+__all__ = [
+    "Mission"
+]
+
+
 class Mission(BaseModel):
+    """
+    A schema representing a single mission, which is represented as a list of events.
+    """
     name: str = Field(..., title="Name", description="name of mission")
     start_date: datetime = Field(
         ..., title="Start Date", description="date of mission start"
