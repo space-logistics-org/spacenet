@@ -77,7 +77,7 @@ def test_simulation_returns_same(scenario, propulsive):
     other_sim = Simulation(scenario, propulsive=propulsive)
     other_sim.run()
     assert sim.errors == other_sim.errors
-    assert sim.result() == other_sim.result()
+    assert sim.result == other_sim.result
 
 
 @given(
