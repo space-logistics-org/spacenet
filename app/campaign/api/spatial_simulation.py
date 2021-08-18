@@ -1,3 +1,6 @@
+"""
+This module defines routes for analysis of campaigns via spatial simulation.
+"""
 from datetime import timedelta
 from typing import List, Optional
 

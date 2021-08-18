@@ -1,3 +1,6 @@
+"""
+This module includes application routers and static files used for campaign analysis.
+"""
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
