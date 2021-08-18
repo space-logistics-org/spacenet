@@ -18,6 +18,9 @@ __all__ = ["Route", "CRUDRouter"]
 
 
 class Route(Enum):
+    """
+    An enumeration of the supported API route types.
+    """
     GetAll = auto()
     GetOne = auto()
     Create = auto()
