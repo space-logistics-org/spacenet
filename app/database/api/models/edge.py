@@ -1,3 +1,7 @@
+"""
+This module defines the database schema for edges and edge subclasses.
+"""
+
 from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declared_attr
 
