@@ -1,3 +1,7 @@
+"""
+This module defines a default class for CRUD routes that can be imported and used for individual schema.
+"""
+
 from enum import Enum, auto
 from typing import List, Set
 
