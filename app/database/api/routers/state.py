@@ -1,3 +1,7 @@
+"""
+This module defines CRUD routes for the state schema.
+"""
+
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
