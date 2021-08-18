@@ -1,3 +1,6 @@
+"""
+This module includes routers for campaign analysis routes.
+"""
 from fastapi import FastAPI
 
 from . import demands, spatial_simulation, spatial_simulation_placeholder
