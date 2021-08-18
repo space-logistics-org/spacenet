@@ -11,8 +11,7 @@ from ..schemas.state import State, StateRead, StateUpdate
 
 router = CRUDRouter(
     table=models.State,
-    name_lower="state",
-    name_capitalized="State",
+    name="state",
     schemas=STATE_SCHEMAS,
     generated_routes={Route.GetOne, Route.GetAll, Route.Delete},
 )
@@ -23,13 +22,15 @@ router = CRUDRouter(
     response_model=StateRead,
     status_code=status.HTTP_201_CREATED,
     summary="Create State",
-    description="Add a new state to the database.",
 )
 def create_state(
     state: State,
     db: Session = Depends(database.get_db),
     _user: User = Depends(current_user),
 ) -> StateRead:
+    """
+    Add a new state to the database.
+    """
     db_element = db.query(ElementModel).get(state.element_id)
     if db_element is None:
         raise HTTPException(
@@ -46,13 +47,15 @@ def create_state(
     response_model=StateRead,
     responses={**NOT_FOUND_RESPONSE, status.HTTP_409_CONFLICT: {"msg": str},},
     summary="Update State",
-    description="Update an existing state in the database.",
 )
 def update_state(
     state: StateUpdate,
     db: Session = Depends(database.get_db),
     _user: User = Depends(current_user),
 ):
+    """
+    Update an existing state in the database.
+    """
     db_element = db.query(ElementModel).get(state.element_id)
     if db_element is None:
         raise HTTPException(

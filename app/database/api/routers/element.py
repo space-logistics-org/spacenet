@@ -4,7 +4,6 @@ from ..schemas.constants import ELEMENT_SCHEMAS
 
 router = CRUDRouter(
     table=models.Element,
-    name_lower="element",
-    name_capitalized="Element",
+    name="element",
     schemas=ELEMENT_SCHEMAS,
 )

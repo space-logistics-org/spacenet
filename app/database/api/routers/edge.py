@@ -3,5 +3,5 @@ from ..models import edge as models
 from ..schemas.constants import EDGE_SCHEMAS
 
 router = CRUDRouter(
-    table=models.Edge, name_lower="edge", name_capitalized="Edge", schemas=EDGE_SCHEMAS,
+    table=models.Edge, name="edge", schemas=EDGE_SCHEMAS,
 )
