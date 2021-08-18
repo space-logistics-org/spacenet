@@ -2,11 +2,11 @@
 This module defines schemas for specifying mission-wide demand models.
 """
 from math import inf
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from .resource import Resource, ResourceType
-
 
 class MissionDemand(BaseModel):
     """
@@ -18,7 +18,7 @@ class MissionDemand(BaseModel):
         title="Resource Type",
         description="Type of resource that is being demanded.",
     )
-    resource: Resource = Field(
+    resource: UUID = Field(
         ..., title="Resource", description="Resource being demanded."
     )
     units: str = Field(..., title="Units", description="Units of resource")
