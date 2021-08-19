@@ -91,7 +91,7 @@ function drawAllBodies (displaySun, scenarioType) {
     drawSun()
     if (scenarioType === 'iss') {
       return {'Earth': {
-                'proj': drawBody(.6, 600, 120, 'earth_equal_area.jpg'),
+                'proj': drawBody(.6, 600, 120, 'earth_equal_area.png'),
                 'rad': 180,
                 'center': {'x': 780, 'y': 300}
                 }
@@ -112,7 +112,7 @@ function drawAllBodies (displaySun, scenarioType) {
           }
   } else if (scenarioType === 'lunar') {
     return {'Earth': {
-              'proj': drawBody(0.6, 400, 120, 'earth_equal_area.jpg'),
+              'proj': drawBody(0.6, 400, 120, 'earth_equal_area.png'),
               'rad': 180,
               'center': {'x': 580, 'y': 300}
               },
@@ -124,7 +124,7 @@ function drawAllBodies (displaySun, scenarioType) {
           }
   } else if (scenarioType === 'martian') {
     return {'Earth': {
-              'proj': drawBody(0.6, 400, 120, 'earth_equal_area.jpg'),
+              'proj': drawBody(0.6, 400, 120, 'earth_equal_area.png'),
               'rad': 180,
               'center': {'x': 580, 'y': 300}
               },
@@ -136,7 +136,7 @@ function drawAllBodies (displaySun, scenarioType) {
           }
   } else if (scenarioType === 'solarSystem') {
     return {'Earth': {
-              'proj': drawBody(0.6, 350, 120, 'earth_equal_area.jpg'),
+              'proj': drawBody(0.6, 350, 120, 'earth_equal_area.png'),
               'rad': 180,
               'center': {'x': 530, 'y': 300}
               },
@@ -159,7 +159,7 @@ function drawAllBodies (displaySun, scenarioType) {
   else {
     if (scenarioType === 'iss') {
       return {'Earth': {
-                'proj': drawBody(.8, 360, 60, 'earth_equal_area.jpg'),
+                'proj': drawBody(.8, 360, 60, 'earth_equal_area.png'),
                 'rad': 240,
                 'center': {'x': 600, 'y': 300}
                 }
@@ -180,7 +180,7 @@ function drawAllBodies (displaySun, scenarioType) {
             }
   } else if (scenarioType === 'lunar') {
       return {'Earth': {
-                'proj': drawBody(0.8, 100, 60, 'earth_equal_area.jpg'),
+                'proj': drawBody(0.8, 100, 60, 'earth_equal_area.png'),
                 'rad': 240,
                 'center': {'x': 340, 'y': 300}
                 },
@@ -192,7 +192,7 @@ function drawAllBodies (displaySun, scenarioType) {
             }
   } else if (scenarioType === 'martian') {
       return {'Earth': {
-                'proj': drawBody(0.8, 100, 60, 'earth_equal_area.jpg'),
+                'proj': drawBody(0.8, 100, 60, 'earth_equal_area.png'),
                 'rad': 240,
                 'center': {'x': 340, 'y': 300}
                 },
@@ -205,7 +205,7 @@ function drawAllBodies (displaySun, scenarioType) {
   } else if (scenarioType === 'solarSystem') {
     drawSun()
     return {'Earth': {
-        'proj': drawBody(0.6, 350, 120, 'earth_equal_area.jpg'),
+        'proj': drawBody(0.6, 350, 120, 'earth_equal_area.png'),
         'rad': 180,
         'center': {'x': 530, 'y': 300}
         },
