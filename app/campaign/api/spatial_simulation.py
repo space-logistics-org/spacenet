@@ -1,3 +1,6 @@
+"""
+This module defines routes for analysis of campaigns via spatial simulation.
+"""
 from datetime import timedelta
 from typing import List, Optional
 
@@ -12,6 +15,9 @@ router = APIRouter()
 
 
 class ResultAndErrors(BaseModel):
+    """
+    A representation of both the result of a simulation and the errors that resulted.
+    """
     result: SimResult
     errors: List[SimError]
 
@@ -22,6 +28,10 @@ def simulate_scenario(
     days_to_run_for: Optional[float] = None,
     propulsive: bool = False,
 ) -> ResultAndErrors:
+    """
+    Perform a spatial simulation analysis on the provided scenario, providing the resulting
+    network and any errors which occurred running the simulation.
+    """
     try:
         sim = Simulation(scenario, propulsive=propulsive)
     except SimException as se:

@@ -1,3 +1,7 @@
+"""
+This module defines the database schema for elements and element subclasses.
+"""
+
 from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr

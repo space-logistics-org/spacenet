@@ -1,3 +1,7 @@
+"""
+This module defines the database schema for resources and resource subclasses.
+"""
+
 from sqlalchemy import Column, Integer, String, Float
 
 from ..database import Base

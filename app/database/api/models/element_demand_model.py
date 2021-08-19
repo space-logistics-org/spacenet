@@ -1,3 +1,7 @@
+"""
+This module defines the database schema for element demand models and element demand model subclasses.
+"""
+
 from sqlalchemy import Column, Integer, String, Float, Boolean
 
 from ..database import Base

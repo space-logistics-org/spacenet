@@ -17,7 +17,7 @@ def union_from_iterable(it: Iterable[Type[T]]) -> Type[T]:
 
     :param it: an iterable of types
     :return: Union[T0, T_1, ..., T_i] for all T_i in the provided iterable
-    :raises ValueError: if provided iterable is non-empty
+    :raises ValueError: if provided iterable is empty
 
     The provided type bound is not tight, but a tighter bound can only really be expressed with
     variadic type arguments.
