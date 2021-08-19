@@ -1,3 +1,7 @@
+"""
+This module runs regression tests for the various database schemas involved in a mock lunar sortie mission. 
+"""
+
 import pytest
 from spacenet.schemas.test.utilities import (
     lunar_sortie_elements,

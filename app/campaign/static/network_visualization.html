@@ -13,8 +13,6 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
   <script src="compile_scenario.js"></script>
 
-
-
 </head>
 
 <style>
@@ -44,7 +42,7 @@
 
     
     </style>
-
+<body onload="checkFilledInfo()" >
 <div class="container-fluid">
   <form id="chooseNetwork">
   <div class="form-row .d-xl-inline-flex">
@@ -68,10 +66,32 @@
   </form>
 </div>
 
+  <!-- No Network modal -->
+  <div aria-hidden="true" aria-labelledby="noNetworkModalLabel" class="modal fade" id="noNetworkModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class='modal-header border-0'>
+                <button aria-label="Close" class="close float-right" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class='modal-body'>
+                <h3 class="modal-title text-center">No network available</h3>
+                <h5 class="modal-title text-center">Choose a network first to view visualization</h4>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <!-- <button class="btn btn-secondary" data-dismiss="modal" type="button">Dismiss</button> -->
+                <button class="btn btn-primary" onclick="document.location='network_selection.html'" type="button">Choose Network</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
 <canvas id="bodies" width="1200px" height="600px" alt="Planetary Bodies"></canvas>
 <canvas id="network" width="1200px" height="600px" alt="Nodes and Edges"></canvas>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="network_visualization.js"></script>
+</body>
 
 </html>

@@ -15,7 +15,6 @@ function createScen(){
   $("#resDirect").hide();
   $("#visDirect").hide();
   $("#netDirect").hide();
-
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="create_scenario.html" ></object>';
 }
 
@@ -25,9 +24,6 @@ function createNet() {
   $("#resDirect").hide();
   $("#visDirect").hide();
   $("#netDirect").hide();
-  if (document.getElementById("scenButton").className == "btn btn-primary") {
-    document.getElementById("scenButton").className = "btn btn-success";
-  }
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="network_selection.html" ></object>';
 }
 
@@ -37,11 +33,6 @@ function createMiss(){
   $("#resDirect").hide();
   $("#visDirect").hide();
   $("#netDirect").hide();
-  if (document.getElementById("netButton").className == "btn btn-primary") {
-    document.getElementById("netButton").className = "btn btn-success";
-    document.getElementById("scenButton").className = "btn btn-success";
-  }
-  document.getElementById("missButton").className = "btn btn-success";
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="create_mission.html" ></object>';
   $("#navbar").show();
   $("#navbar").show();
@@ -223,4 +214,33 @@ function equipDiv(){
   $("#formSpace").show();
   $("#visSpace").hide();
   document.getElementById("formSpace").innerHTML='<object id = formSpace type="text/html" data="eqChart.html" ></object>';
+}
+
+
+window.setInterval(checkFilledInfo,100)
+
+function checkFilledInfo () {
+  if (getElt('scenarioInfo')) {
+    document.getElementById("scenButton").className = "btn btn-success";
+  } else {
+    document.getElementById("scenButton").className = "btn btn-primary"
+  }
+
+  var nodes = getElt('scenarioNetworkNodes'),
+      edges = getElt('scenarioNetworkEdges')
+      elements = getElt('scenarioElementsList'),
+      resources = getElt('scenarioResourceTypes');
+
+  if (nodes && edges && elements && resources) {
+    document.getElementById("netButton").className = "btn btn-success";
+  } else {
+    document.getElementById("netButton").className = "btn btn-primary"
+  }
+
+  if (getElt('missionInfo')) {
+    document.getElementById("missButton").className = "btn btn-success";
+  } else {
+    document.getElementById("missButton").className = "btn btn-primary"
+  }
+
 }

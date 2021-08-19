@@ -1,21 +1,22 @@
 function deleteMission() {
+    window.localStorage.removeItem('missionInfo')
     window.localStorage.removeItem('missionList')
     location.reload()
 }
 
 function fillMission() {
-    // $('#addMissionButton').hide()
     $('#deleteMissionButton').hide()
 
-    var currentMission = JSON.parse(window.localStorage.getItem('missionList'))
+    var currentMission = getElt('missionInfo')
     console.log('current mission:', currentMission)
+
     if (currentMission) {
-        $('#pickStartDate').val(currentMission[0].start_date)
-        $('#inputName').val(currentMission[0].name)
-        $('#pickOrigin').val(currentMission[0].origin)
-        $('#pickDest').val(currentMission[0].destination)
-        $('#pickReturnOrigin').val(currentMission[0].return_origin)
-        $('#pickReturnDest').val(currentMission[0].return_destination)
+        $('#pickStartDate').val(currentMission.start_date)
+        $('#inputName').val(currentMission.name)
+        $('#pickOrigin').val(currentMission.origin)
+        $('#pickDest').val(currentMission.destination)
+        $('#pickReturnOrigin').val(currentMission.return_origin)
+        $('#pickReturnDest').val(currentMission.return_destination)
         $('#submitButton').hide()
         // $('#editScenarioButton').show()
         $('#deleteMissionButton').show()
@@ -34,19 +35,19 @@ function onComplete(){
   return_dest = $('#pickReturnDest').val()
 
 
-    missionList = [{
+    missionInfo = {
       start_date: startDate,
       name: name,
       origin: origin,
       destination: dest,
       return_origin: return_origin,
       return_destination: return_dest
-    }]
+    }
 
-    window.localStorage.setItem('missionList', JSON.stringify(missionList))
-    alert('mission created! Now add events.')
+    setElt('missionInfo', missionInfo)
 
     document.getElementById('createMission').reset()
+    alert("Mission created. Add events next.")
     fillMission()
 
 }

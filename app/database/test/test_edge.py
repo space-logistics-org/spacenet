@@ -1,3 +1,7 @@
+"""
+This module runs regression tests for the edge database schema. The file imports a json file containing mock edge data to use for the testing.
+"""
+
 import unittest
 import json
 import pkg_resources
