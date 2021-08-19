@@ -1,3 +1,15 @@
+function checkFilledInfo() {
+  var nodes = getElt('scenarioNetworkNodes'),
+      edges = getElt('scenarioNetworkEdges');
+  console.log(nodes)
+  console.log(edges)
+
+  if (!nodes || !edges) {
+      $('#noNetworkModal').modal('show')
+    }
+
+}
+
 // select the body canvas element created in the html.
 const bCanvas = document.getElementById('bodies');
 
@@ -550,4 +562,5 @@ function drawCanvas(){
 
 
 setUpBackground()
-$("#pickScenarioType").val('lunar').trigger('change')
+console.log('scenario type:', scenario.scenarioType)
+$("#pickScenarioType").val(scenario.scenarioType).trigger('change')
