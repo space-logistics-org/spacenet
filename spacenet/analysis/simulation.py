@@ -280,14 +280,20 @@ class BurnEvent(SimEvent):
         #    just not add burn events if there's no fuel constraint and just stage)
         event = self.event
         delta_v = event.burn.delta_v
-        m_0 = sum(sim.namespace[id_].total_mass()[0] for id_ in self.event.elements)
+        m_0 = 0
+        for id_ in self.event.elements:
+            mass, errors = sim.namespace[id_].total_mass()
+            sim.add_errors(errors)
+            m_0 += mass
         for item in event.burn_stage_sequence:
             element: SimElement = sim.namespace[item.element_id]
             if item.burnStage == "Burn":
                 assert sim.id_is_of_propulsive_vehicle(item.element_id)
                 if delta_v == 0:
                     continue
-                min_final_mass = element.total_mass()[0] - element.fuel_mass
+                element_total_mass, errors = element.total_mass()
+                sim.add_errors(errors)
+                min_final_mass = element_total_mass - element.fuel_mass
                 stage_delta_v = delta_v_from(element.inner.isp, m_0, min_final_mass)
                 if stage_delta_v > delta_v:
                     mass_change = m_0 - final_mass_from(delta_v, element.inner.isp, m_0)
@@ -303,6 +309,8 @@ class BurnEvent(SimEvent):
             else:
                 assert item.burnStage == "Stage"
                 m_0 -= element.total_mass()
+        if delta_v > 0:
+            sim.add_error(SimError.insufficient_fuel(self.event, self.timestamp))
 
 
 T = TypeVar("T")
@@ -447,7 +455,12 @@ class Simulation:
         for listener, arg in listeners.items():
             listeners[listener] = listener(self, arg)
 
-    def _add_error(self, error: SimError) -> None:
+    def add_error(self, error: SimError) -> None:
+        """
+        Record ``error`` into this simulation.
+
+        :param error: error to record
+        """
         self.errors.append(error)
 
     def add_errors(self, errors: Iterable[SimError]) -> None:
