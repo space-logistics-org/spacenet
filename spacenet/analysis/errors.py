@@ -16,6 +16,8 @@ __all__ = [
     "ElementNotAtLocation",
 ]
 
+from spacenet.schemas import PropulsiveBurn
+
 
 class SimError(BaseModel):
     """
@@ -75,6 +77,18 @@ class SimError(BaseModel):
         :return: an error representing an element not being at a location
         """
         return ElementNotAtLocation.new(timestamp, id_, location, name)
+
+    @staticmethod
+    def insufficient_fuel(
+        event: PropulsiveBurn,
+        timestamp: datetime
+    ) -> "InsufficientFuelForBurn":
+        """
+        :param timestamp: error timestamp
+        :param event: event which requires too much fuel to be satisfied
+        :return: an error representing insufficient fuel to execute a PropulsiveBurn
+        """
+        return InsufficientFuelForBurn.new(event)
 
 
 class EntityDoesNotExist(SimError):
@@ -151,4 +165,25 @@ class ElementNotAtLocation(SimError):
         return ElementNotAtLocation(
             timestamp=timestamp,
             description=f"{name} (ID={id_}) is not at location {location}",
+        )
+
+
+class InsufficientFuelForBurn(SimError):
+    """
+    An error representing insufficient fuel to execute a PropulsiveBurn.
+    """
+
+    @staticmethod
+    def new(
+            timestamp: datetime, event: PropulsiveBurn
+    ) -> "InsufficientFuelForBurn":
+        """
+        :param timestamp: error timestamp
+        :param event: event which requires too much fuel to be satisfied
+        :return: an error representing insufficient fuel to execute a PropulsiveBurn
+        """
+        return InsufficientFuelForBurn(
+            timestamp=timestamp,
+            description=f"The propulsive burn {event.name} at time {timestamp} does not have "
+                        f"sufficient fuel for the specified velocity change"
         )
