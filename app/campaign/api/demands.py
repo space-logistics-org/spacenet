@@ -50,7 +50,7 @@ def getMissionExplorationDuration():
                 min = dur[2]
                 sec = dur[3]
                 itDur = (
-                    (int(days) * 24) + int(hrs) + (int(min) / 60) + (int(sec) / 3600)
+                    (float(days) * 24) + float(hrs) + (float(min) / 60) + (float(sec) / 3600)
                 )
                 totalExpHours += itDur
     return totalExpHours
@@ -68,7 +68,7 @@ def getMissionTransitDuration():
                 min = dur[2]
                 sec = dur[3]
                 itDur = (
-                    (int(days) * 24) + int(hrs) + (int(min) / 60) + (int(sec) / 3600)
+                    (float(days) * 24) + float(hrs) + (float(min) / 60) + (float(sec) / 3600)
                 )
                 totalTransportHours += itDur
     return totalTransportHours
@@ -86,7 +86,7 @@ def getMissionEvaCrewTime():
                 min = dur[2]
                 sec = dur[3]
                 itDur = (
-                    (int(days) * 24) + int(hrs) + (int(min) / 60) + (int(sec) / 3600)
+                    (float(days) * 24) + float(hrs) + (float(min) / 60) + (float(sec) / 3600)
                 )
                 totalHours += itDur
     return totalHours
@@ -94,9 +94,8 @@ def getMissionEvaCrewTime():
 
 def getMissionCrewSize():
     count = 0
-
     for i in json_data["elementList"]:
-        if i["type"] == "HumanAgent":
+        if i[0] == "HumanAgent":
             count += 1
     return count
 
@@ -245,4 +244,4 @@ def generateDemands():
 
     wasteEquipment = (getMissionExplorationDuration()+getMissionTransitDuration()+getReservesDuration())*getWasteContainmentRate()*getMissionCrewSize()
 
-    return {totalWater, totalFood, gases, totalHygiene, clothing, personalItems, officeEquipment, totalEva, totalHealth, safetyEquipment, commEquipment, computerEquipment, trashBags, wasteEquipment}
+    return {"water":totalWater, "food":totalFood, "gases":gases, "hygiene":totalHygiene, "clothing":clothing, "personal":personalItems, "office":officeEquipment, "eva":totalEva, "health":totalHealth, "safety":safetyEquipment, "comms":commEquipment, "computer":computerEquipment, "trashBags":trashBags, "waste":wasteEquipment, "crew":getMissionCrewSize()}
