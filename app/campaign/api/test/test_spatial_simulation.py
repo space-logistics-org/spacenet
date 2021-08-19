@@ -1,3 +1,6 @@
+"""
+This module defines tests for API routes used for analysis of campaigns via spatial simulation.
+"""
 import pytest
 from fastapi.encoders import jsonable_encoder
 from fastapi.testclient import TestClient

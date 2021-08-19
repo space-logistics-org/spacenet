@@ -24,17 +24,7 @@ class EVACrew(HumanAgent):
     eva_state: str = Field(..., title="EVA State", description="The state of the EVA")
     # TODO: type?
 
-
-class EVADemand(MissionDemand):
-    """
-    Schema for a Crew Member
-    """
-
-    amount: SafeFloat = Field(
-        ..., title="Amount", description="The amount of the resource needed"
-    )
-
-
+  
 class CrewedEVA(Event):
     """
     An event for a single crewed extravehicular activity.
@@ -58,7 +48,7 @@ class CrewedEVA(Event):
         description="The location of the crew that will be used for the EVA",
     )
 
-    crew: List[EVACrew] = Field(
+    crew: List[UUID] = Field(
         ..., title="Crew", description="List of the crew selected for the EVA"
     )
     additional_demand: List[MissionDemand] = Field(

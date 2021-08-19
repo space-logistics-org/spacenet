@@ -1,3 +1,6 @@
+"""
+This module includes routers for analysis of the resource demands of campaigns.
+"""
 from fastapi import APIRouter
 import json
 import datetime

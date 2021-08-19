@@ -1,3 +1,7 @@
+"""
+This module defines the schemas for Read and Update variants of the state schema.
+"""
+
 from spacenet.schemas import ReadSchema, State, OptionalFields
 
 

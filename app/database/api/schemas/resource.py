@@ -1,3 +1,9 @@
+"""
+This module defines the schemas for Read and Update variants of resources and the corresponding
+subtypes. 
+
+"""
+
 from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
 from spacenet.schemas.resource import ContinuousResource, DiscreteResource
 
