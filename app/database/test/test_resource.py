@@ -1,3 +1,7 @@
+"""
+This module runs regression tests for the resource database schema. The file imports a json file containing mock resource data to use for the testing.
+"""
+
 import unittest
 import json
 import pkg_resources

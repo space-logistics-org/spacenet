@@ -1,3 +1,7 @@
+"""
+This module runs regression tests for the various functions of databases to ensure their functionality. 
+"""
+
 from collections import defaultdict
 from typing import Tuple, Type
 

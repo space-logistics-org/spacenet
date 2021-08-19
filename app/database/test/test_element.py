@@ -1,3 +1,8 @@
+"""
+This module runs regression tests for the element database schema, including all of its subclasses. 
+The file imports a json file containing mock element data to use for the testing.
+"""
+
 import unittest
 import json
 import pkg_resources

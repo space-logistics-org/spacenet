@@ -45,7 +45,6 @@ const COLUMNS = {
 const genUUID = uuid.v4
 
 
-
 function buildTable(dataType) {
   console.log(dataType)
 
@@ -139,7 +138,10 @@ function addUUIDS (elts) {
 
 var edgeTable;
 var nodeTable;
+var elementTable;
+var resourceTable;
 $(document).ready( function() {
+  checkFilledInfo();
   edgeTable = buildTable('edge')
   nodeTable = buildTable('node')
   elementTable = buildTable('element')
@@ -156,6 +158,7 @@ function submitNodes() {
   })
   setElt('NodeIDstoUUIDs', IDstoUUIDs)
   setElt('scenarioNetworkNodes', nodes)
+  checkFilledInfo()
 }
 
 
@@ -171,9 +174,9 @@ function submitEdges() {
       delete edge.id
     })
     var edgeUUIDs = addUUIDS(edges)
-    console.log(edgeUUIDs)
-    setElt('scenarioNetworkEdges', edges)  
+    setElt('scenarioNetworkEdges', edgeUUIDs)  
   }
+  checkFilledInfo()
 }
 
 function submitElements() {
@@ -184,6 +187,7 @@ function submitElements() {
   var elementUUIDs = addUUIDS(elements)
   console.log(elementUUIDs)
   setElt('scenarioElementsList', elementUUIDs)
+  checkFilledInfo()
 }
 
 function submitResources() {
@@ -194,6 +198,7 @@ function submitResources() {
   var resourceUUIDs = addUUIDS(resources)
   console.log(resourceUUIDs)
   setElt('scenarioResourceTypes', resourceUUIDs)
+  checkFilledInfo()
 }
 
 function showNodeTable() {
@@ -228,6 +233,36 @@ function showResourceTable() {
   $('#Element').hide()
   $('#Resource').show()
   resourceTable.columns.adjust().draw()
-
 }
 
+function checkFilledInfo () {
+  console.log('checking filled info')
+  var nodes = getElt('scenarioNetworkNodes'),
+      edges = getElt('scenarioNetworkEdges')
+      elements = getElt('scenarioElementsList'),
+      resources = getElt('scenarioResourceTypes');
+
+  console.log(nodes, edges, elements, resources)
+
+  if (nodes) {
+    document.getElementById('nodeButton').className = "typebtns btn btn-success"
+  } else {
+    document.getElementById('nodeButton').className = "typebtns btn btn-outline-dark"
+  }
+  if (edges) {
+    document.getElementById('edgeButton').className = "typebtns btn btn-success"
+  } else {
+    document.getElementById('edgeButton').className = "typebtns btn btn-outline-dark"
+  }
+  if (elements) {
+    document.getElementById('elementButton').className = "typebtns btn btn-success"
+  } else {
+    document.getElementById('elementButton').className = "typebtns btn btn-outline-dark"
+  }
+  if (resources) {
+    document.getElementById('resourceButton').className = "typebtns btn btn-success"
+  } else {
+    document.getElementById('resourceButton').className = "typebtns btn btn-outline-dark"
+  }
+
+}

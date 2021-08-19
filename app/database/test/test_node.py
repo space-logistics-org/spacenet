@@ -1,3 +1,8 @@
+"""
+This module runs regression tests for the node database schema, including its three subclasses.
+The file imports a json file containing mock node data to use for the testing.
+"""
+
 import unittest
 import json
 import pkg_resources
