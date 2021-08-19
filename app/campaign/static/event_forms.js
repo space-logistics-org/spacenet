@@ -259,6 +259,46 @@ const scenario = {
       "active_time_fraction": 0.67
     }
   },
+  "resourceList" : {
+    "4cd33179-c683-430e-9f11-3ea00b1f5da4":{
+     "name": "res1",
+     "class_of_supply": 101,
+     "units": "kg",
+     "description": null,
+     "type": "Discrete",
+     "unit_mass": 20,
+     "unit_volume": 0
+   },
+   "2e55ce50-26d7-4738-8aac-777f5bdc6e08":{
+     "name": "res2",
+     "class_of_supply": 102,
+     "units": "kg",
+     "description": null,
+     "type": "Discrete",
+     "unit_mass": 40,
+     "unit_volume": 30
+   },
+   "788751d3-7b9a-4818-afa3-ddd6431d1f10":
+   {
+     "name": "res3",
+     "class_of_supply": 103,
+     "units": "kg",
+     "description": null,
+     "type": "Discrete",
+     "unit_mass": 20,
+     "unit_volume": 20
+   },
+   "1af0dae5-e052-4b60-bf3f-c2f29878b2c7":{
+     "name": "res4",
+     "class_of_supply": 104,
+     "units": "kg",
+     "description": null,
+     "type": "Discrete",
+     "unit_mass": 2,
+     "unit_volume": 5
+   }
+  }
+  ,
   "missionList": [
     {
       "name": "Apollo 17",
@@ -544,7 +584,6 @@ const scenario = {
 
 function populateNodes () {
     Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-        console.log(uuid, node)
         $('#pickNode').append('<option value=' + uuid + '>' + node.name + '</option>')
       });
 }

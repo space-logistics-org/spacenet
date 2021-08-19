@@ -6,22 +6,22 @@ $(document).ready( function() {
 
 	populateNodes();
 
-  $('#addDemand').on('click', function() {
-    console.log('add demand button clicked')
-    $('#demandModal').modal('show')
-  })
-
-  $('#submitDemand').on('click', function() {
-    type = $('#typeDropPick').val()
-    resource = $('#resourceDropPick').val()
-    amount = $('#inputAmount').val()
-    units = $('#inputUnits').val()
-
-
-    $('#demandModal').modal('hide')
-
-    $('#consumeResourcesTable').append('<tr><td>' + type + '</td><td>' + resource + '</td><td>' + amount + '</td><td>' + units + '</td></tr>')
-  })
+  // $('#addDemand').on('click', function() {
+  //   console.log('add demand button clicked')
+  //   $('#demandModal').modal('show')
+  // })
+	//
+  // $('#submitDemand').on('click', function() {
+  //   type = $('#typeDropPick').val()
+  //   resource = $('#resourceDropPick').val()
+  //   amount = $('#inputAmount').val()
+  //   units = $('#inputUnits').val()
+	//
+	//
+  //   $('#demandModal').modal('hide')
+	//
+  //   $('#consumeResourcesTable').append('<tr><td>' + type + '</td><td>' + resource + '</td><td>' + amount + '</td><td>' + units + '</td></tr>')
+  // })
 
 
   var table = $("#crewTable").DataTable( {
@@ -102,6 +102,7 @@ function retreiveElements(){
 
   if (node !== 'Choose...' && time!=='' && priority !== 'Choose...') {
     $('#pickLocation').empty();
+		$('#pickCrew').empty();
 
 
     $.ajax({
@@ -124,6 +125,8 @@ function retreiveElements(){
 										var eltObj = namespace[contentUUID].inner
 										if (eltObj.type !== 'HumanAgent' && eltObj.type !== 'RoboticAgent') {
 											$('#pickLocation').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
+										} else if(eltObj.type == 'HumanAgent') {
+											$('#pickCrew').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
 										}
 									});
 								}
@@ -151,25 +154,30 @@ function onComplete(){
 
     name = $("#inputName").val();
     node = $("#pickNode").val();
-    time = $("#inputTime").val();
-    priority = $("#pickPriority").val();
+    eva_duration = $("#inputEVADuration").val();
+    crew_location = $("#pickLocation").val();
     duration = $("#inputDuration").val();
-    num_EVAs = $("#inputNumEVAS").val();
-    EVA_Duration = $('#inputEVADuration').val();
-    crew_location = $('#pickLocation')
+    eva_per_week = $('#inputNumEVAS').val();
+    type = "CrewedExploration"
+		priority = $('#pickPriority').val();
+		mission_time = $('#inputTime').val();
+
+		crew = $("#pickCrew").val();
 
 
-    data = {
+    data = JSON.stringify({
       name: name,
       node: node,
-      time: time,
-      priority: priority,
-      duration: duration,
-      num_EVAs: num_EVAs,
-      EVA_Duration: EVA_Duration,
+      eva_duration: eva_duration,
       crew_location: crew_location,
-    }
+      duration: duration,
+      eva_per_week: eva_per_week,
+      type: type,
+      priority: priority,
+			mission_time : mission_time,
+			crew: crew
+    });
+    console.log(data);
+		addEvent(data);
 
-    console.log(data)
-    location.reload()
 }

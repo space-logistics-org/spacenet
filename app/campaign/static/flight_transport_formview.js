@@ -1,16 +1,23 @@
 $(document).ready( function() {
-	populateNodes();
+	Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+		$('#inputOriginNode').append('<option value="' + uuid + '">' + node.name + '</option>')
+		}
+	);
+	Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+		$('#inputDestinationNode').append('<option value="' + uuid + '">' + node.name + '</option>')
+		}
+	);
 })
 
 
 
 function retreiveElements(){
-  let node = $('#pickNode').val(),
+  let node = $('#inputOriginNode').val(),
   time = $('#inputTime').val(),
   priority = $('#pickPriority').val();
 
-  if (node && time && priority !== 'Choose...') {
-    $('#ElementSel').find('option:not(:first)').remove();
+  if (node !== 'def' && time && priority !== 'def') {
+    $('#ElementSel').empty();
 
     $.ajax({
       url: "/campaign/api/simulation/?days_to_run_for=" + time,
@@ -52,28 +59,38 @@ function retreiveElements(){
 
   function onComplete(){
 
-      name = $("#inputName").val();
-      node_ID = $("#pickNodeID").val();
-      exec_time = $("#inputTime").val();
-      priority = $("#pickPriority").val();
-      elements = $('#ElementSel').val();
-      flight = $("#pickFlight").val();
-      //duration =$("#Duration").val();
+		name = $("#inputName").val();
+		elements_id_list = $("#ElementSel").val();
+		type = "FlightTransport"
+		//optional=deltav
+		origin_node_id = $("#inputOriginNode").val();
+		destination_node_id = $("#inputDestinationNode").val();
+		priority = $('#pickPriority').val();
+		mission_time = $('#inputTime').val();
 
-      message = JSON.stringify({
-        name: name,
-        origin_node_id: node_ID,
-        //destination_node_id: dest_node_ID,
-        exec_time: exec_time,
-        priority: priority,
-        flight: flight,
-        elements_id_list: elements
-        //duration : duration;
-      });
+		edge_name= $("#inputOriginNode option:selected").text() + "-" + $("#inputDestinationNode option:selected").text()
 
-      console.log(message);
+		Object.entries(scenario.network.edges).forEach( function([uuid, edge]) {
+			if (edge_name == edge.name){
+				edge_id = uuid;
+				exec_time = edge.duration
+			}
+		});
 
-      //location.reload()
-      //console.log(data)
+		data = JSON.stringify({
+			name: name,
+			elements_id_list: elements_id_list,
+			type: type,
+			origin_node_id: origin_node_id,
+			destination_node_id: destination_node_id,
+			exec_time: exec_time,
+			type: type,
+			priority: priority,
+			mission_time : mission_time,
+			edge_id: edge_id,
+			exec_time: exec_time,
+		});
+		console.log(data);
+		addEvent(data);
 
   }

@@ -1,11 +1,10 @@
 $(document).ready(function () {
 
-	//Append Nodes to destination and origin selectors nased on scenario object.
+	//didn't do populate node function since ids are different
   Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
 		$('#inputOriginNode').append('<option value="' + uuid + '">' + node.name + '</option>')
 		}
 	);
-
   Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
 		$('#inputDestinationNode').append('<option value="' + uuid + '">' + node.name + '</option>')
 		}
@@ -16,14 +15,14 @@ $(document).ready(function () {
 		elementName = $("#elementSeqSel option:selected").text();
     name = $('#inputName').val()
 
-    $('#myTabContent div.tab-pane.active div table').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>[Burn]</td><td>' + name + '</td>')
+    $('#myTabContent div.tab-pane.active div table').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>Burn</td><td>' + name + '</td>')
   })
 
   $('#addStage').on('click', function() {
     elementName = $("#elementSeqSel option:selected").text();
     name = $('#inputName').val()
 
-    $('#myTabContent div.tab-pane.active div table').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>[Stage]</td><td>' + name + '</td>')
+    $('#myTabContent div.tab-pane.active div table').append('<tr><td><input type="checkbox"></td><td> '+ elementName + ' </td><td>Stage</td><td>' + name + '</td>')
 	})
 
   $('#delete').on('click', function() {
@@ -72,7 +71,7 @@ function retreiveElements(){
   time = $('#inputTime').val(),
   priority = $('#inputPriority').val();
 
-
+console.log(node)
   	if (node !== 'def' && time && priority !== 'def'){
     $('#elementSeqSel').empty();
 		$('#elementTransportSelector').empty();
@@ -86,7 +85,6 @@ function retreiveElements(){
       dataType: "json",
       method: "POST",
       success: function (simResult) {
-        console.log(simResult);
 
 								var namespace = simResult.result.namespace
 
@@ -130,31 +128,78 @@ function retreiveElements(){
 
 
 function onComplete() {
-	location.reload()
+
+      name = $("#inputName").val();
+      elements_id_list = $("#elementTransportSelector").val();
+      type = "SpaceTransport"
+      //optional=deltav
+      origin_node_id = $("#inputOriginNode").val();
+      destination_node_id = $("#inputDestinationNode").val();
+  		priority = $('#pickPriority').val();
+  		mission_time = $('#inputTime').val();
+
+      edge_name= $("#inputOriginNode option:selected").text() + "-" + $("#inputDestinationNode option:selected").text()
+
+      Object.entries(scenario.network.edges).forEach( function([uuid, edge]) {
+        if (edge_name == edge.name){
+          edge_id = uuid;
+          exec_time = edge.duration
+        }
+      });
 
 
-    // message= JSON.stringify({
-    //   name : name,
-    //   origin_node : origin_node,
-    //   destination_node : destination_node,
-    //   time : time,
-    //   priority : priority,
-    //   elements : JSON.parse(arr),
-    //   burnStageProfile : JSON.parse(burnStageProfile)
-    // });
-		//
-		//
-    // console.log(message)
-    // $.ajax({
-    //   url: "/database/api/edge/",
-    //   data: message,
-    //   contentType: 'application/json; charset=utf-8',
-    //   dataType: "json",
-    //   method: "POST",
-    //   success: function() {
-    //     document.getElementById("edge").reset()
-    //     document.getElementById("components").reset()
-    //     location.href = 'edge_table.html'
-    //         }
-    // });
-  }
+
+      tabNum=document.querySelectorAll("#myTab li").length;
+      burnStageProfile = new Array
+
+
+      for (tabNumLooper=1; tabNumLooper < tabNum+1 ; tabNumLooper++ ) {
+        var currentTab = document.getElementById('propulsiveBurnTable' + tabNumLooper);
+        burnStageSequence = new Array
+        burnStageSequenceReformat = {}
+
+        // LOOP THROUGH EACH ROW OF THE TABLE AFTER HEADER.
+        for (i = 1; i < currentTab.rows.length; i++) {
+          burnStageItem = {}
+
+          // GET THE CELLS COLLECTION OF THE CURRENT ROW.
+          var objCells = currentTab.rows.item(i).cells;
+
+          // LOOP THROUGH EACH CELL OF THE CURENT ROW TO READ CELL VALUES.
+          for (var j = 1; j < objCells.length-1; j++) {
+            //Get element ID rather than the innerHTML
+            if ( j == 1 ){
+              Object.entries(scenario.elementList).forEach( function([uuid, element]) {
+                if (objCells.item(j).innerHTML.trim() == element.name.trim()){
+                  burnStageItem["element_id"] = uuid
+                }
+              });
+            } else {
+              burnStageItem["burnStage"]= objCells.item(j).innerHTML
+            }
+          }
+          burnStageSequence.push(burnStageItem)
+
+        }
+        burnStageSequenceReformat['burnStageSequence'] = burnStageSequence
+        burnStageProfile.push(burnStageSequenceReformat)
+      }
+
+
+      data = JSON.stringify({
+        name: name,
+        elements_id_list: elements_id_list,
+        type: type,
+        origin_node_id: origin_node_id,
+        destination_node_id: destination_node_id,
+        exec_time: exec_time,
+        type: type,
+        priority: priority,
+  			mission_time : mission_time,
+  			edge_id: edge_id,
+        exec_time: exec_time,
+        burnStageProfile: burnStageProfile
+      });
+      console.log(data);
+      addEvent(data);
+}
