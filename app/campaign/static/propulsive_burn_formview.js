@@ -130,7 +130,7 @@ function retreiveElements(){
 			burn_stage_sequence.push(burnStageItem)
 		}
 
-		data = JSON.stringify({
+		data = {
 			name: name,
 			elements: elements,
 			type: type,
@@ -142,7 +142,7 @@ function retreiveElements(){
 			mission_time : mission_time,
 			burn: burn,
 			burn_stage_sequence: burn_stage_sequence
-		});
+		}
 		console.log(data);
 		addEvent(data);
 		}

@@ -104,7 +104,6 @@ function retreiveElements(){
     $('#pickLocation').empty();
 		$('#pickCrew').empty();
 
-
     $.ajax({
       url: "/campaign/api/simulation/?days_to_run_for=" + time,
       data: JSON.stringify(scenario),
@@ -165,7 +164,7 @@ function onComplete(){
 		crew = $("#pickCrew").val();
 
 
-    data = JSON.stringify({
+    data = {
       name: name,
       node: node,
       eva_duration: eva_duration,
@@ -176,7 +175,7 @@ function onComplete(){
       priority: priority,
 			mission_time : mission_time,
 			crew: crew
-    });
+    }
     console.log(data);
 		addEvent(data);
 

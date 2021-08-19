@@ -1,4 +1,7 @@
 $(document).ready( function() {
+	console.log(compileScenario())
+
+
 	Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
 		$('#inputOriginNode').append('<option value="' + uuid + '">' + node.name + '</option>')
 		}
@@ -77,7 +80,7 @@ function retreiveElements(){
 			}
 		});
 
-		data = JSON.stringify({
+		data = {
 			name: name,
 			elements_id_list: elements_id_list,
 			type: type,
@@ -89,8 +92,9 @@ function retreiveElements(){
 			mission_time : mission_time,
 			edge_id: edge_id,
 			exec_time: exec_time,
-		});
+		}
 		console.log(data);
 		addEvent(data);
+
 
   }

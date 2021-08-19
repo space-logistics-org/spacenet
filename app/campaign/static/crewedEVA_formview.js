@@ -77,7 +77,7 @@ function onComplete(){
 		additional_demand.push(parsed_demand)
 	});
 
-	data = JSON.stringify({
+	data = {
 		name : name,
 		node_id : node_id,
 		eva_duration : eva_duration,
@@ -87,7 +87,8 @@ function onComplete(){
 		additional_demand : additional_demand,
 		priority : priority,
 		mission_time : mission_time
-	});
+	}
 	console.log(data);
 	addEvent(data);
+	console.log(compileScenario());
 	}

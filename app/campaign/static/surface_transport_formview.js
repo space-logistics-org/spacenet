@@ -26,7 +26,6 @@ function retreiveElements(){
 		$('#elementTransportSelector').empty();
 
 
-
     $.ajax({
       url: "/campaign/api/simulation/?days_to_run_for=" + time,
       data: JSON.stringify(scenario),
@@ -83,7 +82,7 @@ function onComplete() {
     }
   });
 
-  data = JSON.stringify({
+  data = {
     name: name,
     elements_id_list: elements_id_list,
     type: type,
@@ -95,7 +94,7 @@ function onComplete() {
     mission_time : mission_time,
     edge_id: edge_id,
     exec_time: exec_time,
-  });
+  }
   console.log(data);
   addEvent(data);
   }
