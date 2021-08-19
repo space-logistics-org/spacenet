@@ -41,8 +41,13 @@ def getMissionExplorationDuration():
         for j in i["events"]:
             if j["type"] == "CrewedExploration":
                 dur = j["eva_duration"]
+                dur = dur.split(":")
+                days = dur[0]
+                hrs = dur[1]
+                min = dur[2]
+                sec = dur[3]
                 itDur = (
-                    ((dur.days) * 24) + (dur.seconds // 3600)
+                    (int(days) * 24) + int(hrs) + (int(min) / 60) + (int(sec) / 3600)
                 )
                 totalExpHours += itDur
     return totalExpHours
@@ -54,8 +59,13 @@ def getMissionTransitDuration():
         for j in i["events"]:
             if j["type"] == "SpaceTransport":
                 dur = j["exec_time"]
+                dur = dur.split(":")
+                days = dur[0]
+                hrs = dur[1]
+                min = dur[2]
+                sec = dur[3]
                 itDur = (
-                    ((dur.days) * 24) + (dur.seconds // 3600)
+                    (int(days) * 24) + int(hrs) + (int(min) / 60) + (int(sec) / 3600)
                 )
                 totalTransportHours += itDur
     return totalTransportHours
@@ -67,8 +77,13 @@ def getMissionEvaCrewTime():
         for j in i["events"]:
             if j["type"] == "CrewedExploration":
                 dur = j["eva_duration"]
+                dur = dur.split(":")
+                days = dur[0]
+                hrs = dur[1]
+                min = dur[2]
+                sec = dur[3]
                 itDur = (
-                    ((dur.days) * 24) + (dur.seconds // 3600)
+                    (int(days) * 24) + int(hrs) + (int(min) / 60) + (int(sec) / 3600)
                 )
                 totalHours += itDur
     return totalHours
