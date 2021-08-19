@@ -5,7 +5,9 @@ const COLOR_MAPPINGS = {
     'CrewedExploration': 'blue',
     'RemoveElements': 'black',
     'ReconfigureGroup': 'orange',
-    'MoveElements': 'orange'
+    'MoveElements': 'purple',
+    'ConsumeResources': 'pink',
+    'TransferResources': 'lightblue'
 }
 
 const POINT_SIZES = {
