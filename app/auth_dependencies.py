@@ -1,3 +1,7 @@
+"""
+This module initializes authorization dependencies such as authentication tokens and the
+user database.
+"""
 import os
 import databases
 import sqlalchemy
@@ -9,25 +13,36 @@ from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 DATABASE_URL = "sqlite:///./userbase.db"
 SECRET = os.getenv("SPACENET_AUTH_SECRET")
-SECRET = "password"
 if SECRET is None:
     raise NameError("Authentication secret not defined. "
                     "Set the environment variable SPACENET_AUTH_SECRET to continue.")
 
 
 class User(models.BaseUser):
+    """
+    Model for retrieving users.
+    """
     pass
 
 
 class UserCreate(models.BaseUserCreate):
+    """
+    Model for creating users.
+    """
     pass
 
 
 class UserUpdate(User, models.BaseUserUpdate):
+    """
+    Model for updating users.
+    """
     pass
 
 
 class UserDB(User, models.BaseUserDB):
+    """
+    Model representing a single row in the user database.
+    """
     pass
 
 
@@ -36,6 +51,9 @@ Base: DeclarativeMeta = declarative_base()
 
 
 class UserTable(Base, SQLAlchemyBaseUserTable):
+    """
+    Model representing the table of users in the user database.
+    """
     pass
 
 
@@ -49,6 +67,12 @@ user_db = SQLAlchemyUserDatabase(UserDB, database, users)
 
 
 def on_after_register(user: UserDB, _request: Request):
+    """
+    Callback to use after a user registers.
+
+    :param user: user who registered
+    :param _request: request registering the user
+    """
     print(f"User {user.id} has registered.")
 
 
