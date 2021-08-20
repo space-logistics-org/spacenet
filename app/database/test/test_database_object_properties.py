@@ -27,6 +27,10 @@ pytestmark = [
 
 
 class DatabaseOperations(RuleBasedStateMachine):
+    """
+    A class defining a stateful test for database operations.
+    """
+
     def __init__(self):
         super().__init__()
         self.model = defaultdict(dict)
@@ -40,6 +44,9 @@ class DatabaseOperations(RuleBasedStateMachine):
         entry=st.one_of(*(st.builds(schema) for schema in SCHEMA_TO_MODEL.keys())),
     )
     def create(self, entry):
+        """
+        Create a new database entry.
+        """
         model_cls = SCHEMA_TO_MODEL[type(entry)]
         if issubclass(model_cls, models.State):
             assume(entry.element_id in self.model[models.Element])
@@ -54,6 +61,9 @@ class DatabaseOperations(RuleBasedStateMachine):
 
     @rule(id_and_table=inserted)
     def read(self, id_and_table: Tuple[int, Type]):
+        """
+        Read an existing database entry.
+        """
         id_, table = id_and_table
         from_db = self.db.query(table).get(id_)
         assert table in self.model
@@ -68,12 +78,18 @@ class DatabaseOperations(RuleBasedStateMachine):
         table=st.sampled_from(list(MODEL_TO_PARENT.values())),
     )
     def read_invalid_id(self, id_, table):
+        """
+        Attempt to read an existing database entry with an invalid ID.
+        """
         assume(id_ not in self.model[table])
         from_db = self.db.query(table).get(id_)
         assert from_db is None
 
     @rule(table=st.sampled_from(list(MODEL_TO_PARENT.values())))
     def read_all(self, table: Type):
+        """
+        Read all entries in the given table.
+        """
         from_db = self.db.query(table).all()
         model_table = self.model[table]
         assert len(model_table) == len(from_db)
@@ -83,6 +99,9 @@ class DatabaseOperations(RuleBasedStateMachine):
 
     @rule(id_and_table=consumes(inserted))
     def delete(self, id_and_table: Tuple[int, Type]):
+        """
+        Delete an existing entry from the database.
+        """
         id_, table = id_and_table
         from_db = self.db.query(table).get(id_)
         parent_model = MODEL_TO_PARENT[type(from_db)]
@@ -97,6 +116,9 @@ class DatabaseOperations(RuleBasedStateMachine):
         self.db.commit()
 
     def teardown(self):
+        """
+        Clear test database tables.
+        """
         Base.metadata.drop_all(test_engine, checkfirst=True)
         Base.metadata.create_all(test_engine, checkfirst=False)
 
