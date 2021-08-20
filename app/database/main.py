@@ -1,3 +1,6 @@
+"""
+This module includes application routers and static files used for the database editor.
+"""
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
