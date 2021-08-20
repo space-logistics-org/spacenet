@@ -91,6 +91,9 @@ TESTED_VARIANTS: List[ResourceType] = [ResourceType.Discrete, ResourceType.Conti
 
 @pytest.fixture(scope="module")
 def resource_routing():
+    """
+    Initialize Resource database model tables.
+    """
     ResourceModel.__table__.create(test_engine)
     yield
     ResourceModel.__table__.drop(test_engine)
@@ -98,6 +101,9 @@ def resource_routing():
 
 @pytest.fixture(autouse=True)
 def clear_tables():
+    """
+    Clear test Resource database tables.
+    """
     ResourceModel.__table__.drop(test_engine, checkfirst=False)
     ResourceModel.__table__.create(test_engine, checkfirst=True)
 
@@ -132,7 +138,7 @@ def test_create(resource_type: ResourceType):
 
 @pytest.mark.parametrize("resource_type", TESTED_VARIANTS)
 def test_update(resource_type: ResourceType):
-    def check_get():
+    def _check_get():
         get_r = client.get(f"/resource/{id_}")
         assert get_r.status_code == 200
         assert expected_fields == get_r.json()
@@ -147,11 +153,11 @@ def test_update(resource_type: ResourceType):
     assert patch_r.status_code == 200
     expected_fields = {**kw, **filter_val_not_none(patch_kw), "id": id_}
     assert expected_fields == patch_r.json()
-    check_get()
+    _check_get()
     not_present_id = id_ + 1
     bad_patch = client.patch(f"/resource/{not_present_id}", json=patch_kw)
     assert bad_patch.status_code == 404
-    check_get()
+    _check_get()
     other_type = (
         ResourceType.Discrete
         if resource_type == ResourceType.Continuous
@@ -160,16 +166,16 @@ def test_update(resource_type: ResourceType):
     non_matching_kw = with_type(mistyped, other_type)
     bad_patch = client.patch(f"/resource/{id_}", json=non_matching_kw)
     assert bad_patch.status_code == 409
-    check_get()
+    _check_get()
     invalid_kw = with_type(invalid, resource_type)
     bad_patch = client.patch(f"/resource/{id_}", json=invalid_kw)
     assert bad_patch.status_code == 422
-    check_get()
+    _check_get()
 
 
 @pytest.mark.parametrize("resource_type", TESTED_VARIANTS)
 def test_delete(resource_type: ResourceType):
-    def check_get_all():
+    def _check_get_all():
         read_all_r = client.get("/resource/")
         assert read_all_r.status_code == 200
         for v in read_all_r.json():
@@ -186,17 +192,17 @@ def test_delete(resource_type: ResourceType):
         assert post_r.status_code == 201
         assert first_subset_second(valid_kw, post_r.json())
         posted_vals.append({**valid_kw, "id": post_r.json()["id"]})
-    check_get_all()
+    _check_get_all()
     to_delete = posted_vals.pop()
     del_r = client.delete(f"/resource/{to_delete['id']}")
     assert del_r.status_code == 200
     assert del_r.json() == to_delete
-    check_get_all()
+    _check_get_all()
     del_r = client.delete(f"/resource/{to_delete['id']}")
     assert del_r.status_code == 404
     del_r = client.delete(f"/resource/{to_delete['id'] + 1000}")
     assert del_r.status_code == 404
-    check_get_all()
+    _check_get_all()
     to_delete = posted_vals.pop()
     del_r = client.delete(f"/resource/{to_delete['id']}")
     assert del_r.status_code == 200

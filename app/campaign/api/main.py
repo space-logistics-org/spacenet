@@ -3,7 +3,7 @@ This module includes routers for campaign analysis routes.
 """
 from fastapi import FastAPI
 
-from . import demands, spatial_simulation, spatial_simulation_placeholder
+from . import demands, spatial_simulation
 
 # define the application
 app = FastAPI(
@@ -21,9 +21,4 @@ app.include_router(
 app.include_router(
     spatial_simulation.router,
     prefix="/simulation"
-)
-
-app.include_router(
-    spatial_simulation_placeholder.router,
-    prefix="/simulation_placeholder"
 )

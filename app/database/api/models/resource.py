@@ -12,6 +12,9 @@ __all__ = ["Resource", "ResourceType", "ContinuousResource", "DiscreteResource"]
 
 
 class Resource(Base):
+    """
+    A row representing a single resource, can be continuous or discrete.
+    """
     __tablename__ = "resource"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -27,10 +30,16 @@ class Resource(Base):
 
 
 class DiscreteResource(Resource):
+    """
+    A row representing a single discrete resource.
+    """
 
     __mapper_args__ = {"polymorphic_identity": ResourceType.Discrete.value}
 
 
 class ContinuousResource(Resource):
+    """
+    A row representing a single continuous resource.
+    """
 
     __mapper_args__ = {"polymorphic_identity": ResourceType.Continuous.value}

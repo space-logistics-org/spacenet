@@ -12,6 +12,9 @@ __all__ = ["EdgeType", "Edge", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
 
 
 class Edge(Base):
+    """
+    A row representing a single edge.
+    """
     __tablename__ = "edge"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -25,6 +28,9 @@ class Edge(Base):
 
 
 class SurfaceEdge(Edge):
+    """
+    A row representing a single surface edge.
+    """
     distance = Column(Float)
 
     __mapper_args__ = {"polymorphic_identity": EdgeType.Surface.value}
@@ -38,6 +44,9 @@ class HasDuration(Base):
 
     @declared_attr
     def duration(cls):
+        """
+        :return: amount of time it takes to traverse the edge
+        """
         return Edge.__table__.c.get("duration", Column(Float))
 
 

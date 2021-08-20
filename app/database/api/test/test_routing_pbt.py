@@ -1,3 +1,7 @@
+"""
+This module contains stateful tests that the database behaves similarly to a simplified model
+expressed as a dictionary.
+"""
 from collections import defaultdict
 
 import hypothesis.strategies as st
@@ -47,6 +51,10 @@ PARENT_TO_PREFIX = {
 
 
 def type_to_table(schema_cls):
+    """
+    :param schema_cls: the schema type
+    :return: the table which the schema would be stored in
+    """
     child_model = model_utils.SCHEMA_TO_MODEL[schema_cls]
     return model_utils.MODEL_TO_PARENT[child_model]
 
@@ -62,6 +70,10 @@ SCHEMAS_IN_SAME_TABLE = {
 
 
 class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
+    """
+    A class defining a stateful test for database editor CRUD routes.
+    """
+
     def __init__(self):
         super().__init__()
         self.model = defaultdict(dict)
@@ -69,7 +81,10 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         self.clear_tables()
 
     @classmethod
-    def clear_tables(cls):
+    def clear_tables(cls) -> None:
+        """
+        Delete all table entries.
+        """
         Base.metadata.drop_all(test_engine, checkfirst=True)
         Base.metadata.create_all(test_engine, checkfirst=False)
 
@@ -80,6 +95,11 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         create_schema=st.one_of(*(st.builds(cls) for cls in CREATE_SCHEMAS)),
     )
     def create(self, create_schema):
+        """
+        Create a new entry from ``create_schema``.
+
+        :return: id of created schema and its type
+        """
         type_ = type(create_schema)
         if issubclass(type_, State):
             assume(create_schema.element_id in self.model[models.Element])
@@ -96,12 +116,19 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
 
     @rule(create_schema=st.builds(State))
     def create_state_invalid_element_id(self, create_schema: State):
+        """
+        Create a new element operational state from ``create_schema`` with an invalid element
+        ID, expecting an error.
+        """
         assume(create_schema.element_id not in self.model[models.Element])
         response = self.client.post("/state/", json=create_schema.dict())
         assert 422 == response.status_code
 
     @rule(id_and_type=inserted)
     def read(self, id_and_type):
+        """
+        Read an inserted schema from the database.
+        """
         id_, type_ = id_and_type
         table = type_to_table(type_)
         prefix = PARENT_TO_PREFIX[table]
@@ -112,6 +139,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
 
     @rule(id_and_type=inserted)
     def read_invalid_id(self, id_and_type):
+        """
+        Read an inserted schema from the database which is not actually present.
+        """
         id_, type_ = id_and_type
         table = type_to_table(type_)
         assume(id_ not in self.model[table])
@@ -121,6 +151,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
 
     @rule()
     def read_all(self):
+        """
+        Read all schemas from the database.
+        """
         for table, entries in self.model.items():
             prefix = PARENT_TO_PREFIX[table]
             response = self.client.get(f"{prefix}/")
@@ -140,6 +173,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         )
     )
     def update(self, id_type_and_schema):
+        """
+        Update an existing schema in the database.
+        """
         id_, type_, update_schema = id_type_and_schema
         table = type_to_table(type_)
         prefix = PARENT_TO_PREFIX[table]
@@ -162,6 +198,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         )
     )
     def update_invalid_id(self, id_type_and_schema):
+        """
+        Attempt to update an ID which is not present, expecting an error.
+        """
         id_, type_, update_schema = id_type_and_schema
         table = type_to_table(type_)
         assume(id_ not in self.model[table])
@@ -178,6 +217,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
     )
     @precondition(lambda self: len(self.model[models.Element]) > 0)
     def update_state_invalid_element_id(self, id_and_schema):
+        """
+        Attempt to update an operational state with the ID of an element that does not exist.
+        """
         id_, update_schema = id_and_schema
         assume(update_schema.element_id not in self.model[models.Element])
         prefix = PARENT_TO_PREFIX[models.State]
@@ -202,6 +244,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         )
     )
     def update_type_mismatch(self, id_table_and_schema):
+        """
+        Attempt to update en existing entry with a type field disagreement.
+        """
         id_, table, update_schema = id_table_and_schema
         prefix = PARENT_TO_PREFIX[table]
         response = self.client.patch(
@@ -211,6 +256,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
 
     @rule(id_and_type=consumes(inserted))
     def delete(self, id_and_type):
+        """
+        Delete an existing entry from the database.
+        """
         id_, type_ = id_and_type
         table = type_to_table(type_)
         prefix = PARENT_TO_PREFIX[table]
@@ -239,6 +287,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         )
     )
     def delete_invalid_id(self, id_and_type):
+        """
+        Attempt to delete an entry via an ID which is not present in the table.
+        """
         id_, type_ = id_and_type
         table = type_to_table(type_)
         assume(id_ not in self.model[table])
@@ -247,6 +298,9 @@ class DatabaseEditorCRUDRoutes(RuleBasedStateMachine):
         assert 404 == response.status_code
 
     def teardown(self):
+        """
+        Clear tables upon closing.
+        """
         self.clear_tables()
 
 

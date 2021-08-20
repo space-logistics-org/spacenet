@@ -1,3 +1,7 @@
+"""
+This module defines a database engine and a function for retrieving a session which uses that
+engine.
+"""
 from sqlalchemy import create_engine, event
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -19,6 +23,9 @@ Base = declarative_base()
 
 # Dependency
 def get_db():
+    """
+    A generator which provides a database session.
+    """
     db = SessionLocal()
     try:
         yield db

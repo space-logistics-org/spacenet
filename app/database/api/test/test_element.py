@@ -56,6 +56,15 @@ app.dependency_overrides[current_user] = get_current_user
 def valid_invalid_strategies_from_maps(
     valid_map, invalid_map
 ) -> Tuple[st.SearchStrategy, st.SearchStrategy]:
+    """
+    Generate valid and invalid strategies from maps dictating valid and invalid strategies as
+    maps.
+
+    :param valid_map: map of keys to valid strategies
+    :param invalid_map: map of keys to invalid strategies
+    :return: valid and invalid strategies respectively, sampling which strategy is used by
+            using either valid_map or invalid_map as a source
+    """
     valid = st.fixed_dictionaries(valid_map)
     invalid = st.one_of(
         *(
@@ -78,16 +87,29 @@ def get_invalid_types(my_type: ElementKind) -> Tuple[ElementKind, ...]:
 
 
 def convert_enum_variants_to_values(v):
+    """
+    :param v: an enum variant or other value
+    :return: v's associated value if v is variant else v
+    """
     return v.value if isinstance(v, Enum) else v
 
 
 def equivalent_json(inp, response) -> bool:
+    """
+    :param inp: input
+    :param response: response json
+    :return: true if inp and response represent the same JSON, ignoring the ID field
+    """
     return {k: convert_enum_variants_to_values(v) for k, v in inp.items()} == {
         k: v for k, v in response.items() if k != "id"
     }
 
 
 def nan_in_iterable(iterable) -> bool:
+    """
+    :param iterable: iterable to check
+    :return: true if NaN is in iterable, false otherwise
+    """
     for v in iterable:
         if v != v:
             return True
@@ -220,7 +242,7 @@ def test_create(data: st.DataObject, element_type: ElementKind):
 @given(data=st.data())
 @settings(max_examples=5, deadline=None)
 def test_update(data: st.DataObject, element_type: ElementKind):
-    def check_get():
+    def _check_get():
         get_r = client.get(f"/element/{id_}")
         assert get_r.status_code == 200
         assert expected_fields == get_r.json()
@@ -238,13 +260,13 @@ def test_update(data: st.DataObject, element_type: ElementKind):
         expected_fields = {**kw, **filter_val_not_none(patch_kw), "id": id_}
         assert expected_fields == patch_r.json()
         # GET that element: should match new vals
-        check_get()
+        _check_get()
         # PATCH an element not in the database: should be a 404
         not_present_id = id_ + 1
         bad_patch = client.patch(f"/element/{not_present_id}", json=patch_kw)
         assert bad_patch.status_code == 404
         # GET that element: should not have changed
-        check_get()
+        _check_get()
         # PATCH the element with non-matching type but valid schema: should be a 409
         other_type = random.choice(get_invalid_types(element_type))
         valid_other_st, _ = KIND_TO_STRATEGIES[other_type]
@@ -252,7 +274,7 @@ def test_update(data: st.DataObject, element_type: ElementKind):
         bad_patch = client.patch(f"/element/{id_}", json=non_matching_kw)
         assert bad_patch.status_code == 409
         # GET that element: should not have changed
-        check_get()
+        _check_get()
         # PATCH the element with invalid schema: should be a 422
         invalid_kw = data.draw(invalid_st)
         assume(invalid_kw["type"] == element_type)
@@ -267,14 +289,14 @@ def test_update(data: st.DataObject, element_type: ElementKind):
         else:
             assert bad_patch.status_code == 422
         # GET that element: should not have changed
-        check_get()
+        _check_get()
 
 
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)
 @given(data=st.data())
 @settings(max_examples=5, deadline=None)
 def test_delete(data: st.DataObject, element_type: ElementKind):
-    def check_get_all():
+    def _check_get_all():
         read_all_r = client.get("/element/")
         assert read_all_r.status_code == 200
         for v in read_all_r.json():
@@ -294,14 +316,14 @@ def test_delete(data: st.DataObject, element_type: ElementKind):
             assert equivalent_json(valid_kw, post_r.json())
             posted_vals.append({**valid_kw, "id": post_r.json()["id"]})
         # GET LIST and check that both are present
-        check_get_all()
+        _check_get_all()
         # DELETE an element: should be a 200
         to_delete = posted_vals.pop()
         del_r = client.delete(f"/element/{to_delete['id']}")
         assert del_r.status_code == 200
         assert del_r.json() == to_delete
         # GET LIST and check that only 1 is present
-        check_get_all()
+        _check_get_all()
         # DELETE the same ID: should be a 404
         del_r = client.delete(f"/element/{to_delete['id']}")
         assert del_r.status_code == 404
@@ -309,7 +331,7 @@ def test_delete(data: st.DataObject, element_type: ElementKind):
         del_r = client.delete(f"/element/{to_delete['id'] + 1000}")
         assert del_r.status_code == 404
         # GET LIST and check that only 1 is present
-        check_get_all()
+        _check_get_all()
         # DELETE the remaining element: should be a 200
         to_delete = posted_vals.pop()
         del_r = client.delete(f"/element/{to_delete['id']}")

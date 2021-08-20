@@ -20,24 +20,42 @@ __all__ = [
 
 
 class SurfaceNodeUpdate(SurfaceNode, RequiresOnlyType):
+    """
+    Update schema variant for surface node.
+    """
     pass
 
 
 class SurfaceNodeRead(SurfaceNode, ReadSchema):
+    """
+    Read schema variant for surface node.
+    """
     pass
 
 
 class OrbitalNodeUpdate(OrbitalNode, RequiresOnlyType):
+    """
+    Update schema variant for orbital node.
+    """
     pass
 
 
 class OrbitalNodeRead(OrbitalNode, ReadSchema):
+    """
+    Read schema variant for orbital node.
+    """
     pass
 
 
 class LagrangeNodeUpdate(LagrangeNode, RequiresOnlyType):
+    """
+    Update schema variant for lagrange node.
+    """
     pass
 
 
 class LagrangeNodeRead(LagrangeNode, ReadSchema):
+    """
+    Read schema variant for lagrange node.
+    """
     pass
