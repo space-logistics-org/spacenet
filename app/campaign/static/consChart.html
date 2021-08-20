@@ -10,11 +10,64 @@
 
   <link href="style.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="compile_scenario.js"></script>
+  <script src="consChart.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
-<main>
+<main onload = "calcCurrent()">
+  <div hidden id = "eltablediv">
+      <label for="element_table">Elements</label>
+      <table id="element_table" class="table table-striped table-bordered" style="width: 100%">
+        <thead class="thead-dark">
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Class of Supply</th>
+                <th>Environment</th>
+                <th>Accomodation Mass</th>
+                <th>Mass</th>
+                <th>Volume</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody id = "elementTableBody">
+        </tbody>
+        <tfoot>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Class of Supply</th>
+            <th>Environment</th>
+            <th>Accomodation Mass</th>
+            <th>Mass</th>
+            <th>Volume</th>
+            <th>Description</th>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
   <canvas id="myChart" width="400" height="400"></canvas>
   <script>
+    var scenario = compileScenario();
+    var dvA = {};
+    // dvA = $.ajax({
+    //                         url: "/analysis",
+    //                         method: "GET",
+    //                         success: function (data) {
+    //                           data.forEach(function (item)){
+    //                             valArray.water = item["water"],
+    //                             valArray.food = item["food"],
+    //                             valArray.gases = item["gases"],
+    //                             valArray.hitems = item["hygiene"],
+    //                             valArray.pitems = item["personal"],
+    //                             valArray.clothing = item["clothing"]
+    //                           });
+    //
+    //                         }
+    //                       });
+  dvA = {"water":25, "food":10, "gases":10, "hygiene":10, "personal":10, "clothing":10}
   var ctx = document.getElementById('myChart').getContext('2d');
   var myChart = new Chart(ctx, {
       type: 'bar',
@@ -22,7 +75,7 @@
           labels: ['Water', 'Food', 'Gases', 'Hygeine Items', 'Personal Items', 'Clothing'],
           datasets: [{
               label: 'Required Mass in kg',
-              data: [60, 25, 10, 11, 40, 48],
+              data: [dvA["water"], dvA["food"], dvA["gases"], dvA["hygiene"], dvA["personal"], dvA["clothing"]],
               backgroundColor: [
                   'rgba(255, 99, 132, 0.2)',
                   'rgba(54, 162, 235, 0.2)',
@@ -43,7 +96,7 @@
           },
           {
               label: 'Current Mass in kg',
-              data: [30, 19, 3, 5, 2, 3],
+              data: [wmass, 2, 3, 5, 2, 3],
               backgroundColor: [
                   'rgba(255, 99, 132, 1)',
                   'rgba(54, 162, 235, 1)',
