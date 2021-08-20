@@ -90,5 +90,4 @@ function onComplete(){
 	}
 	console.log(data);
 	addEvent(data);
-	console.log(compileScenario());
-	}
+}
