@@ -44,6 +44,9 @@ class HasDuration(Base):
 
     @declared_attr
     def duration(cls):
+        """
+        :return: amount of time it takes to traverse the edge
+        """
         return Edge.__table__.c.get("duration", Column(Float))
 
 
