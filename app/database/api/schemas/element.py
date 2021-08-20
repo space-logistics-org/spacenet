@@ -47,56 +47,98 @@ __all__ = [
 
 
 class ElementUpdate(Element, RequiresOnlyType):
+    """
+    Update variant of Element
+    """
     pass
 
 
 class ElementRead(Element, ReadSchema):
+    """
+    Read variant of Element
+    """
     pass
 
 
 class ElementCarrierUpdate(ElementCarrier, RequiresOnlyType):
+    """
+    Update variant of ElementCarrier
+    """
     pass
 
 
 class ElementCarrierRead(ElementCarrier, ReadSchema):
+    """
+    Read variant of ElementCarrier
+    """
     pass
 
 
 class ResourceContainerUpdate(ResourceContainer, RequiresOnlyType):
+    """
+    Update variant of ResourceContainer
+    """
     pass
 
 
 class ResourceContainerRead(ResourceContainer, ReadSchema):
+    """
+    Read variant of ResourceContainer
+    """
     pass
 
 
 class SurfaceVehicleUpdate(SurfaceVehicle, RequiresOnlyType):
+    """
+    Update variant of SurfaceVehicle
+    """
     pass
 
 
 class SurfaceVehicleRead(SurfaceVehicle, ReadSchema):
+    """
+    Read variant of SurfaceVehicle
+    """
     pass
 
 
 class PropulsiveVehicleUpdate(PropulsiveVehicle, RequiresOnlyType):
+    """
+    Update variant of PropulsiveVehicle
+    """
     pass
 
 
 class PropulsiveVehicleRead(PropulsiveVehicle, ReadSchema):
+    """
+    Read variant of PropulsiveVehicle
+    """
     pass
 
 
 class HumanAgentUpdate(HumanAgent, RequiresOnlyType):
+    """
+    Update variant of HumanAgent
+    """
     pass
 
 
 class HumanAgentRead(HumanAgent, ReadSchema):
+    """
+    Read variant of HumanAgent
+    """
     pass
 
 
 class RoboticAgentUpdate(RoboticAgent, RequiresOnlyType):
+    """
+    Update variant of RoboticAgent
+    """
     pass
 
 
 class RoboticAgentRead(RoboticAgent, ReadSchema):
+    """
+    Read variant of RoboticAgent
+    """
     pass
