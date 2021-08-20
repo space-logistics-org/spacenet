@@ -30,7 +30,10 @@ class SurfaceEdge(Edge):
     __mapper_args__ = {"polymorphic_identity": EdgeType.Surface.value}
 
 
-class EdgeWithDuration(Edge):
+class HasDuration(Base):
+    """
+    A row representing an edge with an attribute Duration.
+    """
     __abstract__ = True
 
     @declared_attr
@@ -38,14 +41,21 @@ class EdgeWithDuration(Edge):
         return Edge.__table__.c.get("duration", Column(Float))
 
 
-class SpaceEdge(EdgeWithDuration):
+class SpaceEdge(Edge, HasDuration):
+    """
+    A row representing an edge between two nodes traversed via propulsive burns.
+    """
 
     delta_v = Column(Float)
 
     __mapper_args__ = {"polymorphic_identity": EdgeType.Space.value}
 
 
-class FlightEdge(EdgeWithDuration):
+class FlightEdge(Edge, HasDuration):
+    """
+    A row representing an edge which the vehicle is known to be able to traverse with
+    sufficient fuel.
+    """
     max_crew = Column(Integer)
     max_cargo = Column(Float)
 
