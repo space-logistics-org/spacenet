@@ -1,3 +1,7 @@
+"""
+This module contains stateful tests that the database behaves similarly to a dictionary for
+inserting solely resources.
+"""
 from typing import Union
 
 import hypothesis.strategies as st

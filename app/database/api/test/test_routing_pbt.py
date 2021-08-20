@@ -51,6 +51,10 @@ PARENT_TO_PREFIX = {
 
 
 def type_to_table(schema_cls):
+    """
+    :param schema_cls: the schema type
+    :return: the table which the schema would be stored in
+    """
     child_model = model_utils.SCHEMA_TO_MODEL[schema_cls]
     return model_utils.MODEL_TO_PARENT[child_model]
 
