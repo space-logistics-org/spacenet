@@ -11,6 +11,9 @@ __all__ = ["State"]
 
 
 class State(Base):
+    """
+    A row representing a single operational state of an element.
+    """
     __tablename__ = "state"
 
     id = Column(Integer, primary_key=True, index=True)
