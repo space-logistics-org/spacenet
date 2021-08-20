@@ -52,25 +52,25 @@
   <script>
   var scenario = compileScenario();
   var edvA = {};
-  // edvA = $.ajax({
-  //                         url: "/analysis",
-  //                         method: "GET",
-  //                         success: function (data) {
-  //                           data.forEach(function (item)){
-  //                             edvA.office = item["office"],
-  //                             edvA.eva = item["eva"],
-  //                             edvA.health = item["health"],
-  //                             edvA.safety = item["safety"],
-  //                             edvA.comms = item["comms"],
-  //                             edvA.computer = item["computer"],
-  //                             edvA.trashBags = item["trashBags"],
-  //                             edvA.waste = item["waste"],
-  //                             edvA.crew = item["crew"]
-  //                           });
-  //
-  //                         }
-  //                       });
-  edvA = {"office":25, "eva":10, "health":10, "safety":10, "comms":10, "computer":10, "trashBags":20, "waste":10, "crew":10}
+  edvA = $.ajax({
+                          url: "/analysis",
+                          method: "GET",
+                          success: function (data) {
+                            data.forEach(function (item)){
+                              edvA.office = item["office"],
+                              edvA.eva = item["eva"],
+                              edvA.health = item["health"],
+                              edvA.safety = item["safety"],
+                              edvA.comms = item["comms"],
+                              edvA.computer = item["computer"],
+                              edvA.trashBags = item["trashBags"],
+                              edvA.waste = item["waste"],
+                              edvA.crew = item["crew"]
+                            });
+
+                          }
+                        });
+  //edvA = {"office":25, "eva":10, "health":10, "safety":10, "comms":10, "computer":10, "trashBags":20, "waste":10, "crew":10}
   var ctx = document.getElementById('eqChart').getContext('2d');
   var myChart = new Chart(ctx, {
       type: 'bar',
