@@ -154,8 +154,11 @@ function submitNodes() {
   var IDstoUUIDs = {}
   Object.entries(nodes).forEach( function ([uuid, node]) {
     IDstoUUIDs[node.id] = uuid
+    IDstoUUIDs[uuid] = node.id
     delete node.id
   })
+  console.log('ids to uuids etc:', IDstoUUIDs)
+  console.log('nodes:', nodes)
   setElt('NodeIDstoUUIDs', IDstoUUIDs)
   setElt('scenarioNetworkNodes', nodes)
   checkFilledInfo()
