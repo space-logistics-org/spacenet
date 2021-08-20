@@ -2,22 +2,21 @@ $(document).ready(function () {
 
 	populateNodes();
 
-	Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-		$('#inputNode').append('<option value="' + uuid + '">' + node.name + '</option>')
-	});
-
-    CrewList();
-    DemandList();
+	Object.entries(scenario.resourceList).forEach( function([uuid, resource]) {
+			value= JSON.stringify({resourceType : resource.type, resource : uuid, units : resource.units});
+			$('#pickDemands').append('<option value=' + value + '>' + resource.name + '</option>')
+		});
 });
 
 
 function retreiveElements(){
-  let node = $('#inputNode').val(),
+  let node = $('#pickNode').val(),
   time = $('#inputTime').val(),
   priority = $('#inputPriority').val();
 
   if (node && time && priority !== 'Choose...') {
     $('#inputCrewVehicle').empty();
+		$('#pickCrew').empty();
 
     $.ajax({
       url: "/campaign/api/simulation/?days_to_run_for=" + time,
@@ -39,6 +38,8 @@ function retreiveElements(){
 										var eltObj = namespace[contentUUID].inner
 										if (eltObj.type !== 'HumanAgent' && eltObj.type !== 'RoboticAgent') {
 											$('#inputCrewVehicle').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
+										} else if (eltObj.type == 'HumanAgent') {
+											$('#pickCrew').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
 										}
 									});
 								}
@@ -56,164 +57,37 @@ function retreiveElements(){
 				}
 
 
-function CrewList() {
-
-    var itxtCnt = 0;    // COUNTER TO SET ELEMENT IDs.
-
-    // CREATE A DIV DYNAMICALLY TO SERVE A CONTAINER TO THE ELEMENTS.
-    var container = $(document.createElement('div')).css({
-        width: '100%',
-        clear: 'both',
-        'margin-top': '10px',
-        'margin-bottom': '10px'
-        });
-
-        // CREATE THE ELEMENTS.
-    $('#crewAdd').click(function () {
-        itxtCnt = itxtCnt + 1;
-
-        $(container).append('<input type="text"' +'placeholder="name" class="crewName" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="available time fraction" class="crewTimeFraction" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="EVA State" class="crewState" id=tb' + itxtCnt + ' value="" />');
-
-        // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
-        $('#crewmain').after(container);
-    });
-}
-
-
-
-function DemandList() {
-
-    var itxtCnt = 0;    // COUNTER TO SET ELEMENT IDs.
-
-    // CREATE A DIV DYNAMICALLY TO SERVE A CONTAINER TO THE ELEMENTS.
-    var container = $(document.createElement('div')).css({
-        width: '100%',
-        clear: 'both',
-        'margin-top': '10px',
-        'margin-bottom': '10px'
-        });
-
-        // CREATE THE ELEMENTS.
-    $('#demAdd').click(function () {
-        itxtCnt = itxtCnt + 1;
-
-        $(container).append('<input type="text"' +'placeholder="Resource Type" class="demandType" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="Resource ID" class="demandResource" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="Amount" class="demandAmount" id=tb' + itxtCnt + ' value="" />');
-        $(container).append('<input type="text"' +'placeholder="Units" class="demandUnit" id=tb' + itxtCnt + ' value="" />');
-
-        // ADD EVERY ELEMENT TO THE MAIN CONTAINER.
-        $('#demandmain').after(container);
-    });
-}
 
 
 function onComplete(){
-    name = document.getElementById("inputName").value;
-    node = document.getElementById("inputNodeID").value;
-    time = document.getElementById("inputTime").value;
-    priority = document.getElementById("inputPriority").value;
-    eva_duration = document.getElementById("inputEVADuration").value;
-    crew_vehicle = document.getElementById("inputCrewVehicle").value
+	name = $("#inputName").val();
+	node_id = $("#pickNode").val();
+	eva_duration = $("#inputEVADuration").val();
+	type = "CrewedEVA"
+	crew_vehicle = $('#inputCrewVehicle').val();
+	crew = $('#pickCrew').val();
+	additional_demandJSON = $('#pickDemands').val();
+	priority = $('#inputPriority').val();
+	mission_time = $('#inputTime').val();
 
+	additional_demand = []
+	additional_demandJSON.forEach( function (demand) {
+		console.log(demand)
+		parsed_demand = JSON.parse(demand)
+		additional_demand.push(parsed_demand)
+	});
 
-    var demandTypeList = new Array();
-    var demandResourceList = new Array();
-    var demandAmountList = new Array();
-    var demandUnitList = new Array();
-
-    $('.demandType').each(function () {
-      if (this.value != '')
-          demandTypeList.push(this.value);
-    });
-
-    $('.demandResource').each(function () {
-      if (this.value != '')
-          demandResourceList.push(this.value);
-    });
-    $('.demandAmount').each(function () {
-      if (this.value != '')
-          demandAmountList.push(this.value);
-    });
-    $('.demandUnit').each(function () {
-      if (this.value != '')
-          demandUnitList.push(this.value);
-    });
-
-    max = demandTypeList.length
-    var evaDemandList = [];
-
-    for ( var i=0 ; i < max ; i++ ){
-        evaDemandList[i] = [JSON.stringify({
-          resourceType : demandTypeList[i],
-          resource : demandResourceList[i],
-          amount : demandAmountList[i],
-          units : demandUnitList[i]
-        })
-      ];
-    }
-
-
-
-
-    var crewNameList = new Array();
-    var crewTimeFractionList = new Array();
-    var crewStateList = new Array();
-
-    $('.crewName').each(function () {
-      if (this.value != '')
-          crewNameList.push(this.value);
-    });
-
-    $('.crewTimeFraction').each(function () {
-      if (this.value != '')
-          crewTimeFractionList.push(this.value);
-    });
-    $('.crewState').each(function () {
-      if (this.value != '')
-          crewStateList.push(this.value);
-    });
-
-    max = crewNameList.length
-    var crewMemEVAList = [];
-
-    for ( var i=0 ; i < max ; i++ ){
-        crewMemEVAList[i] = [JSON.stringify({
-          name : crewNameList[i],
-          active_time_fraction : crewTimeFractionList[i],
-          type : "HumanAgent",
-          eva_state : crewStateList[i]
-        })
-      ];
-    }
-
-
-
-    message= JSON.stringify({
-      name : name,
-      node : node,
-      time : time,
-      priority : priority,
-      eva_duration : eva_duration,
-      crew_vehicle : crew_vehicle,
-      crew : JSON.parse(crewMemEVAList),
-      additional_demand : JSON.parse(evaDemandList)
-    });
-
-
-    console.log(message)
-    $.ajax({
-      url: "/database/api/edge/",
-      data: message,
-      contentType: 'application/json; charset=utf-8',
-      dataType: "json",
-      method: "POST",
-      success: function() {
-        document.getElementById("edge").reset()
-        document.getElementById("components").reset()
-        location.href = 'edge_table.html'
-            }
-    });
-  }
+	data = {
+		name : name,
+		node_id : node_id,
+		eva_duration : eva_duration,
+		type : type,
+		crew_vehicle : crew_vehicle,
+		crew : crew,
+		additional_demand : additional_demand,
+		priority : priority,
+		mission_time : mission_time
+	}
+	console.log(data);
+	addEvent(data);
+}

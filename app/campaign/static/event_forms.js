@@ -1,4 +1,3 @@
-
 const scenario = compileScenario();
 
 function populateNodes() {
@@ -97,4 +96,3 @@ function createTree(simResult, startingNodeUUID) {
 function getTreeSelected () {
     return $("#elementsTree").jstree("get_checked")
 }
-

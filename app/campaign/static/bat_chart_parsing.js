@@ -27,16 +27,16 @@ const scenario = compileScenario();
 
 const oneNodeEvents = ['MakeElements', 'MoveElements', 'RemoveElements', 'ReconfigureElements', 'ReconfigureGroup', 'ConsumeResources', 'TransferResources']
 
-let nodeLocations = {};
-let ind = 0;
-Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-    nodeLocations[uuid] = ind
-    nodeLocations[ind] = uuid
-    ind += 1
-});
+var nodeLocations = getElt('NodeIDstoUUIDs');
+// let ind = 0;
+// Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+//     nodeLocations[uuid] = ind
+//     nodeLocations[ind] = uuid
+//     ind += 1
+// });
 
 console.log('node locations:', nodeLocations)
-console.log(scenario.network.nodes)
+// console.log(scenario.network.nodes)
 
 function getNodeLocation (uuid) {
     if (Object.keys(nodeLocations).includes(uuid)) {

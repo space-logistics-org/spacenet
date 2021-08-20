@@ -23,9 +23,7 @@ function retreiveElements(){
 
 
   	if (node !== 'def' && time && priority !== 'def'){
-    $('#elementSeqSel').empty();
 		$('#elementTransportSelector').empty();
-
 
 
     $.ajax({
@@ -66,31 +64,37 @@ function retreiveElements(){
 
 
 function onComplete() {
-    location.reload()
+  name = $("#inputName").val();
+  elements_id_list = $("#elementTransportSelector").val();
+  type = "SurfaceTransport"
+  //optional=deltav
+  origin_node_id = $("#inputOriginNode").val();
+  destination_node_id = $("#inputDestinationNode").val();
+  priority = $('#pickPriority').val();
+  mission_time = $('#inputTime').val();
 
+  edge_name= $("#inputOriginNode option:selected").text() + "-" + $("#inputDestinationNode option:selected").text()
 
-    // message= JSON.stringify({
-    //   name : name,
-    //   origin_node : origin_node,
-    //   destination_node : destination_node,
-    //   time : time,
-    //   priority : priority,
-    //   elements : JSON.parse(arr),
-    //   burnStageProfile : JSON.parse(burnStageProfile)
-    // });
-    //
-    //
-    // console.log(message)
-    // $.ajax({
-    //   url: "/database/api/edge/",
-    //   data: message,
-    //   contentType: 'application/json; charset=utf-8',
-    //   dataType: "json",
-    //   method: "POST",
-    //   success: function() {
-    //     document.getElementById("edge").reset()
-    //     document.getElementById("components").reset()
-    //     location.href = 'edge_table.html'
-    //         }
-    // });
+  Object.entries(scenario.network.edges).forEach( function([uuid, edge]) {
+    if (origin_node_id == edge.origin_id && destination_node_id == edge.destination_id){
+      edge_id = uuid;
+      exec_time = edge.duration
+    }
+  });
+
+  data = {
+    name: name,
+    elements_id_list: elements_id_list,
+    type: type,
+    origin_node_id: origin_node_id,
+    destination_node_id: destination_node_id,
+    exec_time: exec_time,
+    type: type,
+    priority: priority,
+    mission_time : mission_time,
+    edge_id: edge_id,
+    exec_time: exec_time,
+  }
+  console.log(data);
+  addEvent(data);
   }

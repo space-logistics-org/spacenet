@@ -1,24 +1,21 @@
 $(document).ready( function() {
-	Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-		$('#pickNode').append('<option value="' + uuid + '">' + node.name + '</option>')
+	Object.entries(scenario.network.edges).forEach( function([uuid, edge]) {
+		value = JSON.stringify({"origin_id" : edge.origin_id , "edge_uuid" : uuid});
+		$('#pickEdge').append('<option value= ' + value  + ' >' + edge.name + '</option>')
 	  });
 
 	$('#addBurn').on('click', function() {
-		console.log('add burn button clicked')
-
-		elementName = $("#ElementSel option:selected").text();
+		elementName = $("#elementSeqSel option:selected").text();
 		name = $('#inputName').val()
 
-		$('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>[Burn]</td><td>' + name + '</td>')
+		$('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>Burn</td><td>' + name + '</td>')
 	})
 
 	$('#addStage').on('click', function() {
-		console.log('add stage button clicked')
-
-		elementName = $("#ElementSel option:selected").text();
+		elementName = $("#elementSeqSel option:selected").text();
 		name = $('#inputName').val()
 
-		$('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>[Stage]</td><td>' + name + '</td>')
+		$('#propulsiveBurnTable').append('<tr><td><input type="checkbox"></td><td> '+ elementName +  '</td><td>Stage</td><td>' + name + '</td>')
 	})
 
 
@@ -42,13 +39,17 @@ $(document).ready( function() {
 
 
 function retreiveElements(){
-  let node = $('#pickNode').val(),
+	var edge = $('#pickEdge').val();
+	//will raise JSON error if edge is not chosen first but doesn't really matter.
+	node = JSON.parse(edge).origin_id
+
   time = $('#inputTime').val(),
   priority = $('#pickPriority').val();
 
-  if (node && time && priority !== 'Choose...') {
+
+
+  if (node !== 'def' && time && priority !== 'def') {
     $('#elementSeqSel').empty();
-		$("#elementTransportSelector").empty();
 
     $.ajax({
       url: "/campaign/api/simulation/?days_to_run_for=" + time,
@@ -68,24 +69,19 @@ function retreiveElements(){
 								} else {
 									allContents.forEach( function (contentUUID) {
 										var eltObj = namespace[contentUUID].inner
-										$('#elementTransportSelector').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
-
+										if (eltObj.type !== 'HumanAgent' && eltObj.type !== 'RoboticAgent'){
+											$('#elementSeqSel').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
+										}
 									});
 								}
 								//Sorts elements in element selector
-								var options = $("#elementTransportSelector option");
+								var options = $("#elementSeqSel option");
 								options.detach().sort(function(a,b) {
 									var at = $(a).text();
 									var bt = $(b).text();
 									return (at > bt)?1:((at < bt)?-1:0);
 								});
-								options.appendTo("#elementTransportSelector");
-
-								$("#elementTransportSelector > option").each(function() {
-									if (namespace[this.value].inner.type !== 'HumanAgent' && namespace[this.value].inner.type !== 'RoboticAgent') {
-										$('#elementSeqSel').append('<option value="' + this.value + '">' + this.text + '</option>');
-									}
-								});
+								options.appendTo("#elementSeqSel");
 							}
 						})
 					}
@@ -93,23 +89,60 @@ function retreiveElements(){
 
 
   function onComplete(){
+		name = $("#inputName").val();
+		elements = $("#elementTransportSelector").val();
+		type = "PropulsiveBurn"
+		delta_v = $('#inputDelta').val();
+		priority = $('#pickPriority').val();
+		mission_time = $('#inputTime').val();
 
-      name = $("#inputName").val();
-      node = $("#pickNode").val();
-      mission_time = $("#inputTime").val();
-      priority = $("#pickPriority").val();
+		//used for the Burn property
+		var edge = $('#pickEdge').val();
+		edge_values = JSON.parse(edge)
+		node_id = edge_values.origin_id
+		edge_id = edge_values.edge_uuid
 
+		burn = {edge_id : edge_id , time : mission_time , delta_v : delta_v }
 
-      data = JSON.stringify({
-        name : name,
-        node : node,
-        mission_time : mission_time,
-        priority : priority,
-        elements : elementsList,
-        burn_stage_sequence : burn_stage_sequence
-        //sequence
-      })
+		var currentTab = document.getElementById('propulsiveBurnTable');
+		burn_stage_sequence = new Array
 
-      console.log(data)
+		// LOOP THROUGH EACH ROW OF THE TABLE AFTER HEADER.
+		for (i = 1; i < currentTab.rows.length; i++) {
+			burnStageItem = {}
 
-  }
+			// GET THE CELLS COLLECTION OF THE CURRENT ROW.
+			var objCells = currentTab.rows.item(i).cells;
+
+			// LOOP THROUGH EACH CELL OF THE CURENT ROW TO READ CELL VALUES.
+			for (var j = 1; j < objCells.length-1; j++) {
+				//Get element ID rather than the innerHTML
+				if ( j == 1 ){
+					Object.entries(scenario.elementList).forEach( function([uuid, element]) {
+						if (objCells.item(j).innerHTML.trim() == element.name.trim()){
+							burnStageItem["element_id"] = uuid
+						}
+					});
+				} else {
+					burnStageItem["burnStage"]= objCells.item(j).innerHTML
+				}
+			}
+			burn_stage_sequence.push(burnStageItem)
+		}
+
+		data = {
+			name: name,
+			elements: elements,
+			type: type,
+			delta_v: delta_v,
+			priority: priority,
+			mission_time: mission_time,
+			type: type,
+			priority: priority,
+			mission_time : mission_time,
+			burn: burn,
+			burn_stage_sequence: burn_stage_sequence
+		}
+		console.log(data);
+		addEvent(data);
+		}
