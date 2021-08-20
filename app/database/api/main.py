@@ -1,3 +1,6 @@
+"""
+This module includes routers for database editor routes.
+"""
 from fastapi import FastAPI
 
 from .database import Base, engine

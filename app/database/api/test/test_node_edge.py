@@ -57,6 +57,11 @@ BAD_EDGE_LIST = json.loads(
 
 
 def get_other_variants(to_exclude, enum: Type[Enum]) -> List[Enum]:
+    """
+    :param to_exclude: enum variant to exclude
+    :param enum: enum to find variants from
+    :return: values of enum associated with at least one variant other than to_exclude
+    """
     return [variant.value for variant in enum if variant != to_exclude]
 
 
@@ -87,6 +92,10 @@ GOOD_EDGES = {
 
 
 def name_to_obj(name):
+    """
+    :param name: type discriminant enum value value as string for either nodes or edges
+    :return: appropriate pair of good/bad inputs based on provided name
+    """
     assert name in NODE_NAMES or name in EDGE_NAMES
     return (
         (GOOD_NODES, BAD_NODE_LIST)
@@ -108,6 +117,9 @@ VARIANT_NAME_TO_PREFIX = {
 
 @pytest.fixture(scope="module")
 def seed_and_make_tables():
+    """
+    Seed the random number generator and initialize test database tables.
+    """
     random.seed("spacenet")
     NodeModel.__table__.create(test_engine)
     EdgeModel.__table__.create(test_engine)
@@ -118,6 +130,9 @@ def seed_and_make_tables():
 
 @pytest.fixture(autouse=True)
 def reseed_and_clear_tables():
+    """
+    Reset the random number generator seed and clear database tables.
+    """
     random.seed("spacenet")
     EdgeModel.__table__.drop(test_engine, checkfirst=False)
     NodeModel.__table__.drop(test_engine)
@@ -173,7 +188,7 @@ def test_create(variant_name):
     + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_update(variant_name):
-    def check_get():
+    def _check_get():
         get_r = client.get(f"{prefix}/{id_}")
         assert get_r.status_code == 200
         assert expected_fields == get_r.json()
@@ -193,11 +208,11 @@ def test_update(variant_name):
     assert patch_r.status_code == 200
     expected_fields = {**kw, **filter_val_not_none(patch_kw), "id": id_}
     assert expected_fields == patch_r.json()
-    check_get()
+    _check_get()
     not_present_id = id_ + 1
     bad_patch = client.patch(f"{prefix}/{not_present_id}", json=patch_kw)
     assert bad_patch.status_code == 404
-    check_get()
+    _check_get()
     variant = NAMES_TO_VARIANTS[variant_name]
     parent_enum = NodeType if variant_name in NODE_NAMES else EdgeType
     other_variant = random.choice(get_other_variants(variant, parent_enum))
@@ -205,11 +220,11 @@ def test_update(variant_name):
     # variant to all other
     bad_patch = client.patch(f"{prefix}/{id_}", json=mistyped)
     assert bad_patch.status_code == 409
-    check_get()
+    _check_get()
     invalid_kw = random.choice(bad_values)
     bad_patch = client.patch(f"{prefix}/{id_}", json=invalid_kw)
     assert bad_patch.status_code == 422
-    check_get()
+    _check_get()
 
 
 @pytest.mark.parametrize(
@@ -218,7 +233,7 @@ def test_update(variant_name):
     + [pytest.param(name, marks=[pytest.mark.edge,],) for name in EDGE_NAMES],
 )
 def test_delete(variant_name):
-    def check_get_all():
+    def _check_get_all():
         read_all_r = client.get(f"{prefix}/")
         assert read_all_r.status_code == 200
         for v in read_all_r.json():
@@ -238,17 +253,17 @@ def test_delete(variant_name):
         assert post_r.status_code == 201
         assert first_subset_second(valid_kw, post_r.json())
         posted_values.append({**valid_kw, "id": post_r.json()["id"]})
-    check_get_all()
+    _check_get_all()
     to_delete = posted_values.pop()
     del_r = client.delete(f"{prefix}/{to_delete['id']}")
     assert del_r.status_code == 200
     assert del_r.json() == to_delete
-    check_get_all()
+    _check_get_all()
     del_r = client.delete(f"{prefix}/{to_delete['id']}")
     assert del_r.status_code == 404
     del_r = client.delete(f"{prefix}/{to_delete['id'] + 1000}")
     assert del_r.status_code == 404
-    check_get_all()
+    _check_get_all()
     to_delete = posted_values.pop()
     del_r = client.delete(f"{prefix}/{to_delete['id']}")
     assert del_r.status_code == 200

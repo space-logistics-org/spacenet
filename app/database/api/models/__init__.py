@@ -1,3 +1,6 @@
+"""
+This module defines database models used for the database editor.
+"""
 from .edge import EdgeType, Edge, SpaceEdge, SurfaceEdge, FlightEdge
 from .element import (
     ElementKind,

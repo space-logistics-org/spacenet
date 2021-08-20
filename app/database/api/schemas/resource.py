@@ -18,16 +18,28 @@ __all__ = [
 
 
 class DiscreteRead(DiscreteResource, ReadSchema):
+    """
+    Read variant of DiscreteResource schema
+    """
     pass
 
 
 class DiscreteUpdate(DiscreteResource, RequiresOnlyType):
+    """
+    Update variant of DiscreteResource schema
+    """
     pass
 
 
 class ContinuousRead(ContinuousResource, ReadSchema):
+    """
+    Read variant of ContinuousResource schema
+    """
     pass
 
 
 class ContinuousUpdate(ContinuousResource, RequiresOnlyType):
+    """
+    Update variant of ContinuousResource schema
+    """
     pass

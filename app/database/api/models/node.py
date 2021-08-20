@@ -16,6 +16,9 @@ __all__ = [
 
 
 class Node(Base):
+    """
+    A row representing a single node.
+    """
     __tablename__ = "node"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -28,6 +31,9 @@ class Node(Base):
 
 
 class SurfaceNode(Node):
+    """
+    A row representing a surface node.
+    """
     latitude = Column(Float)
     longitude = Column(Float)
 
@@ -35,6 +41,9 @@ class SurfaceNode(Node):
 
 
 class OrbitalNode(Node):
+    """
+    A row representing an orbital node.
+    """
     apoapsis = Column(Float)
     periapsis = Column(Float)
     inclination = Column(Float)
@@ -43,6 +52,9 @@ class OrbitalNode(Node):
 
 
 class LagrangeNode(Node):
+    """
+    A row representing a Lagrange point.
+    """
     body_2 = Column(String)
     lp_number = Column(Integer)
 

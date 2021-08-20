@@ -24,10 +24,18 @@ pytestmark = [
 
 
 def state_with_element_id(state: State, element_id: int):
+    """
+    :param state: element operational state to copy
+    :param element_id: new element id
+    :return: original state provided, but with an element id that was provided
+    """
     return type(state).parse_obj({**state.dict(), "element_id": element_id})
 
 
 class ElementStateInteraction(RuleBasedStateMachine):
+    """
+    A class defining a stateful test for element-state database interactions.
+    """
     def __init__(self):
         super().__init__()
         self.db = TestingSessionLocal()
@@ -57,6 +65,9 @@ class ElementStateInteraction(RuleBasedStateMachine):
         ),
     )
     def create_element(self, element: Element):
+        """
+        Add an element.
+        """
         return self._create(element)
 
     # element id must reference an element which exists in the database, hence the complex
@@ -74,10 +85,16 @@ class ElementStateInteraction(RuleBasedStateMachine):
         ),
     )
     def create_state(self, state: State):
+        """
+        Add a state.
+        """
         return self._create(state)
 
     @rule(element_id=st.integers())
     def delete_element(self, element_id):
+        """
+        Delete an element.
+        """
         assume(element_id in self.elements)
         # Associated states should be deleted too
         from_db = self.db.query(models.Element).get(element_id)
@@ -98,6 +115,9 @@ class ElementStateInteraction(RuleBasedStateMachine):
 
     @rule(state_id=st.integers())
     def delete_state(self, state_id):
+        """
+        Delete a state.
+        """
         assume(state_id in self.states)
         from_db = self.db.query(models.State).get(state_id)
         assert self.states.pop(state_id) == dictify_row(from_db)
@@ -106,13 +126,19 @@ class ElementStateInteraction(RuleBasedStateMachine):
 
     @rule()
     def read_all_elements(self):
-        self.read_all(models.Element, self.elements)
+        """
+        Read all states in the database.
+        """
+        self._read_all(models.Element, self.elements)
 
     @rule()
     def read_all_states(self):
-        self.read_all(models.State, self.states)
+        """
+        Read all states in the database.
+        """
+        self._read_all(models.State, self.states)
 
-    def read_all(self, table, mapping):
+    def _read_all(self, table, mapping):
         from_db = self.db.query(table).all()
         assert len(mapping) == len(from_db)
         for row in from_db:
@@ -120,6 +146,9 @@ class ElementStateInteraction(RuleBasedStateMachine):
             assert mapping[row.id] == dictify_row(row)
 
     def teardown(self):
+        """
+        Clear modified tables.
+        """
         for table in (models.State, models.Element):
             table.__table__.drop(test_engine, checkfirst=True)
             table.__table__.create(test_engine, checkfirst=False)
