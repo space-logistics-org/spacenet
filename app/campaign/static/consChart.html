@@ -50,24 +50,24 @@
     </div>
   <canvas id="myChart" width="400" height="400"></canvas>
   <script>
-    var scenario = compileScenario();
-    var dvA = {};
-    dvA = $.ajax({
-                            url: "/analysis",
-                            method: "GET",
-                            success: function (data) {
-                              data.forEach(function (item)){
-                                dvA.water = item["water"],
-                                dvA.food = item["food"],
-                                dvA.gases = item["gases"],
-                                dvA.hitems = item["hygiene"],
-                                dvA.pitems = item["personal"],
-                                dvA.clothing = item["clothing"]
-                              });
-
-                            }
-                          });
-  //dvA = {"water":25, "food":10, "gases":10, "hygiene":10, "personal":10, "clothing":10}
+    // var scenario = compileScenario();
+    // var dvA = {};
+    // dvA = $.ajax({
+    //                         url: "/analysis",
+    //                         method: "GET",
+    //                         success: function (data) {
+    //                           data.forEach(function (item)){
+    //                             dvA.water = item["water"],
+    //                             dvA.food = item["food"],
+    //                             dvA.gases = item["gases"],
+    //                             dvA.hitems = item["hygiene"],
+    //                             dvA.pitems = item["personal"],
+    //                             dvA.clothing = item["clothing"]
+    //                           });
+    //
+    //                         }
+    //                       });
+  dvA = {"water":43, "food":20, "gases":40, "hygiene":10, "personal":10, "clothing":7}
   var ctx = document.getElementById('myChart').getContext('2d');
   var myChart = new Chart(ctx, {
       type: 'bar',
@@ -96,7 +96,7 @@
           },
           {
               label: 'Current Mass in kg',
-              data: [wmass, fmass, gmass, himass, pimass, cmass],
+              data: [43, 15, 32, 10, 3, 5],
               backgroundColor: [
                   'rgba(255, 99, 132, 1)',
                   'rgba(54, 162, 235, 1)',

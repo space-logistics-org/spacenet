@@ -50,27 +50,27 @@
     </div>
   <canvas id="eqChart" width="400" height="400"></canvas>
   <script>
-  var scenario = compileScenario();
-  var edvA = {};
-  edvA = $.ajax({
-                          url: "/analysis",
-                          method: "GET",
-                          success: function (data) {
-                            data.forEach(function (item)){
-                              edvA.office = item["office"],
-                              edvA.eva = item["eva"],
-                              edvA.health = item["health"],
-                              edvA.safety = item["safety"],
-                              edvA.comms = item["comms"],
-                              edvA.computer = item["computer"],
-                              edvA.trashBags = item["trashBags"],
-                              edvA.waste = item["waste"],
-                              edvA.crew = item["crew"]
-                            });
-
-                          }
-                        });
-  //edvA = {"office":25, "eva":10, "health":10, "safety":10, "comms":10, "computer":10, "trashBags":20, "waste":10, "crew":10}
+  // var scenario = compileScenario();
+  // var edvA = {};
+  // edvA = $.ajax({
+  //                         url: "/analysis",
+  //                         method: "GET",
+  //                         success: function (data) {
+  //                           data.forEach(function (item)){
+  //                             edvA.office = item["office"],
+  //                             edvA.eva = item["eva"],
+  //                             edvA.health = item["health"],
+  //                             edvA.safety = item["safety"],
+  //                             edvA.comms = item["comms"],
+  //                             edvA.computer = item["computer"],
+  //                             edvA.trashBags = item["trashBags"],
+  //                             edvA.waste = item["waste"],
+  //                             edvA.crew = item["crew"]
+  //                           });
+  //
+  //                         }
+  //                       });
+  edvA = {"office":25, "eva":10, "health":42, "safety":11, "comms":23, "computer":10, "trashBags":8, "waste":10, "crew":140}
   var ctx = document.getElementById('eqChart').getContext('2d');
   var myChart = new Chart(ctx, {
       type: 'bar',
@@ -105,7 +105,7 @@
           },
           {
               label: 'Current Mass in kg',
-              data: [omass, evamass, hmass, smass, comumass, compmass, tbmass, wamass, cmmass],
+              data: [25, 10, 37, 8, 19, 9, 8, 10, 140],
               backgroundColor: [
                   'rgba(255, 99, 132, 1)',
                   'rgba(54, 162, 235, 1)',
