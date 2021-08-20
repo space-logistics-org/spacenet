@@ -71,10 +71,8 @@ function retreiveElements(){
 		priority = $('#pickPriority').val();
 		mission_time = $('#inputTime').val();
 
-		edge_name= $("#inputOriginNode option:selected").text() + "-" + $("#inputDestinationNode option:selected").text()
-
 		Object.entries(scenario.network.edges).forEach( function([uuid, edge]) {
-			if (edge_name == edge.name){
+			if (origin_node_id == edge.origin_id && destination_node_id == edge.destination_id){
 				edge_id = uuid;
 				exec_time = edge.duration
 			}
