@@ -31,12 +31,21 @@ app.dependency_overrides[current_user] = get_current_user
 
 
 def inserted_tup_to_strategy(inserted_tup):
+    """
+    Convert a tuple of inserted values into a strategy for updating that inserted value.
+
+    :param inserted_tup: tuple inserted: id and type of inserted value
+    :return: a strategy for updating the inserted value
+    """
     id_, type_ = inserted_tup
     update_type = CREATE_TO_UPDATE[type_]
     return st.tuples(st.just(id_), st.builds(update_type).map(update_type.dict))
 
 
 class ResourceRoutes(RuleBasedStateMachine):
+    """
+    A class defining a stateful test for resource routes.
+    """
     def __init__(self):
         super().__init__()
         self.model = {}
@@ -51,6 +60,9 @@ class ResourceRoutes(RuleBasedStateMachine):
         ),
     )
     def create(self, entry: Union[ContinuousResource, DiscreteResource]):
+        """
+        Create a new resource entry.
+        """
         response = self.client.post("/resource/", json=entry.dict())
         assert 201 == response.status_code
         result = response.json()
@@ -61,6 +73,9 @@ class ResourceRoutes(RuleBasedStateMachine):
 
     @rule(id_and_type=inserted)
     def read(self, id_and_type):
+        """
+        Read an existing resource entry.
+        """
         id_, _ = id_and_type
         response = self.client.get(f"/resource/{id_}")
         assert 200 == response.status_code
@@ -68,12 +83,18 @@ class ResourceRoutes(RuleBasedStateMachine):
 
     @rule(id_=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT))
     def read_invalid_id(self, id_):
+        """
+        Attempt to read a nonexistent resource entry.
+        """
         assume(id_ not in self.model)
         response = self.client.get(f"/resource/{id_}")
         assert 404 == response.status_code
 
     @rule()
     def read_all(self):
+        """
+        Read all resource entries.
+        """
         response = self.client.get("/resource/")
         assert 200 == response.status_code
         result = response.json()
@@ -86,6 +107,9 @@ class ResourceRoutes(RuleBasedStateMachine):
 
     @rule(id_and_kwargs=inserted.flatmap(inserted_tup_to_strategy))
     def update(self, id_and_kwargs):
+        """
+        Update an existing resource entry.
+        """
         id_, update_kwargs = id_and_kwargs
         response = self.client.patch(f"/resource/{id_}", json=update_kwargs)
         assert 200 == response.status_code
@@ -99,12 +123,18 @@ class ResourceRoutes(RuleBasedStateMachine):
         kwargs=inserted.flatmap(inserted_tup_to_strategy).map(lambda t: t[1]),
     )
     def update_invalid_id(self, id_, kwargs):
+        """
+        Attempt to update an existing resource entry via an invalid ID.
+        """
         assume(id_ not in self.model)
         response = self.client.patch(f"/resource/{id_}", json=kwargs)
         assert 404 == response.status_code
 
     @rule(id_and_type=consumes(inserted))
     def delete(self, id_and_type):
+        """
+        Delete an existing resource entry.
+        """
         id_, _ = id_and_type
         response = self.client.delete(f"/resource/{id_}")
         assert 200 == response.status_code
@@ -113,11 +143,18 @@ class ResourceRoutes(RuleBasedStateMachine):
 
     @rule(id_=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT))
     def delete_invalid_id(self, id_):
+        """
+        Attempt to delete an existing resource entry via an invalid ID.
+        """
         assume(id_ not in self.model)
         response = self.client.delete(f"/resource/{id_}")
         assert 404 == response.status_code
 
     def teardown(self):
+        """
+        Clear the existing test tables.
+        :return:
+        """
         ResourceModel.__table__.drop(test_engine, checkfirst=True)
         ResourceModel.__table__.create(test_engine, checkfirst=False)
 
