@@ -1,3 +1,6 @@
+"""
+This module contains tests for API routes via the lunar sortie data.
+"""
 import pytest
 from fastapi.testclient import TestClient
 
@@ -26,6 +29,10 @@ client = TestClient(app)
 
 
 def schema_superclass(type_):
+    """
+    :param type_: subclass of exactly one of Element, Node, Edge, or Resource schemas
+    :return: the superclass of type_ from (Element, Node, Edge, Resource)
+    """
     for super_ in (Element, Node, Edge, Resource):
         if issubclass(type_, super_):
             return super_
@@ -38,6 +45,10 @@ SUPER_TO_PREFIX = {Element: "element", Edge: "edge", Node: "node", Resource: "re
 
 
 def object_to_prefix(obj: dict) -> str:
+    """
+    :param obj: object, which fits some schema in CREATE_SCHEMAS
+    :return: routing prefix for the object schema's type
+    """
     for schema in CREATE_SCHEMAS:
         try:
             obj = schema.parse_obj(obj)
