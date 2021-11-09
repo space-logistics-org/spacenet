@@ -49,7 +49,6 @@ def create_state(
 @router.patch(
     "/{item_id}",
     response_model=StateRead,
-    responses={**NOT_FOUND_RESPONSE, status.HTTP_409_CONFLICT: {"msg": str},},
     summary="Update State",
 )
 def update_state(

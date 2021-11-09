@@ -16,7 +16,7 @@ from ..database import Base
 from ..models.utilities import SCHEMA_TO_MODEL, dictify_row
 from ....auth_dependencies import User, current_user
 
-NOT_FOUND_RESPONSE = {status.HTTP_404_NOT_FOUND: {"msg": str}}
+NOT_FOUND_RESPONSE = {404: {"msg": str}}
 
 __all__ = ["Route", "CRUDRouter"]
 
@@ -90,7 +90,6 @@ class CRUDRouter(APIRouter):
                 endpoint=self.get_read_item(),
                 methods=["GET"],
                 response_model=self.read_schema,
-                responses=NOT_FOUND_RESPONSE,
                 summary=f"Read {name_cap}",
                 description=f"Find a specific {name} in the database.",
             )
@@ -110,10 +109,6 @@ class CRUDRouter(APIRouter):
                 endpoint=self.get_update_item(),
                 methods=["PATCH"],
                 response_model=self.read_schema,
-                responses={
-                    **NOT_FOUND_RESPONSE,
-                    status.HTTP_409_CONFLICT: {"msg": str},
-                },
                 summary=f"Update {name_cap}",
                 description=f"Update an existing {name} in the database.",
             )
@@ -123,7 +118,6 @@ class CRUDRouter(APIRouter):
                 endpoint=self.get_delete_item(),
                 methods=["DELETE"],
                 response_model=self.read_schema,
-                responses=NOT_FOUND_RESPONSE,
                 summary=f"Delete {name_cap}",
                 description=f"Delete an existing {name} from the database.",
             )
