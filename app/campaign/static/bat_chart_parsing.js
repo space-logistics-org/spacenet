@@ -24,6 +24,7 @@ var DateTime = luxon.DateTime;
 
 
 const scenario = compileScenario();
+console.log("scenario:", scenario)
 
 const oneNodeEvents = ['MakeElements', 'MoveElements', 'RemoveElements', 'ReconfigureElements', 'ReconfigureGroup', 'ConsumeResources', 'TransferResources']
 
@@ -35,7 +36,7 @@ var nodeLocations = getElt('NodeIDstoUUIDs');
 //     ind += 1
 // });
 
-console.log('node locations:', nodeLocations)
+// console.log('node locations:', nodeLocations)
 // console.log(scenario.network.nodes)
 
 function getNodeLocation (uuid) {
@@ -165,6 +166,8 @@ const data = {
     datasets: all_data
 };
 
+console.log("data:", data)
+
 
 const config = {
     type: 'line',
@@ -183,7 +186,7 @@ const config = {
                 callbacks: {
                     label: function(context) {
                         var label = context.dataset.label || '';
-						var nodeUUID = nodeLocations[context.parsed.y]
+                        var nodeUUID = nodeLocations[context.parsed.y]
                         var nodeName = scenario.network.nodes[nodeUUID].name
 
                         if (label) {
@@ -215,9 +218,9 @@ const config = {
                 display: true,
                 text: 'Location'
                 },
+                min: 1,
                 ticks: {
                     stepSize: 1,
-                    min: 0,
                     callback: function(value, index, values) {
                         var nodeUUID = nodeLocations[value]
                         var nodeName = scenario.network.nodes[nodeUUID].name
