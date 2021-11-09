@@ -1,6 +1,7 @@
 var getSelected;
 var populateRows;
 var clearTable;
+var addRow;
 $(document).ready(function () {
     const dataType = document.getElementsByName('dataType')[0].content;
 
