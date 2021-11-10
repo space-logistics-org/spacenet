@@ -33,8 +33,6 @@ class SpaceTransport(ElementTransportEvent):
     Schema for Space Transport
     """
 
-    name: str = Field(..., title="Name", description="Space Transport name")
-
     elements_id_list: List[UUID] = Field(
         ...,
         title="Element ID List",
