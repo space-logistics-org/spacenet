@@ -25,7 +25,7 @@ class ResultAndErrors(BaseModel):
 @router.post("/", response_model=ResultAndErrors)
 def simulate_scenario(
     scenario: CheckedScenario,
-    days_to_run_for: Optional[float] = None,
+    time_to_run_for: Optional[timedelta] = None,
     propulsive: bool = False,
 ) -> ResultAndErrors:
     """
@@ -38,11 +38,11 @@ def simulate_scenario(
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(se)
         )  # TODO: format this better
-    if days_to_run_for is None:
+    if time_to_run_for is None:
         sim.run()
     else:
         try:
-            stop_date = scenario.startDate + timedelta(days=days_to_run_for)
+            stop_date = scenario.startDate + time_to_run_for
         except OverflowError:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
