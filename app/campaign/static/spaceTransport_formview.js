@@ -1,14 +1,17 @@
+function showUnselectedInstructions () {
+	$('.selected-instructions').hide()
+	$('.unselected-instructions').show()
+}
+
 $(document).ready(function () {
+  showUnselectedInstructions();
 
 
 	//didn't do populate node function since ids are different
   Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
 		$('#inputOriginNode').append('<option value="' + uuid + '">' + node.name + '</option>')
-		}
-	);
-  Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-		$('#inputDestinationNode').append('<option value="' + uuid + '">' + node.name + '</option>')
-		}
+    $('#inputDestinationNode').append('<option value="' + uuid + '">' + node.name + '</option>')
+    }
 	);
 
 	//Add/Burn/Delete rows from tables
@@ -70,11 +73,14 @@ function retreiveElements(){
 
 	let node = $('#inputOriginNode').val(),
   time = $('#inputTime').val(),
-  priority = $('#inputPriority').val();
+  priority = $('#pickPriority').val();
 
   	if (node !== 'def' && time && priority !== 'def'){
     $('#elementSeqSel').empty();
-		$('#elementTransportSelector').empty();
+    $('#elementTransportSelector').empty();
+    $('.selected-instructions').show()
+		$('.unselected-instructions').hide()
+
 
 
     $.ajax({
@@ -120,7 +126,10 @@ function retreiveElements(){
 								});
 							}
 						})
-					}
+          }
+    else {
+      showUnselectedInstructions()
+    }
 				}
 
 
@@ -180,7 +189,7 @@ function onComplete() {
           burnStageSequence.push(burnStageItem)
 
         }
-        burnStageSequenceReformat['burnStageSequence'] = burnStageSequence
+        burnStageSequenceReformat['burn_stage_sequence'] = burnStageSequence
         burnStageProfile.push(burnStageSequenceReformat)
       }
 
@@ -199,6 +208,5 @@ function onComplete() {
         exec_time: exec_time,
         burnStageProfile: burnStageProfile
       }
-      console.log(data);
   		addEvent(data);
 }

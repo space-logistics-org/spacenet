@@ -17,6 +17,7 @@
   <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="compile_scenario.js"></script>
   <script src="event_forms.js"></script>
   <script src="spaceTransport_formview.js"></script>
   <style>
@@ -33,27 +34,26 @@
 
 <body>
 
-  <div class="container">
-    <h1 class= "text-center">Space Transport Form</h1>
+  <div class="container-fluid py-4">
+    <h1 class= "text-center">Space Transport Event</h1>
 
     <hr>
 
     <form id="components">
-
       <div class="form-row">
         <div class="form-group col">
           <label for="inputName">Name</label>
           <input type="text" class="form-control" id="inputName" placeholder="Name">
         </div>
         <div class="form-group col">
-          <label for="inputPriority">Priority</label>
-          <select id="inputPriority" onchange="retreiveElements()" class="form-control" class="text-center">
-            <option selected id="def">Choose...</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
+          <label for="pickPriority">Priority</label>
+          <select id="pickPriority" onchange="retreiveElements()" class="form-control" class="text-center">
+            <option selected value="def">Choose...</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
         </div>
       </div>
@@ -62,13 +62,13 @@
         <div class="form-group col">
           <label for="inputOriginNode">Origin Node</label>
             <select id="inputOriginNode" onchange="retreiveElements()" class="form-control" class="text-center">
-              <option selected id="def">Choose...</option>
+              <option selected value="def">Choose...</option>
             </select>
         </div>
         <div class="form-group col">
           <label for="inputDestinationNode">Destination Node</label>
           <select id="inputDestinationNode" class="form-control" class="text-center">
-            <option selected id="def">Choose...</option>
+            <option selected value="def">Choose...</option>
           </select>
         </div>
       </div>
@@ -80,8 +80,10 @@
         </div>
         <div class= "form-group col">
             <label for="elementTransportSelector">Elements to Transport</label>
+            <h6 class="unselected-instructions">Choose node, time and priority to load available elements</h6>
+            <h6 class="selected-instructions">Select element(s) to move</h6>      
             <select id="elementTransportSelector" class="form-control" class="text-center" multiple>
-              <option selected id="def">Choose...</option>
+              <option selected value="def">Choose...</option>
             </select>
         </div>
       </div>
