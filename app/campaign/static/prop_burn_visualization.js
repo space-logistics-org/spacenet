@@ -1,4 +1,6 @@
 var deltSum = 0;
+var masses = 0;
+
 
 function showUnselectedInstructions () {
 	$('.selected-instructions').hide()
@@ -88,7 +90,6 @@ function loadSim() {
     })
 
     $('#prepBurn').on('click', function() {
-		var masses = 0;
 		var selectedElts = getSelected()
 		selectedElts.forEach(function(uuid) {
 			m = Number(scenario.elementList[uuid].mass);

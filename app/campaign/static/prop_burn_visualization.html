@@ -27,7 +27,6 @@
   <div class="container py-4">
   <h1 class= "text-center">Propulsive Burn Visualization</h1>
 
-      <hr>
 
       <form id="propulsiveBurn">
         <div class="form-row">
@@ -60,20 +59,6 @@
         </div>
       </div>
 
-      <div class="form-row form-group col-md-12 py-4">
-        <div class="form-group col-md-6">
-          <label for="pickBurnType">Burn Type</label>
-          <select id="pickBurnType" onChange = "setBurnType()" class="form-control" class="text-center">
-            <option selected id="def">Choose...</option>
-            <option id="OMS">OMS</option>
-            <option id="RCS">RCS</option>
-          </select>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="inputDelta">Required Delta-V</label>
-          <input type="number" class="form-control" id="inputDelta" placeholder="Delta-V">
-        </div>
-        </div>
         
         <div class="text-center" class="dropdown">
           <h4>Elements</h4>
@@ -115,7 +100,22 @@
 
     <hr>
 
-      <div class="form-row col-md-3 float-right d-flex flex-row-reverse py-4">
+    <div class="form-row form-group col-md-12 py-4">
+      <div class="form-group col-md-6">
+        <label for="pickBurnType">Burn Type</label>
+        <select id="pickBurnType" onChange = "setBurnType()" class="form-control" class="text-center">
+          <option selected id="def">Choose...</option>
+          <option id="OMS">OMS</option>
+          <option id="RCS">RCS</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="inputDelta">Required Delta-V</label>
+        <input type="number" class="form-control" id="inputDelta" placeholder="Delta-V">
+      </div>
+      </div>
+
+      <div class="form-row form-group col-md-12 py-4">
         <input id="prepBurn" type="button" class="btn btn-danger" value="Prep Burn">
       </div>
 
