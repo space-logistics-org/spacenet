@@ -14,9 +14,9 @@ $(document).ready( function() {
 
 
 
-function retreiveElements(){
+function loadSim(){
   let node = $('#inputOriginNode').val(),
-  time = $('#inputTime').val(),
+  time = getSimTime(),
   priority = $('#pickPriority').val();
 
   if (node !== 'def' && time && priority !== 'def') {
@@ -69,7 +69,7 @@ function retreiveElements(){
 		origin_node_id = $("#inputOriginNode").val();
 		destination_node_id = $("#inputDestinationNode").val();
 		priority = $('#pickPriority').val();
-		mission_time = $('#inputTime').val();
+		mission_time = getTime();
 
 		Object.entries(scenario.network.edges).forEach( function([uuid, edge]) {
 			if (origin_node_id == edge.origin_id && destination_node_id == edge.destination_id){
@@ -93,6 +93,8 @@ function retreiveElements(){
 		}
 		console.log(data);
 		addEvent(data);
+		alert('Event added')
+		location.reload()
 
 
   }

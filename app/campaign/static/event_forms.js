@@ -1,5 +1,42 @@
 const scenario = compileScenario();
 
+function getTime () {
+	function makeTwoDigits (timestring) {
+		if (timestring.length < 2) {
+			timestring = '0' + timestring
+		}
+		return timestring
+    }
+
+    var hrs = $('#hours').val()
+    var mins = $('#minutes').val()
+	var secs = $('#seconds').val()
+    
+    if (!hrs || !mins || !secs) {
+        return null
+    }
+
+    var hrs = makeTwoDigits(hrs)
+    var mins = makeTwoDigits(mins)
+    var secs = makeTwoDigits(secs)
+
+    return hrs + ':' + mins + ':' + secs + '.00'
+}
+
+function getSimTime () {
+    var hrs = $('#hours').val()
+    var mins = $('#minutes').val()
+    var secs = $('#seconds').val()
+    
+    if (!hrs || !mins|| !secs) {
+        return null
+    } 
+    if (parseInt(mins) > 0 || parseInt(secs) > 0) {
+        return (parseInt(hrs) + 1).toString()
+    }
+    return (parseInt(hrs)).toString()
+}
+
 function populateNodes() {
     var nodes = getElt('scenarioNetworkNodes')
     Object.entries(nodes).forEach( function([uuid, node]) {

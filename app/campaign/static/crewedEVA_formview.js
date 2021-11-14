@@ -9,9 +9,9 @@ $(document).ready(function () {
 });
 
 
-function retreiveElements(){
+function loadSim(){
   let node = $('#pickNode').val(),
-  time = $('#inputTime').val(),
+  time = getSimTime(),
   priority = $('#inputPriority').val();
 
   if (node && time && priority !== 'Choose...') {
@@ -68,7 +68,7 @@ function onComplete(){
 	crew = $('#pickCrew').val();
 	additional_demandJSON = $('#pickDemands').val();
 	priority = $('#inputPriority').val();
-	mission_time = $('#inputTime').val();
+	mission_time = getTime();
 
 	additional_demand = []
 	additional_demandJSON.forEach( function (demand) {
@@ -90,4 +90,6 @@ function onComplete(){
 	}
 	console.log(data);
 	addEvent(data);
+	alert('Event added')
+	location.reload()
 }

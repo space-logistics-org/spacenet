@@ -95,9 +95,9 @@ function setResourceType () {
 }
 
 
-function retreiveElements(){
+function loadSim(){
   let node = $('#pickNode').val(),
-  time = $('#inputTime').val(),
+  time = getSimTime(),
   priority = $('#pickPriority').val();
 
   if (node !== 'Choose...' && time!=='' && priority !== 'Choose...') {
@@ -159,7 +159,7 @@ function onComplete(){
     eva_per_week = $('#inputNumEVAS').val();
     type = "CrewedExploration"
 		priority = $('#pickPriority').val();
-		mission_time = $('#inputTime').val();
+		mission_time = getTime();
 
 		crew = $("#pickCrew").val();
 
@@ -177,6 +177,8 @@ function onComplete(){
 			crew: crew
     }
     console.log(data);
-		addEvent(data);
+    addEvent(data);
+    alert('Event added')
+    location.reload()
 
 }

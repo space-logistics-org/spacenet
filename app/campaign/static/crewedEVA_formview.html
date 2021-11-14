@@ -47,7 +47,7 @@
       </div>
       <div class="form-group col">
         <label for="inputPriority">Priority</label>
-        <select id="inputPriority" onchange="retreiveElements()" class="form-control" class="text-center">
+        <select id="inputPriority" onchange="loadSim()" class="form-control" class="text-center">
           <option selected id="def">Choose...</option>
           <option>1</option>
           <option>2</option>
@@ -61,13 +61,15 @@
     <div class="form-row">
       <div class="form-group col">
         <label for="pickNode">Node</label>
-        <select id="pickNode" onchange="retreiveElements()" class="form-control" class="text-center">
+        <select id="pickNode" onchange="loadSim()" class="form-control" class="text-center">
           <option selected id="def">Choose...</option>
         </select>
       </div>
       <div class="form-group col">
         <label for="inputTime">Time From Mission Start</label>
-        <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
+        <div id="time-span">
+          <input onChange="loadSim()" id="hours" style="max-width:70px" type="number" placeholder="hours" min="0" step="1" /> : <input onChange="loadSim()" id="minutes" placeholder="min" style="min-width:50px" type="number" min="0" max="59" step="1" /> : <input onChange="loadSim()"  id="seconds" style="min-width:50px" placeholder="sec" type="number" min="0" max="59" step="1"/>
+        </div>
       </div>
     </div>
 

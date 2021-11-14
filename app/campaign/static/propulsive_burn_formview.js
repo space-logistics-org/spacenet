@@ -38,12 +38,12 @@ $(document).ready( function() {
 
 
 
-function retreiveElements(){
+function loadSim(){
 	var edge = $('#pickEdge').val();
 	//will raise JSON error if edge is not chosen first but doesn't really matter.
 	node = JSON.parse(edge).origin_id
 
-  time = $('#inputTime').val(),
+  time = getSimTime(),
   priority = $('#pickPriority').val();
 
 
@@ -94,7 +94,7 @@ function retreiveElements(){
 		type = "PropulsiveBurn"
 		delta_v = $('#inputDelta').val();
 		priority = $('#pickPriority').val();
-		mission_time = $('#inputTime').val();
+		mission_time = getTime();
 
 		//used for the Burn property
 		var edge = $('#pickEdge').val();
@@ -145,4 +145,6 @@ function retreiveElements(){
 		}
 		console.log(data);
 		addEvent(data);
+		alert('Event added')
+		location.reload()
 		}

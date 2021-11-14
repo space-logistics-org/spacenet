@@ -15,7 +15,7 @@ $(document).ready( function() {
 
 function loadSim() {
 	let node = $('#pickNode').val(),
-		time = $('#inputTime').val(),
+		time = getSimTime(),
 		priority = $('#pickPriority').val();
 	
 	if (node !== 'def' && time && priority !== 'def') {
@@ -70,7 +70,7 @@ function onComplete(){
 	  to_move = getTreeSelected(),
 	  type = 'MoveElements',
 	  priority = $('#pickPriority').val(),
-	  mission_time = $('#inputTime').val();
+	  mission_time = getTime();
 
 	console.log("selected in tree:", to_move)
 

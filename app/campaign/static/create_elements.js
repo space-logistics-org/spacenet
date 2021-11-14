@@ -5,6 +5,8 @@ function showUnselectedInstructions () {
 	$('#createIn').hide()  
 }
 
+
+
 $(document).ready( function() {
 	populateNodes();
 	showUnselectedInstructions()
@@ -15,7 +17,7 @@ $(document).ready( function() {
 
 function loadSim() {
 	let node = $('#pickNode').val(),
-		time = $('#inputTime').val(),
+		time = getSimTime(),
 		priority = $('#pickPriority').val();
 
 	if (node !== 'def' && time && priority !== 'def') {
@@ -59,7 +61,7 @@ function onComplete(){
   var name = $('#inputName').val(),
   	entry_point_id = $('#createIn').val(),
 	priority = $('#pickPriority').val(),
-	mission_time = $('#inputTime').val(),
+	mission_time = getTime(),
     elements = getSelected();
 
   document.getElementById("createElements").reset();
