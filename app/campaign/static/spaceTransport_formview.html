@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="style.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="multiselect.css" />
   <script src="compile_scenario.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
@@ -28,6 +29,7 @@
     margin-bottom: 18px;
     list-style: none;
   }
+
   </style>
 
 </head>
@@ -47,7 +49,7 @@
         </div>
         <div class="form-group col">
           <label for="pickPriority">Priority</label>
-          <select id="pickPriority" onchange="retreiveElements()" class="form-control" class="text-center">
+          <select id="pickPriority" onchange="loadSim()" class="form-control" class="text-center">
             <option selected value="def">Choose...</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -61,7 +63,7 @@
       <div class="form-row">
         <div class="form-group col">
           <label for="inputOriginNode">Origin Node</label>
-            <select id="inputOriginNode" onchange="retreiveElements()" class="form-control" class="text-center">
+            <select id="inputOriginNode" onchange="loadSim()" class="form-control" class="text-center">
               <option selected value="def">Choose...</option>
             </select>
         </div>
@@ -76,16 +78,30 @@
       <div class="form-row">
         <div class="form-group col">
           <label for="inputTime">Time from Mission Start</label>
-          <input type="number" onchange="retreiveElements()" class="form-control" id="inputTime" placeholder="Time">
+          <div id="time-span">
+            <input onChange="loadSim()" id="hours" style="max-width:70px" type="number" placeholder="hours" min="0" step="1" /> : <input onChange="loadSim()" id="minutes" placeholder="min" style="min-width:50px" type="number" min="0" max="59" step="1" /> : <input onChange="loadSim()"  id="seconds" style="min-width:50px" placeholder="sec" type="number" min="0" max="59" step="1"/>
+          </div>
         </div>
         <div class= "form-group col">
             <label for="elementTransportSelector">Elements to Transport</label>
             <h6 class="unselected-instructions">Choose node, time and priority to load available elements</h6>
             <h6 class="selected-instructions">Select element(s) to move</h6>      
-            <select id="elementTransportSelector" class="form-control" class="text-center" multiple>
-              <option selected value="def">Choose...</option>
-            </select>
+            <form>
+              <div class="multiselect">
+                <div class="selectBox" onclick="showCheckboxes('transportCheck')">
+                  <select class="form-control">
+                    <option>Choose...</option>
+                  </select>
+                  <div class="overSelect"></div>
+                </div>
+                <div class="checkboxes" id="transportCheck">
+                </div>
+              </div>
+            </form>
         </div>
+
+
+
       </div>
 
       <hr>

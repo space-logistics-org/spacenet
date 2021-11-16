@@ -5,52 +5,31 @@ const genericResources = ['Generic COS 1', 'Generic COS 2', 'Generic COS 3']
 $(document).ready( function() {
 
 	populateNodes();
-
-  // $('#addDemand').on('click', function() {
-  //   console.log('add demand button clicked')
-  //   $('#demandModal').modal('show')
-  // })
-	//
-  // $('#submitDemand').on('click', function() {
-  //   type = $('#typeDropPick').val()
-  //   resource = $('#resourceDropPick').val()
-  //   amount = $('#inputAmount').val()
-  //   units = $('#inputUnits').val()
-	//
-	//
-  //   $('#demandModal').modal('hide')
-	//
-  //   $('#consumeResourcesTable').append('<tr><td>' + type + '</td><td>' + resource + '</td><td>' + amount + '</td><td>' + units + '</td></tr>')
-  // })
-
-
-  var table = $("#crewTable").DataTable( {
-    scrollX: true,
-    dom: 't',
-    columnDefs: [
-    {
-      targets:   0,
-      searchable: false,
-      orderable: false,
-      defaultContent: '',
-      className: 'select-checkbox',
-      width: '8%',
-    }],
-    select: {
-        style:    'multi',
-        selector: 'td:first-child'
-    },
-    order: [[ 1, 'asc' ]],
-  });
-
-  // scenario.elements.forEach( function(element) {
-  //   if (element.type === 'HumanAgent') {
-  //     table.row.add([, element.name,'x']).draw()
-  //   }
-  // })
-
-
 })
+
+
+function getEVATime (ID) {
+	function makeTwoDigits (timestring) {
+		if (timestring.length < 2) {
+			timestring = '0' + timestring
+		}
+		return timestring
+    }
+
+    var hrs = $('#' + ID + 'hours').val()
+    var mins = $('#' + ID + 'minutes').val()
+	  var secs = $('#' + ID + 'seconds').val()
+    
+    if (!hrs || !mins || !secs) {
+        return null
+    }
+
+    var hrs = makeTwoDigits(hrs)
+    var mins = makeTwoDigits(mins)
+    var secs = makeTwoDigits(secs)
+
+    return hrs + ':' + mins + ':' + secs + '.00'
+}
 
 
 function setResourceType () {
@@ -100,9 +79,9 @@ function loadSim(){
   time = getSimTime(),
   priority = $('#pickPriority').val();
 
-  if (node !== 'Choose...' && time!=='' && priority !== 'Choose...') {
-    $('#pickLocation').empty();
-		$('#pickCrew').empty();
+	if (node !== 'def' && time && priority !== 'def') {
+    $('#crewECheck').empty();
+    $('#pickLocation').find('option:not(:first)').remove();
 
     $.ajax({
       url: "/campaign/api/simulation/?days_to_run_for=" + time,
@@ -125,7 +104,7 @@ function loadSim(){
 										if (eltObj.type !== 'HumanAgent' && eltObj.type !== 'RoboticAgent') {
 											$('#pickLocation').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
 										} else if(eltObj.type == 'HumanAgent') {
-											$('#pickCrew').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
+                      $('#crewECheck').append('<label for=' + contentUUID + '><input type="checkbox" value=' + contentUUID + '/>' + eltObj.name + " (active time fraction:" + eltObj.active_time_fraction + ")" +  '</label>')
 										}
 									});
 								}
@@ -140,12 +119,7 @@ function loadSim(){
 							}
 						});
 					}
-				}
-        // simResult.result.nodes.forEach( function(simNode) {
-        //   if (simNode.inner.name === node) {
-        //     simNode.contents.forEach( function(elementContained) {
-        //       if (elementContained.inner.type !== 'HumanAgent' && elementContained.inner.type !== 'RoboticAgent') {
-        //         $('#pickLocation').append('<option value="' + elementContained.inner + '">' + elementContained.inner.name + '</option>')
+}
 
 
 
@@ -153,15 +127,15 @@ function onComplete(){
 
     name = $("#inputName").val();
     node = $("#pickNode").val();
-    eva_duration = $("#inputEVADuration").val();
+    eva_duration = getEVATime('EDur');
     crew_location = $("#pickLocation").val();
-    duration = $("#inputDuration").val();
+    duration = getEVATime('Dur');
     eva_per_week = $('#inputNumEVAS').val();
     type = "CrewedExploration"
 		priority = $('#pickPriority').val();
 		mission_time = getTime();
 
-		crew = $("#pickCrew").val();
+		crew = getChecked('#crewECheck');
 
 
     data = {

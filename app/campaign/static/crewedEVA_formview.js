@@ -12,11 +12,11 @@ $(document).ready(function () {
 function loadSim(){
   let node = $('#pickNode').val(),
   time = getSimTime(),
-  priority = $('#inputPriority').val();
+  priority = $('#pickPriority').val();
 
   if (node && time && priority !== 'Choose...') {
-    $('#inputCrewVehicle').empty();
-		$('#pickCrew').empty();
+	$('#inputCrewVehicle').find('option:not(:first)').remove();
+	$('#checkboxes').empty();
 
     $.ajax({
       url: "/campaign/api/simulation/?days_to_run_for=" + time,
@@ -25,36 +25,35 @@ function loadSim(){
       dataType: "json",
       method: "POST",
       success: function (simResult) {
+			var namespace = simResult.result.namespace
 
-								var namespace = simResult.result.namespace
+			var allContents = getAllContents(findNodeContents(node, simResult), simResult)
 
-								var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+			if (allContents.length === 0) {
+				alert("No elements available at given time, please choose a different mission time")
 
-								if (allContents.length === 0) {
-									alert("No elements available at given time, please choose a different mission time")
-
-								} else {
-									allContents.forEach( function (contentUUID) {
-										var eltObj = namespace[contentUUID].inner
-										if (eltObj.type !== 'HumanAgent' && eltObj.type !== 'RoboticAgent') {
-											$('#inputCrewVehicle').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
-										} else if (eltObj.type == 'HumanAgent') {
-											$('#pickCrew').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
-										}
-									});
-								}
-								//Sorts elements in element selector
-								var options = $("#inputCrewVehicle option");
-								options.detach().sort(function(a,b) {
-									var at = $(a).text();
-									var bt = $(b).text();
-									return (at > bt)?1:((at < bt)?-1:0);
-								});
-								options.appendTo("#inputCrewVehicle");
-							}
-						});
+			} else {
+				allContents.forEach( function (contentUUID) {
+					var eltObj = namespace[contentUUID].inner
+					if (eltObj.type !== 'HumanAgent' && eltObj.type !== 'RoboticAgent') {
+						$('#inputCrewVehicle').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
+					} else if (eltObj.type == 'HumanAgent') {
+						$('#crewCheck').append('<label for=' + contentUUID + '><input type="checkbox" value=' + contentUUID + '/>' + eltObj.name + " (active time fraction:" + eltObj.active_time_fraction + ")" +  '</label>')
 					}
-				}
+				});
+			}
+			//Sorts elements in element selector
+			var options = $("#inputCrewVehicle option");
+			options.detach().sort(function(a,b) {
+				var at = $(a).text();
+				var bt = $(b).text();
+				return (at > bt)?1:((at < bt)?-1:0);
+			});
+			options.appendTo("#inputCrewVehicle");
+		}
+	});
+	}
+	}
 
 
 
@@ -65,9 +64,9 @@ function onComplete(){
 	eva_duration = $("#inputEVADuration").val();
 	type = "CrewedEVA"
 	crew_vehicle = $('#inputCrewVehicle').val();
-	crew = $('#pickCrew').val();
+	crew = getChecked('#crewCheck');
 	additional_demandJSON = $('#pickDemands').val();
-	priority = $('#inputPriority').val();
+	priority = $('#pickPriority').val();
 	mission_time = getTime();
 
 	additional_demand = []
