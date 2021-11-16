@@ -109,7 +109,7 @@ function parseMission(mission) {
         } else {
 
             if (event.type === 'CrewedExploration') {
-                evaAddedTime = parseTime(event.eva_duration)
+                evaAddedTime = parseTime(event.duration)
 
 
                 if (getNodeLocation(event.node)) {

@@ -95,7 +95,8 @@ function loadSim(){
 
 								var namespace = simResult.result.namespace
 
-								var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+                var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+                console.log('all contents:', allContents)
 
 								if (allContents.length === 0) {
 									alert("No elements available at given time, please choose a different mission time")
