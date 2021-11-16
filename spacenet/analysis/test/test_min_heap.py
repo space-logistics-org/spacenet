@@ -57,6 +57,7 @@ class HeapModel(RuleBasedStateMachine):
         if not self.model:
             assert 0 == len(self.heap)
             assert not self.heap
+            assert self.heap.pop() is None
             return
         item = heappop(self.model)
         assert item == self.heap.pop()
@@ -80,7 +81,8 @@ class HeapModel(RuleBasedStateMachine):
 
     @invariant()
     def _iter_contains_all(self):
-        assert set(self.model) == set(self.heap)
+        assert set(self.model) == set(self.heap) \
+               and len(list(self.model)) == len(list(self.heap))
 
 
 TestMinHeapStateful = HeapModel.TestCase
