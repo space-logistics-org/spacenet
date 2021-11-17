@@ -1,5 +1,11 @@
+function showUnselectedInstructions () {
+	$('.selected-instructions').hide()
+  $('.unselected-instructions').show()
+  $('.selectBox').hide()  
+}
+
 $(document).ready( function() {
-	console.log(compileScenario())
+	showUnselectedInstructions()
 
 
 	Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
@@ -14,13 +20,18 @@ $(document).ready( function() {
 
 
 
-function retreiveElements(){
+function loadSim(){
   let node = $('#inputOriginNode').val(),
-  time = $('#inputTime').val(),
+  time = getSimTime(),
   priority = $('#pickPriority').val();
 
   if (node !== 'def' && time && priority !== 'def') {
-    $('#ElementSel').empty();
+	$('#flightTransportCheck').empty();
+	$('.selected-instructions').show()
+	$('.unselected-instructions').hide()
+	$('.selectBox').show()  
+
+
 
     $.ajax({
       url: "/campaign/api/simulation/?days_to_run_for=" + time,
@@ -30,46 +41,42 @@ function retreiveElements(){
       method: "POST",
       success: function (simResult) {
 
-								var namespace = simResult.result.namespace
+		var namespace = simResult.result.namespace
 
-								var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+		var allContents = getAllContents(findNodeContents(node, simResult), simResult)
 
-								if (allContents.length === 0) {
-									alert("No elements available at given time, please choose a different mission time")
+		if (allContents.length === 0) {
+			alert("No elements available at given time, please choose a different mission time")
 
-								} else {
-									allContents.forEach( function (contentUUID) {
-										var eltObj = namespace[contentUUID].inner
-										if (eltObj.type !== 'HumanAgent' && eltObj.type !== 'RoboticAgent') {
-											$('#ElementSel').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
-										}
-									});
-								}
-								//Sorts elements in element selector
-								var options = $("#ElementSel option");
-								options.detach().sort(function(a,b) {
-									var at = $(a).text();
-									var bt = $(b).text();
-									return (at > bt)?1:((at < bt)?-1:0);
-								});
-								options.appendTo("#ElementSel");
-							}
-						});
-					}
-				}
+		} else {
+			allContents.forEach( function (contentUUID) {
+				var eltObj = namespace[contentUUID].inner
+				if (eltObj.type !== 'HumanAgent') {
+					$('#flightTransportCheck').append('<label for=' + contentUUID + '><input type="checkbox" value=' + contentUUID + '/>' + eltObj.name + '</label>')
+				  } else {
+					$('#flightTransportCheck').append('<label for=' + contentUUID + '><input type="checkbox" value=' + contentUUID + '/>' + eltObj.name + " (active time fraction:" + eltObj.active_time_fraction + ")" +  '</label>')
+				  }
+			});
+		}
+	}
+});
+} else {
+	showUnselectedInstructions()
+}
+}
 
 
 
   function onComplete(){
 
 		name = $("#inputName").val();
-		elements_id_list = $("#ElementSel").val();
+		elements_id_list = getChecked('#flightTransportCheck');
 		type = "FlightTransport"
 		//optional=deltav
 		origin_node_id = $("#inputOriginNode").val();
 		destination_node_id = $("#inputDestinationNode").val();
 		priority = $('#pickPriority').val();
-		mission_time = $('#inputTime').val();
+		mission_time = getTime();
 
 		Object.entries(scenario.network.edges).forEach( function([uuid, edge]) {
 			if (origin_node_id == edge.origin_id && destination_node_id == edge.destination_id){
@@ -93,6 +100,8 @@ function retreiveElements(){
 		}
 		console.log(data);
 		addEvent(data);
+		alert('Event added')
+		location.reload()
 
 
   }

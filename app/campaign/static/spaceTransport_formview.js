@@ -1,14 +1,18 @@
+function showUnselectedInstructions () {
+	$('.selected-instructions').hide()
+  $('.unselected-instructions').show()
+  $('.selectBox').hide()  
+}
+
 $(document).ready(function () {
+  showUnselectedInstructions();
 
 
 	//didn't do populate node function since ids are different
   Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
 		$('#inputOriginNode').append('<option value="' + uuid + '">' + node.name + '</option>')
-		}
-	);
-  Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-		$('#inputDestinationNode').append('<option value="' + uuid + '">' + node.name + '</option>')
-		}
+    $('#inputDestinationNode').append('<option value="' + uuid + '">' + node.name + '</option>')
+    }
 	);
 
 	//Add/Burn/Delete rows from tables
@@ -66,15 +70,19 @@ $(document).ready(function () {
 
 
 // Populate Element selector with elements based on simulation filter.
-function retreiveElements(){
+function loadSim(){
 
 	let node = $('#inputOriginNode').val(),
-  time = $('#inputTime').val(),
-  priority = $('#inputPriority').val();
+  time = getSimTime(),
+  priority = $('#pickPriority').val();
 
   	if (node !== 'def' && time && priority !== 'def'){
-    $('#elementSeqSel').empty();
-		$('#elementTransportSelector').empty();
+    $('#elementSeqSel').find('option:not(:first)').remove();
+    $('.selectBox').show()
+    $('#transportCheck').empty();
+    $('.selected-instructions').show()
+		$('.unselected-instructions').hide()
+
 
 
     $.ajax({
@@ -87,7 +95,8 @@ function retreiveElements(){
 
 								var namespace = simResult.result.namespace
 
-								var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+                var allContents = getAllContents(findNodeContents(node, simResult), simResult)
+                console.log('all contents:', allContents)
 
 								if (allContents.length === 0) {
 									alert("No elements available at given time, please choose a different mission time")
@@ -96,31 +105,23 @@ function retreiveElements(){
 									allContents.forEach( function (contentUUID) {
 										var eltObj = namespace[contentUUID].inner
                     if (eltObj.type !== 'HumanAgent') {
-                      $('#elementTransportSelector').append('<option value=' + contentUUID + '>' + eltObj.name + '</option>')
+                      $('#transportCheck').append('<label for=' + contentUUID + '><input type="checkbox" value=' + contentUUID + '/>' + eltObj.name + '</label>')
                     } else {
-                      $('#elementTransportSelector').append('<option value=' + contentUUID + '>' + eltObj.name+"(active time fraction:" + eltObj.active_time_fraction+ ")" + '</option>')
+                      $('#transportCheck').append('<label for=' + contentUUID + '><input type="checkbox" value=' + contentUUID + '/>' + eltObj.name + " (active time fraction:" + eltObj.active_time_fraction + ")" +  '</label>')
                     }
 
+                    if (eltObj.type !== 'HumanAgent' && eltObj.type !== 'RoboticAgent') {
+                        $('#elementSeqSel').append('<option value="' + contentUUID + '">' + eltObj.name + '</option>');
+                      }
 
 									});
 								}
-								//Sorts elements in element selector
-								var options = $("#elementTransportSelector option");
-								options.detach().sort(function(a,b) {
-									var at = $(a).text();
-									var bt = $(b).text();
-									return (at > bt)?1:((at < bt)?-1:0);
-								});
-								options.appendTo("#elementTransportSelector");
-
-								$("#elementTransportSelector > option").each(function() {
-									if (namespace[this.value].inner.type !== 'HumanAgent' && namespace[this.value].inner.type !== 'RoboticAgent') {
-										$('#elementSeqSel').append('<option value="' + this.value + '">' + this.text + '</option>');
-									}
-								});
 							}
 						})
-					}
+          }
+    else {
+      showUnselectedInstructions()
+    }
 				}
 
 
@@ -128,14 +129,15 @@ function retreiveElements(){
 
 function onComplete() {
 
+
       name = $("#inputName").val();
-      elements_id_list = $("#elementTransportSelector").val();
+      elements_id_list = getChecked('#transportCheck');
       type = "SpaceTransport"
       //optional=deltav
       origin_node_id = $("#inputOriginNode").val();
       destination_node_id = $("#inputDestinationNode").val();
   		priority = $('#pickPriority').val();
-  		mission_time = $('#inputTime').val();
+  		mission_time = getTime();
 
       edge_name= $("#inputOriginNode option:selected").text() + "-" + $("#inputDestinationNode option:selected").text()
 
@@ -180,7 +182,7 @@ function onComplete() {
           burnStageSequence.push(burnStageItem)
 
         }
-        burnStageSequenceReformat['burnStageSequence'] = burnStageSequence
+        burnStageSequenceReformat['burn_stage_sequence'] = burnStageSequence
         burnStageProfile.push(burnStageSequenceReformat)
       }
 
@@ -199,6 +201,8 @@ function onComplete() {
         exec_time: exec_time,
         burnStageProfile: burnStageProfile
       }
-      console.log(data);
-  		addEvent(data);
+      addEvent(data);
+      alert('Event added')
+      location.reload()
+      console.log(compileScenario())
 }

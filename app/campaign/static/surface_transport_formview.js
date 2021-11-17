@@ -15,10 +15,10 @@ $(document).ready(function () {
 
 
 //Populate Element selector with elements based on simulation filter.
-function retreiveElements(){
+function loadSim(){
 
 	let node = $('#inputOriginNode').val(),
-  time = $('#inputTime').val(),
+  time = getSimTime(),
   priority = $('#inputPriority').val();
 
 
@@ -71,7 +71,7 @@ function onComplete() {
   origin_node_id = $("#inputOriginNode").val();
   destination_node_id = $("#inputDestinationNode").val();
   priority = $('#pickPriority').val();
-  mission_time = $('#inputTime').val();
+  mission_time = getTime();
 
   edge_name= $("#inputOriginNode option:selected").text() + "-" + $("#inputDestinationNode option:selected").text()
 
@@ -97,4 +97,6 @@ function onComplete() {
   }
   console.log(data);
   addEvent(data);
+  alert('Event added')
+  location.reload()
   }

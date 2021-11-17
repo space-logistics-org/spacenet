@@ -2,6 +2,7 @@ function showUnselectedInstructions () {
 	$('.selected-instructions').hide()
 	$('.unselected-instructions').show()
 	$('#moveTo').hide()  
+	$('.selectBox').hide()  
 	$('#elementsTree').jstree("destroy")
 }
 
@@ -15,14 +16,17 @@ $(document).ready( function() {
 
 function loadSim() {
 	let node = $('#pickNode').val(),
-		time = $('#inputTime').val(),
+		time = getSimTime(),
 		priority = $('#pickPriority').val();
+
+	console.log(node, time, priority)
 	
 	if (node !== 'def' && time && priority !== 'def') {
 		$('.selected-instructions').show()
 		$('.unselected-instructions').hide()
 		$('#moveTo').show()
-		$('#elementsTree').jstree("destroy")
+		$('.selectBox').show()
+		$('#elementsCheck').empty();
 		$('#moveTo').find('option:not(:first)').remove();
 
 		  
@@ -50,6 +54,7 @@ function loadSim() {
 						}
 					})
 					createTree(simResult, node)
+					nestedDropdown(simResult, node, '#elementsCheck')
 
 				}
 			}
@@ -67,12 +72,10 @@ function onComplete(){
   var name = $('#inputName').val(),
   	  origin_id = $('#pickNode').val(),
       destination_id = $('#moveTo').val(),
-	  to_move = getTreeSelected(),
+	  to_move = getChecked('#elementsCheck'),
 	  type = 'MoveElements',
 	  priority = $('#pickPriority').val(),
-	  mission_time = $('#inputTime').val();
-
-	console.log("selected in tree:", to_move)
+	  mission_time = getTime();
 
 
   document.getElementById("moveElements").reset();

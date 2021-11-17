@@ -23,6 +23,7 @@ const POINT_SIZES = {
 var DateTime = luxon.DateTime;
 
 
+<<<<<<< HEAD
 const scenario =
 {
   "name": "Mars Exploration",
@@ -2329,6 +2330,10 @@ const scenario =
   "volumeConstrained": false,
   "environmentConstrained": false
 }
+=======
+const scenario = compileScenario();
+console.log("scenario:", scenario)
+>>>>>>> 94c4feb92778dac9aad3e44ba018840b9158a45c
 
 const oneNodeEvents = ['MakeElements', 'MoveElements', 'RemoveElements', 'ReconfigureElements', 'ReconfigureGroup', 'ConsumeResources', 'TransferResources']
 
@@ -2340,7 +2345,7 @@ Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
      ind += 1
  });
 
-console.log('node locations:', nodeLocations)
+// console.log('node locations:', nodeLocations)
 // console.log(scenario.network.nodes)
 
 function getNodeLocation (uuid) {
@@ -2413,7 +2418,7 @@ function parseMission(mission) {
         } else {
 
             if (event.type === 'CrewedExploration') {
-                evaAddedTime = parseTime(event.eva_duration)
+                evaAddedTime = parseTime(event.duration)
 
 
                 if (getNodeLocation(event.node)) {
@@ -2470,6 +2475,8 @@ const data = {
     datasets: all_data
 };
 
+console.log("data:", data)
+
 
 const config = {
     type: 'line',
@@ -2488,7 +2495,7 @@ const config = {
                 callbacks: {
                     label: function(context) {
                         var label = context.dataset.label || '';
-						var nodeUUID = nodeLocations[context.parsed.y]
+                        var nodeUUID = nodeLocations[context.parsed.y]
                         var nodeName = scenario.network.nodes[nodeUUID].name
 
                         if (label) {
@@ -2520,9 +2527,9 @@ const config = {
                 display: true,
                 text: 'Location'
                 },
+                min: 1,
                 ticks: {
                     stepSize: 1,
-                    min: 0,
                     callback: function(value, index, values) {
                         var nodeUUID = nodeLocations[value]
                         var nodeName = scenario.network.nodes[nodeUUID].name
