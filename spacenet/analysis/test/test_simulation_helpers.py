@@ -32,7 +32,8 @@ def _all_element_contents(
 
 def _recursive_total_mass(element: SimElement) -> float:
     all_contents = _all_element_contents(element)
-    return sum(e.inner.mass for e in all_contents)
+    # TODO: fix this test?
+    return sum(e.inner.mass for e in all_contents) + element.fuel_mass
 
 
 all_elements = st.one_of(*(st.builds(ty) for ty in get_args(AllElements)))
