@@ -23,7 +23,6 @@ const POINT_SIZES = {
 var DateTime = luxon.DateTime;
 
 
-<<<<<<< HEAD
 const scenario =
 {
   "name": "Mars Exploration",
@@ -2330,20 +2329,19 @@ const scenario =
   "volumeConstrained": false,
   "environmentConstrained": false
 }
-=======
 const scenario = compileScenario();
-console.log("scenario:", scenario)
->>>>>>> 94c4feb92778dac9aad3e44ba018840b9158a45c
+console.log("scenario:", scenario);
+const scenario = compileScenario();
 
 const oneNodeEvents = ['MakeElements', 'MoveElements', 'RemoveElements', 'ReconfigureElements', 'ReconfigureGroup', 'ConsumeResources', 'TransferResources']
 
 var nodeLocations = getElt('NodeIDstoUUIDs');
-let ind = 0;
-Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
-     nodeLocations[uuid] = ind
-     nodeLocations[ind] = uuid
-     ind += 1
- });
+// let ind = 0;
+// Object.entries(scenario.network.nodes).forEach( function([uuid, node]) {
+//     nodeLocations[uuid] = ind
+//     nodeLocations[ind] = uuid
+//     ind += 1
+// });
 
 // console.log('node locations:', nodeLocations)
 // console.log(scenario.network.nodes)
@@ -2408,7 +2406,7 @@ function parseMission(mission) {
             } else {
                 newLocation = lastLocation
             }
-
+            
 
             var info = [{
                 x: newDate,
@@ -2427,7 +2425,7 @@ function parseMission(mission) {
                 } else {
                     newLocation = lastLocation
                 }
-
+    
 
                 var info = [{
                     x: newDate,
