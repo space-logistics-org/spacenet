@@ -71,7 +71,7 @@ class SimElement(ContainsElements):
             found relating to invariant violations in the containment relationship
         """
         all_contained, errors = self.all_contained()
-        return sum(contained.mass for contained in all_contained), errors
+        return sum(contained.mass for contained in all_contained) + self.fuel_mass, errors
 
     @property
     def current_mass(self) -> float:

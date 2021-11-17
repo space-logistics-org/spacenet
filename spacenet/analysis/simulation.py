@@ -24,7 +24,7 @@ from spacenet.schemas import (
     Event,
     PropulsiveBurn,
     PropulsiveVehicle,
-    Scenario,
+    BurnStage,
     MoveElements,
     MakeElements,
     RemoveElements,
@@ -268,7 +268,6 @@ class BurnEvent(SimEvent):
                 raise MismatchedIDType(f"ID {id_} is not of an element")
             elif not sim.id_is_of_propulsive_vehicle(id_):
                 raise MismatchedIDType(f"ID {id_} is not of a PropulsiveVehicle")
-        assert set(event.burn_stage_sequence).issubset(event.elements)
 
     # noinspection PyMissingOrEmptyDocstring
     def process_with_ctx(self, sim: "Simulation") -> None:
@@ -287,7 +286,7 @@ class BurnEvent(SimEvent):
             m_0 += mass
         for item in event.burn_stage_sequence:
             element: SimElement = sim.namespace[item.element_id]
-            if item.burnStage == "Burn":
+            if item.burnStage == BurnStage.Burn:
                 assert sim.id_is_of_propulsive_vehicle(item.element_id)
                 if delta_v == 0:
                     continue
@@ -307,8 +306,10 @@ class BurnEvent(SimEvent):
                     m_0 -= element.fuel_mass
                     delta_v -= stage_delta_v
             else:
-                assert item.burnStage == "Stage"
-                m_0 -= element.total_mass()
+                assert item.burnStage == BurnStage.Stage, item.burnStage
+                element_total_mass, errors = element.total_mass()
+                sim.add_errors(errors)
+                m_0 -= element_total_mass
         if delta_v > 0:
             sim.add_error(SimError.insufficient_fuel(self.event, self.timestamp))
 
