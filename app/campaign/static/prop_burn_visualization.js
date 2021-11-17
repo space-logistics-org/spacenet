@@ -10,7 +10,7 @@ function showUnselectedInstructions () {
 
 function loadSim() {
 	let node = $('#pickNode').val(),
-		time = $('#inputTime').val(),
+		time = getSimTime(),
 		priority = $('#pickPriority').val();
 	
 	if (node !== 'def' && time && priority !== 'def') {
