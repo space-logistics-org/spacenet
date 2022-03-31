@@ -3,6 +3,7 @@ This module defines schemas for network nodes.
 """
 from enum import Enum
 from typing import Union
+from uuid import uuid4, UUID
 
 from pydantic import Field, confloat, conint
 from typing_extensions import Literal
@@ -10,7 +11,7 @@ from typing_extensions import Literal
 from .types import SafeNonNegFloat
 from .mixins import ImmutableBaseModel
 
-__all__ = ["Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode", "AllNodes"]
+__all__ = ["NodeUUID", "Body", "NodeType", "LagrangeNode", "OrbitalNode", "SurfaceNode", "AllNodes"]
 
 
 class Body(str, Enum):
@@ -33,8 +34,14 @@ class NodeType(str, Enum):
     Orbital = "OrbitalNode"
     Lagrange = "LagrangeNode"
 
+class NodeUUID(ImmutableBaseModel):
+    """
+    A base class which defines a node by its UUID only.
+    """
+    id: UUID = Field(default_factory=uuid4, description="unique identifier for node")
 
-class Node(ImmutableBaseModel):
+
+class Node(NodeUUID):
     """
     Base class for all nodes.
     """

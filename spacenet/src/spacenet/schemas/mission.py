@@ -11,7 +11,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from .mission_demand_model import MissionDemand
+from .mission_demand_model import MissionDemandUUID
+from .node import NodeUUID
 from .events import (
     FlightTransport,
     SpaceTransport,
@@ -30,7 +31,7 @@ AllEvents = Union[
     RemoveElements,
     MakeElements,
     CrewedExploration,
-]  # TODO: AllEvents should be expanded to include all the types of Event
+]
 
 
 __all__ = ["Mission"]
@@ -48,16 +49,16 @@ class Mission(BaseModel):
     events: List[AllEvents] = Field(
         ..., title="Event ID List", description="list of event IDs"
     )
-    demand_models: List[MissionDemand] = Field(
+    demand_models: List[MissionDemandUUID] = Field(
         ..., title="Demand Models List", description="list of mission demand models"
     )
-    origin: UUID = Field(..., title="Origin ID", description="ID of origin node")
-    destination: UUID = Field(
+    origin: NodeUUID = Field(..., title="Origin ID", description="ID of origin node")
+    destination: NodeUUID = Field(
         ..., title="Destination ID", description="ID of destination node"
     )
-    return_origin: UUID = Field(
+    return_origin: NodeUUID = Field(
         ..., title="Return Origin ID", description="ID of return origin node"
     )
-    return_destination: UUID = Field(
+    return_destination: NodeUUID = Field(
         ..., title="Return Destination ID", description="ID of return destination node"
     )

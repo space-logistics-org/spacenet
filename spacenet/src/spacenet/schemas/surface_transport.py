@@ -8,7 +8,9 @@ from uuid import UUID
 
 from pydantic import Field
 
-from spacenet.schemas import ElementTransportEvent
+from .bases import ElementTransportEvent
+from .inst_element import InstElementUUID
+
 
 
 __all__ = ["SurfaceTransport"]
@@ -21,9 +23,9 @@ class SurfaceTransport(ElementTransportEvent):
 
     name: str = Field(..., title="Name", description="The surface transport name")
 
-    elements_id_list: List[UUID] = Field(
+    elements: List[InstElementUUID] = Field(
         ...,
-        title="List of Element IDs",
-        description="The list of IDs of elements being transported",
+        title="List of Element UUIDs",
+        description="The list of IDs of instantiated elements being transported",
     )
     type: Literal["SurfaceTransport"]

@@ -9,8 +9,9 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from . import ElementTransportEvent
+from .bases import ElementTransportEvent
 from .propulsive_burn import BurnStageItem
+from .inst_element import InstElementUUID
 
 
 __all__ = ["SpaceTransport"]
@@ -33,10 +34,10 @@ class SpaceTransport(ElementTransportEvent):
     Schema for Space Transport
     """
 
-    elements_id_list: List[UUID] = Field(
+    elements: List[InstElementUUID] = Field(
         ...,
         title="Element ID List",
-        description="A list of the IDs of elements that will be transported",
+        description="A list of the UUIDs of the instantiated elements that will be transported",
     )
 
     burnStageProfile: List[BurnStageSequence] = Field(

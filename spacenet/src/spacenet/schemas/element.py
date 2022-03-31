@@ -3,7 +3,8 @@ This module defines the schemas for Elements, and exports them explicitly.
 """
 from abc import ABC
 from enum import Enum
-from typing import Optional, Union
+from typing import List, Optional, Union
+from uuid import uuid4, UUID
 
 from pydantic import Extra, Field, confloat
 from typing_extensions import Literal
@@ -11,8 +12,11 @@ from typing_extensions import Literal
 from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
+from .state import State
 
 __all__ = [
+    "ElementKind",
+    "ElementUUID",
     "Element",
     "ResourceContainer",
     "ElementCarrier",
@@ -22,6 +26,7 @@ __all__ = [
     "SurfaceVehicle",
     "ElementKind",
     "AllElements",
+    "AllElements2"
 ]
 
 
@@ -38,8 +43,14 @@ class ElementKind(str, Enum):
     PropulsiveVehicle = "PropulsiveVehicle"
     SurfaceVehicle = "SurfaceVehicle"
 
+class ElementUUID(ImmutableBaseModel):
+    """
+    A base class for elements defining only the UUID.
+    """
+    id: UUID = Field(default_factory=uuid4, description="unique identifier for element")
 
-class Element(ImmutableBaseModel):
+
+class Element(ElementUUID):
     """
     A generic element.
     """
@@ -64,6 +75,8 @@ class Element(ImmutableBaseModel):
     )
     mass: SafeNonNegFloat = Field(..., title="Mass", description="mass in kg")
     volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
+    states: List[State] = Field(..., tile="States", description="list of states the element may possess")
+    current_state: Optional[UUID] = Field(None, title="Current State", description="the current state of the element")
 
     class Config:
         """
@@ -185,6 +198,16 @@ class SurfaceVehicle(Vehicle):
 
 
 AllElements = Union[
+    Element,
+    ResourceContainer,
+    ElementCarrier,
+    HumanAgent,
+    RoboticAgent,
+    PropulsiveVehicle,
+    SurfaceVehicle,
+]
+
+AllElements2 = [
     Element,
     ResourceContainer,
     ElementCarrier,

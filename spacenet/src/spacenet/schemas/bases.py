@@ -4,6 +4,8 @@ This module defines base classes for events.
 from datetime import timedelta
 from uuid import UUID
 
+from .node import NodeUUID
+from .edge import EdgeUUID
 from pydantic import BaseModel, Field, validator
 
 __all__ = ["Event", "ElementTransportEvent", "PrimitiveEvent"]
@@ -34,19 +36,19 @@ class ElementTransportEvent(Event):
     A schema representing a basic event transporting elements from one node to another.
     """
 
-    origin_node_id: UUID = Field(
+    origin_node_id: NodeUUID = Field(
         ...,
         title="Origin Node ID",
         description="The ID of the transport event's origin node",
     )
 
-    destination_node_id: UUID = Field(
+    destination_node_id: NodeUUID = Field(
         ...,
         title="Destination Node ID",
         description="The ID of the transport event's destination node",
     )
 
-    edge_id: UUID = Field(
+    edge_id: EdgeUUID = Field(
         ..., description="The ID of the edge between origin and destination nodes"
     )
 

@@ -2,27 +2,41 @@
 This module defines schemas for specifying mission-wide demand models.
 """
 from math import inf
-from uuid import UUID
+from uuid import uuid4, UUID
+from typing import Union
 
 from pydantic import BaseModel, Field
 
-from .resource import Resource, ResourceType
+from .resource import ResourceUUID, ResourceType
+from .mixins import ImmutableBaseModel
 
-class MissionDemand(BaseModel):
+__all__ = [
+    "MissionDemandUUID",
+    "MissionDemand",
+    "TimedModel",
+    "RatedModel",
+    "ConsumablesModel",
+]
+
+class MissionDemandUUID(ImmutableBaseModel):
+    """
+    A base class representing a Mission Demand Model by only its UUID.
+    """
+    id: UUID = Field(default_factory=uuid4, description="unique identifier for edge")
+
+
+class MissionDemand(MissionDemandUUID):
     """
     Mission Demand Model base class.
     """
-
     resourceType: ResourceType = Field(
         ...,
         title="Resource Type",
         description="Type of resource that is being demanded.",
     )
-    resource: UUID = Field(
+    resource: ResourceUUID = Field(
         ..., title="Resource", description="Resource being demanded."
     )
-    units: str = Field(..., title="Units", description="Units of resource")
-
 
 class TimedModel(MissionDemand):
     """
@@ -56,7 +70,7 @@ class RatedModel(MissionDemand):
     )
 
 
-class ConsumablesModel(BaseModel):
+class ConsumablesModel(MissionDemandUUID):
     """
     Consumables Model
     A demand for resources based on NASA Space Logistics Consumables Model
@@ -180,3 +194,10 @@ class ConsumablesModel(BaseModel):
         title="Transit Demands",
         description="A boolean expressing whether or not to incldue transit demaands",
     )
+
+AllMissionDemandModels = Union[
+    MissionDemand,
+    TimedModel,
+    RatedModel,
+    ConsumablesModel
+]

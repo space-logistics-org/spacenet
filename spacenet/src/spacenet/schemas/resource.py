@@ -2,7 +2,8 @@
 This module defines schemas for specifying resources.
 """
 from enum import Enum
-from typing import Optional
+from typing import List, Optional, Union
+from uuid import uuid4, UUID
 
 from pydantic import (
     BaseModel,
@@ -10,10 +11,17 @@ from pydantic import (
 )
 from typing_extensions import Literal
 
+from .mixins import ImmutableBaseModel
 from .types import SafeNonNegFloat, SafePosFloat
 from .constants import ClassOfSupply
 
-__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource"]
+__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUUID", "Resource"]
+
+class ResourceUUID(ImmutableBaseModel):
+    """
+    A base class which defines a resource by its UUID only.
+    """
+    id: UUID = Field(default_factory=uuid4, description="unique identifier for resource")
 
 
 class ResourceType(str, Enum):
@@ -25,7 +33,7 @@ class ResourceType(str, Enum):
     Continuous = "Continuous"
 
 
-class Resource(BaseModel):
+class Resource(ResourceUUID):
     """
     A resource with a given class of supply as a general category, as well as specified
     physical properties such as mass and volume.
@@ -63,3 +71,5 @@ class ContinuousResource(Resource):
     type: Literal[ResourceType.Continuous] = Field(
         ..., title="Type", description="Resource type"
     )
+
+AllResources = Union[DiscreteResource, ContinuousResource]

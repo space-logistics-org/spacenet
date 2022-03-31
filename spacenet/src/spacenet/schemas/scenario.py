@@ -8,14 +8,16 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from spacenet.schemas.edge import AllUUIDEdges
+from spacenet.schemas.edge import AllEdges
 from spacenet.schemas.element import AllElements
 from spacenet.schemas.element_events import MakeElements, MoveElements
 from spacenet.schemas.mission import Mission
 from spacenet.schemas.node import AllNodes
-from spacenet.schemas.resource import ContinuousResource, DiscreteResource
+from spacenet.schemas.resource import AllResources
+from .inst_element import AllInstElements
+from .mission_demand_model import AllMissionDemandModels
 
-__all__ = ["ScenarioType", "Scenario", "Manifest"]
+__all__ = ["ScenarioType", "Scenario", "Manifest", "Configuration"]
 
 
 class Manifest(BaseModel):
@@ -34,9 +36,15 @@ class Network(BaseModel):
     used to refer to them.
     """
 
-    nodes: Dict[UUID, AllNodes] = Field(..., title="Nodes")
-    edges: Dict[UUID, AllUUIDEdges] = Field(..., title="Edges")
+    nodes: List[AllNodes] = Field(..., title="Nodes")
+    edges: List[AllEdges] = Field(..., title="Edges")
 
+class Configuration(BaseModel):
+    """
+    The specific configuration of the scenario specifiying whether volume and environment are constrained.
+    """
+    volumeConstrained: bool = Field(False, title="Volume Constrained")
+    environmentConstrained: bool = Field(False, title="Environment Constrained")
 
 class ScenarioType(str, Enum):
     """
@@ -45,10 +53,10 @@ class ScenarioType(str, Enum):
 
     iss = "ISS"
     lunar = "Lunar"
-    moon_only = "Moon-only"
+    moon_only = "MoonOnly"
     martian = "Martian"
-    mars_only = "Mars-only"
-    solar_system = "Solar System"
+    mars_only = "MarsOnly"
+    solar_system = "SolarSystem"
 
 
 class Scenario(BaseModel):
@@ -60,14 +68,14 @@ class Scenario(BaseModel):
     description: str = Field(None, title="Description", description="Short description")
     startDate: datetime = Field(..., title="Start Date")
     scenarioType: ScenarioType = Field(..., title="Type of Scenario")
-    # TODO: case convention?
     network: Network = Field(..., title="Network")
     missionList: List[Mission] = Field(..., title="Mission List")
-    elementList: Dict[UUID, AllElements] = Field(..., title="Element List")
-    resourceList: Dict[UUID, Union[ContinuousResource, DiscreteResource]] = Field(
-        default_factory=dict
+    elementTemplates: List[AllElements] = Field(..., title="Element List")
+    instantiatedElements: List[AllInstElements]
+    missionDemandModels: List[AllMissionDemandModels]
+    resourceList: List[AllResources] = Field(
+        default_factory=list
     )
     manifest: Manifest = Field(..., title="Manifest")
+    configuration: Configuration = Field(..., title="Configuration")
 
-    volumeConstrained: bool = Field(False, title="Volume Constrained")
-    environmentConstrained: bool = Field(False, title="Environment Constrained")

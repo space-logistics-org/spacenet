@@ -2,11 +2,18 @@
 This module defines a schema for specifying how various element types require continual
 resources.
 """
+from typing import List, Optional, Union
 from enum import Enum
+from uuid import uuid4, UUID
 
 from pydantic import BaseModel, Field
+from typing_extensions import Literal
+from .mixins import ImmutableBaseModel
+
+from .resource import ResourceUUID, ResourceType
 
 __all__ = [
+    "DemandModelUUID",
     "DemandModel",
     "CrewConsumablesDemandModel",
     "TimedImpulseDemandModel",
@@ -15,26 +22,42 @@ __all__ = [
 ]
 
 
-class DemandModelType(str, Enum):
-    crew_consumables = "Crew Consumables Demand Model"
-    timed_impulse = "Timed Impulse Demand Model"
-    rated = "Rated Demand Model"
-    sparing_by_mass = "Sparing by Mass Demand Model"
+class DemandModelKind(str, Enum):
+    """
+    An enumeration of all the types of Demand Model.
+    """
+    CrewConsumables = "CrewConsumables"
+    TimedImpulse = "TimedImpulse"
+    Rated = "Rated"
+    SparingByMass = "SparingByMass"
 
-    class Config:
-        title: "Demand Model Type"
+class ElementDemand(BaseModel):
+    """
+    A representation of one specific demand, particularly including the type, UUID and amount of resource demanded.
+    """
+    resourceType: ResourceType = Field(
+        ...,
+        title="Resource Type",
+        description="Type of resource that is being demanded.",
+    )
+    resource: ResourceUUID = Field(..., title="Resource ID", description="UUID of resource being consumed")
+    amount: float = Field(..., title="Amount", description="amount of the resource being consumed, in units defined by given resource")
 
+class DemandModelUUID(ImmutableBaseModel):
+    """
+    A representation of a demand model containing only its UUID and serving as a base class for all other demand models.
+    """
+    id: UUID = Field(default_factory=uuid4, description="unique identifier for demand model")
 
-class DemandModel(BaseModel):
+class DemandModel(DemandModelUUID):
+    """
+    Element Demand Model base class.
+    """
     name: str = Field(..., title="Name")
 
 
 class CrewConsumablesDemandModel(DemandModel):
-    type: DemandModelType = Field(
-        default=DemandModelType.crew_consumables,
-        title="Type",
-        description="Demand model type",
-    )
+    type: Literal[DemandModelKind.CrewConsumables] = Field(description="the demand model's type")
 
     reservesDuration: float = Field(..., title="Reserves Duration")
     waterRecoveryRate: float = Field(..., title="Water Recovery Rate")
@@ -66,13 +89,25 @@ class CrewConsumablesDemandModel(DemandModel):
 
 class TimedImpulseDemandModel(DemandModel):
     flag: bool = Field(default=False, title="flag")
+    type: Literal[DemandModelKind.TimedImpulse] = Field(description="the demand model's type")
 
 
 class RatedDemandModel(DemandModel):
-    pass
+    type: Literal[DemandModelKind.Rated] = Field(description="the demand model's type")
+    demands: List[ElementDemand] = Field(..., description="a list of the demands of the given demand model")
 
 
 class SparingByMassDemandModel(DemandModel):
+    type: Literal[DemandModelKind.SparingByMass] = Field(description="the demand model's type")
     unpressurizedSparesRates: float = Field(..., title="Unpressurized Spares Rates")
     pressurizedSparesRates: float = Field(..., title="Pressurized Spares Rates")
     partsListEnabled: bool = Field(..., title="Parts List Enabled")
+
+
+AllElementDemandModels = Union[
+    DemandModel,
+    CrewConsumablesDemandModel,
+    TimedImpulseDemandModel,
+    RatedDemandModel,
+    SparingByMassDemandModel
+]
