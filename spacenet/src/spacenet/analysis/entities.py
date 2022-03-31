@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field, NonNegativeFloat, validator
 
 from spacenet.analysis.indirect_entities import IndirectEntity
 from spacenet.analysis.errors import SimError
-from spacenet.schemas import AllElements, AllNodes, AllUUIDEdges, PropulsiveVehicle
+from spacenet.schemas import AllElements, AllNodes, AllEdges, PropulsiveVehicle
 
 __all__ = ["SimElement", "SimNode", "SimEdge", "SimResult", "into_indirect_entity"]
 
@@ -107,7 +107,7 @@ class SimEdge(ContainsElements):
     An edge under simulation; wraps Edge schema.
     """
 
-    inner: AllUUIDEdges
+    inner: AllEdges
 
     def __hash__(self):
         # Analogous safety argument as to SimNode

@@ -11,7 +11,7 @@ from spacenet.schemas import (
     Scenario,
     SpaceTransport,
     SurfaceTransport,
-    UUIDSpaceEdge,
+    SpaceEdge,
 )
 from spacenet.schemas.mission import Mission
 from spacenet.schemas.scenario import Network
@@ -75,7 +75,7 @@ class CheckedScenario(Scenario):
                 if isinstance(event, SpaceTransport) and event.delta_v is None:
                     assert event.edge_id in edges
                     edge = edges[event.edge_id]
-                    assert isinstance(edge, UUIDSpaceEdge)
+                    assert isinstance(edge, SpaceEdge)
                     event.delta_v = edges[event.edge_id].delta_v
         return missions
 
