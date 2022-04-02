@@ -9,8 +9,10 @@ from pydantic import Field
 
 from . import Event
 from .element import HumanAgent
-from .mission_demand_model import MissionDemand
+from .mission_demand_model import MissionDemandUUID
 from .types import SafeFloat
+from .node import NodeUUID
+from .element import ElementUUID
 
 
 __all__ = ["CrewedEVA"]
@@ -32,7 +34,7 @@ class CrewedEVA(Event):
 
     name: str = Field(..., title="Name", description="Crewed EVA name")
 
-    node_id: UUID = Field(
+    node_id: NodeUUID = Field(
         ...,
         title="Origin Node ID",
         description="The origin node ID of the Space Transport",
@@ -42,15 +44,15 @@ class CrewedEVA(Event):
         ..., title="EVA Duration", description="The duration of the EVA"
     )
 
-    crew_vehicle: UUID = Field(
+    crew_vehicle: ElementUUID = Field(
         ...,
         title="Crew Vehicle",
         description="The location of the crew that will be used for the EVA",
     )
 
-    crew: List[UUID] = Field(
+    crew: List[ElementUUID] = Field(
         ..., title="Crew", description="List of the crew selected for the EVA"
     )
-    additional_demand: List[MissionDemand] = Field(
+    additional_demand: List[MissionDemandUUID] = Field(
         ..., title="Additional Demands", description="List of demands needed for EVA"
     )
