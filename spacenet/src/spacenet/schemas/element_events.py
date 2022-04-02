@@ -30,7 +30,7 @@ class MakeElements(PrimitiveEvent):
     elements: List[InstElement] = Field(
         ..., description="the IDs of the instantiated elements being added to simulation"
     )
-    entry_point_id: NodeUUID = Field(
+    entry_point_id: Union[EdgeUUID, InstElementUUID, NodeUUID] = Field(
         ..., description="the ID of the entry point the element is being added at"
     )
 
@@ -42,12 +42,12 @@ class MoveElements(PrimitiveEvent):
     """
 
     to_move: List[InstElementUUID] = Field(..., description="the list of IDs of instantiated elements to move")
-    origin_id: NodeUUID = Field(
+    origin_id: Union[EdgeUUID, NodeUUID] = Field(
         ...,
         description="the ID of the original time and location "
         "which the elements are being moved from",
     )
-    destination_id: NodeUUID = Field(
+    destination_id: Union[EdgeUUID, InstElementUUID, NodeUUID] = Field(
         ...,
         description="the ID of the new location which the elements are being moved to",
     )
