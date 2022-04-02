@@ -13,7 +13,6 @@ from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import StateUUID
-from .inst_state import InstState, InstStateUUID
 from .element import ElementKind
 
 __all__ = [
@@ -48,7 +47,6 @@ class InstElement(InstElementUUID):
     class_of_supply: Optional[ClassOfSupply] = Field(
         title="Class of Supply", description="class of supply number"
     )
-    type: Optional[Literal[ElementKind.Element]] = Field(description="the element's type")
     environment: Optional[Environment] = Field(
         title="Environment", description="the element's environment"
     )
@@ -60,8 +58,7 @@ class InstElement(InstElementUUID):
     )
     mass: Optional[SafeNonNegFloat] = Field(title="Mass", description="mass in kg")
     volume: Optional[SafeNonNegFloat] = Field(title="Volume", description="volume in m^3")
-    states: Optional[List[InstState]] = Field(tile="States", description="list of states the element may possess")
-    current_state: Optional[Union[StateUUID, InstStateUUID]] = Field(None, title="Current State", description="the current state of the element")
+    current_state: Optional[StateUUID] = Field(None, title="Current State", description="the current state of the element")
 
     class Config:
         """
@@ -88,10 +85,7 @@ class InstResourceContainer(InstCargoCarrier):
     An element representing a container for resources.
     """
 
-    type: Optional[Literal[ElementKind.ResourceContainer]] = Field(
-        description="the element's type"
-    )
-
+    pass
 
 class InstElementCarrier(InstCargoCarrier):
     """
@@ -142,9 +136,6 @@ class InstPropulsiveVehicle(InstVehicle):
     An element representing a vehicle with its own propulsion.
     """
 
-    type: Optional[Literal[ElementKind.PropulsiveVehicle]] = Field(
-        description="the element's type"
-    )
     isp: Optional[SafeNonNegFloat] = Field(
         title="Specific Impulse", description="specific impulse (s)"
     )
@@ -160,7 +151,6 @@ class InstSurfaceVehicle(InstVehicle):
     An element representing a surface vehicle.
     """
 
-    type: Optional[Literal[ElementKind.SurfaceVehicle]] = Field(description="the element's type")
     max_speed: Optional[SafeNonNegFloat] = Field(
         title="Maximum Speed", description="maximum speed (kph)"
     )
