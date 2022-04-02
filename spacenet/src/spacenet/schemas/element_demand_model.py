@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from typing_extensions import Literal
 from .mixins import ImmutableBaseModel
 
+from .demand import DemandModelKind, Demand, DemandRate
 from .resource import ResourceUUID, ResourceType
 
 __all__ = [
@@ -21,27 +22,6 @@ __all__ = [
     "SparingByMassDemandModel",
 ]
 
-
-class DemandModelKind(str, Enum):
-    """
-    An enumeration of all the types of Demand Model.
-    """
-    CrewConsumables = "CrewConsumables"
-    TimedImpulse = "TimedImpulse"
-    Rated = "Rated"
-    SparingByMass = "SparingByMass"
-
-class ElementDemand(BaseModel):
-    """
-    A representation of one specific demand, particularly including the type, UUID and amount of resource demanded.
-    """
-    resourceType: ResourceType = Field(
-        ...,
-        title="Resource Type",
-        description="Type of resource that is being demanded.",
-    )
-    resource: ResourceUUID = Field(..., title="Resource ID", description="UUID of resource being consumed")
-    amount: float = Field(..., title="Amount", description="amount of the resource being consumed, in units defined by given resource")
 
 class DemandModelUUID(ImmutableBaseModel):
     """
@@ -88,13 +68,14 @@ class CrewConsumablesDemandModel(DemandModel):
 
 
 class TimedImpulseDemandModel(DemandModel):
-    flag: bool = Field(default=False, title="flag")
+    processed: bool = Field(default=False, title="flag")
     type: Literal[DemandModelKind.TimedImpulse] = Field(description="the demand model's type")
+    demands: List[Demand] = Field(..., description="a list of the demands of the given demand model")
 
 
 class RatedDemandModel(DemandModel):
     type: Literal[DemandModelKind.Rated] = Field(description="the demand model's type")
-    demands: List[ElementDemand] = Field(..., description="a list of the demands of the given demand model")
+    demands: List[DemandRate] = Field(..., description="a list of the rated demands of the given demand model")
 
 
 class SparingByMassDemandModel(DemandModel):

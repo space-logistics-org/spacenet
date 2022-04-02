@@ -3,80 +3,58 @@ This module defines schemas for specifying mission-wide demand models.
 """
 from math import inf
 from uuid import uuid4, UUID
-from typing import Union
+from typing import Union, List
 
 from pydantic import BaseModel, Field
+from typing_extensions import Literal
 
 from .resource import ResourceUUID, ResourceType
 from .mixins import ImmutableBaseModel
+from .demand import Demand, DemandRate, DemandModelKind
 
 __all__ = [
     "MissionDemandUUID",
-    "MissionDemand",
-    "TimedModel",
-    "RatedModel",
-    "ConsumablesModel",
+    "TimedImpulseDemandModel",
+    "RatedDemandModel",
+    "CrewConsumablesDemandModel",
 ]
 
 class MissionDemandUUID(ImmutableBaseModel):
     """
     A base class representing a Mission Demand Model by only its UUID.
     """
-    id: UUID = Field(default_factory=uuid4, description="unique identifier for edge")
+    id: UUID = Field(default_factory=uuid4, description="unique identifier for mission demand model")
 
 
-class MissionDemand(MissionDemandUUID):
-    """
-    Mission Demand Model base class.
-    """
-    resourceType: ResourceType = Field(
-        ...,
-        title="Resource Type",
-        description="Type of resource that is being demanded.",
-    )
-    resource: ResourceUUID = Field(
-        ..., title="Resource", description="Resource being demanded."
-    )
-
-class TimedModel(MissionDemand):
+class TimedImpulseDemandModel(MissionDemandUUID):
     """
     Timed Impulse Mission Demand Model
     A one-time demand for a set of resources scheduled for the first
     transportation arrival at the destination node.
     """
-
-    amount: float = Field(
-        ...,
-        title="Amount",
-        description="Amount of resource to be demanded.",
-        gt=-inf,
-        lt=inf,
-    )
+    type: Literal[DemandModelKind.TimedImpulse] = Field(description="the demand model's type")
+    demands: List[Demand] = Field(..., description="a list of the demands of the mission")
 
 
-class RatedModel(MissionDemand):
+
+class RatedDemandModel(MissionDemandUUID):
     """
     Rated Demand Model
     A demand for a set of resources based on daily rates and the
     mission duration.
     """
-
-    daily_rate: float = Field(
-        ...,
-        title="Daily Rate",
-        description="Amount of resources to be demanded per day",
-        ge=0,
-        lt=inf,
-    )
+    type: Literal[DemandModelKind.Rated] = Field(description="the demand model's type")
+    demands: List[DemandRate] = Field(..., description="a list of the rated demands of the mission")
 
 
-class ConsumablesModel(MissionDemandUUID):
+
+class CrewConsumablesDemandModel(MissionDemandUUID):
     """
     Consumables Model
     A demand for resources based on NASA Space Logistics Consumables Model
     """
 
-    mission_id: int = Field(..., title="Mission ID", gt=0)
+    type: Literal[DemandModelKind.CrewConsumables] = Field(description="the demand model's type")
     reserves_duration: float = Field(
         ..., title="Reserves Duration", description="", gt=0, lt=inf,
     )
@@ -196,8 +174,7 @@ class ConsumablesModel(MissionDemandUUID):
     )
 
 AllMissionDemandModels = Union[
-    MissionDemand,
-    TimedModel,
-    RatedModel,
-    ConsumablesModel
+    TimedImpulseDemandModel,
+    RatedDemandModel,
+    CrewConsumablesDemandModel
 ]
