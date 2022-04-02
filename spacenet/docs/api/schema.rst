@@ -157,15 +157,6 @@ States
 .. autoclass:: spacenet.schemas.state.State
    :members:
 
-Instantiated States
---------------------
-
-.. autoclass:: spacenet.schemas.inst_state.InstStateUUID
-   :members:
-
-.. autoclass:: spacenet.schemas.inst_state.InstState
-   :members:
-
 
 
 Campaign
@@ -219,16 +210,13 @@ Mission Demand Models
 .. autoclass:: spacenet.schemas.mission_demand_model.MissionDemandUUID
    :members:
 
-.. autoclass:: spacenet.schemas.mission_demand_model.MissionDemand
+.. autoclass:: spacenet.schemas.mission_demand_model.TimedImpulseDemandModel
    :members:
 
-.. autoclass:: spacenet.schemas.mission_demand_model.TimedModel
+.. autoclass:: spacenet.schemas.mission_demand_model.RatedDemandModel
    :members:
 
-.. autoclass:: spacenet.schemas.mission_demand_model.RatedModel
-   :members:
-
-.. autoclass:: spacenet.schemas.mission_demand_model.ConsumablesModel
+.. autoclass:: spacenet.schemas.mission_demand_model.CrewConsumablesDemandModel
    :members:
 
 Element Demand Models
@@ -249,23 +237,6 @@ Element Demand Models
 .. autoclass:: spacenet.schemas.element_demand_model.SparingByMassDemandModel
    :members:
 
-Instantiated Element Demand Models
------------------------------------
-
-.. autoclass:: spacenet.schemas.inst_element_demand_model.InstDemandModelUUID
-   :members:
-
-.. autoclass:: spacenet.schemas.inst_element_demand_model.InstCrewConsumablesDemandModel
-   :members:
-
-.. autoclass:: spacenet.schemas.inst_element_demand_model.InstTimedImpulseDemandModel
-   :members:
-
-.. autoclass:: spacenet.schemas.inst_element_demand_model.InstRatedDemandModel
-   :members:
-
-.. autoclass:: spacenet.schemas.inst_element_demand_model.InstSparingByMassDemandModel
-   :members:
 
 Exploration Events
 -------------------
