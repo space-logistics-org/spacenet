@@ -44,6 +44,9 @@ class NodeUUID(ImmutableBaseModel):
 class Node(NodeUUID):
     """
     Base class for all nodes.
+
+    Attributes:
+        name    name of node
     """
 
     name: str = Field(..., title="Name", description="name of the node")
@@ -63,7 +66,7 @@ class SurfaceNode(Node):
     """
 
     type: Literal[NodeType.Surface] = Field(
-        ..., title="Type", description="Type of node (surface, orbital, or lagrange)",
+        NodeType.Surface, title="Type", description="Type of node (surface, orbital, or lagrange)",
     )
     latitude: confloat(ge=-90, le=90) = Field(
         ..., title="Latitude", description="Latitude (decimal degrees)"
@@ -79,7 +82,7 @@ class OrbitalNode(Node):
     """
 
     type: Literal[NodeType.Orbital] = Field(
-        ..., title="Type", description="Type of node (surface, orbital, or lagrange)",
+        NodeType.Orbital, title="Type", description="Type of node (surface, orbital, or lagrange)",
     )
     apoapsis: SafeNonNegFloat = Field(
         ..., title="Apoapsis", description="Major radius of orbit"
@@ -98,7 +101,7 @@ class LagrangeNode(Node):
     """
 
     type: Literal[NodeType.Lagrange] = Field(
-        ..., title="Type", description="Type of node (surface, orbital, or lagrange)",
+        NodeType.Lagrange, title="Type", description="Type of node (surface, orbital, or lagrange)",
     )
     body_2: Body = Field(
         ..., title="Body 2", description="Minor body of Lagrange node",

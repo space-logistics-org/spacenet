@@ -37,7 +37,7 @@ class DemandModel(DemandModelUUID):
 
 
 class CrewConsumablesDemandModel(DemandModel):
-    type: Literal[DemandModelKind.CrewConsumables] = Field(description="the demand model's type")
+    type: Literal[DemandModelKind.CrewConsumables] = Field(DemandModelKind.CrewConsumables, description="the demand model's type")
 
     reservesDuration: float = Field(..., title="Reserves Duration")
     waterRecoveryRate: float = Field(..., title="Water Recovery Rate")
@@ -69,17 +69,17 @@ class CrewConsumablesDemandModel(DemandModel):
 
 class TimedImpulseDemandModel(DemandModel):
     processed: bool = Field(default=False, title="flag")
-    type: Literal[DemandModelKind.TimedImpulse] = Field(description="the demand model's type")
+    type: Literal[DemandModelKind.TimedImpulse] = Field(DemandModelKind.TimedImpulse, description="the demand model's type")
     demands: List[Demand] = Field(..., description="a list of the demands of the given demand model")
 
 
 class RatedDemandModel(DemandModel):
-    type: Literal[DemandModelKind.Rated] = Field(description="the demand model's type")
+    type: Literal[DemandModelKind.Rated] = Field(DemandModelKind.Rated, description="the demand model's type")
     demands: List[DemandRate] = Field(..., description="a list of the rated demands of the given demand model")
 
 
 class SparingByMassDemandModel(DemandModel):
-    type: Literal[DemandModelKind.SparingByMass] = Field(description="the demand model's type")
+    type: Literal[DemandModelKind.SparingByMass] = Field(DemandModelKind.SparingByMass, description="the demand model's type")
     unpressurizedSparesRates: float = Field(..., title="Unpressurized Spares Rates")
     pressurizedSparesRates: float = Field(..., title="Pressurized Spares Rates")
     partsListEnabled: bool = Field(..., title="Parts List Enabled")

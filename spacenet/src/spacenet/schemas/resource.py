@@ -59,7 +59,7 @@ class DiscreteResource(Resource):
     """
 
     type: Literal[ResourceType.Discrete] = Field(
-        ..., title="Type", description="Resource type"
+        ResourceType.Discrete, title="Type", description="Resource type"
     )
 
 
@@ -69,7 +69,7 @@ class ContinuousResource(Resource):
     """
 
     type: Literal[ResourceType.Continuous] = Field(
-        ..., title="Type", description="Resource type"
+        ResourceType.Continuous, title="Type", description="Resource type"
     )
 
 AllResources = Union[DiscreteResource, ContinuousResource]

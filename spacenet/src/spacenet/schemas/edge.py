@@ -65,7 +65,7 @@ class SurfaceEdge(Edge):
     """
 
     type: Literal[EdgeType.Surface] = Field(
-        title="Type", description="Type of edge",
+        EdgeType.Surface, title="Type", description="Type of edge",
     )
     distance: SafeNonNegFloat = Field(
         ..., title="Distance", description="Distance of surface edge"
@@ -78,7 +78,7 @@ class SpaceEdge(Edge):
     """
 
     type: Literal[EdgeType.Space] = Field(
-        title="Type", description="Type of edge",
+        EdgeType.Space, title="Type", description="Type of edge",
     )
     duration: SafeNonNegFloat = Field(
         ..., title="Duration", description="Duration of space edge"
@@ -97,7 +97,7 @@ class FlightEdge(Edge):
     """
 
     type: Literal[EdgeType.Flight] = Field(
-        ..., title="Type", description="Type of edge",
+        EdgeType.Flight, title="Type", description="Type of edge",
     )
     duration: SafeNonNegFloat = Field(
         ..., title="duration", description="Duration of flight edge"

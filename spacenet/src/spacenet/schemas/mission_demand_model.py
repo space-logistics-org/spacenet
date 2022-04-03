@@ -32,7 +32,7 @@ class TimedImpulseDemandModel(MissionDemandUUID):
     A one-time demand for a set of resources scheduled for the first
     transportation arrival at the destination node.
     """
-    type: Literal[DemandModelKind.TimedImpulse] = Field(description="the demand model's type")
+    type: Literal[DemandModelKind.TimedImpulse] = Field(DemandModelKind.TimedImpulse, description="the demand model's type")
     demands: List[Demand] = Field(..., description="a list of the demands of the mission")
 
 
@@ -43,7 +43,7 @@ class RatedDemandModel(MissionDemandUUID):
     A demand for a set of resources based on daily rates and the
     mission duration.
     """
-    type: Literal[DemandModelKind.Rated] = Field(description="the demand model's type")
+    type: Literal[DemandModelKind.Rated] = Field(DemandModelKind.Rated, description="the demand model's type")
     demands: List[DemandRate] = Field(..., description="a list of the rated demands of the mission")
 
 
@@ -54,7 +54,7 @@ class CrewConsumablesDemandModel(MissionDemandUUID):
     A demand for resources based on NASA Space Logistics Consumables Model
     """
 
-    type: Literal[DemandModelKind.CrewConsumables] = Field(description="the demand model's type")
+    type: Literal[DemandModelKind.CrewConsumables] = Field(DemandModelKind.CrewConsumables, description="the demand model's type")
     reserves_duration: float = Field(
         ..., title="Reserves Duration", description="", gt=0, lt=inf,
     )

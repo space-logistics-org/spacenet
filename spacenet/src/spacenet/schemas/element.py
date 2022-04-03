@@ -25,8 +25,7 @@ __all__ = [
     "PropulsiveVehicle",
     "SurfaceVehicle",
     "ElementKind",
-    "AllElements",
-    "AllElements2"
+    "AllElements"
 ]
 
 
@@ -62,7 +61,7 @@ class Element(ElementUUID):
     class_of_supply: ClassOfSupply = Field(
         ..., title="Class of Supply", description="class of supply number"
     )
-    type: Literal[ElementKind.Element] = Field(description="the element's type")
+    type: Literal[ElementKind.Element] = Field(ElementKind.Element, description="the element's type")
     environment: Environment = Field(
         ..., title="Environment", description="the element's environment"
     )
@@ -105,7 +104,7 @@ class ResourceContainer(CargoCarrier):
     """
 
     type: Literal[ElementKind.ResourceContainer] = Field(
-        description="the element's type"
+        ElementKind.ResourceContainer, description="the element's type"
     )
 
 
@@ -114,7 +113,7 @@ class ElementCarrier(CargoCarrier):
     An element which can carry other elements.
     """
 
-    type: Literal[ElementKind.ElementCarrier] = Field(description="the element's type")
+    type: Literal[ElementKind.ElementCarrier] = Field(ElementKind.ElementCarrier, description="the element's type")
     cargo_environment: Environment = Field(
         ...,
         title="Cargo Environment",
@@ -142,7 +141,7 @@ class HumanAgent(Agent):
     An element representing a human agent, like a crew member.
     """
 
-    type: Literal[ElementKind.HumanAgent] = Field(description="the element's type")
+    type: Literal[ElementKind.HumanAgent] = Field(ElementKind.HumanAgent, description="the element's type")
 
 
 class RoboticAgent(Agent):
@@ -150,7 +149,7 @@ class RoboticAgent(Agent):
     An element representing a robotic agent.
     """
 
-    type: Literal[ElementKind.RoboticAgent] = Field(description="the element's type")
+    type: Literal[ElementKind.RoboticAgent] = Field(ElementKind.RoboticAgent, description="the element's type")
 
 
 class Vehicle(CargoCarrier, ABC):
@@ -169,7 +168,7 @@ class PropulsiveVehicle(Vehicle):
     """
 
     type: Literal[ElementKind.PropulsiveVehicle] = Field(
-        description="the element's type"
+        ElementKind.PropulsiveVehicle, description="the element's type"
     )
     isp: SafeNonNegFloat = Field(
         ..., title="Specific Impulse", description="specific impulse (s)"
@@ -186,7 +185,7 @@ class SurfaceVehicle(Vehicle):
     An element representing a surface vehicle.
     """
 
-    type: Literal[ElementKind.SurfaceVehicle] = Field(description="the element's type")
+    type: Literal[ElementKind.SurfaceVehicle] = Field(ElementKind.SurfaceVehicle, description="the element's type")
     max_speed: SafeNonNegFloat = Field(
         ..., title="Maximum Speed", description="maximum speed (kph)"
     )
@@ -198,16 +197,6 @@ class SurfaceVehicle(Vehicle):
 
 
 AllElements = Union[
-    Element,
-    ResourceContainer,
-    ElementCarrier,
-    HumanAgent,
-    RoboticAgent,
-    PropulsiveVehicle,
-    SurfaceVehicle,
-]
-
-AllElements2 = [
     Element,
     ResourceContainer,
     ElementCarrier,
