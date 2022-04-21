@@ -62,18 +62,31 @@ class ScenarioType(str, Enum):
 class Scenario(BaseModel):
     """
     A scenario describing a space mission campaign.
+
+    :param str name: name of the scenario
+    :param str description: short description
+    :param datetime start_date: start date of mission
+    :param ScenarioType scenario_type: type of scenario
+    :param Network network: nodes and edges used
+    :param [Mission] mission_list: list of missions included in scenario
+    :param [AllElements] element_templates: list of base element objects for use in scenario
+    :param [AllInstElements] instantiated_elements: list of elements created in events
+    :param [AllMissionDemandModels] mission_demand_models: library of mission demand models used
+    :param [AllResources] resource_list: list of resources used throughout the scenario
+    :param Manifest manifest:
+    :param Configuration configuration:
     """
 
     name: str = Field(..., title="Name", description="Name of Scenario")
     description: str = Field(None, title="Description", description="Short description")
-    startDate: datetime = Field(..., title="Start Date")
-    scenarioType: ScenarioType = Field(..., title="Type of Scenario")
+    start_date: datetime = Field(..., title="Start Date")
+    scenario_type: ScenarioType = Field(..., title="Type of Scenario")
     network: Network = Field(..., title="Network")
-    missionList: List[Mission] = Field(..., title="Mission List")
-    elementTemplates: List[AllElements] = Field(..., title="Element List")
-    instantiatedElements: List[AllInstElements]
-    missionDemandModels: List[AllMissionDemandModels]
-    resourceList: List[AllResources] = Field(
+    mission_list: List[Mission] = Field(..., title="Mission List")
+    element_templates: List[AllElements] = Field(..., title="Element List")
+    instantiated_elements: List[AllInstElements] = Field(..., title="Instantiated Elements")
+    mission_demand_models: List[AllMissionDemandModels] = Field(..., title="Mission Demand Models")
+    resource_list: List[AllResources] = Field(
         default_factory=list
     )
     manifest: Manifest = Field(..., title="Manifest")
