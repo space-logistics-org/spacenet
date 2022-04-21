@@ -21,6 +21,8 @@ __all__ = ["CrewedEVA"]
 class EVACrew(HumanAgent):
     """
     Schema for a Crew Member
+
+    :param str eva_state: the state of the EVA
     """
 
     eva_state: str = Field(..., title="EVA State", description="The state of the EVA")
@@ -30,6 +32,12 @@ class EVACrew(HumanAgent):
 class CrewedEVA(Event):
     """
     An event for a single crewed extravehicular activity.
+
+    :param str name: crewed EVA name
+    :param NodeUUID node_id: the origin node UUID of the space transport
+    :param timedelta eva_duration: the duration of the EVA
+    :param ElementUUID crew_vehicle: the location of the crew that will be used for the EVA
+    :param [MissionDemandUUID] additional_demands: list of demands needed for the EVA
     """
 
     name: str = Field(..., title="Name", description="Crewed EVA name")
@@ -37,7 +45,7 @@ class CrewedEVA(Event):
     node_id: NodeUUID = Field(
         ...,
         title="Origin Node ID",
-        description="The origin node ID of the Space Transport",
+        description="The origin node UUID of the Space Transport",
     )
 
     eva_duration: timedelta = Field(
@@ -53,6 +61,6 @@ class CrewedEVA(Event):
     crew: List[ElementUUID] = Field(
         ..., title="Crew", description="List of the crew selected for the EVA"
     )
-    additional_demand: List[MissionDemandUUID] = Field(
+    additional_demands: List[MissionDemandUUID] = Field(
         ..., title="Additional Demands", description="List of demands needed for EVA"
     )
