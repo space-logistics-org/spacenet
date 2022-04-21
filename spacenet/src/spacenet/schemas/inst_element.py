@@ -13,7 +13,8 @@ from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import StateUUID
-from .element import ElementKind
+from .element import ElementKind, ElementUUID
+from .resource import ResourceUUID
 
 __all__ = [
     "InstElementUUID",
@@ -31,6 +32,9 @@ __all__ = [
 class InstElementUUID(ImmutableBaseModel):
     """
     A base class for instantiated elements defining only the UUID.
+
+    :param UUID id: unique identifier for element
+
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for instantiated element")
 
@@ -38,8 +42,18 @@ class InstElementUUID(ImmutableBaseModel):
 class InstElement(InstElementUUID):
     """
     A generic element.
+
+    :param ElementUUID template_id: UUID of the template for this instantiated element
+    :param str name: name of the element (optional)
+    :param str description: short description of the element (optional)
+    :param ClassOfSupply class_of_supply: class of supply number (optional)
+    :param Environment environment: the element's environment (optional)
+    :param NonNegFloat accommodation_mass: the amount of additional COS5 required to pack the element inside a carrier (optional)
+    :param NonNegFloat mass: mass in kg (optional)
+    :param NonNegFloat volume: volume in cubic meters (optional)
+    :param StateUUID current_state: field describing the current state of the element. Set to initial state during creation. (optional)
     """
-    template_id: UUID = Field(..., description="UUID of the template for this instantiated element")
+    template_id: ElementUUID = Field(..., description="UUID of the template for this instantiated element")
     name: Optional[str] = Field(title="Name", description="name of the element")
     description: Optional[str] = Field(
         title="Description", description="short description of the element"
@@ -71,6 +85,11 @@ class InstElement(InstElementUUID):
 class InstCargoCarrier(InstElement, ABC):
     """
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
+    
+    :param NonNegFloat max_cargo_mass: cargo capacity constraint (kg) (optional)
+    :param max_cargo_volume: cargo capacity constraint (m^3) (optional)
+    :param [InstElementUUID | ResourceUUID] contents: list of elements or resources moved into carrier during spatial simulation (optional)
+
     """
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
         0, title="Max Cargo Mass", description="cargo capacity constraint (kg)"
@@ -78,6 +97,8 @@ class InstCargoCarrier(InstElement, ABC):
     max_cargo_volume: Optional[SafeNonNegFloat] = Field(
         0, title="Maximum Cargo Volume", description="cargo capacity constraint (m^3)",
     )
+    contents: List[Union[InstElementUUID, ResourceUUID]] = Field([], title="Contents", description="list of elements or resources moved into carrier during spatial simulation")
+
 
 
 class InstResourceContainer(InstCargoCarrier):
@@ -90,6 +111,8 @@ class InstResourceContainer(InstCargoCarrier):
 class InstElementCarrier(InstCargoCarrier):
     """
     An element which can carry other elements.
+
+    :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo (optional)
     """
     cargo_environment: Optional[Environment] = Field(
         title="Cargo Environment",
@@ -103,6 +126,10 @@ class InstElementCarrier(InstCargoCarrier):
 class InstAgent(InstElement, ABC):
     """
     An abstract base class representing a generic Agent element.
+    
+    :param active_time_fraction: the fraction of the day that an agent is active (available) (optional)
+    :type active_time_fraction: float from 0 to 1
+
     """
     active_time_fraction: Optional[confloat(ge=0, le=1)] = Field(
         title="Active Time Fraction",
@@ -125,6 +152,9 @@ class InstRoboticAgent(InstAgent):
 class InstVehicle(InstCargoCarrier, ABC):
     """
     An abstract base class representing a generic Vehicle, surface or propulsive.
+        
+    :param NonNegInt max_crew: crew capacity constraint
+
     """
     max_crew: Optional[SafeNonNegInt] = Field(
         ..., title="Maximum Crew Count", description="crew capacity constraint"
@@ -134,6 +164,10 @@ class InstVehicle(InstCargoCarrier, ABC):
 class InstPropulsiveVehicle(InstVehicle):
     """
     An element representing a vehicle with its own propulsion.
+    
+    :param NonNegFloat isp: "specific impulse (s) (optional)
+    :param NonNegFloat max_fuel: maximum fuel (units) (optional)
+
     """
 
     isp: Optional[SafeNonNegFloat] = Field(
@@ -149,6 +183,10 @@ class InstPropulsiveVehicle(InstVehicle):
 class InstSurfaceVehicle(InstVehicle):
     """
     An element representing a surface vehicle.
+
+    :param NonNegFloat max_speed: maximum speed (kph) (optional)
+    :param NonNegFloat max_fule: maximum fuel (units) (optional)
+
     """
 
     max_speed: Optional[SafeNonNegFloat] = Field(
