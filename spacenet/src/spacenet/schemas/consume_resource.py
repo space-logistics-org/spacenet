@@ -21,6 +21,10 @@ __all__ = ["ConsumeResource"]
 class ConsumeResource(Event):
     """
     Schema for consuming resources from a point
+
+    :param NodeUUID | EdgeUUID removal_point_id: ID of the node or edge to remove resources from
+    :param ResourceUUID to_remove: UUID of resource to remove
+    :param float quantity: quantity to remove
     """
 
     removal_point_id: Union[NodeUUID, EdgeUUID] = Field(

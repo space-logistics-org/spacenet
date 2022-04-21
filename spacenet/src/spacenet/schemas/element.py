@@ -12,12 +12,14 @@ from typing_extensions import Literal
 from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
-from .state import State
+from .state import State, StateUUID
+from .resource import ResourceUUID
 
 __all__ = [
     "ElementKind",
     "ElementUUID",
     "Element",
+    "CargoCarrier",
     "ResourceContainer",
     "ElementCarrier",
     "HumanAgent",
@@ -31,7 +33,7 @@ __all__ = [
 
 class ElementKind(str, Enum):
     """
-    An enumeration of all the types of Element.
+    An enumeration of all the types of Element
     """
 
     Element = "Element"
@@ -45,6 +47,8 @@ class ElementKind(str, Enum):
 class ElementUUID(ImmutableBaseModel):
     """
     A base class for elements defining only the UUID.
+
+    :param UUID id: unique identifier for element
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for element")
 
@@ -52,6 +56,17 @@ class ElementUUID(ImmutableBaseModel):
 class Element(ElementUUID):
     """
     A generic element.
+
+    :param str name: name of the element
+    :param str description: short description of the element
+    :param ClassOfSupply class_of_supply: class of supply number
+    :param Element type: the element's type
+    :param Environment environment: the element's environment
+    :param NonNegFloat accommodation_mass: the amount of additional COS5 required to pack the element inside a carrier
+    :param NonNegFloat mass: mass in kg
+    :param NonNegFloat volume: volume in cubic meters
+    :param [State] states: list of states the element may possess
+    :param StateUUID current_state: optional field describing the current state of the element. Set to initial state during creation.
     """
 
     name: str = Field(..., title="Name", description="name of the element")
@@ -75,7 +90,8 @@ class Element(ElementUUID):
     mass: SafeNonNegFloat = Field(..., title="Mass", description="mass in kg")
     volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
     states: List[State] = Field(..., tile="States", description="list of states the element may possess")
-    current_state: Optional[UUID] = Field(None, title="Current State", description="the current state of the element")
+    current_state: Optional[StateUUID] = Field(None, title="Current State", description="the current state of the element")
+
 
     class Config:
         """
@@ -88,6 +104,10 @@ class Element(ElementUUID):
 class CargoCarrier(Element, ABC):
     """
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
+
+    :param NonNegFloat max_cargo_mass: cargo capacity constraint (kg)
+    :param max_cargo_volume: cargo capacity constraint (m^3)
+    :param [ElementUUID | ResourceUUID] contents: list of elements or resources moved into carrier during spatial simulation
     """
 
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
@@ -101,6 +121,8 @@ class CargoCarrier(Element, ABC):
 class ResourceContainer(CargoCarrier):
     """
     An element representing a container for resources.
+
+    :param ResourceContainer type: the element's type
     """
 
     type: Literal[ElementKind.ResourceContainer] = Field(
@@ -111,6 +133,9 @@ class ResourceContainer(CargoCarrier):
 class ElementCarrier(CargoCarrier):
     """
     An element which can carry other elements.
+
+    :param ElementCarrier type: the element's type
+    :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo
     """
 
     type: Literal[ElementKind.ElementCarrier] = Field(ElementKind.ElementCarrier, description="the element's type")
@@ -127,6 +152,9 @@ class ElementCarrier(CargoCarrier):
 class Agent(Element, ABC):
     """
     An abstract base class representing a generic Agent element.
+
+    :param active_time_fraction: the fraction of the day that an agent is active (available)
+    :type active_time_fraction: float from 0 to 1
     """
 
     active_time_fraction: confloat(ge=0, le=1) = Field(
@@ -139,6 +167,8 @@ class Agent(Element, ABC):
 class HumanAgent(Agent):
     """
     An element representing a human agent, like a crew member.
+
+    :param HumanAgent type: the element's type
     """
 
     type: Literal[ElementKind.HumanAgent] = Field(ElementKind.HumanAgent, description="the element's type")
@@ -147,6 +177,8 @@ class HumanAgent(Agent):
 class RoboticAgent(Agent):
     """
     An element representing a robotic agent.
+
+    :param RoboticAgent type: the element's type
     """
 
     type: Literal[ElementKind.RoboticAgent] = Field(ElementKind.RoboticAgent, description="the element's type")
@@ -155,6 +187,8 @@ class RoboticAgent(Agent):
 class Vehicle(CargoCarrier, ABC):
     """
     An abstract base class representing a generic Vehicle, surface or propulsive.
+
+    :param NonNegInt max_crew: crew capacity constraint
     """
 
     max_crew: SafeNonNegInt = Field(
@@ -165,6 +199,10 @@ class Vehicle(CargoCarrier, ABC):
 class PropulsiveVehicle(Vehicle):
     """
     An element representing a vehicle with its own propulsion.
+
+    :param PropulsiveVehicle type: the element's type
+    :param NonNegFloat isp: "specific impulse (s)
+    :param NonNegFloat max_fuel: maximum fuel (units)
     """
 
     type: Literal[ElementKind.PropulsiveVehicle] = Field(
@@ -183,6 +221,10 @@ class PropulsiveVehicle(Vehicle):
 class SurfaceVehicle(Vehicle):
     """
     An element representing a surface vehicle.
+
+    :param SurfaceVehicle type: the element's type
+    :param NonNegFloat max_speed: maximum speed (kph)
+    :param NonNegFloat max_fule: maximum fuel (units)
     """
 
     type: Literal[ElementKind.SurfaceVehicle] = Field(ElementKind.SurfaceVehicle, description="the element's type")

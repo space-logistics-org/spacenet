@@ -31,20 +31,28 @@ class DemandModelKind(str, Enum):
 class Demand(BaseModel):
     """
     A representation of one specific demand, particularly including the type, UUID and amount of resource demanded.
+    
+    :param ResourceType resource_type: type of resource that is being demanded (continuous or discrete)
+    :param ResourceUUID resource: UUID of the resource demanded
+    :param float amount: amount of the resource being demanded, in units defined by given resource
     """
-    resourceType: ResourceType = Field(
+    resource_type: ResourceType = Field(
         ...,
         title="Resource Type",
         description="Type of resource that is being demanded.",
     )
     resource: ResourceUUID = Field(..., title="Resource ID", description="UUID of resource being consumed")
-    amount: float = Field(..., title="Amount", description="amount of the resource being consumed, in units defined by given resource")
+    amount: float = Field(..., title="Amount", description="amount of the resource being demanded, in units defined by given resource")
 
 class DemandRate(BaseModel):
     """
     A representation of one specific demand, particularly including the type, UUID and amount of resource demanded.
+
+    :param ResourceType resource_type: type of resource that is being demanded (continuous or discrete)
+    :param ResourceUUID resource: UUID of the resource demanded
+    :param float amount: rate of resource demand, in units defined by given resource
     """
-    resourceType: ResourceType = Field(
+    resource_type: ResourceType = Field(
         ...,
         title="Resource Type",
         description="Type of resource that is being demanded.",
