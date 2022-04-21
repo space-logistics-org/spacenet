@@ -40,6 +40,15 @@ __all__ = ["Mission"]
 class Mission(BaseModel):
     """
     A schema representing a single mission, which is represented as a list of events.
+
+    :param str name: name of mission
+    :param datetime start_date: date of mission start
+    :param [AllEvents] events: list of events occuring in mission
+    :param [MissionDemandUUID] demand_models: list of mission demand models
+    :param NodeUUID origin: UUID of origin node
+    :param NodeUUID destination: UUID of destination node
+    :param NodeUUID return_origin: UUID of return origin node
+    :param NodeUUID return_destination: UUID of return destination node
     """
 
     name: str = Field(..., title="Name", description="name of mission")
@@ -47,17 +56,17 @@ class Mission(BaseModel):
         ..., title="Start Date", description="date of mission start"
     )
     events: List[AllEvents] = Field(
-        ..., title="Event ID List", description="list of event IDs"
+        ..., title="Event ID List", description="list of events occuring in mission"
     )
     demand_models: List[MissionDemandUUID] = Field(
         ..., title="Demand Models List", description="list of mission demand models"
     )
-    origin: NodeUUID = Field(..., title="Origin ID", description="ID of origin node")
+    origin: NodeUUID = Field(..., title="Origin UUID", description="UUID of origin node")
     destination: NodeUUID = Field(
-        ..., title="Destination ID", description="ID of destination node"
+        ..., title="Destination UUID", description="UUID of destination node"
     )
     return_origin: NodeUUID = Field(
-        ..., title="Return Origin ID", description="ID of return origin node"
+        ..., title="Return Origin UUID", description="UUID of return origin node"
     )
     return_destination: NodeUUID = Field(
         ..., title="Return Destination ID", description="ID of return destination node"
