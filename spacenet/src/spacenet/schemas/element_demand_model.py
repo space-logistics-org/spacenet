@@ -26,17 +26,52 @@ __all__ = [
 class DemandModelUUID(ImmutableBaseModel):
     """
     A representation of a demand model containing only its UUID and serving as a base class for all other demand models.
+
+    :param UUID id: unique identifier for element demand model
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for demand model")
 
 class DemandModel(DemandModelUUID):
     """
     Element Demand Model base class.
+
+    :param str name: name of demand model
     """
     name: str = Field(..., title="Name")
 
 
 class CrewConsumablesDemandModel(DemandModel):
+    """
+    Demands for consumables by crew.
+
+    :param CrewConsumables type: 
+    :param float reservesDuration: 
+    :param float waterRecoveryRate: 
+    :param float clothingLifetime: 
+    :param float transitDemandOmitted: 
+    :param float waterRate: 
+    :param float evaWaterRate: 
+    :param float foodSupportRate: 
+    :param float ambientFoodRate: 
+    :param float rfFoodRate: 
+    :param float oxygenRate: 
+    :param float evaOxygenRate: 
+    :param float nitrogenRate: 
+    :param float hygieneRate: 
+    :param float hygieneKit: 
+    :param float clothingRate: 
+    :param float personalItems: 
+    :param float officeEquipment: 
+    :param float evaSuit: 
+    :param float evaLithiumHydroxide: 
+    :param float healthEquipment: 
+    :param float healthConsumables: 
+    :param float safetyEquipment: 
+    :param float commEquipment: 
+    :param float computerEquipment: 
+    :param float trashBagRate: 
+    :param float wasteContainmentRate: 
+    """
     type: Literal[DemandModelKind.CrewConsumables] = Field(DemandModelKind.CrewConsumables, description="the demand model's type")
 
     reservesDuration: float = Field(..., title="Reserves Duration")
@@ -68,20 +103,43 @@ class CrewConsumablesDemandModel(DemandModel):
 
 
 class TimedImpulseDemandModel(DemandModel):
+    """
+    Demand model consuming a resource in one instant.
+
+    :param bool processed: flag using in simulation to determine whether or not a demand has been processed.
+    :param TimedImpulse type: demand model's type
+    :param [Demand] demands: a list of demands of the given demand model
+    """
     processed: bool = Field(default=False, title="flag")
     type: Literal[DemandModelKind.TimedImpulse] = Field(DemandModelKind.TimedImpulse, description="the demand model's type")
     demands: List[Demand] = Field(..., description="a list of the demands of the given demand model")
 
 
 class RatedDemandModel(DemandModel):
+    """
+    Demand model consuming a resource in one instant.
+
+    :param Rated type: demand model's type
+    :param [Demand] demands: a list of the rated demands of the given demand model
+    """
     type: Literal[DemandModelKind.Rated] = Field(DemandModelKind.Rated, description="the demand model's type")
     demands: List[DemandRate] = Field(..., description="a list of the rated demands of the given demand model")
 
 
 class SparingByMassDemandModel(DemandModel):
+    """
+    Demand model consuming a resource in one instant.
+
+    :param SparingByMass type: demand model's type
+    :param [Demand] demands: a list of the rated demands of the given demand model
+    :param float unpressurizedSparesRate
+    :param float pressurizedSparesRate
+    :param float partsListEnabled
+
+    """
     type: Literal[DemandModelKind.SparingByMass] = Field(DemandModelKind.SparingByMass, description="the demand model's type")
-    unpressurizedSparesRates: float = Field(..., title="Unpressurized Spares Rates")
-    pressurizedSparesRates: float = Field(..., title="Pressurized Spares Rates")
+    unpressurizedSparesRate: float = Field(..., title="Unpressurized Spares Rate")
+    pressurizedSparesRate: float = Field(..., title="Pressurized Spares Rate")
     partsListEnabled: bool = Field(..., title="Parts List Enabled")
 
 
