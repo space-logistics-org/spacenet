@@ -16,6 +16,9 @@ Database
 Nodes
 ------
 
+.. autoclass:: spacenet.schemas.node.Body
+   :members:
+
 .. autoclass:: spacenet.schemas.node.NodeType
    :members:
 
@@ -68,10 +71,7 @@ Elements
 .. autoclass:: spacenet.schemas.element.Element
    :members:  
 
-.. autoclass:: spacenet.schemas.element.ResourceContainer
-   :members:  
-
-.. autoclass:: spacenet.schemas.element.Element
+.. autoclass:: spacenet.schemas.element.CargoCarrier
    :members:  
 
 .. autoclass:: spacenet.schemas.element.ResourceContainer
@@ -80,11 +80,17 @@ Elements
 .. autoclass:: spacenet.schemas.element.ElementCarrier
    :members:  
 
+.. autoclass:: spacenet.schemas.element.Agent
+   :members: 
+
 .. autoclass:: spacenet.schemas.element.HumanAgent
    :members: 
 
 .. autoclass:: spacenet.schemas.element.RoboticAgent
    :members:  
+
+.. autoclass:: spacenet.schemas.element.Vehicle
+   :members: 
 
 .. autoclass:: spacenet.schemas.element.PropulsiveVehicle
    :members: 
@@ -102,11 +108,9 @@ Instantiated Elements
 .. autoclass:: spacenet.schemas.inst_element.InstElement
    :members:  
 
-.. autoclass:: spacenet.schemas.inst_element.InstResourceContainer
+.. autoclass:: spacenet.schemas.inst_element.InstCargoCarrier
    :members:  
-
-.. autoclass:: spacenet.schemas.inst_element.InstElement
-   :members:  
+ 
 
 .. autoclass:: spacenet.schemas.inst_element.InstResourceContainer
    :members: 
@@ -114,11 +118,17 @@ Instantiated Elements
 .. autoclass:: spacenet.schemas.inst_element.InstElementCarrier
    :members:  
 
+.. autoclass:: spacenet.schemas.inst_element.InstAgent
+   :members: 
+
 .. autoclass:: spacenet.schemas.inst_element.InstHumanAgent
    :members: 
 
 .. autoclass:: spacenet.schemas.inst_element.InstRoboticAgent
    :members:  
+
+.. autoclass:: spacenet.schemas.inst_element.InstVehicle
+   :members: 
 
 .. autoclass:: spacenet.schemas.inst_element.InstPropulsiveVehicle
    :members: 
