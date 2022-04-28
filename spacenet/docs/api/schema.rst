@@ -175,7 +175,7 @@ Campaign
 Element Events
 ----------------
 
-.. autoclass:: spacenet.schemas.element_events.MakeElements
+.. autoclass:: spacenet.schemas.element_events.CreateElements
    :members:
 
 .. autoclass:: spacenet.schemas.element_events.MoveElements
@@ -190,6 +190,9 @@ Element Events
 Transport Events
 -----------------
 
+.. autoclass:: spacenet.schemas.edge.Burn
+   :members:
+
 .. autoclass:: spacenet.schemas.flight_transport.FlightTransport
    :members:
 
@@ -200,9 +203,6 @@ Transport Events
    :members:
 
 .. autoclass:: spacenet.schemas.propulsive_burn.PropulsiveBurn
-   :members:
-
-.. autoclass:: spacenet.schemas.burn.Burn
    :members:
 
 Resource Events

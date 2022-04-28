@@ -6,7 +6,7 @@ from typing import Union, List
 from uuid import uuid4, UUID
 from datetime import timedelta
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, NonNegativeFloat
 from typing_extensions import Literal
 
 from .node import NodeUUID
@@ -16,6 +16,7 @@ from .inst_element import InstElementUUID
 
 __all__ = [
     "EdgeUUID",
+    "Burn",
     "Edge",
     "EdgeType",
     "FlightEdge",
@@ -30,9 +31,9 @@ class EdgeType(str, Enum):
     An enumeration for the types of edges.
     """
 
-    Surface = "SurfaceEdge"
-    Space = "SpaceEdge"
-    Flight = "FlightEdge"
+    Surface = "Surface"
+    Space = "Space"
+    Flight = "Flight"
 
 
 class EdgeUUID(ImmutableBaseModel):
@@ -43,6 +44,20 @@ class EdgeUUID(ImmutableBaseModel):
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for edge")
 
+class Burn(BaseModel):
+    """
+    An individual burn to generate a specified amount of
+    velocity change. Base class for propulsive burns
+    
+    """
+
+    edge_id: EdgeUUID = Field(..., description="UUID of the edge the burn will occur on")
+    time: timedelta = Field(
+        ..., description="Mission time at which the burn will occur"
+    )
+    delta_v: NonNegativeFloat = Field(
+        ..., description="Change in velocity to be achieved by a burn"
+    )
 
 class Edge(EdgeUUID):
     """
@@ -107,7 +122,8 @@ class SpaceEdge(Edge):
         ...,
         title="Delta-V",
         description="Acceleration required to traverse this edge in m/s",
-    )
+    ),
+    burns: List[Burn] = Field(..., title="Burns", description="List of burns included in the space edge")
 
 
 class FlightEdge(Edge):

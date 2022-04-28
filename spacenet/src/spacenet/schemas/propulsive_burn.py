@@ -9,7 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field, root_validator
 
 from . import PrimitiveEvent
-from .burn import Burn
+from .edge import Burn
 from .element import ElementUUID
 
 __all__ = ["BurnStage", "PropulsiveBurn", "BurnStageItem"]
