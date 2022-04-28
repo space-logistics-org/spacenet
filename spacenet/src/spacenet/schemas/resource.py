@@ -15,7 +15,7 @@ from .mixins import ImmutableBaseModel
 from .types import SafeNonNegFloat, SafePosFloat
 from .constants import ClassOfSupply
 
-__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUUID", "Resource"]
+__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUUID", "Resource", "ResourceAmount"]
 
 class ResourceUUID(ImmutableBaseModel):
     """
@@ -31,7 +31,6 @@ class ResourceType(str, Enum):
 
     Discrete = "Discrete"
     Continuous = "Continuous"
-
 
 class Resource(ResourceUUID):
     """
@@ -51,6 +50,17 @@ class Resource(ResourceUUID):
     unit_volume: SafeNonNegFloat = Field(
         ..., title="Unit Volume", description="Resource volume"
     )
+
+class ResourceAmount(ImmutableBaseModel):
+    """
+    A specified amount of a resource type.
+
+    :param ResourceUUID | ClassofSupply resource_id: UUID or COS number of resource being used
+    :param float amount: amount of resource being used, in units specified by that resource
+    """
+
+    resource_id: Union[ResourceUUID, ClassOfSupply] = Field(..., title="Resource UUID", description="UUID of the resource being used")
+    amount: float = Field(..., title="Amount", description="amount of resource being used, in units specified by that resource")
 
 
 class DiscreteResource(Resource):

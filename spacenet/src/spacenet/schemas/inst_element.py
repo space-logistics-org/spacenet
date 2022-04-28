@@ -14,7 +14,8 @@ from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import StateUUID
 from .element import ElementKind, ElementUUID
-from .resource import ResourceUUID
+from .resource import ResourceAmount
+from .constants import ClassOfSupply
 
 __all__ = [
     "InstElementUUID",
@@ -97,30 +98,35 @@ class InstCargoCarrier(InstElement, ABC):
     max_cargo_volume: Optional[SafeNonNegFloat] = Field(
         0, title="Maximum Cargo Volume", description="cargo capacity constraint (m^3)",
     )
-    contents: List[Union[InstElementUUID, ResourceUUID]] = Field([], title="Contents", description="list of elements or resources moved into carrier during spatial simulation")
 
 
 
 class InstResourceContainer(InstCargoCarrier):
     """
     An element representing a container for resources.
+
+    :param [ResourceAmount] contents: list of resource quantities moved into container during spatial simulation
     """
 
-    pass
+    contents: List[ResourceAmount] = Field([], title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
 
 class InstElementCarrier(InstCargoCarrier):
     """
     An element which can carry other elements.
 
     :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo (optional)
+    :param [InstElementUUID] contents: list of elements moved into carrier during spatial simulation
     """
+
     cargo_environment: Optional[Environment] = Field(
         title="Cargo Environment",
         description="the cargo's environment — if "
         "unpressurized, "
         "cannot add pressurized elements as "
         "cargo",
-    )
+    ),
+    contents: List[InstElementUUID] = Field([], title="Contents", description="list of elements moved into carrier during spatial simulation")
+
 
 
 class InstAgent(InstElement, ABC):

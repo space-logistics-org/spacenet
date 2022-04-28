@@ -13,7 +13,7 @@ from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import State, StateUUID
-from .resource import ResourceUUID
+from .resource import ResourceAmount
 
 __all__ = [
     "ElementKind",
@@ -107,7 +107,6 @@ class CargoCarrier(Element, ABC):
 
     :param NonNegFloat max_cargo_mass: cargo capacity constraint (kg)
     :param max_cargo_volume: cargo capacity constraint (m^3)
-    :param [ElementUUID | ResourceUUID] contents: list of elements or resources moved into carrier during spatial simulation
     """
 
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
@@ -203,6 +202,7 @@ class PropulsiveVehicle(Vehicle):
     :param PropulsiveVehicle type: the element's type
     :param NonNegFloat isp: "specific impulse (s)
     :param NonNegFloat max_fuel: maximum fuel (units)
+    :param propellant ResourceAmount: UUID of propellant resource and rate of usage
     """
 
     type: Literal[ElementKind.PropulsiveVehicle] = Field(
@@ -214,8 +214,7 @@ class PropulsiveVehicle(Vehicle):
     max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant_id: SafeInt  # TODO: this needs constraints or to be an enum;
-    #  perhaps a foreign key constraint in model?
+    propellant: ResourceAmount = Field(..., title="Propellant", description="UUID of propellant resource and rate")
 
 
 class SurfaceVehicle(Vehicle):

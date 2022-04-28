@@ -11,6 +11,7 @@ from typing_extensions import Literal
 from .mixins import ImmutableBaseModel
 
 from .resource import ResourceUUID, ResourceType
+from .constants import ClassOfSupply
 
 __all__ = [
     "DemandModelKind",
@@ -33,7 +34,7 @@ class Demand(BaseModel):
     A representation of one specific demand, particularly including the type, UUID and amount of resource demanded.
     
     :param ResourceType resource_type: type of resource that is being demanded (continuous or discrete)
-    :param ResourceUUID resource: UUID of the resource demanded
+    :param ResourceUUID | ClassofSupply resource: UUID of COS number of the resource demanded
     :param float amount: amount of the resource being demanded, in units defined by given resource
     """
     resource_type: ResourceType = Field(
@@ -41,7 +42,7 @@ class Demand(BaseModel):
         title="Resource Type",
         description="Type of resource that is being demanded.",
     )
-    resource: ResourceUUID = Field(..., title="Resource ID", description="UUID of resource being consumed")
+    resource: Union[ResourceUUID, ClassOfSupply] = Field(..., title="Resource", description="UUID or COS number of resource being demanded")
     amount: float = Field(..., title="Amount", description="amount of the resource being demanded, in units defined by given resource")
 
 class DemandRate(BaseModel):
@@ -49,7 +50,7 @@ class DemandRate(BaseModel):
     A representation of one specific demand, particularly including the type, UUID and amount of resource demanded.
 
     :param ResourceType resource_type: type of resource that is being demanded (continuous or discrete)
-    :param ResourceUUID resource: UUID of the resource demanded
+    :param ResourceUUID | ClassofSupply resource: UUID of COS number of the resource demanded
     :param float amount: rate of resource demand, in units defined by given resource
     """
     resource_type: ResourceType = Field(
@@ -57,5 +58,5 @@ class DemandRate(BaseModel):
         title="Resource Type",
         description="Type of resource that is being demanded.",
     )
-    resource: ResourceUUID = Field(..., title="Resource ID", description="UUID of resource being consumed")
+    resource: Union[ResourceUUID, ClassOfSupply] = Field(..., title="Resource", description="UUID or COS number of resource being demanded")
     rate: float = Field(..., title="Amount", description="rate of resource consumption, in units defined by given resource")
