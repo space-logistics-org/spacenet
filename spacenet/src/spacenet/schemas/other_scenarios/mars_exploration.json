@@ -1220,7 +1220,7 @@
         {
           "name": "M.01 | Create Stack 1",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -1287,7 +1287,7 @@
         {
           "name": "M.01 | Create Stack 2",
           "mission_time": "31 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -1354,7 +1354,7 @@
         {
           "name": "M.01 | Create Stack 3",
           "mission_time": "59 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -1371,7 +1371,7 @@
         {
           "name": "M.01 | Create CFC Resources A",
           "mission_time": "59 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "0d4bda92-ec8f-4d8d-b76b-352367d77438",
           "elements": [
@@ -1435,7 +1435,7 @@
         {
           "name": "M.01 | Create Stack 4",
           "mission_time": "90 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -1451,7 +1451,7 @@
         {
           "name": "M.01 | Create MAV Resources",
           "mission_time": "90 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "6c773d1e-2a3f-4396-bdbc-a09bd4157cb3",
           "elements": [
@@ -1461,7 +1461,7 @@
         {
           "name": "M.01 | Create MDAV Resources",
           "mission_time": "90 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "dba6909b-4073-4fa0-aaff-23cc40bda6ba",
           "elements": [
@@ -1520,7 +1520,7 @@
         {
           "name": "M.01 | Create Stack 5",
           "mission_time": "120 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -1535,7 +1535,7 @@
         {
           "name": "M.01 | Create SHAB Resources",
           "mission_time": "120 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "1b9476c4-80ad-4a89-b761-e3d87f721dad",
           "elements": [
@@ -1712,7 +1712,7 @@
         {
           "name": "M.01 | Create Stack 6",
           "mission_time": "821 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -1779,7 +1779,7 @@
         {
           "name": "M.01 | Create Stack 7",
           "mission_time": "851 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -1846,7 +1846,7 @@
         {
           "name": "M.01 | Create Stack 8",
           "mission_time": "882 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -1915,7 +1915,7 @@
         {
           "name": "M.01 | Create Stack 9",
           "mission_time": "912 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -1934,7 +1934,7 @@
         {
           "name": "M.01 | Create CFC Resources B",
           "mission_time": "912 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "bf76062d-3dc4-4a4b-8247-ddef23cda38a",
           "elements": [
@@ -1944,7 +1944,7 @@
         {
           "name": "M.01 | Create MTH Resources",
           "mission_time": "912 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "f8f213a7-ae92-4e37-a01c-98c5937ff333",
           "elements": [
@@ -2010,7 +2010,7 @@
         {
           "name": "M.01 | Create CM and SM",
           "mission_time": "964 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "9533b255-526f-4197-9319-6013ca01ec97",
           "elements": [
@@ -2020,7 +2020,7 @@
         {
           "name": "M.01 | Create Crew",
           "mission_time": "964 00:00:00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "3771661d-1442-46a8-8646-b87d93346b63",
           "elements": [
@@ -2195,7 +2195,7 @@
         {
           "name": "M.01 | Create Samples",
           "mission_time": "1677",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "6c773d1e-2a3f-4396-bdbc-a09bd4157cb3",
           "elements": [

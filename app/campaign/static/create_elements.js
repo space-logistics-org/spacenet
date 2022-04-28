@@ -68,7 +68,7 @@ function onComplete(){
 
     data = {
 		name: name,
-		type: 'MakeElements',
+		type: 'CreateElements',
 		priority: parseInt(priority),
 		mission_time: mission_time,
 		elements: elements,

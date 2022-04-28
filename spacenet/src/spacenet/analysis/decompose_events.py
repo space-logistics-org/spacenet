@@ -7,7 +7,7 @@ from typing import Callable, Dict, List, Type, TypeVar, Union
 from spacenet.schemas import Burn
 from spacenet.schemas.events import *
 
-PrimitiveEvents = Union[MoveElements, MakeElements, RemoveElements, PropulsiveBurn]
+PrimitiveEvents = Union[MoveElements, CreateElements, RemoveElements, PropulsiveBurn]
 
 E = TypeVar("E", bound=Event)
 P = TypeVar("P", bound=PrimitiveEvents)
@@ -28,9 +28,9 @@ def _decompose_move(event: MoveElements) -> List[MoveElements]:
     return [event]
 
 
-def _decompose_make(event: MakeElements) -> List[MakeElements]:
+def _decompose_make(event: CreateElements) -> List[CreateElements]:
     """
-    Decompose an event creating elements into a list of MakeElements events representing the
+    Decompose an event creating elements into a list of CreateElements events representing the
     same action.
 
     :param event: event to decompose
@@ -157,7 +157,7 @@ def _decompose_space_transport(event: SpaceTransport) -> List[PrimitiveEvents]:
 
 DECOMPOSE_REGISTRY: Dict[Type[E], DecomposeFn[E]] = {
     MoveElements: _decompose_move,
-    MakeElements: _decompose_make,
+    CreateElements: _decompose_make,
     RemoveElements: _decompose_remove,
     PropulsiveBurn: _decompose_propulsive_burn,
     FlightTransport: _decompose_flight_transport,

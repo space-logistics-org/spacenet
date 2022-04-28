@@ -565,7 +565,7 @@
         {
           "name": "M.00 | Create ISS",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "d17b893d-af31-47fe-9a47-9512c4de41a3",
           "elements": [
@@ -578,7 +578,7 @@
         {
           "name": "M.00 | Create Crew",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "361d4d09-eca1-428b-aa53-4b5c8d487900",
           "elements": [
@@ -650,7 +650,7 @@
         {
           "name": "M.01 | Create Progress",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
           "elements": [
@@ -694,7 +694,7 @@
         {
           "name": "M.02 | Create Shuttle",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
           "elements": [
@@ -704,7 +704,7 @@
         {
           "name": "M.02 | Create Shuttle Payload",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "a2eed7a1-fe47-4bad-9076-7c2705035ef8",
           "elements": [
@@ -774,7 +774,7 @@
         {
           "name": "M.03 | Create Soyuz",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
           "elements": [
@@ -831,7 +831,7 @@
         {
           "name": "M.04 | Create Progress",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "6cf28cc6-d156-41a4-b594-fff8762ef292",
           "elements": [
@@ -875,7 +875,7 @@
         {
           "name": "M.05 | Create Shuttle",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 1,
           "entry_point_id": "d180458e-d6d0-45d6-b0a8-86ace094b68a",
           "elements": [
@@ -885,7 +885,7 @@
         {
           "name": "M.05 | Create Shuttle Payload",
           "mission_time": "00",
-          "type": "MakeElements",
+          "type": "CreateElements",
           "priority": 2,
           "entry_point_id": "fe4dcd40-1187-4094-901a-0d879d98c157",
           "elements": [

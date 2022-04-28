@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 from spacenet.schemas.edge import AllEdges
 from spacenet.schemas.element import AllElements
-from spacenet.schemas.element_events import MakeElements, MoveElements
+from spacenet.schemas.element_events import CreateElements, MoveElements
 from spacenet.schemas.mission import Mission
 from spacenet.schemas.node import AllNodes
 from spacenet.schemas.resource import AllResources
@@ -25,7 +25,7 @@ class Manifest(BaseModel):
     A manifest of events manipulating resources.
     """
 
-    container_events: List[Union[MakeElements, MoveElements]] = Field(  # TODO: types?
+    container_events: List[Union[CreateElements, MoveElements]] = Field(  # TODO: types?
         ..., title="Resource Event Sequence"
     )
 
@@ -43,20 +43,20 @@ class Configuration(BaseModel):
     """
     The specific configuration of the scenario specifiying whether volume and environment are constrained.
     """
-    volumeConstrained: bool = Field(False, title="Volume Constrained")
-    environmentConstrained: bool = Field(False, title="Environment Constrained")
+    volume_constrained: bool = Field(False, title="Volume Constrained")
+    environment_constrained: bool = Field(False, title="Environment Constrained")
 
 class ScenarioType(str, Enum):
     """
     An enumeration of the different kinds of scenario.
     """
 
-    iss = "ISS"
+    earth = "Earth-only"
     lunar = "Lunar"
-    moon_only = "MoonOnly"
+    moon_only = "Moon-only"
     martian = "Martian"
-    mars_only = "MarsOnly"
-    solar_system = "SolarSystem"
+    mars_only = "Mars-only"
+    solar_system = "Solar System"
 
 
 class Scenario(BaseModel):

@@ -1,5 +1,5 @@
 const COLOR_MAPPINGS = {
-    'MakeElements': 'green',
+    'CreateElements': 'green',
     'FlightTransport': 'red',
     'SpaceTransport': 'yellow',
     'CrewedExploration': 'blue',
@@ -11,7 +11,7 @@ const COLOR_MAPPINGS = {
 }
 
 const POINT_SIZES = {
-    'MakeElements': 4,
+    'CreateElements': 4,
     'FlightTransport': 1,
     'CrewedExploration': 1,
     'RemoveElements': 3.5,
@@ -26,7 +26,7 @@ var DateTime = luxon.DateTime;
 const scenario = compileScenario();
 console.log("scenario:", scenario)
 
-const oneNodeEvents = ['MakeElements', 'MoveElements', 'RemoveElements', 'ReconfigureElements', 'ReconfigureGroup', 'ConsumeResources', 'TransferResources']
+const oneNodeEvents = ['CreateElements', 'MoveElements', 'RemoveElements', 'ReconfigureElements', 'ReconfigureGroup', 'ConsumeResources', 'TransferResources']
 
 var nodeLocations = getElt('NodeIDstoUUIDs');
 // let ind = 0;

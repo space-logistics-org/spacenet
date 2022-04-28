@@ -17,7 +17,7 @@ from .events import (
     FlightTransport,
     SpaceTransport,
     SurfaceTransport,
-    MakeElements,
+    CreateElements,
     RemoveElements,
     MoveElements,
     CrewedExploration,
@@ -29,7 +29,7 @@ AllEvents = Union[
     SurfaceTransport,
     MoveElements,
     RemoveElements,
-    MakeElements,
+    CreateElements,
     CrewedExploration,
 ]
 

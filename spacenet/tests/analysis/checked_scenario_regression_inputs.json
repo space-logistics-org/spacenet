@@ -262,7 +262,7 @@
           {
             "name": "Create Apollo 17 Saturn-V Stack at KSC",
             "mission_time": "00",
-            "type": "MakeElements",
+            "type": "CreateElements",
             "priority": 1,
             "entry_point_id": "cb3aa87b-893c-4dbd-9acb-d1c5b7017644",
             "elements": [
@@ -278,7 +278,7 @@
           {
             "name": "Create crew members in the CSM",
             "mission_time": "00",
-            "type": "MakeElements",
+            "type": "CreateElements",
             "priority": 2,
             "entry_point_id": "677fe98e-a8e3-4b6c-a148-d7004287d43e",
             "elements": [

@@ -1,10 +1,10 @@
 """
-This module contains tests for MakeElements event schemas.
+This module contains tests for CreateElements event schemas.
 """
 import pytest
 from hypothesis import given, strategies as st
 
-from spacenet.schemas.element_events import MakeElements
+from spacenet.schemas.element_events import CreateElements
 from .utilities import EVENT_VALID_MAP, EVENT_INVALID_MAP
 from ..utilities import (
     INVALID_UUIDS,
@@ -32,7 +32,7 @@ def xfail_construct_make(
     name, elements, entry_point_id, priority, mission_time, type
 ) -> None:
     """
-    Construct a MakeElements event, expecting construction to fail.
+    Construct a CreateElements event, expecting construction to fail.
 
     :param name: event name
     :param elements: UUIDs of elements to create
@@ -42,7 +42,7 @@ def xfail_construct_make(
     :param type: kind of event
     """
     xfail_from_kw(
-        MakeElements,
+        CreateElements,
         name=name,
         elements=elements,
         entry_point_id=entry_point_id,
@@ -54,7 +54,7 @@ def xfail_construct_make(
 
 @given(kw=st.fixed_dictionaries(mapping=VALID_MAP),)
 def test_valid(kw):
-    success_from_kw(MakeElements, **kw)
+    success_from_kw(CreateElements, **kw)
 
 
 @given(

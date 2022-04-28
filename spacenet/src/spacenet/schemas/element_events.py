@@ -15,14 +15,14 @@ from .edge import EdgeUUID
 from .state import StateUUID
 
 __all__ = [
-    "MakeElements",
+    "CreateElements",
     "MoveElements",
     "ReconfigureElements",
     "RemoveElements",
 ]
 
 
-class MakeElements(PrimitiveEvent):
+class CreateElements(PrimitiveEvent):
     """
     An event which brings elements "into" a simulation
     at a specific time and location (node, edge, or inside an element carrier).

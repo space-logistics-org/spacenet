@@ -281,7 +281,7 @@
             "events": [
                 {
                     "name": "Create Apollo 17 Saturn-V Stack at KSC",
-                    "type": "MakeElements",
+                    "type": "CreateElements",
                     "priority": 1,
                     "mission_time": "00:00:00.00",
                     "elements": [
@@ -297,7 +297,7 @@
                 },
                 {
                     "name": "Create Crew Members in the CSM",
-                    "type": "MakeElements",
+                    "type": "CreateElements",
                     "priority": 2,
                     "mission_time": "00:00:00.00",
                     "elements": [

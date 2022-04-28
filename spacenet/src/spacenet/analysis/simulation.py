@@ -26,7 +26,7 @@ from spacenet.schemas import (
     PropulsiveVehicle,
     BurnStage,
     MoveElements,
-    MakeElements,
+    CreateElements,
     RemoveElements,
 )
 from .checked_scenario import CheckedScenario
@@ -148,7 +148,7 @@ class Create(SimEvent):
     Represents an event creating elements, one of the four primitive SimEvents.
     """
 
-    event: MakeElements
+    event: CreateElements
 
     # noinspection PyMissingOrEmptyDocstring
     def validate_ids(self, sim: "Simulation") -> None:
@@ -319,7 +319,7 @@ SimCallback = Callable[["Simulation", Optional[T]], T]
 SimEntity = Union[SimEdge, SimElement, SimNode]
 
 EVENT_TO_SIM_EVENT = {
-    MakeElements: Create,
+    CreateElements: Create,
     MoveElements: Move,
     RemoveElements: Remove,
     PropulsiveBurn: BurnEvent,

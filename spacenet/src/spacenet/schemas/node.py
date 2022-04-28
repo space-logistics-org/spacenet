@@ -32,9 +32,9 @@ class NodeType(str, Enum):
     An enumeration of the three types of nodes.
     """
 
-    Surface = "SurfaceNode"
-    Orbital = "OrbitalNode"
-    Lagrange = "LagrangeNode"
+    Surface = "Surface"
+    Orbital = "Orbital"
+    Lagrange = "Lagrange"
 
 class NodeUUID(ImmutableBaseModel):
     """
@@ -98,7 +98,7 @@ class OrbitalNode(Node):
     :param NonNegFloat apoapsis: Major radius of orbit
     :param NonNegFloat periapsis: Minor radius of orbit
     :param inclination: Inclination of orbit
-    :type inclination: float from -90 to 90
+    :type inclination: float from 0 to 180
     """
 
     type: Literal[NodeType.Orbital] = Field(
@@ -110,7 +110,7 @@ class OrbitalNode(Node):
     periapsis: SafeNonNegFloat = Field(
         ..., title="Periapsis", description="Minor radius of orbit"
     )
-    inclination: confloat(ge=0, le=90) = Field(
+    inclination: confloat(ge=0, le=180) = Field(
         ..., title="Inclination", description="Inclination of orbit"
     )
 
