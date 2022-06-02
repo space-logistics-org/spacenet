@@ -9,8 +9,8 @@ from uuid import UUID
 from pydantic import BaseModel, Field, root_validator
 
 from . import PrimitiveEvent
-from .edge import Burn
-from .element import ElementUUID
+from .burn import Burn
+from .inst_element import InstElementUUID
 
 __all__ = ["BurnStage", "PropulsiveBurn", "BurnStageItem"]
 
@@ -31,7 +31,7 @@ class BurnStageItem(BaseModel):
     Class for items in the burn-stage sequence
     """
 
-    element: ElementUUID = Field(
+    element: InstElementUUID = Field(
         ..., title="Element", description="Element to be burned or staged."
     )
     burnStage: BurnStage = Field(
@@ -47,7 +47,7 @@ class PropulsiveBurn(PrimitiveEvent):
     more burns or stages of individual elements.
     """
 
-    elements: List[ElementUUID] = Field(
+    elements: List[InstElementUUID] = Field(
         ...,
         title="Elements List",
         description="List of the elements to be included in the burn event.",

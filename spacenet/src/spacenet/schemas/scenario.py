@@ -64,6 +64,7 @@ class Scenario(BaseModel):
     A scenario describing a space mission campaign.
 
     :param str name: name of the scenario
+    :paran str created_by: author of the scenario
     :param str description: short description
     :param datetime start_date: start date of mission
     :param ScenarioType scenario_type: type of scenario
@@ -78,6 +79,7 @@ class Scenario(BaseModel):
     """
 
     name: str = Field(..., title="Name", description="Name of Scenario")
+    created_by: str = Field(..., title="CreatedBy", description="Author of Scenario")
     description: str = Field(None, title="Description", description="Short description")
     start_date: datetime = Field(..., title="Start Date")
     scenario_type: ScenarioType = Field(..., title="Type of Scenario")

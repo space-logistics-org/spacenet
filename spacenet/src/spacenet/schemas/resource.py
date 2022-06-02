@@ -13,9 +13,9 @@ from typing_extensions import Literal
 
 from .mixins import ImmutableBaseModel
 from .types import SafeNonNegFloat, SafePosFloat
-from .constants import ClassOfSupply
+from .constants import ClassOfSupply, Environment
 
-__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUUID", "Resource", "ResourceAmount"]
+__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUUID", "Resource", "ResourceAmount", "GenericResourceAmount"]
 
 class ResourceUUID(ImmutableBaseModel):
     """
@@ -41,7 +41,8 @@ class Resource(ResourceUUID):
     name: str = Field(..., title="Name", description="Resource name")
     class_of_supply: ClassOfSupply = Field(
         ..., title="Class of Supply", description="Class of supply number"
-    )
+    ),
+    packing_factor: SafePosFloat = Field(..., title="Packing Factor", description="Float greater than 0 representing resource's packing factor")
     units: str = Field(default="kg", title="Units")
     description: Optional[str] = Field(
         default=None, title="Description", description="Short description"
@@ -55,12 +56,29 @@ class ResourceAmount(ImmutableBaseModel):
     """
     A specified amount of a resource type.
 
+    :param ResourceType type: type of the resource (either discrete or continuous)
     :param ResourceUUID | ClassofSupply resource_id: UUID or COS number of resource being used
     :param float amount: amount of resource being used, in units specified by that resource
     """
 
-    resource_id: Union[ResourceUUID, ClassOfSupply] = Field(..., title="Resource UUID", description="UUID of the resource being used")
+    type: ResourceType = Field(..., title="Type", description="Resource type; discrete or continuous"
+    )
+    resource_id: ResourceUUID = Field(..., title="Resource UUID", description="UUID of the resource being used")
     amount: float = Field(..., title="Amount", description="amount of resource being used, in units specified by that resource")
+
+class GenericResourceAmount(ImmutableBaseModel):
+    """
+    A specified amount of a generic resource.
+
+    :param ClassOfSupply class_of_supply: COS number of generic resource being used
+    :param Environment environment: environment of generic resource. Either pressurized or unpressurized.
+    :param float amount: amount of generic resource being used, in units specified by that resource
+    """
+
+    class_of_supply: ClassOfSupply = Field(..., title="Class of Suppoly", description="class of suppply of the generic resource being used")
+    environment: Environment = Field(..., title="Environment", description="Environment"),
+    amount: float = Field(..., title="Amount", description="amount of resource being used, in units specified by that resource")
+
 
 
 class DiscreteResource(Resource):

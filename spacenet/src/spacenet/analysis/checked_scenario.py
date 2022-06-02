@@ -27,13 +27,13 @@ class CheckedScenario(Scenario):
     def _same_start_date_as_earliest_mission_start_date(
         cls, values: Dict[str, Any]
     ) -> Dict[str, Any]:
-        missions = values.get("missionList")
+        missions = values.get("mission_list")
         assert missions is not None
         earliest_starting_mission: Optional[Mission] = min(
             missions, key=lambda mission: mission.start_date, default=None
         )
         if earliest_starting_mission is not None:
-            start_date = values.get("startDate")
+            start_date = values.get("start_date")
             assert start_date is not None
             assert start_date == earliest_starting_mission.start_date
         return values
@@ -43,7 +43,7 @@ class CheckedScenario(Scenario):
         network: Optional[Network] = values.get("network")
         assert network is not None
         network_ids = network.nodes.keys() | network.edges.keys()
-        elements = values.get("elementList")
+        elements = values.get("element_templates")
         assert elements is not None
         assert not (
             elements.keys() & network_ids
@@ -64,7 +64,7 @@ class CheckedScenario(Scenario):
     # Initialization occurs in this schema because we do validation that edges actually exist
     # in this schema
 
-    @validator("missionList")
+    @validator("mission_list")
     def _initialize_default_delta_v(cls, v, values, **kwargs) -> List[Mission]:
         assert "network" in values, "prior errors raised for network being invalid"
         network: Network = values["network"]
@@ -84,7 +84,7 @@ class CheckedScenario(Scenario):
         cls, values: Dict[str, Any]
     ) -> Dict[str, Any]:
         edges = values["network"].edges
-        missions: List[Mission] = values["missionList"]
+        missions: List[Mission] = values["mission_list"]
         for mission in missions:
             for event in mission.events:
                 if isinstance(

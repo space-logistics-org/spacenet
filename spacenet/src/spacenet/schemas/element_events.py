@@ -27,11 +27,11 @@ class CreateElements(PrimitiveEvent):
     An event which brings elements "into" a simulation
     at a specific time and location (node, edge, or inside an element carrier).
     """
-    elements: List[InstElement] = Field(
+    elements: List[InstElementUUID] = Field(
         ..., description="the IDs of the instantiated elements being added to simulation"
     )
-    entry_point_id: Union[EdgeUUID, InstElementUUID, NodeUUID] = Field(
-        ..., description="the ID of the entry point the element is being added at"
+    location: Union[EdgeUUID, InstElementUUID, NodeUUID] = Field(
+        ..., description="the ID of the node, edge or instianted element where the element is being created"
     )
 
 
@@ -41,13 +41,13 @@ class MoveElements(PrimitiveEvent):
     to a new location (node, edge, or element carrier).
     """
 
-    to_move: List[InstElementUUID] = Field(..., description="the list of IDs of instantiated elements to move")
-    origin_id: Union[EdgeUUID, NodeUUID] = Field(
+    elements: List[InstElementUUID] = Field(..., description="the list of IDs of instantiated elements to move")
+    location: Union[EdgeUUID, NodeUUID] = Field(
         ...,
-        description="the ID of the original time and location "
+        description="the ID of the original edge or node "
         "which the elements are being moved from",
     )
-    destination_id: Union[EdgeUUID, InstElementUUID, NodeUUID] = Field(
+    container: Union[EdgeUUID, InstElementUUID, NodeUUID] = Field(
         ...,
         description="the ID of the new location which the elements are being moved to",
     )
@@ -62,7 +62,7 @@ class RemoveElements(PrimitiveEvent):
     elements: List[InstElementUUID] = Field(
         ..., description="the list of IDs of instantiated elements to remove"
     )
-    removal_point_id: Union[NodeUUID, EdgeUUID]  = Field(
+    location: Union[NodeUUID, EdgeUUID]  = Field(
         ..., description="the ID of the node or edge to remove elements from"
     )
 
@@ -73,11 +73,11 @@ class ReconfigureElements(Event):
     at a specific time and location (node or edge).
     """
 
-    to_reconfigure: Dict[InstElementUUID, StateUUID] = Field(
+    element_states: Dict[InstElementUUID, StateUUID] = Field(
         ...,
         description="a mapping from the IDs of instantiated elements to the IDs of their desired "
         "new state",
     )
-    reconfigure_point_id: NodeUUID = Field(
+    location: Union[NodeUUID, EdgeUUID] = Field(
         ..., description="the ID of the node or edge to reconfigure elements at",
     )

@@ -13,10 +13,10 @@ from .node import NodeUUID
 from spacenet.schemas.mixins import ImmutableBaseModel
 from spacenet.schemas.types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .inst_element import InstElementUUID
+from .burn import Burn
 
 __all__ = [
     "EdgeUUID",
-    "Burn",
     "Edge",
     "EdgeType",
     "FlightEdge",
@@ -44,20 +44,6 @@ class EdgeUUID(ImmutableBaseModel):
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for edge")
 
-class Burn(BaseModel):
-    """
-    An individual burn to generate a specified amount of
-    velocity change. Base class for propulsive burns
-    
-    """
-
-    edge_id: EdgeUUID = Field(..., description="UUID of the edge the burn will occur on")
-    time: timedelta = Field(
-        ..., description="Mission time at which the burn will occur"
-    )
-    delta_v: NonNegativeFloat = Field(
-        ..., description="Change in velocity to be achieved by a burn"
-    )
 
 class Edge(EdgeUUID):
     """

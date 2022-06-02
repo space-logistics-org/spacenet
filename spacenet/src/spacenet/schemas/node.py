@@ -76,7 +76,7 @@ class SurfaceNode(Node):
     :param latitude: Latitude (decimal degrees)
     :type latitude: float from -90 to 90
     :param longitude: Longitude (decimal degrees)
-    :type longitude: float from -90 to 90
+    :type longitude: float from -180 to 180
     """
 
     type: Literal[NodeType.Surface] = Field(

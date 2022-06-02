@@ -22,7 +22,7 @@ class ResultAndErrors(BaseModel):
     errors: List[SimError]
 
 
-@router.post("/", response_model=ResultAndErrors)
+@router.post("/", response_model= ResultAndErrors)
 def simulate_scenario(
     scenario: CheckedScenario,
     time_to_run_for: Optional[timedelta] = None,

@@ -12,7 +12,7 @@ from .resource import Resource
 from .types import SafeFloat
 from .node import NodeUUID
 from .edge import EdgeUUID
-from .resource import ResourceUUID
+from .resource import ResourceAmount, GenericResourceAmount
 
 
 __all__ = ["ConsumeResource"]
@@ -22,17 +22,17 @@ class ConsumeResource(Event):
     """
     Schema for consuming resources from a point
 
-    :param NodeUUID | EdgeUUID removal_point_id: ID of the node or edge to remove resources from
+    :param NodeUUID | EdgeUUID location: ID of the node or edge to remove resources from
     :param ResourceUUID to_remove: UUID of resource to remove
     :param float quantity: quantity to remove
     """
 
-    removal_point_id: Union[NodeUUID, EdgeUUID] = Field(
+    location: Union[NodeUUID, EdgeUUID] = Field(
         ...,
         title="Location ID",
         description="ID of the node or edge to remove resources from",
     )
-    to_remove: ResourceUUID = Field(
+    resources: Union[ResourceAmount, GenericResourceAmount] = Field(
         ..., title="Consumed Resource", description="UUID of resource to remove"
     )
     quantity: SafeFloat = Field(

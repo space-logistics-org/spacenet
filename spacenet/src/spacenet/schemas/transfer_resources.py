@@ -6,12 +6,12 @@ from uuid import UUID
 
 from pydantic import Field
 from .resource import ResourceUUID
+from .bases import Event
 from .node import NodeUUID
 from .edge import EdgeUUID
+from .inst_element import InstElementUUID
 
 __all__ = ["TransferResources"]
-
-from spacenet.schemas import Event
 
 
 class TransferResources(Event):
@@ -20,17 +20,17 @@ class TransferResources(Event):
     from an origin resource container to a destination resource container
     """
 
-    to_transfer: List[ResourceUUID] = Field(
+    resources: List[ResourceUUID] = Field(
         ..., description="the list of resource IDs to transfer"
     )
 
-    origin_id: Union[NodeUUID, EdgeUUID] = Field(
+    location: Union[NodeUUID, EdgeUUID] = Field(
         ...,
-        description="the ID of the original time and location which the "
+        description="the UUID of the original edge or node which the "
         "resources are being transferred from",
     )
 
-    destination_id: Union[NodeUUID, EdgeUUID] = Field(
+    container: Union[NodeUUID, EdgeUUID, InstElementUUID] = Field(
         ...,
-        description="the ID of the new location which the elements are being transferred to",
+        description="the UUID of the node, edge or instantiated element to which the resources are being moved",
     )
