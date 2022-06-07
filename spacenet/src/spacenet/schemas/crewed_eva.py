@@ -9,10 +9,10 @@ from pydantic import Field
 
 from . import Event
 from .element import HumanAgent
-from .mission_demand_model import MissionDemandUUID
+from .element_demand_model import DemandModelUUID
 from .types import SafeFloat
 from .node import NodeUUID
-from .element import ElementUUID
+from .inst_element import InstElementUUID
 
 
 __all__ = ["CrewedEVA"]
@@ -33,34 +33,27 @@ class CrewedEVA(Event):
     """
     An event for a single crewed extravehicular activity.
 
-    :param str name: crewed EVA name
-    :param NodeUUID node_id: the origin node UUID of the space transport
     :param timedelta eva_duration: the duration of the EVA
-    :param ElementUUID crew_vehicle: the location of the crew that will be used for the EVA
-    :param [MissionDemandUUID] additional_demands: list of demands needed for the EVA
+    :param InstElementUUID vehicle: the UUID of the instantiated vehicle that will be used for the EVA
+    :param Dict[InstElementUUID, SafeInt] crew_states: a mapping from the UUIDs of crew members in the exploration to the index number of their new state
+    :param [DemandModelUUID] additional_demands: list of UUIDs of demand models needed for EVA
     """
-
-    name: str = Field(..., title="Name", description="Crewed EVA name")
-
-    node_id: NodeUUID = Field(
-        ...,
-        title="Origin Node ID",
-        description="The origin node UUID of the Space Transport",
-    )
 
     eva_duration: timedelta = Field(
         ..., title="EVA Duration", description="The duration of the EVA"
     )
 
-    crew_vehicle: ElementUUID = Field(
+    vehicle: InstElementUUID = Field(
         ...,
         title="Crew Vehicle",
         description="The location of the crew that will be used for the EVA",
     )
-
-    crew: List[ElementUUID] = Field(
-        ..., title="Crew", description="List of the crew selected for the EVA"
+    #TODO: maps to state UUIDs or safeints?
+    crew_states: Dict[InstElementUUID, SafeInt] = Field(
+        ...,
+        description="a mapping from the IDs of instantiated elements to the IDs of their desired "
+        "new state",
     )
-    additional_demands: List[MissionDemandUUID] = Field(
-        ..., title="Additional Demands", description="List of demands needed for EVA"
+    additional_demands: List[DemandModelUUID] = Field(
+        ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"
     )

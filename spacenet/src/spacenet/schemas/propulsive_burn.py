@@ -12,7 +12,7 @@ from . import PrimitiveEvent
 from .burn import Burn
 from .inst_element import InstElementUUID
 
-__all__ = ["BurnStage", "PropulsiveBurn", "BurnStageItem"]
+__all__ = ["BurnStageType", "PropulsiveBurn", "BurnStageItem"]
 
 
 class BurnStage(Enum):
@@ -34,7 +34,7 @@ class BurnStageItem(BaseModel):
     element: InstElementUUID = Field(
         ..., title="Element", description="Element to be burned or staged."
     )
-    burnStage: BurnStage = Field(
+    type: BurnStage = Field(
         ...,
         title="Burn/Stage",
         description="Whether the target element will be burned or staged.",

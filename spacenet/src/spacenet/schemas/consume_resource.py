@@ -8,33 +8,26 @@ from typing import Union
 from pydantic import Field
 
 from . import Event
-from .resource import Resource
-from .types import SafeFloat
-from .node import NodeUUID
-from .edge import EdgeUUID
+from .inst_element import InstElementUUID
 from .resource import ResourceAmount, GenericResourceAmount
 
 
-__all__ = ["ConsumeResource"]
+__all__ = ["ConsumeResources"]
 
 
-class ConsumeResource(Event):
+class ConsumeResources(Event):
     """
     Schema for consuming resources from a point
 
-    :param NodeUUID | EdgeUUID location: ID of the node or edge to remove resources from
-    :param ResourceUUID to_remove: UUID of resource to remove
-    :param float quantity: quantity to remove
+    :param ResourceAmount | GenericResourceAmount resources: list of resource quantities to consume
+    :param InstElementUUID source: UUID of the instantiated element where the resource to be consumed is currently stored
     """
 
-    location: Union[NodeUUID, EdgeUUID] = Field(
-        ...,
-        title="Location ID",
-        description="ID of the node or edge to remove resources from",
-    )
+
     resources: Union[ResourceAmount, GenericResourceAmount] = Field(
-        ..., title="Consumed Resource", description="UUID of resource to remove"
+        ..., title="Consumed Resources", description="list of resource quantities to consume"
     )
-    quantity: SafeFloat = Field(
-        ..., title="Consumed Quantity", description="quantity to remove"
+    #TODO: change name to location or something? What does this represent?
+    source: InstElementUUID = Field(
+        ..., title="Consumed Quantity", description="UUID of the instantiated element where the resource to be consumed is currently stored"
     )

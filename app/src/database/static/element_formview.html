@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Element Formview</title>
+    <meta content="SpaceNet Team" name="author">
+    <meta content="A formview editor for SpaceNet Element objects." name="description">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="style.css" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+    <script crossorigin="anonymous"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+    <script src="element_formview.js"></script>
+    <script src="jsuniv.js"></script>
+
+</head>
+
+<body>
+<div class="container py-4">
+    <header class="pb-3 mb-4 border-bottom">
+        <a class="d-flex align-items-center text-dark text-decoration-none"></a>
+        <a href="formviewdir.html">
+            <img height="30px" src="SpaceNetLogo.jpg">
+        </a>
+        <span class="fs-4">SpaceNet</span>
+    </header>
+    <h1 class="text-center">Element Form</h1>
+    <div class="text-center" class="dropdown">
+        <label for="dropPick">Element Type</label>
+        <form id="element">
+            <select class="form-control" class="text-center" id="dropPick" onChange="formSet()">
+                <option id="def" selected>Choose...</option>
+                <option id="Element">Element</option>
+                <option id="ResourceContainer">Resource Container</option>
+                <option id="ElementCarrier">Element Carrier</option>
+                <option id="HumanAgent">Human Agent</option>
+                <option id="RoboticAgent">Robotic Agent</option>
+                <option id="PropulsiveVehicle">Propulsive Vehicle</option>
+                <option id="SurfaceVehicle">Surface Vehicle</option>
+            </select>
+        </form>
+    </div>
+    <hr></hr>
+    <form id="components">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputName">Name</label>
+                <input class="form-control" id="inputName" placeholder="Element Name" type="text">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputDesc">Description</label>
+                <input class="form-control" id="inputDesc" placeholder="Element Description" type="text">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputCOS">Class of Supply</label>
+                <select class="form-control" id="inputCOS" onChange="subclassSet()">
+                    <option selected>Choose...</option>
+                    <option id="0">None</option>
+                    <option id="1">Propellants and Fuels</option>
+                    <option id="2">Crew Provisions</option>
+                    <option id="3">Crew Operations</option>
+                    <option id="4">Maintenence and Upkeep</option>
+                    <option id="5">Stowage and Restraint</option>
+                    <option id="6">Exploration and Research</option>
+                    <option id="7">Waste and Disposal</option>
+                    <option id="8">Habitation and Infrastructure</option>
+                    <option id="9">Transportation and Carriers</option>
+                    <option id="10">Miscellaneous</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6" id="inputCOSSub1">
+                <label for="inputCOSSub1">Class of Supply Subclass</label>
+                <select class="form-control" id="inputCOSSub1" onChange="setCOS()">
+                    <option selected>Choose...</option>
+                    <option id="101">Cryogens</option>
+                    <option id="102">Hypergols</option>
+                    <option id="103">Nuclear Fuel</option>
+                    <option id="104">Petroleum Fuels</option>
+                    <option id="105">Other Fuels</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub2" onChange="setCOS()">
+                    <option selected>Choose...</option>
+                    <option id="201">Water and Support Equipment</option>
+                    <option id="202">Food and Support Equipment</option>
+                    <option id="203">Gases</option>
+                    <option id="204">Hygiene Items</option>
+                    <option id="205">Clothing</option>
+                    <option id="206">Personal Items</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub3" onChange="setCOS()">
+                    <option selected>Choose...</option>
+                    <option id="301">Office Equipment and Supplies</option>
+                    <option id="302">EVA Equipment and Consumables</option>
+                    <option id="303">Health Equipment and Consumables</option>
+                    <option id="304">Safety Equipment</option>
+                    <option id="305">Communications Equipment</option>
+                    <option id="306">Computers and Support Equipment</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub4" onChange="subSelect4(); setCOS();">
+                    <option selected>Choose...</option>
+                    <option id="401">Spares and Repair Parts</option>
+                    <option id="402">Maintenance Tools</option>
+                    <option id="403">Lubricants and Bulk Chemicals</option>
+                    <option id="404">Batteries</option>
+                    <option id="405">Cleaning Equipment and Consumables</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub5" onChange="setCOS()">
+                    <option selected>Choose...</option>
+                    <option id="501">Cargo Containers and Restraints</option>
+                    <option id="502">Inventory Management Equipment</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub6" onChange="setCOS()">
+                    <option selected>Choose...</option>
+                    <option id="601">Science Payloads and Instruments</option>
+                    <option id="602">Field Equipment</option>
+                    <option id="603">Samples</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub7" onChange="setCOS()">
+                    <option selected>Choose...</option>
+                    <option id="701">Waste</option>
+                    <option id="702">Waste Management Equipment</option>
+                    <option id="703">Failed Pairs</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub8" onChange="subSelect8()">
+                    <option selected>Choose...</option>
+                    <option id="801">Habitation Facilities</option>
+                    <option id="802">Surface Mobility Systems</option>
+                    <option id="803">Power Systems</option>
+                    <option id="804">Robotic Systems</option>
+                    <option id="805">Resource Utilization Systems</option>
+                    <option id="806">Orbiting Service Systems</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub9" onChange="subSelect9(); setCOS();">
+                    <option selected>Choose...</option>
+                    <option id="901">Carriers, Non-propulsive Elements</option>
+                    <option id="902">Propulsive Elements</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub4Sub" onChange="setCOS()">
+                    <option selected>Choose...</option>
+                    <option id="4011">Spares</option>
+                    <option id="4012">Repair Parts</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub8Sub" onChange="setCOS()">
+                    <option selected>Choose...</option>
+                    <option id="8041">Science Robotics</option>
+                    <option id="8042">Construction/Maintenance Robotics</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select class="form-control" id="inputCOSSub9Sub" onChange="setCOS()">
+                    <option selected>Choose...</option>
+                    <option id="9021">Launch Vehicles</option>
+                    <option id="9022">Upper Stages/In-Space Propulsion Systems</option>
+                    <option id="9023">Descent Stages</option>
+                    <option id="9024">Ascent Stages</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputEnv">Environment</label>
+                <select class="form-control" id="inputEnv">
+                    <option selected>Choose...</option>
+                    <option id="pres">Pressurized</option>
+                    <option id="unpres">Unpressurized</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputAccMass">Accomodation Mass</label>
+                <input class="form-control" id="inputAccMass" placeholder="Accomodation Mass" type="number">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputMass">Mass</label>
+                <input class="form-control" id="inputMass" placeholder="Mass" type="number">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputVol">Volume</label>
+                <input class="form-control" id="inputVol" placeholder="Volume" type="number">
+            </div>
+        </div>
+        <hr></hr>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputCarMass">Cargo Mass</label>
+                <input class="form-control" id="inputCarMass" placeholder="Cargo Mass" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputCarVol">Cargo Volume</label>
+                <input class="form-control" id="inputCarVol" placeholder="Cargo Volume" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputATF">Active Time Fraction</label>
+                <input class="form-control" id="inputATF" placeholder="Active Time Fraction" type="text">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputMaxCrew">Maximum Crew Count</label>
+                <input class="form-control" id="inputMaxCrew" placeholder="Maximum Crew" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputSpecImp">Specific Impulse</label>
+                <input class="form-control" id="inputSpecImp" placeholder="Specific Impulse" type="number">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputMaxFuel">Maximum Fuel</label>
+                <input class="form-control" id="inputMaxFuel" placeholder="Maximum Fuel" type="number">
+            </div>
+            <!-- Look for Propellant ID? Once schema confirmed determine the correct form view -->
+            <div class="form-group col-md-6">
+                <label for="inputMaxSpeed">Maximum Speed</label>
+                <input class="form-control" id="inputMaxSpeed" placeholder="Maximum Speed" type="number">
+            </div>
+            <!-- Look for Fuel ID? Once schema confirmed determine the correct form view -->
+        </div>
+        <input class="btn btn-primary" onClick="onComplete()" type="button" value="Submit">
+    </form>
+</div>
+
+</body>
+
+</html>

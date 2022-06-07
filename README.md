@@ -28,7 +28,7 @@ SPACENET_AUTH_SECRET
 
 To launch the SpaceNet application, run:
 ```shell
-uvicorn app.main:app --reload-dir app --reload-dir spacenet
+uvicorn app.src.main:app --reload-dir app --reload-dir spacenet
 ```
 The default address is http://localhost:8000.
 

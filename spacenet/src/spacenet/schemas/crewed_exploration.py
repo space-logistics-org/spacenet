@@ -2,7 +2,7 @@
 This module defines an event for a recurring crewed extravehicular activity.
 """
 from datetime import timedelta
-from typing import List, Union
+from typing import List, Union, Dict
 from uuid import UUID
 
 from pydantic import Field
@@ -13,6 +13,7 @@ from spacenet.schemas import Event
 from .node import NodeUUID
 from .inst_element import InstElementUUID
 from .edge import EdgeUUID
+from .element_demand_model import DemandModelUUID
 
 
 __all__ = ["CrewedExploration"]
@@ -22,39 +23,34 @@ class CrewedExploration(Event):
     """
     Crewed Exploration Event schema
 
-    :param str name: crewed exploration name
-    :param NodeUUID node_id: The UUID of the node at which the crewed exploration occurs
     :param timedelta eva_duration: the duration of the crewed exploration
-    :param NodeUUID | EdgeUUID crew_location: the UUID of the node or edge where the crew is located
-    :param [InstElementUUID] crew: list of the crew selected for the exploration
-    :param timedelta duration: the duration of the exploration
-    :param NonNegInt eva_per_week: number of EVAs to be performed per week
+    :param InstElementUUID vehicle: the UUID of the instantiated vehicle in which the crewed exploration will take place
+    :param SafeNonNegInt eva_per_week: number of EVAs to be performed per week
+    :param Dict[InstElementUUID, SafeInt] crew_states: a mapping from the UUIDs of crew members in the exploration to the index number of their new state
+    :param [DemandModelUUID] additional_demands: list of UUIDs of demand models needed for EVA
     """
-
-    name: str = Field(..., title="Name", description="Crewed exploration name")
-
-    node_id: NodeUUID = Field(..., title="Node", description="The UUID of the node at which the crewed exploration occurs")
 
     eva_duration: timedelta = Field(
         ..., title="EVA Duration", description="The duration of the crewed exploration"
     )
 
-    crew_location: Union[NodeUUID, EdgeUUID] = Field(
+    vehicle: InstElementUUID = Field(
         ...,
-        title="Crew Location",
-        description="The location of the crew that will be used for the crewed exploration",
-    )
-
-    crew: List[InstElementUUID] = Field(
-        ..., title="Crew", description="List of the crew selected for the crewed exploration"
-    )
-    duration: timedelta = Field(
-        ...,
-        title="Exploration Duration",
-        description="The duration of the exploration",
+        title="Crew Vehicle",
+        description="the UUID of the instantiated vehicle in which the crewed exploration will take place",
     )
     eva_per_week: SafeNonNegInt = Field(
         ...,
         title="EVAs per week",
         description="Number of EVAs to be performed a week"
     )
+    #TODO: maps to state UUIDs or safeints?
+    crew_states: Dict[InstElementUUID, SafeInt] = Field(
+        ...,
+        description="a mapping from the IDs of instantiated elements to the IDs of their desired "
+        "new state",
+    )
+    additional_demands: List[DemandModelUUID] = Field(
+        ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"
+    )
+
