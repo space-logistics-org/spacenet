@@ -8,12 +8,12 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from spacenet.schemas.edge import AllEdges
-from spacenet.schemas.element import AllElements
-from spacenet.schemas.element_events import CreateElements, MoveElements
-from spacenet.schemas.mission import Mission
-from spacenet.schemas.node import AllNodes
-from spacenet.schemas.resource import AllResources
+from .edge import AllEdges
+from .element import AllElements
+from .element_events import CreateElements, MoveElements
+from .mission import Mission
+from .node import AllNodes
+from .resource import AllResources
 from .inst_element import AllInstElements
 from .mission_demand_model import AllMissionDemandModels
 

@@ -59,7 +59,7 @@ async def _super_secret(
 
 
 # mount the static directory
-app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
+app.mount("/", StaticFiles(directory="app/src/static", html=True), name="static")
 
 
 @app.on_event("startup")

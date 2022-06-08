@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
 from ..database import Base
 
-from spacenet.schemas.element import ElementKind
+from spacenet.src.schemas.element import ElementKind
 
 __all__ = [
     "ElementKind",

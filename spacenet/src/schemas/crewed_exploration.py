@@ -9,7 +9,7 @@ from pydantic import Field
 
 from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .constants import SQLITE_MAX_INT
-from spacenet.schemas import Event
+from .bases import Event
 from .node import NodeUUID
 from .inst_element import InstElementUUID
 from .edge import EdgeUUID

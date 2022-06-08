@@ -6,15 +6,15 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import root_validator, validator
 
-from spacenet.schemas import (
+from ..schemas import (
     FlightTransport,
     Scenario,
     SpaceTransport,
     SurfaceTransport,
     SpaceEdge,
 )
-from spacenet.schemas.mission import Mission
-from spacenet.schemas.scenario import Network
+from ..schemas.mission import Mission
+from ..schemas.scenario import Network
 
 
 class CheckedScenario(Scenario):

@@ -3,3 +3,8 @@ pytest-lazy-fixture
 hypothesis
 flake8
 pytest-env
+databases
+fastapi
+fastapi_users
+sqlalchemy
+deal

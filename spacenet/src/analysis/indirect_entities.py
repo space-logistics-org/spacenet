@@ -7,7 +7,7 @@ from uuid import UUID
 
 from pydantic import Field
 
-from spacenet.schemas.mixins import ImmutableBaseModel
+from ..schemas.mixins import ImmutableBaseModel
 
 
 __all__ = [

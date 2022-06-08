@@ -10,8 +10,8 @@ from pydantic import BaseModel, Field, NonNegativeFloat
 from typing_extensions import Literal
 
 from .node import NodeUUID
-from spacenet.schemas.mixins import ImmutableBaseModel
-from spacenet.schemas.types import SafeInt, SafeNonNegFloat, SafeNonNegInt
+from .mixins import ImmutableBaseModel
+from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .inst_element import InstElementUUID
 from .burn import Burn
 

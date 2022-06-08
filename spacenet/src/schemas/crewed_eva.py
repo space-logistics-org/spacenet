@@ -2,7 +2,7 @@
 This module defines an event for a single crewed extravehicular activity.
 """
 from datetime import timedelta
-from typing import List
+from typing import List, Dict
 from uuid import UUID
 
 from pydantic import Field
@@ -13,6 +13,7 @@ from .element_demand_model import DemandModelUUID
 from .types import SafeFloat
 from .node import NodeUUID
 from .inst_element import InstElementUUID
+from .types import SafeInt
 
 
 __all__ = ["CrewedEVA"]

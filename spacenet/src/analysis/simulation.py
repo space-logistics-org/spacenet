@@ -19,7 +19,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from spacenet.schemas import (
+from ..schemas import (
     ElementCarrier,
     Event,
     PropulsiveBurn,
@@ -36,7 +36,7 @@ from .entities import *
 from .errors import SimError
 from .exceptions import *
 
-from spacenet.fuel_formulas.functions import delta_v_from, final_mass_from
+from ..fuel_formulas.functions import delta_v_from, final_mass_from
 
 __all__ = ["Simulation", "SimResult", "SimError"]
 
@@ -286,7 +286,7 @@ class BurnEvent(SimEvent):
             m_0 += mass
         for item in event.burn_stage_sequence:
             element: SimElement = sim.namespace[item.element_id]
-            if item.burnStage == BurnStage.Burn:
+            if item.BurnStage == BurnStage.Burn:
                 assert sim.id_is_of_propulsive_vehicle(item.element_id)
                 if delta_v == 0:
                     continue
@@ -306,7 +306,7 @@ class BurnEvent(SimEvent):
                     m_0 -= element.fuel_mass
                     delta_v -= stage_delta_v
             else:
-                assert item.burnStage == BurnStage.Stage, item.burnStage
+                assert item.BurnStage == BurnStage.Stage, item.BurnStage
                 element_total_mass, errors = element.total_mass()
                 sim.add_errors(errors)
                 m_0 -= element_total_mass

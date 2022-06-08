@@ -7,12 +7,12 @@ from typing import Dict, List, Tuple
 import pytest
 from fastapi.testclient import TestClient
 
-from app.database.api.database import Base, get_db
-from app.database.api.main import app
-from app.database.api.models.resource import Resource as ResourceModel
-from app.database.test.utilities import test_engine
-from app.auth_dependencies import current_user
-from spacenet.schemas.resource import ResourceType
+from ..database import Base, get_db
+from ..main import app
+from ..models.resource import Resource as ResourceModel
+from .utilities import test_engine
+from ....auth_dependencies import current_user
+from spacenet.src.schemas.resource import ResourceType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,

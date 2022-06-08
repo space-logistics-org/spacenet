@@ -16,4 +16,4 @@ from .api import main as api
 app.mount("/api", api.app)
 
 # mount the static directory
-app.mount("/", StaticFiles(directory="app/campaign/static", html=True), name="static")
+app.mount("/", StaticFiles(directory="app/src/campaign/static", html=True), name="static")

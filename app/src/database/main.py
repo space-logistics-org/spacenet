@@ -17,4 +17,4 @@ from .api import main as api
 app.mount('/api', api.app)
 
 # mount the static directory
-app.mount("/", StaticFiles(directory="app/database/static", html=True), name="static")
+app.mount("/", StaticFiles(directory="app/src/database/static", html=True), name="static")

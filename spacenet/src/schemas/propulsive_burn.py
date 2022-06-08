@@ -12,7 +12,7 @@ from . import PrimitiveEvent
 from .burn import Burn
 from .inst_element import InstElementUUID
 
-__all__ = ["BurnStageType", "PropulsiveBurn", "BurnStageItem"]
+__all__ = ["BurnStage", "PropulsiveBurn", "BurnStageItem"]
 
 
 class BurnStage(Enum):

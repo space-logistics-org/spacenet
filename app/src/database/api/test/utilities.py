@@ -2,8 +2,9 @@ import doctest
 import random
 from typing import Dict
 
-from app.database.test.utilities import TestingSessionLocal
-from app.auth_dependencies import fastapi_users
+#TODO: is this a self import?
+from .utilities import TestingSessionLocal
+from ....auth_dependencies import fastapi_users
 
 __all__ = [
     "get_test_db",

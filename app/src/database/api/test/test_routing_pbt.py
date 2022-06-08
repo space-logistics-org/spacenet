@@ -16,12 +16,12 @@ from hypothesis.stateful import (
     rule,
 )
 
-from app.database.api import models
-from app.database.api.database import Base, get_db
-from app.database.api.main import app
-from app.auth_dependencies import current_user
-from spacenet.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
-from spacenet.schemas import Element, State
+from ...api import models
+from ..database import Base, get_db
+from ..main import app
+from ....auth_dependencies import current_user
+from spacenet.src.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from spacenet.src.schemas import Element, State
 from .utilities import get_current_user, get_test_db
 from ..models import utilities as model_utils
 from ..schemas.constants import CREATE_SCHEMAS, CREATE_TO_UPDATE

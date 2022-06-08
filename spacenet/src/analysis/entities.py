@@ -8,9 +8,9 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, NonNegativeFloat, validator
 
-from spacenet.analysis.indirect_entities import IndirectEntity
-from spacenet.analysis.errors import SimError
-from spacenet.schemas import AllElements, AllNodes, AllEdges, PropulsiveVehicle
+from ..analysis.indirect_entities import IndirectEntity
+from ..analysis.errors import SimError
+from ..schemas import AllElements, AllNodes, AllEdges, PropulsiveVehicle
 
 __all__ = ["SimElement", "SimNode", "SimEdge", "SimResult", "into_indirect_entity"]
 

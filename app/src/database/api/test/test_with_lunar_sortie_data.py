@@ -4,16 +4,16 @@ This module contains tests for API routes via the lunar sortie data.
 import pytest
 from fastapi.testclient import TestClient
 
-from app.database.api.database import get_db
-from app.database.api.main import app
-from app.auth_dependencies import current_user
+from ..database import get_db
+from ..main import app
+from ....auth_dependencies import current_user
 from ..schemas.constants import CREATE_SCHEMAS
-from app.database.api.test.utilities import get_current_user, get_test_db
-from spacenet.schemas.element import Element
-from spacenet.schemas.node import Node
-from spacenet.schemas.edge import Edge
-from spacenet.schemas.resource import Resource
-from spacenet.schemas.test.utilities import (
+from .utilities import get_current_user, get_test_db
+from spacenet.src.schemas.element import Element
+from spacenet.src.schemas.node import Node
+from spacenet.src.schemas.edge import Edge
+from spacenet.src.schemas.resource import Resource
+from .utilities import (
     lunar_sortie_elements,
     lunar_sortie_edges,
     lunar_sortie_nodes,

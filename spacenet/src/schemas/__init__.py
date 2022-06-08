@@ -13,3 +13,4 @@ from .resource import *
 from .state import *
 from .scenario import *
 from .events import *
+from .burn import *

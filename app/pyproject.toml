@@ -16,7 +16,7 @@ dependencies = [
     "aiofiles",
     "fastapi",
     "pydantic",
-    "sqlalchemy==1.3.24",
+    "sqlalchemy>=1.4",
     "uvicorn",
     "requests",
     "fastapi-users==6.1.0",

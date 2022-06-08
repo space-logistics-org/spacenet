@@ -8,7 +8,7 @@ from uuid import UUID
 
 from pydantic import Field
 
-from spacenet.schemas import ElementTransportEvent
+from .bases import ElementTransportEvent
 from .inst_element import InstElementUUID
 
 

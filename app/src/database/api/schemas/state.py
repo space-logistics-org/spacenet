@@ -2,7 +2,7 @@
 This module defines the schemas for Read and Update variants of the state schema.
 """
 
-from spacenet.schemas import ReadSchema, State, OptionalFields
+from spacenet.src.schemas import ReadSchema, State, OptionalFields
 
 
 __all__ = ["State", "StateUpdate", "StateRead"]

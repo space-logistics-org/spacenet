@@ -10,16 +10,8 @@ means that fields are specified in as few places as possible.
 
 The module exports the schemas for Elements and corresponding subtypes explicitly.
 """
-from spacenet.schemas.element import (
-    Element,
-    ElementCarrier,
-    HumanAgent,
-    PropulsiveVehicle,
-    ResourceContainer,
-    RoboticAgent,
-    SurfaceVehicle,
-)
-from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
+from spacenet.src.schemas.element import *
+from spacenet.src.schemas.mixins import ReadSchema, RequiresOnlyType
 
 __all__ = [
     "Element",

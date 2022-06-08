@@ -12,13 +12,13 @@ import pytest
 from fastapi.testclient import TestClient
 from hypothesis import assume, given, settings, strategies as st
 
-from app.database.api.database import Base, get_db
-from app.database.api.main import app
-from app.database.api.models.element import Element as ElementModel
-from app.database.test.utilities import test_engine
-from app.auth_dependencies import current_user
-from spacenet.schemas.element import ElementKind
-from spacenet.schemas.test.element_maps import (
+from ..database import Base, get_db
+from ..main import app
+from ..models.element import Element as ElementModel
+from .utilities import test_engine
+from ....auth_dependencies import current_user
+from spacenet.src.schemas.element import ElementKind
+from .spacenet.tests.schemas.element_maps import (
     VALID_ELEMENT_MAP,
     VALID_ELEMENT_CARRIER_MAP,
     VALID_HUMAN_AGENT_MAP,

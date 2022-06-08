@@ -1,8 +1,8 @@
 import doctest
 from typing import Any, Dict
 
-from app.database.api.database import Base
-from app.database.api import models, schemas
+from ..database import Base
+from ...api import models, schemas
 
 __all__ = ["dictify_row", "SCHEMA_TO_MODEL", "MODEL_TO_PARENT"]
 

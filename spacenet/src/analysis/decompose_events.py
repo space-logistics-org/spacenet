@@ -4,8 +4,8 @@ and a mechanism for registering types of events with a function to do so.
 """
 from typing import Callable, Dict, List, Type, TypeVar, Union
 
-from spacenet.schemas import Burn
-from spacenet.schemas.events import *
+from ..schemas import Burn
+from ..schemas.events import *
 
 PrimitiveEvents = Union[MoveElements, CreateElements, RemoveElements, PropulsiveBurn]
 

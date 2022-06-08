@@ -16,7 +16,7 @@ __all__ = [
     "ElementNotAtLocation",
 ]
 
-from spacenet.schemas import PropulsiveBurn
+from ..schemas import PropulsiveBurn
 
 
 class SimError(BaseModel):

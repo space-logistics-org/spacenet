@@ -5,10 +5,9 @@ This module defines the database schema for element demand models and element de
 from sqlalchemy import Column, Integer, String, Float, Boolean
 
 from ..database import Base
-from spacenet.schemas.element_demand_model import DemandModelType
-from spacenet.schemas.element import *
+from spacenet.src.schemas.element_demand_model import DemandModelType
+from spacenet.src.schemas.element import *
 
-# from  spacenet.schemas.mission import *
 
 __all__ = ["DemandModelType", "DemandModel", "CrewConsumablesDemandModel",
            "TimedImpulseDemandModel", "RatedDemandModel", "SparingByMassDemandModel"]

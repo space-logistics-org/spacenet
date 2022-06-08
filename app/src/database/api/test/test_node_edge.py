@@ -13,14 +13,14 @@ import pytest
 from fastapi.testclient import TestClient
 
 import spacenet
-from app.database.api.database import Base, get_db
-from app.database.api.main import app
-from app.database.api.models.edge import Edge as EdgeModel
-from app.database.api.models.node import Node as NodeModel
-from app.database.test.utilities import test_engine
-from app.auth_dependencies import current_user
-from spacenet.schemas.edge import EdgeType
-from spacenet.schemas.node import NodeType
+from ..database import Base, get_db
+from ..main import app
+from ..models.edge import Edge as EdgeModel
+from ..models.node import Node as NodeModel
+from .utilities import test_engine
+from ....auth_dependencies import current_user
+from spacenet.src.schemas.edge import EdgeType
+from spacenet.src.schemas.node import NodeType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,
