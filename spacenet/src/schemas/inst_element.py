@@ -45,7 +45,7 @@ class InstElement(InstElementUUID):
     A generic element.
 
     :param ElementUUID template_id: UUID of the template for this instantiated element
-    :param str name: name of the element (optional)
+    :param str name: name of the element
     :param str description: short description of the element (optional)
     :param ClassOfSupply class_of_supply: class of supply number (optional)
     :param Environment environment: the element's environment (optional)
@@ -54,8 +54,9 @@ class InstElement(InstElementUUID):
     :param NonNegFloat volume: volume in cubic meters (optional)
     :param StateUUID current_state: field describing the current state of the element. Set to initial state during creation. (optional)
     """
+
     template_id: ElementUUID = Field(..., description="UUID of the template for this instantiated element")
-    name: Optional[str] = Field(title="Name", description="name of the element")
+    name: str = Field(..., title="Name", description="name of the element")
     description: Optional[str] = Field(
         title="Description", description="short description of the element"
     )

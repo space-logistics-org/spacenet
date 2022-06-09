@@ -95,7 +95,6 @@ class SpaceEdge(Edge):
 
     :param SpaceEdge type: the edge's type
     :param timedelta duration: duration of space edge
-    :param NonNegFloat delta_v: acceleration required to traverse this edge in m/s
     """
 
     type: Literal[EdgeType.Space] = Field(
@@ -104,11 +103,6 @@ class SpaceEdge(Edge):
     duration: timedelta = Field(
         ..., title="Duration", description="Duration of space edge"
     )
-    delta_v: SafeNonNegFloat = Field(
-        ...,
-        title="Delta-V",
-        description="Acceleration required to traverse this edge in m/s",
-    ),
     burns: List[Burn] = Field(..., title="Burns", description="List of burns included in the space edge")
 
 

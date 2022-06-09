@@ -24,6 +24,7 @@ class ResourceUUID(ImmutableBaseModel):
     id: UUID = Field(default_factory=uuid4, description="unique identifier for resource")
 
 
+#TODO: why do some resource in quick start scenario have type "Resource"?
 class ResourceType(str, Enum):
     """
     An enumeration of the different kinds of resource.
@@ -52,6 +53,7 @@ class Resource(ResourceUUID):
         ..., title="Unit Volume", description="Resource volume"
     )
 
+#TODO:verify that ResourceAmount and GenericResourceAmount are correct
 class ResourceAmount(ImmutableBaseModel):
     """
     A specified amount of a resource type.

@@ -30,7 +30,7 @@ __all__ = [
     "AllElements"
 ]
 
-
+#TODO: spaces or no spaces?
 class ElementKind(str, Enum):
     """
     An enumeration of all the types of Element

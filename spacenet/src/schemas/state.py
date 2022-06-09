@@ -38,7 +38,7 @@ class State(StateUUID):
     description: str = Field(
         ..., title="Description", description="short description of the state"
     )
-    state_type: StateType = Field(
+    type: StateType = Field(
         ..., description="the general classification of this state"
     )
     is_initial_state: StrictBool = Field(
