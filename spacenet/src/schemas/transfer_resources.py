@@ -5,7 +5,7 @@ from typing import List, Union
 from uuid import UUID
 
 from pydantic import Field
-from .resource import ResourceUUID
+from .resource import ResourceAmount, GenericResourceAmount
 from .bases import Event
 from .node import NodeUUID
 from .edge import EdgeUUID
@@ -18,10 +18,13 @@ class TransferResources(Event):
     """
     An event that moves resources at a specific time and location (node or edge)
     from an origin resource container to a destination resource container
+
+    :param ResourceAmount | GenericResourceAmount resources: list of resource quantities to consume
+    :param InstElementUUID location: UUID of the instantiated element where the resource to be consumed is currently stored
     """
 
-    resources: List[ResourceUUID] = Field(
-        ..., description="the list of resource IDs to transfer"
+    resources: Union[ResourceAmount, GenericResourceAmount] = Field(
+        ..., title="Consumed Resources", description="list of resource quantities to consume"
     )
 
     location: Union[NodeUUID, EdgeUUID] = Field(

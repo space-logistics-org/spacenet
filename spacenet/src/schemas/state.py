@@ -41,6 +41,7 @@ class State(StateUUID):
     type: StateType = Field(
         ..., description="the general classification of this state"
     )
+    #TODO: take out is_initial_state
     is_initial_state: StrictBool = Field(
         ...,
         description="a boolean flag representing if this state is the state an element starts in or not",

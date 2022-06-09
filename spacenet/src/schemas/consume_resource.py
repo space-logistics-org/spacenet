@@ -27,7 +27,6 @@ class ConsumeResources(Event):
     resources: Union[ResourceAmount, GenericResourceAmount] = Field(
         ..., title="Consumed Resources", description="list of resource quantities to consume"
     )
-    #TODO: change name to location or something? What does this represent?
     source: InstElementUUID = Field(
         ..., title="Consumed Quantity", description="UUID of the instantiated element where the resource to be consumed is currently stored"
     )

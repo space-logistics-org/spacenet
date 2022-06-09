@@ -13,7 +13,7 @@ from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import State, StateUUID
-from .resource import ResourceAmount
+from .resource import ResourceAmount, GenericResourceAmount
 
 __all__ = [
     "ElementKind",
@@ -38,6 +38,7 @@ class ElementKind(str, Enum):
 
     Element = "Element"
     ResourceContainer = "ResourceContainer"
+    #TODO: just carrier or elementcarrier?
     ElementCarrier = "ElementCarrier"
     HumanAgent = "HumanAgent"
     RoboticAgent = "RoboticAgent"
@@ -66,7 +67,7 @@ class Element(ElementUUID):
     :param NonNegFloat mass: mass in kg
     :param NonNegFloat volume: volume in cubic meters
     :param [State] states: list of states the element may possess
-    :param StateUUID current_state: optional field describing the current state of the element. Set to initial state during creation.
+    :param SafeInt current_state_index: field describing the current state of the element.
     """
 
     name: str = Field(..., title="Name", description="name of the element")
@@ -90,7 +91,8 @@ class Element(ElementUUID):
     mass: SafeNonNegFloat = Field(..., title="Mass", description="mass in kg")
     volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
     states: List[State] = Field(..., tile="States", description="list of states the element may possess")
-    current_state: Optional[StateUUID] = Field(None, title="Current State", description="the current state of the element")
+    current_state_index: SafeInt = Field(0, title="Current State", description="the current state of the element")
+    icon: str = Field(..., title="icon", description="Icon of element")
 
 
     class Config:
@@ -127,13 +129,14 @@ class ResourceContainer(CargoCarrier):
     type: Literal[ElementKind.ResourceContainer] = Field(
         ElementKind.ResourceContainer, description="the element's type"
     )
+    contents: List[Union[GenericResourceAmount, ResourceAmount]] = Field([], title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
 
 
 class ElementCarrier(CargoCarrier):
     """
     An element which can carry other elements.
 
-    :param ElementCarrier type: the element's type
+    :param Carrier type: the element's type
     :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo
     """
 
@@ -141,11 +144,9 @@ class ElementCarrier(CargoCarrier):
     cargo_environment: Environment = Field(
         ...,
         title="Cargo Environment",
-        description="the cargo's environment — if "
-        "unpressurized, "
-        "cannot add pressurized elements as "
-        "cargo",
+        description="the cargo's environment — if unpressurized, cannot add pressurized elements as cargo",
     )
+    contents: List[ElementUUID] = Field([], title="Contents", description="list of elements moved into carrier during spatial simulation")
 
 
 class Agent(Element, ABC):

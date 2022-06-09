@@ -12,7 +12,7 @@ from .bases import Event, PrimitiveEvent
 from .inst_element import InstElementUUID
 from .node import NodeUUID
 from .edge import EdgeUUID
-from .state import StateUUID
+from .types import SafeInt
 
 __all__ = [
     "CreateElements",
@@ -73,11 +73,10 @@ class ReconfigureElements(Event):
     An event which changes the operational state for elements
     at a specific time and location (node or edge).
 
-    :param Dict[InstElementUUID, StateUUID] element_states: a mapping from the IDs of instantiated elements to the IDs of their desired new state
+    :param Dict[InstElementUUID, SafeInt] element_states: a mapping from the IDs of instantiated elements to the index of their desired new state
     """
-    #TODO: change to SafeInts?
-    element_states: Dict[InstElementUUID, StateUUID] = Field(
+    #TODO: SafeInts or StateUUIDs?
+    element_states: Dict[InstElementUUID, SafeInt] = Field(
         ...,
-        description="a mapping from the IDs of instantiated elements to the IDs of their desired "
-        "new state",
+        description="a mapping from the IDs of instantiated elements to the index of their desired new state",
     )

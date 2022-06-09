@@ -14,7 +14,7 @@ from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import StateUUID
 from .element import ElementKind, ElementUUID
-from .resource import ResourceAmount
+from .resource import ResourceAmount, GenericResourceAmount
 from .constants import ClassOfSupply
 
 __all__ = [
@@ -109,7 +109,7 @@ class InstResourceContainer(InstCargoCarrier):
     :param [ResourceAmount] contents: list of resource quantities moved into container during spatial simulation
     """
 
-    contents: List[ResourceAmount] = Field([], title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
+    contents: List[Union[GenericResourceAmount, ResourceAmount]] = Field([], title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
 
 class InstElementCarrier(InstCargoCarrier):
     """
