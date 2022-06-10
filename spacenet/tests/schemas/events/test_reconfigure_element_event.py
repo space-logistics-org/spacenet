@@ -4,7 +4,7 @@ This module contains tests for ReconfigureElements event schemas.
 import pytest
 from hypothesis import given, strategies as st
 
-from spacenet.schemas.element_events import ReconfigureElements
+from ....src.schemas.element_events import ReconfigureElements
 from .utilities import EVENT_VALID_MAP, INVALID_PRIORITIES
 from ..utilities import (
     INVALID_UUIDS,

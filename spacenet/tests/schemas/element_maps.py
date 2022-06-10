@@ -4,16 +4,16 @@ to generate valid and invalid instances of the different types of elements.
 """
 from typing import Dict, List
 
-from spacenet.schemas.constants import (
+from ...src.schemas.constants import (
     ClassOfSupply,
     Environment,
     SQLITE_MAX_INT,
     SQLITE_MIN_INT,
 )
-from spacenet.schemas.element import ElementKind
+from ...src.schemas.element import ElementKind
 from hypothesis import strategies as st
 
-from spacenet.schemas.test.utilities import UNSERIALIZABLE_INTS
+from .utilities import UNSERIALIZABLE_INTS
 
 __all__ = [
     "VALID_ELEMENT_MAP",

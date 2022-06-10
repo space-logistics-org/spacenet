@@ -6,7 +6,7 @@ from hypothesis import given, strategies as st
 
 from .utilities import EVENT_VALID_MAP as VALID_MAP, EVENT_INVALID_MAP as INVALID_MAP
 from ..utilities import xfail_from_kw, success_from_kw
-from spacenet.schemas import Event
+from ....src.schemas import Event
 
 
 pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]

@@ -4,7 +4,7 @@ This module contains tests that the Apollo 17 schema parses.
 import pkg_resources
 import pytest
 
-from .. import Scenario
+from ...src.schemas import Scenario
 
 
 pytestmark = [pytest.mark.schema, pytest.mark.apollo_17]

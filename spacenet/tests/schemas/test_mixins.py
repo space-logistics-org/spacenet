@@ -9,7 +9,7 @@ import pytest
 from pydantic import BaseModel, Field, conint
 from pydantic.fields import ModelField
 
-from spacenet.schemas.mixins import OptionalFields, RequiresID
+from ...src.schemas.mixins import OptionalFields, RequiresID
 
 pytestmark = [pytest.mark.unit, pytest.mark.schema]
 
