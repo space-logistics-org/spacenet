@@ -63,9 +63,7 @@ class ResourceAmount(ImmutableBaseModel):
     :param float amount: amount of resource being used, in units specified by that resource
     """
 
-    type: ResourceType = Field(..., title="Type", description="Resource type; discrete or continuous"
-    )
-    resource_id: ResourceUUID = Field(..., title="Resource UUID", description="UUID of the resource being used")
+    resource: ResourceUUID = Field(..., title="Resource UUID", description="UUID of the resource being used")
     amount: float = Field(..., title="Amount", description="amount of resource being used, in units specified by that resource")
 
 class GenericResourceAmount(ImmutableBaseModel):
