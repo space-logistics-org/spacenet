@@ -16,10 +16,19 @@ from .node import AllNodes
 from .resource import AllResources
 from .inst_element import AllInstElements
 from .mission_demand_model import AllMissionDemandModels
+from .element_demand_model import AllElementDemandModels
 from .types import SafeNonNegFloat
 
 __all__ = ["ScenarioType", "Scenario", "Manifest", "Configuration"]
 
+class itemDiscretizationTypes(str, Enum):
+    """
+    An enumeration of all the types of item discretizations.
+    """
+    NoItemDiscretization = "None"
+    Element = "Element"
+    Location = "Location"
+    Scenario = "Scenario"
 
 class Manifest(BaseModel):
     """
@@ -49,13 +58,14 @@ class Configuration(BaseModel):
     mass_precision: SafeNonNegFloat = Field(0.01)
     volume_precision: SafeNonNegFloat = Field(1.0E-6)
     volume_constrained: bool = Field(False, title="Volume Constrained")
-    #TODO: should be NOne?
-    #TODO: best method for defaults?
-    item_discretization: bool = Field(False)
+    item_discretization: itemDiscretizationTypes = Field("None")
     item_aggregation: SafeNonNegFloat = Field(0.0)
+    environment_constrained: bool = Field(False, title="Environment Constrained")
+
     scavenge_spares: bool = Field(False)
     detailed_eva: bool = Field(True)
     detailed_exploration: bool = Field(True)
+
     generic_packing_factor_gas: SafeNonNegFloat = Field(1.0)
     generic_packing_factor_liquid: SafeNonNegFloat = Field(0.5)
     generic_packing_factor_pressurized: SafeNonNegFloat = Field(0.2)
@@ -85,9 +95,6 @@ class Configuration(BaseModel):
     cargo_transfer_bag_volume: SafeNonNegFloat = Field(0.053)
     cargo_transfer_bag_max_mass: SafeNonNegFloat = Field(26.8)
     cargo_transfer_bag_max_volume: SafeNonNegFloat = Field(0.049)
-
-    #TODO: keep environment constrained configuration?
-    environment_constrained: bool = Field(False, title="Environment Constrained")
 
 
 class ScenarioType(str, Enum):
@@ -131,7 +138,7 @@ class Scenario(BaseModel):
     mission_list: List[Mission] = Field(..., title="Mission List")
     element_templates: List[AllElements] = Field(..., title="Element List")
     instantiated_elements: List[AllInstElements] = Field(..., title="Instantiated Elements")
-    mission_demand_models: List[AllMissionDemandModels] = Field(..., title="Mission Demand Models")
+    demand_models: List[AllMissionDemandModels, AllElementDemandModels] = Field(..., title="Mission Demand Models")
     resource_list: List[AllResources] = Field(
         default_factory=list
     )
