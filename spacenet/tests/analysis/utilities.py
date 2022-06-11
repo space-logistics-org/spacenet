@@ -4,8 +4,8 @@ This module contains utilities for testing spacenet's analysis and simulation co
 from hypothesis import assume, strategies as st
 from typing import Callable, TypeVar
 
-from spacenet.analysis.checked_scenario import CheckedScenario
-from spacenet.schemas import ElementTransportEvent, Scenario, UUIDSpaceEdge
+from ...src.analysis.checked_scenario import CheckedScenario
+from ...src.schemas import ElementTransportEvent, Scenario, UUIDSpaceEdge
 
 __all__ = ["T", "DrawFn", "build_validating_scenario", "build_checked_scenario"]
 
