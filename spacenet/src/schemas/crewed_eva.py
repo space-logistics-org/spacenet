@@ -50,7 +50,7 @@ class CrewedEVA(Event):
         description="The location of the crew that will be used for the EVA",
     )
     #TODO: maps to state UUIDs or safeints?
-    crew_states: Dict[InstElementUUID, SafeInt] = Field(
+    element_states: Dict[InstElementUUID, SafeInt] = Field(
         ...,
         description="a mapping from the IDs of instantiated elements to the index of their desired new state",
     )

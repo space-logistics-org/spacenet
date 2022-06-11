@@ -45,7 +45,7 @@ class CrewedExploration(Event):
         description="Number of EVAs to be performed a week"
     )
     #TODO: maps to state UUIDs or safeints?
-    crew_states: Dict[InstElementUUID, SafeInt] = Field(
+    element_states: Dict[InstElementUUID, SafeInt] = Field(
         ...,
         description="a mapping from the IDs of instantiated elements to the IDs of their desired "
         "new state",
