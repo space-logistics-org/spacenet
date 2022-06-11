@@ -74,7 +74,7 @@ class InstElement(InstElementUUID):
     )
     mass: Optional[SafeNonNegFloat] = Field(title="Mass", description="mass in kg")
     volume: Optional[SafeNonNegFloat] = Field(title="Volume", description="volume in m^3")
-    current_state: Optional[StateUUID] = Field(None, title="Current State", description="the current state of the element")
+    current_state: Optional[StateUUID] = Field(title="Current State", description="the current state of the element")
 
     class Config:
         """
@@ -94,10 +94,10 @@ class InstCargoCarrier(InstElement, ABC):
 
     """
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
-        0, title="Max Cargo Mass", description="cargo capacity constraint (kg)"
+        title="Max Cargo Mass", description="cargo capacity constraint (kg)"
     )
     max_cargo_volume: Optional[SafeNonNegFloat] = Field(
-        0, title="Maximum Cargo Volume", description="cargo capacity constraint (m^3)",
+        title="Maximum Cargo Volume", description="cargo capacity constraint (m^3)",
     )
 
 
@@ -109,7 +109,7 @@ class InstResourceContainer(InstCargoCarrier):
     :param [ResourceAmount] contents: list of resource quantities moved into container during spatial simulation
     """
 
-    contents: List[Union[GenericResourceAmount, ResourceAmount]] = Field([], title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
+    contents: Optional[List[Union[GenericResourceAmount, ResourceAmount]]] = Field(title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
 
 class InstElementCarrier(InstCargoCarrier):
     """
@@ -126,7 +126,7 @@ class InstElementCarrier(InstCargoCarrier):
         "cannot add pressurized elements as "
         "cargo",
     ),
-    contents: List[InstElementUUID] = Field([], title="Contents", description="list of elements moved into carrier during spatial simulation")
+    contents: Optional[List[InstElementUUID]] = Field(title="Contents", description="list of elements moved into carrier during spatial simulation")
 
 
 
@@ -183,8 +183,9 @@ class InstPropulsiveVehicle(InstVehicle):
     max_fuel: Optional[SafeNonNegFloat] = Field(
         title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant_id: Optional[SafeInt]  # TODO: this needs constraints or to be an enum;
-    #  perhaps a foreign key constraint in model?
+    propellant: Optional[ResourceAmount] = Field(title="Propellant", description="UUID of propellant resource and rate")
+    isp: Optional[SafeNonNegFloat] = Field(title="Specific Impulse", description="specific impulse (s)"
+    )
 
 
 class InstSurfaceVehicle(InstVehicle):
@@ -202,8 +203,8 @@ class InstSurfaceVehicle(InstVehicle):
     max_fuel: Optional[SafeNonNegFloat] = Field(
         title="Maximum Fuel", description="maximum fuel (units)"
     )
-    fuel_id: Optional[SafeInt]  # TODO: this needs constraints or to be an enum;
-    #  perhaps a foreign key constraint in model?
+    #TODO: could this also be GenericResourceAmount?
+    propellant: ResourceAmount = Field(title="Propellant", description="UUID of propellant resource and rate")
 
 
 AllInstElements = Union[
