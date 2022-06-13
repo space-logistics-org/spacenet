@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, StrictBool, conint
 
 from .mixins import ImmutableBaseModel
 from .constants import SQLITE_MAX_INT, SQLITE_MIN_INT
-from .element_demand_model import AllElementDemandModels
+from .demand_model import ElementDemandModelUUID
 
 __all__ = ["State", "StateType", "StateUUID"]
 
@@ -41,9 +41,4 @@ class State(StateUUID):
     type: StateType = Field(
         ..., description="the general classification of this state"
     )
-    #TODO: take out is_initial_state
-    is_initial_state: StrictBool = Field(
-        ...,
-        description="a boolean flag representing if this state is the state an element starts in or not",
-    )
-    demand_models: List[AllElementDemandModels]
+    demand_models: List[ElementDemandModelUUID]
