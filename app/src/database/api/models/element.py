@@ -7,10 +7,10 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
 from ..database import Base
 
-from spacenet.src.schemas.element import ElementKind
+from spacenet.src.schemas.element import ElementType
 
 __all__ = [
-    "ElementKind",
+    "ElementType",
     "Element",
     "ElementCarrier",
     "ResourceContainer",
@@ -40,7 +40,7 @@ class Element(Base):
 
     __mapper_args__ = {
         "polymorphic_on": type,
-        "polymorphic_identity": ElementKind.Element.value,
+        "polymorphic_identity": ElementType.Element.value,
     }
 
 
@@ -71,7 +71,7 @@ class ResourceContainer(CargoCarrier):
     A row representing a resource container.
     """
 
-    __mapper_args__ = {"polymorphic_identity": ElementKind.ResourceContainer.value}
+    __mapper_args__ = {"polymorphic_identity": ElementType.ResourceContainer.value}
 
 
 class ElementCarrier(CargoCarrier):
@@ -80,7 +80,7 @@ class ElementCarrier(CargoCarrier):
     """
     cargo_environment = Column(String)
 
-    __mapper_args__ = {"polymorphic_identity": ElementKind.ElementCarrier.value}
+    __mapper_args__ = {"polymorphic_identity": ElementType.ElementCarrier.value}
 
 
 class Agent(Element):
@@ -101,7 +101,7 @@ class HumanAgent(Agent):
     """
     A row representing a human agent, such as a crew member.
     """
-    __mapper_args__ = {"polymorphic_identity": ElementKind.HumanAgent.value}
+    __mapper_args__ = {"polymorphic_identity": ElementType.HumanAgent.value}
     pass
 
 
@@ -109,7 +109,7 @@ class RoboticAgent(Agent):
     """
     A row representing a robotic agent.
     """
-    __mapper_args__ = {"polymorphic_identity": ElementKind.RoboticAgent.value}
+    __mapper_args__ = {"polymorphic_identity": ElementType.RoboticAgent.value}
     pass
 
 
@@ -142,7 +142,7 @@ class PropulsiveVehicle(Vehicle):
     isp = Column(Float)
     propellant_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": ElementKind.PropulsiveVehicle.value}
+    __mapper_args__ = {"polymorphic_identity": ElementType.PropulsiveVehicle.value}
 
 
 class SurfaceVehicle(Vehicle):
@@ -152,4 +152,4 @@ class SurfaceVehicle(Vehicle):
     max_speed = Column(Float)
     fuel_id = Column(Integer)
 
-    __mapper_args__ = {"polymorphic_identity": ElementKind.SurfaceVehicle.value}
+    __mapper_args__ = {"polymorphic_identity": ElementType.SurfaceVehicle.value}

@@ -82,13 +82,13 @@ def lunar_sortie_resources():
 
 
 KIND_TO_SCHEMA = {
-    ElementKind.Element: Element,
-    ElementKind.ElementCarrier: ElementCarrier,
-    ElementKind.ResourceContainer: ResourceContainer,
-    ElementKind.HumanAgent: HumanAgent,
-    ElementKind.RoboticAgent: RoboticAgent,
-    ElementKind.PropulsiveVehicle: PropulsiveVehicle,
-    ElementKind.SurfaceVehicle: SurfaceVehicle,
+    ElementType.Element: Element,
+    ElementType.ElementCarrier: ElementCarrier,
+    ElementType.ResourceContainer: ResourceContainer,
+    ElementType.HumanAgent: HumanAgent,
+    ElementType.RoboticAgent: RoboticAgent,
+    ElementType.PropulsiveVehicle: PropulsiveVehicle,
+    ElementType.SurfaceVehicle: SurfaceVehicle,
     EdgeType.Surface: SurfaceEdge,
     EdgeType.Flight: FlightEdge,
     EdgeType.Space: SpaceEdge,

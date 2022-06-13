@@ -13,7 +13,7 @@ from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import StateUUID
-from .element import ElementKind, ElementUUID
+from .element import ElementType, ElementUUID
 from .resource import ResourceAmount, GenericResourceAmount
 from .constants import ClassOfSupply
 
@@ -26,7 +26,7 @@ __all__ = [
     "InstRoboticAgent",
     "InstPropulsiveVehicle",
     "InstSurfaceVehicle",
-    "InstElementKind",
+    "InstElementType",
     "AllInstElements",
 ]
 

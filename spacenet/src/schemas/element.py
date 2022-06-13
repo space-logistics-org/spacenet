@@ -16,7 +16,7 @@ from .state import State, StateUUID
 from .resource import ResourceAmount, GenericResourceAmount
 
 __all__ = [
-    "ElementKind",
+    "ElementType",
     "ElementUUID",
     "Element",
     "CargoCarrier",
@@ -26,11 +26,11 @@ __all__ = [
     "RoboticAgent",
     "PropulsiveVehicle",
     "SurfaceVehicle",
-    "ElementKind",
+    "ElementType",
     "AllElements"
 ]
 
-class ElementKind(str, Enum):
+class ElementType(str, Enum):
     """
     An enumeration of all the types of Element
     """
@@ -75,7 +75,7 @@ class Element(ElementUUID):
     class_of_supply: ClassOfSupply = Field(
         ..., title="Class of Supply", description="class of supply number"
     )
-    type: Literal[ElementKind.Element] = Field(ElementKind.Element, description="the element's type")
+    type: Literal[ElementType.Element] = Field(ElementType.Element, description="the element's type")
     environment: Environment = Field(
         ..., title="Environment", description="the element's environment"
     )
@@ -124,8 +124,8 @@ class ResourceContainer(CargoCarrier):
     :param ResourceContainer type: the element's type
     """
 
-    type: Literal[ElementKind.ResourceContainer] = Field(
-        ElementKind.ResourceContainer, description="the element's type"
+    type: Literal[ElementType.ResourceContainer] = Field(
+        ElementType.ResourceContainer, description="the element's type"
     )
     contents: List[Union[GenericResourceAmount, ResourceAmount]] = Field([], title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
 
@@ -138,7 +138,7 @@ class ElementCarrier(CargoCarrier):
     :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo
     """
 
-    type: Literal[ElementKind.ElementCarrier] = Field(ElementKind.ElementCarrier, description="the element's type")
+    type: Literal[ElementType.ElementCarrier] = Field(ElementType.ElementCarrier, description="the element's type")
     cargo_environment: Environment = Field(
         ...,
         title="Cargo Environment",
@@ -169,7 +169,7 @@ class HumanAgent(Agent):
     :param HumanAgent type: the element's type
     """
 
-    type: Literal[ElementKind.HumanAgent] = Field(ElementKind.HumanAgent, description="the element's type")
+    type: Literal[ElementType.HumanAgent] = Field(ElementType.HumanAgent, description="the element's type")
 
 
 class RoboticAgent(Agent):
@@ -179,7 +179,7 @@ class RoboticAgent(Agent):
     :param RoboticAgent type: the element's type
     """
 
-    type: Literal[ElementKind.RoboticAgent] = Field(ElementKind.RoboticAgent, description="the element's type")
+    type: Literal[ElementType.RoboticAgent] = Field(ElementType.RoboticAgent, description="the element's type")
 
 
 class Vehicle(CargoCarrier, ABC):
@@ -204,8 +204,8 @@ class PropulsiveVehicle(Vehicle):
     :param propellant ResourceAmount: UUID of propellant resource and rate of usage
     """
 
-    type: Literal[ElementKind.PropulsiveVehicle] = Field(
-        ElementKind.PropulsiveVehicle, description="the element's type"
+    type: Literal[ElementType.PropulsiveVehicle] = Field(
+        ElementType.PropulsiveVehicle, description="the element's type"
     )
     isp: SafeNonNegFloat = Field(
         ..., title="Specific Impulse", description="specific impulse (s)"
@@ -226,7 +226,7 @@ class SurfaceVehicle(Vehicle):
     :param NonNegFloat max_fule: maximum fuel (units)
     """
 
-    type: Literal[ElementKind.SurfaceVehicle] = Field(ElementKind.SurfaceVehicle, description="the element's type")
+    type: Literal[ElementType.SurfaceVehicle] = Field(ElementType.SurfaceVehicle, description="the element's type")
     max_speed: SafeNonNegFloat = Field(
         ..., title="Maximum Speed", description="maximum speed (kph)"
     )

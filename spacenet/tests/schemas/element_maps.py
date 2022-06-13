@@ -10,7 +10,7 @@ from ...src.schemas.constants import (
     SQLITE_MAX_INT,
     SQLITE_MIN_INT,
 )
-from ...src.schemas.element import ElementKind
+from ...src.schemas.element import ElementType
 from hypothesis import strategies as st
 
 from .utilities import UNSERIALIZABLE_INTS
@@ -82,7 +82,7 @@ VALID_ELEMENT_MAP = {
     "name": st.text(),
     "description": st.text(),
     "class_of_supply": st.sampled_from(ClassOfSupply),
-    "type": st.just(ElementKind.Element),
+    "type": st.just(ElementType.Element),
     "environment": st.sampled_from(Environment),
     "accommodation_mass": NON_NEGATIVE_FINITE_FLOATS,
     "mass": NON_NEGATIVE_FINITE_FLOATS,
@@ -90,7 +90,7 @@ VALID_ELEMENT_MAP = {
 }
 INVALID_ELEMENT_MAP = {
     "class_of_supply": st.text().filter(lambda s: s not in CLASS_OF_SUPPLY_VALUES),
-    "type": st.sampled_from(ElementKind).filter(lambda ty: ty != ElementKind.Element),
+    "type": st.sampled_from(ElementType).filter(lambda ty: ty != ElementType.Element),
     "environment": st.text().filter(lambda s: s not in ENVIRONMENT_VALUES),
     "accommodation_mass": NEGATIVE_AND_INFINITE_FLOATS,
     "mass": NEGATIVE_AND_INFINITE_FLOATS,
@@ -100,14 +100,14 @@ INVALID_ELEMENT_MAP = {
 
 VALID_RESOURCE_CONTAINER_MAP = dict(
     VALID_ELEMENT_MAP,
-    type=st.just(ElementKind.ResourceContainer),
+    type=st.just(ElementType.ResourceContainer),
     max_cargo_mass=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
     max_cargo_volume=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
 )
 INVALID_RESOURCE_CONTAINER_MAP = dict(
     INVALID_ELEMENT_MAP,
-    type=st.sampled_from(ElementKind).filter(
-        lambda ty: ty != ElementKind.ResourceContainer
+    type=st.sampled_from(ElementType).filter(
+        lambda ty: ty != ElementType.ResourceContainer
     ),
     max_cargo_mass=NEGATIVE_AND_INFINITE_FLOATS,
     max_cargo_volume=NEGATIVE_AND_INFINITE_FLOATS,
@@ -116,15 +116,15 @@ INVALID_RESOURCE_CONTAINER_MAP = dict(
 
 VALID_ELEMENT_CARRIER_MAP = dict(
     VALID_ELEMENT_MAP,
-    type=st.just(ElementKind.ElementCarrier),
+    type=st.just(ElementType.ElementCarrier),
     cargo_environment=st.sampled_from(Environment),
     max_cargo_mass=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
     max_cargo_volume=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
 )
 INVALID_ELEMENT_CARRIER_MAP = dict(
     INVALID_ELEMENT_MAP,
-    type=st.sampled_from(ElementKind).filter(
-        lambda ty: ty != ElementKind.ElementCarrier
+    type=st.sampled_from(ElementType).filter(
+        lambda ty: ty != ElementType.ElementCarrier
     ),
     cargo_environment=st.text().filter(lambda s: s not in ENVIRONMENT_VALUES),
     max_cargo_mass=NEGATIVE_AND_INFINITE_FLOATS,
@@ -135,7 +135,7 @@ INVALID_ELEMENT_CARRIER_MAP = dict(
 VALID_HUMAN_AGENT_MAP = dict(
     VALID_ELEMENT_MAP,
     active_time_fraction=st.floats(min_value=0, max_value=1),
-    type=st.just(ElementKind.HumanAgent),
+    type=st.just(ElementType.HumanAgent),
 )
 INVALID_HUMAN_AGENT_MAP = dict(
     INVALID_ELEMENT_MAP,
@@ -143,22 +143,22 @@ INVALID_HUMAN_AGENT_MAP = dict(
         st.floats(max_value=0, exclude_max=True),
         st.floats(min_value=1, exclude_min=True),
     ),
-    type=st.sampled_from(ElementKind).filter(lambda ty: ty != ElementKind.HumanAgent),
+    type=st.sampled_from(ElementType).filter(lambda ty: ty != ElementType.HumanAgent),
 )
 
 
 VALID_ROBOTIC_AGENT_MAP = dict(
-    VALID_HUMAN_AGENT_MAP, type=st.just(ElementKind.RoboticAgent),
+    VALID_HUMAN_AGENT_MAP, type=st.just(ElementType.RoboticAgent),
 )
 INVALID_ROBOTIC_AGENT_MAP = dict(
     INVALID_HUMAN_AGENT_MAP,
-    type=st.sampled_from(ElementKind).filter(lambda ty: ty != ElementKind.RoboticAgent),
+    type=st.sampled_from(ElementType).filter(lambda ty: ty != ElementType.RoboticAgent),
 )
 
 
 VALID_PROPULSIVE_VEHICLE_MAP = dict(
     VALID_ELEMENT_MAP,
-    type=st.just(ElementKind.PropulsiveVehicle),
+    type=st.just(ElementType.PropulsiveVehicle),
     max_crew=st.integers(min_value=0, max_value=SQLITE_MAX_INT),
     isp=NON_NEGATIVE_FINITE_FLOATS,
     max_fuel=NON_NEGATIVE_FINITE_FLOATS,
@@ -168,8 +168,8 @@ VALID_PROPULSIVE_VEHICLE_MAP = dict(
 )
 INVALID_PROPULSIVE_VEHICLE_MAP = dict(
     INVALID_ELEMENT_MAP,
-    type=st.sampled_from(ElementKind).filter(
-        lambda ty: ty != ElementKind.PropulsiveVehicle
+    type=st.sampled_from(ElementType).filter(
+        lambda ty: ty != ElementType.PropulsiveVehicle
     ),
     max_crew=st.one_of(st.integers(max_value=-1), UNSERIALIZABLE_INTS),
     isp=NEGATIVE_AND_INFINITE_FLOATS,
@@ -181,7 +181,7 @@ INVALID_PROPULSIVE_VEHICLE_MAP = dict(
 
 VALID_SURFACE_VEHICLE_MAP = dict(
     VALID_ELEMENT_MAP,
-    type=st.just(ElementKind.SurfaceVehicle),
+    type=st.just(ElementType.SurfaceVehicle),
     max_crew=st.integers(min_value=0, max_value=SQLITE_MAX_INT),
     max_speed=NON_NEGATIVE_FINITE_FLOATS,
     max_fuel=NON_NEGATIVE_FINITE_FLOATS,
@@ -191,8 +191,8 @@ VALID_SURFACE_VEHICLE_MAP = dict(
 )
 INVALID_SURFACE_VEHICLE_MAP = dict(
     INVALID_ELEMENT_MAP,
-    type=st.sampled_from(ElementKind).filter(
-        lambda ty: ty != ElementKind.SurfaceVehicle
+    type=st.sampled_from(ElementType).filter(
+        lambda ty: ty != ElementType.SurfaceVehicle
     ),
     max_crew=st.one_of(st.integers(max_value=-1), UNSERIALIZABLE_INTS),
     max_speed=NEGATIVE_AND_INFINITE_FLOATS,

@@ -17,7 +17,7 @@ from ..main import app
 from ..models.element import Element as ElementModel
 from .utilities import test_engine
 from ....auth_dependencies import current_user
-from spacenet.src.schemas.element import ElementKind
+from spacenet.src.schemas.element import ElementType
 from .spacenet.tests.schemas.element_maps import (
     VALID_ELEMENT_MAP,
     VALID_ELEMENT_CARRIER_MAP,
@@ -75,7 +75,7 @@ def valid_invalid_strategies_from_maps(
     return valid, invalid
 
 
-def get_invalid_types(my_type: ElementKind) -> Tuple[ElementKind, ...]:
+def get_invalid_types(my_type: ElementType) -> Tuple[ElementType, ...]:
     """
     Get a list of all invalid type discriminants, given that the only valid type discriminant
     is the provided "myType".
@@ -83,7 +83,7 @@ def get_invalid_types(my_type: ElementKind) -> Tuple[ElementKind, ...]:
     :param my_type: the valid type discriminant
     :return:  all invalid type discriminants
     """
-    return tuple(kind for kind in ElementKind if kind != my_type)
+    return tuple(kind for kind in ElementType if kind != my_type)
 
 
 def convert_enum_variants_to_values(v):
@@ -116,62 +116,62 @@ def nan_in_iterable(iterable) -> bool:
     return False
 
 
-KIND_TO_STRATEGIES: Dict[ElementKind, Tuple[st.SearchStrategy, st.SearchStrategy]] = {
-    ElementKind.Element: valid_invalid_strategies_from_maps(
+KIND_TO_STRATEGIES: Dict[ElementType, Tuple[st.SearchStrategy, st.SearchStrategy]] = {
+    ElementType.Element: valid_invalid_strategies_from_maps(
         VALID_ELEMENT_MAP,
         dict(
             INVALID_ELEMENT_MAP,
             type=st.sampled_from(
                 [
                     variant
-                    for variant in ElementKind
+                    for variant in ElementType
                     if variant
-                    not in {ElementKind.Element, ElementKind.ResourceContainer}
+                    not in {ElementType.Element, ElementType.ResourceContainer}
                 ]
             ),
         ),
     ),
-    ElementKind.ElementCarrier: valid_invalid_strategies_from_maps(
+    ElementType.ElementCarrier: valid_invalid_strategies_from_maps(
         VALID_ELEMENT_CARRIER_MAP, INVALID_ELEMENT_CARRIER_MAP
     ),
-    ElementKind.ResourceContainer: valid_invalid_strategies_from_maps(
+    ElementType.ResourceContainer: valid_invalid_strategies_from_maps(
         VALID_RESOURCE_CONTAINER_MAP, INVALID_RESOURCE_CONTAINER_MAP
     ),
-    ElementKind.RoboticAgent: valid_invalid_strategies_from_maps(
+    ElementType.RoboticAgent: valid_invalid_strategies_from_maps(
         VALID_ROBOTIC_AGENT_MAP,
         dict(
             INVALID_ROBOTIC_AGENT_MAP,
             type=st.sampled_from(
                 [
                     variant
-                    for variant in ElementKind
-                    if variant not in {ElementKind.RoboticAgent, ElementKind.HumanAgent}
+                    for variant in ElementType
+                    if variant not in {ElementType.RoboticAgent, ElementType.HumanAgent}
                 ]
             ),
         ),
     ),
-    ElementKind.HumanAgent: valid_invalid_strategies_from_maps(
+    ElementType.HumanAgent: valid_invalid_strategies_from_maps(
         VALID_HUMAN_AGENT_MAP,
         dict(
             INVALID_HUMAN_AGENT_MAP,
             type=st.sampled_from(
                 [
                     variant
-                    for variant in ElementKind
-                    if variant not in {ElementKind.RoboticAgent, ElementKind.HumanAgent}
+                    for variant in ElementType
+                    if variant not in {ElementType.RoboticAgent, ElementType.HumanAgent}
                 ]
             ),
         ),
     ),
-    ElementKind.PropulsiveVehicle: valid_invalid_strategies_from_maps(
+    ElementType.PropulsiveVehicle: valid_invalid_strategies_from_maps(
         VALID_PROPULSIVE_VEHICLE_MAP, INVALID_PROPULSIVE_VEHICLE_MAP
     ),
-    ElementKind.SurfaceVehicle: valid_invalid_strategies_from_maps(
+    ElementType.SurfaceVehicle: valid_invalid_strategies_from_maps(
         VALID_SURFACE_VEHICLE_MAP, INVALID_SURFACE_VEHICLE_MAP
     ),
 }
 
-TESTED_VARIANTS: List[ElementKind] = [variant for variant in ElementKind]
+TESTED_VARIANTS: List[ElementType] = [variant for variant in ElementType]
 
 
 @contextmanager
@@ -199,14 +199,14 @@ def test_empty():
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)
 @given(data=st.data())
 @settings(max_examples=5, deadline=None)
-def test_create(data: st.DataObject, element_type: ElementKind):
+def test_create(data: st.DataObject, element_type: ElementType):
     with clear_tables_scope():
         valid_st, invalid_st = KIND_TO_STRATEGIES[element_type]
         # POST an invalid element: should 422
         invalid_kw = data.draw(invalid_st)
         assume(
-            not element_type == ElementKind.Element
-            or not invalid_kw["type"] == ElementKind.ResourceContainer
+            not element_type == ElementType.Element
+            or not invalid_kw["type"] == ElementType.ResourceContainer
         )
         try:
             response = client.post("/element/", json=invalid_kw)
@@ -241,7 +241,7 @@ def test_create(data: st.DataObject, element_type: ElementKind):
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)
 @given(data=st.data())
 @settings(max_examples=5, deadline=None)
-def test_update(data: st.DataObject, element_type: ElementKind):
+def test_update(data: st.DataObject, element_type: ElementType):
     def _check_get():
         get_r = client.get(f"/element/{id_}")
         assert get_r.status_code == 200
@@ -295,7 +295,7 @@ def test_update(data: st.DataObject, element_type: ElementKind):
 @pytest.mark.parametrize("element_type", TESTED_VARIANTS)
 @given(data=st.data())
 @settings(max_examples=5, deadline=None)
-def test_delete(data: st.DataObject, element_type: ElementKind):
+def test_delete(data: st.DataObject, element_type: ElementType):
     def _check_get_all():
         read_all_r = client.get("/element/")
         assert read_all_r.status_code == 200
