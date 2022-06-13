@@ -31,10 +31,9 @@ class EdgeType(str, Enum):
     An enumeration for the types of edges.
     """
 
-    Surface = "Surface"
-    Space = "Space"
-    Flight = "Flight"
-    #TODO: change the Flight Edge, with spaces in between??
+    Surface = "Surface Edge"
+    Space = "Space Edge"
+    Flight = "Flight Edge"
 
 
 class EdgeUUID(ImmutableBaseModel):
