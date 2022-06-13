@@ -12,7 +12,10 @@
     "max_cargo_volume": 0,
     "isp": 328,
     "max_fuel": 10000,
-    "propellant_id": 3,
+    "propellant": {
+      "resource": "0ca6c983-f086-4737-be62-d3a0e13cf5c7",
+      "amount": 3.0
+    },
     "type": "PropulsiveVehicle"
   },
   {
@@ -28,7 +31,10 @@
     "max_cargo_volume": 0,
     "isp": 0,
     "max_fuel": 0,
-    "propellant_id": 3,
+    "propellant": {
+      "resource": "0ca6c983-f086-4737-be62-d3a0e13cf5c7",
+      "amount": 3.0
+    },
     "type": "PropulsiveVehicle"
   },
   {
