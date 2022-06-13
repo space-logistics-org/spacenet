@@ -9,6 +9,6 @@ from .surface_transport import *
 from .propulsive_burn import *
 from .element_events import *
 from .transfer_resources import *
-from .consume_resource import *
+from .consume_resources import *
 from .crewed_eva import *
 from .crewed_exploration import *
