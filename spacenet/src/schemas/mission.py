@@ -11,7 +11,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from .mission_demand_model import MissionDemandUUID
+from .demand_model import MissionDemandModelUUID
 from .node import NodeUUID
 from .events import (
     FlightTransport,
@@ -58,7 +58,7 @@ class Mission(BaseModel):
     events: List[AllEvents] = Field(
         ..., title="Event ID List", description="list of events occuring in mission"
     )
-    demand_models: List[MissionDemandUUID] = Field(
+    demand_models: List[MissionDemandModelUUID] = Field(
         ..., title="Demand Models List", description="list of mission demand models"
     )
     origin: NodeUUID = Field(..., title="Origin UUID", description="UUID of origin node")

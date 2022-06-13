@@ -15,8 +15,7 @@ from .mission import Mission
 from .node import AllNodes
 from .resource import AllResources
 from .inst_element import AllInstElements
-from .mission_demand_model import AllMissionDemandModels
-from .element_demand_model import AllElementDemandModels
+from .demand_model import AllDemandModels
 from .types import SafeNonNegFloat
 
 __all__ = ["ScenarioType", "Scenario", "Manifest", "Configuration"]
@@ -138,7 +137,7 @@ class Scenario(BaseModel):
     mission_list: List[Mission] = Field(..., title="Mission List")
     element_templates: List[AllElements] = Field(..., title="Element List")
     instantiated_elements: List[AllInstElements] = Field(..., title="Instantiated Elements")
-    demand_models: List[AllMissionDemandModels, AllElementDemandModels] = Field(..., title="Mission Demand Models")
+    demand_models: List[AllDemandModels] = Field(..., title="Demand Models")
     resource_list: List[AllResources] = Field(
         default_factory=list
     )

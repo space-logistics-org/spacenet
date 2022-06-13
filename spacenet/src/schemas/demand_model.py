@@ -1,37 +1,56 @@
 """
-This module defines a schema for specifying how various element types require continual
-resources.
+This module defines schemas for specifying mission-wide demand models.
 """
-from typing import List, Optional, Union
-from enum import Enum
+from math import inf
 from uuid import uuid4, UUID
+from typing import Union, List
+from enum import Enum
 
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
 from .mixins import ImmutableBaseModel
 
-from .demand import DemandModelKind, Demand, DemandRate
-from .resource import ResourceUUID, ResourceType
+from .resource import ResourceAmount, ResourceAmountRate, GenericResourceAmount, GenericResourceAmountRate
+from .mixins import ImmutableBaseModel
+
 
 __all__ = [
-    "DemandModelUUID",
-    "DemandModel",
-    "CrewConsumablesDemandModel",
+    "MissionDemandModelUUID",
+    "ElementDemandModelUUID",
     "TimedImpulseDemandModel",
     "RatedDemandModel",
-    "SparingByMassDemandModel",
+    "CrewConsumablesDemandModel",
+    "AllDemandModels"
 ]
 
-
-class DemandModelUUID(ImmutableBaseModel):
+#TODO: is this structure possible?
+class DemandModelKind(str, Enum):
     """
-    A representation of a demand model containing only its UUID and serving as a base class for all other demand models.
+    An enumeration of all the types of Demand Model.
+    """
+    CrewConsumables = "Crew Consumables"
+    TimedImpulse = "Timed Impulse"
+    Rated = "Rated"
+    SparingByMass = "Sparing By Mass"
+
+class ElementDemandModelUUID(ImmutableBaseModel):
+    """
+    A representation of an element demand model containing only its UUID and serving as a base class for all other demand models.
 
     :param UUID id: unique identifier for element demand model
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for demand model")
 
-class DemandModel(DemandModelUUID):
+class MissionDemandModelUUID(ImmutableBaseModel):
+    """
+    A representation of a mission demand model containing only its UUID and serving as a base class for all other demand models.
+
+    :param UUID id: unique identifier for element demand model
+    """
+    id: UUID = Field(default_factory=uuid4, description="unique identifier for demand model")
+
+
+class ElementDemandModel(ElementDemandModelUUID):
     """
     Element Demand Model base class.
 
@@ -39,8 +58,15 @@ class DemandModel(DemandModelUUID):
     """
     name: str = Field(..., title="Name")
 
+class MissionDemandModel(MissionDemandModelUUID):
+    """
+    Mission Demand Model base class.
 
-class CrewConsumablesDemandModel(DemandModel):
+    :param str name: name of demand model
+    """
+    name: str = Field(..., title="Name")
+
+class CrewConsumablesDemandModel(MissionDemandModel):
     """
     Demands for consumables by crew.
 
@@ -102,7 +128,7 @@ class CrewConsumablesDemandModel(DemandModel):
     waste_containment_rate: float = Field(default=0.05, title="Waste Containment Rate")
 
 
-class TimedImpulseDemandModel(DemandModel):
+class TimedImpulseDemandModel(ElementDemandModel, MissionDemandModel):
     """
     Demand model consuming a resource in one instant.
 
@@ -112,10 +138,10 @@ class TimedImpulseDemandModel(DemandModel):
     """
     processed: bool = Field(default=False, title="flag")
     type: Literal[DemandModelKind.TimedImpulse] = Field(DemandModelKind.TimedImpulse, description="the demand model's type")
-    demands: List[Demand] = Field(..., description="a list of the demands of the given demand model")
+    demands: List[Union[ResourceAmount, GenericResourceAmount]] = Field(..., description="a list of the demands of the given demand model")
 
 
-class RatedDemandModel(DemandModel):
+class RatedDemandModel(ElementDemandModel, MissionDemandModel):
     """
     Demand model consuming a resource in one instant.
 
@@ -123,10 +149,10 @@ class RatedDemandModel(DemandModel):
     :param [Demand] demands: a list of the rated demands of the given demand model
     """
     type: Literal[DemandModelKind.Rated] = Field(DemandModelKind.Rated, description="the demand model's type")
-    demands: List[DemandRate] = Field(..., description="a list of the rated demands of the given demand model")
+    demands: List[Union[ResourceAmountRate, GenericResourceAmountRate]] = Field(..., description="a list of the rated demands of the given demand model")
 
 
-class SparingByMassDemandModel(DemandModel):
+class SparingByMassDemandModel(ElementDemandModel):
     """
     Demand model consuming a resource in one instant.
 
@@ -136,16 +162,18 @@ class SparingByMassDemandModel(DemandModel):
     :param bool partsListEnabled: true if the element's part list should be used to drive demand resources
 
     """
+    #TODO: review and compare with json
     type: Literal[DemandModelKind.SparingByMass] = Field(DemandModelKind.SparingByMass, description="the demand model's type")
     unpressurizedSparesRate: float = Field(..., title="Unpressurized Spares Rate")
     pressurizedSparesRate: float = Field(..., title="Pressurized Spares Rate")
     partsListEnabled: bool = Field(..., title="Parts List Enabled")
 
 
-AllElementDemandModels = Union[
-    DemandModel,
-    CrewConsumablesDemandModel,
+
+
+AllDemandModels = Union[
     TimedImpulseDemandModel,
     RatedDemandModel,
+    CrewConsumablesDemandModel,
     SparingByMassDemandModel
 ]
