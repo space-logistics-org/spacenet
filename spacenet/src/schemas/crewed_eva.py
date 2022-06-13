@@ -9,7 +9,7 @@ from pydantic import Field
 
 from . import Event
 from .element import HumanAgent
-from .element_demand_model import DemandModelUUID
+from .demand_model import ElementDemandModelUUID
 from .types import SafeFloat
 from .node import NodeUUID
 from .inst_element import InstElementUUID
@@ -54,6 +54,6 @@ class CrewedEVA(Event):
         ...,
         description="a mapping from the IDs of instantiated elements to the index of their desired new state",
     )
-    additional_demands: List[DemandModelUUID] = Field(
+    additional_demands: List[ElementDemandModelUUID] = Field(
         ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"
     )

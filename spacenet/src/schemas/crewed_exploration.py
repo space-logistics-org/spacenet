@@ -13,7 +13,7 @@ from .bases import Event
 from .node import NodeUUID
 from .inst_element import InstElementUUID
 from .edge import EdgeUUID
-from .element_demand_model import DemandModelUUID
+from .demand_model import ElementDemandModelUUID
 
 
 __all__ = ["CrewedExploration"]
@@ -50,7 +50,8 @@ class CrewedExploration(Event):
         description="a mapping from the IDs of instantiated elements to the IDs of their desired "
         "new state",
     )
-    additional_demands: List[DemandModelUUID] = Field(
+    #TODO: this should be element, not mission, demand model right? Same question for crewed_eva.
+    additional_demands: List[ElementDemandModelUUID] = Field(
         ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"
     )
 
