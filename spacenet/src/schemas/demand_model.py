@@ -162,7 +162,6 @@ class SparingByMassDemandModel(ElementDemandModel):
     :param bool partsListEnabled: true if the element's part list should be used to drive demand resources
 
     """
-    #TODO: review and compare with json
     type: Literal[DemandModelType.SparingByMass] = Field(DemandModelType.SparingByMass, description="the demand model's type")
     unpressurizedSparesRate: float = Field(..., title="Unpressurized Spares Rate")
     pressurizedSparesRate: float = Field(..., title="Pressurized Spares Rate")
