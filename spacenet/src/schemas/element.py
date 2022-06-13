@@ -30,7 +30,6 @@ __all__ = [
     "AllElements"
 ]
 
-#TODO: spaces or no spaces?
 class ElementKind(str, Enum):
     """
     An enumeration of all the types of Element
@@ -38,7 +37,6 @@ class ElementKind(str, Enum):
 
     Element = "Element"
     ResourceContainer = "Resource Container"
-    #TODO: just carrier or elementcarrier?
     ElementCarrier = "Element Carrier"
     HumanAgent = "Human Agent"
     RoboticAgent = "Robotic Agent"
