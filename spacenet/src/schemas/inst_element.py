@@ -126,7 +126,7 @@ class InstElementCarrier(InstCargoCarrier):
         "cannot add pressurized elements as "
         "cargo",
     ),
-    contents: Optional[List[InstElementUUID]] = Field(title="Contents", description="list of elements moved into carrier during spatial simulation")
+    contents: List[InstElementUUID] = Field([], title="Contents", description="list of elements moved into carrier during spatial simulation")
 
 
 
