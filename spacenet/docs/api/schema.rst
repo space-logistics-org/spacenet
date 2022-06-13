@@ -62,7 +62,7 @@ Edges
 Elements
 --------
 
-.. autoclass:: spacenet.schemas.element.ElementKind
+.. autoclass:: spacenet.schemas.element.ElementType
    :members: 
 
 .. autoclass:: spacenet.schemas.element.ElementUUID
