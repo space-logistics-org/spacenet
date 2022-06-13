@@ -37,13 +37,13 @@ class ElementKind(str, Enum):
     """
 
     Element = "Element"
-    ResourceContainer = "ResourceContainer"
+    ResourceContainer = "Resource Container"
     #TODO: just carrier or elementcarrier?
-    ElementCarrier = "ElementCarrier"
-    HumanAgent = "HumanAgent"
-    RoboticAgent = "RoboticAgent"
-    PropulsiveVehicle = "PropulsiveVehicle"
-    SurfaceVehicle = "SurfaceVehicle"
+    ElementCarrier = "Element Carrier"
+    HumanAgent = "Human Agent"
+    RoboticAgent = "Robotic Agent"
+    PropulsiveVehicle = "Propulsive Vehicle"
+    SurfaceVehicle = "Surface Vehicle"
 
 class ElementUUID(ImmutableBaseModel):
     """
@@ -215,6 +215,7 @@ class PropulsiveVehicle(Vehicle):
     max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
+    #TODO: could this also be GenericResourceAmount?
     propellant: ResourceAmount = Field(..., title="Propellant", description="UUID of propellant resource and rate")
 
 
@@ -234,8 +235,8 @@ class SurfaceVehicle(Vehicle):
     max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    fuel_id: SafeInt  # TODO: this needs constraints or to be an enum;
-    #  perhaps a foreign key constraint in model?
+    #TODO: could this also be GenericResourceAmount?
+    propellant: ResourceAmount = Field(..., title="Propellant", description="UUID of propellant resource and rate")
 
 
 AllElements = Union[

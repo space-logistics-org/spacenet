@@ -34,6 +34,7 @@ class EdgeType(str, Enum):
     Surface = "Surface"
     Space = "Space"
     Flight = "Flight"
+    #TODO: change the Flight Edge, with spaces in between??
 
 
 class EdgeUUID(ImmutableBaseModel):
