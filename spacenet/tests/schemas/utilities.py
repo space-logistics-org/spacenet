@@ -11,7 +11,7 @@ from hypothesis import strategies as st
 from hypothesis.strategies import SearchStrategy
 from pydantic import BaseModel, ValidationError
 
-from spacenet import schemas
+from spacenet.src import schemas
 from ...src.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from ...src.schemas.element import *
 from ...src.schemas.edge import FlightEdge, SpaceEdge, SurfaceEdge, EdgeType
