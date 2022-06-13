@@ -24,7 +24,7 @@ __all__ = [
 ]
 
 #TODO: is this structure possible?
-class DemandModelKind(str, Enum):
+class DemandModelType(str, Enum):
     """
     An enumeration of all the types of Demand Model.
     """
@@ -98,7 +98,7 @@ class CrewConsumablesDemandModel(MissionDemandModel):
     :param float trash_bag_rate: 
     :param float waste_containment_rate: 
     """
-    type: Literal[DemandModelKind.CrewConsumables] = Field(DemandModelKind.CrewConsumables, description="the demand model's type")
+    type: Literal[DemandModelType.CrewConsumables] = Field(DemandModelType.CrewConsumables, description="the demand model's type")
 
     reserves_duration: float = Field(..., title="Reserves Duration")
     water_recovery_rate: float = Field(..., title="Water Recovery Rate")
@@ -137,7 +137,7 @@ class TimedImpulseDemandModel(ElementDemandModel, MissionDemandModel):
     :param [Demand] demands: a list of demands of the given demand model
     """
     processed: bool = Field(default=False, title="flag")
-    type: Literal[DemandModelKind.TimedImpulse] = Field(DemandModelKind.TimedImpulse, description="the demand model's type")
+    type: Literal[DemandModelType.TimedImpulse] = Field(DemandModelType.TimedImpulse, description="the demand model's type")
     demands: List[Union[ResourceAmount, GenericResourceAmount]] = Field(..., description="a list of the demands of the given demand model")
 
 
@@ -148,7 +148,7 @@ class RatedDemandModel(ElementDemandModel, MissionDemandModel):
     :param Rated type: demand model's type
     :param [Demand] demands: a list of the rated demands of the given demand model
     """
-    type: Literal[DemandModelKind.Rated] = Field(DemandModelKind.Rated, description="the demand model's type")
+    type: Literal[DemandModelType.Rated] = Field(DemandModelType.Rated, description="the demand model's type")
     demands: List[Union[ResourceAmountRate, GenericResourceAmountRate]] = Field(..., description="a list of the rated demands of the given demand model")
 
 
@@ -163,7 +163,7 @@ class SparingByMassDemandModel(ElementDemandModel):
 
     """
     #TODO: review and compare with json
-    type: Literal[DemandModelKind.SparingByMass] = Field(DemandModelKind.SparingByMass, description="the demand model's type")
+    type: Literal[DemandModelType.SparingByMass] = Field(DemandModelType.SparingByMass, description="the demand model's type")
     unpressurizedSparesRate: float = Field(..., title="Unpressurized Spares Rate")
     pressurizedSparesRate: float = Field(..., title="Pressurized Spares Rate")
     partsListEnabled: bool = Field(..., title="Parts List Enabled")
