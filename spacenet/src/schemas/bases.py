@@ -4,12 +4,32 @@ This module defines base classes for events.
 from datetime import timedelta
 from uuid import UUID
 from typing import Union
+from enum import Enum
 
 from .node import NodeUUID
 from .edge import EdgeUUID
 from pydantic import BaseModel, Field, validator
 
-__all__ = ["Event", "ElementTransportEvent", "PrimitiveEvent"]
+__all__ = ["Event", "EventType", "ElementTransportEvent", "PrimitiveEvent"]
+
+class EventType(str, Enum):
+    """
+    An enumeration of all the types of events
+    """
+
+    ConsumeResources = "Consume Resources"
+    TransferResources = "Transfer Resources"
+    CreateElements = "Create Elements"
+    MoveElements = "Move Elements"
+    RemoveElements = "Remove Elements"
+    ReconfigureElements = "Reconfigure Elements"
+    FlightTransport = "Flight Transport"
+    PropulsiveBurn = "Propulsive Burn"
+    SpaceTransport = "Space Transport"
+    SurfaceTransport = "Surface Transport"
+    CrewedEVA = "Crewed EVA"
+    CrewedExploration = "Crewed Exploration"
+
 
 
 class Event(BaseModel):

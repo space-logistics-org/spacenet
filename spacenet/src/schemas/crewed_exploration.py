@@ -3,13 +3,13 @@ This module defines an event for a recurring crewed extravehicular activity.
 """
 from datetime import timedelta
 from typing import List, Union, Dict
+from typing_extensions import Literal
 from uuid import UUID
-
 from pydantic import Field
 
 from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .constants import SQLITE_MAX_INT
-from .bases import Event
+from .bases import Event, EventType
 from .node import NodeUUID
 from .inst_element import InstElementUUID
 from .edge import EdgeUUID
@@ -17,6 +17,7 @@ from .demand_model import ElementDemandModelUUID
 
 
 __all__ = ["CrewedExploration"]
+
 
 
 class CrewedExploration(Event):
@@ -29,7 +30,9 @@ class CrewedExploration(Event):
     :param Dict[InstElementUUID, SafeInt] crew_states: a mapping from the UUIDs of crew members in the exploration to the index number of their new state
     :param [DemandModelUUID] additional_demands: list of UUIDs of demand models needed for EVA
     """
-
+    type: Literal[EventType.CrewedExploration] = Field(
+        EventType.CrewedExploration, title="Type", description="Type of event",
+    )
     eva_duration: timedelta = Field(
         ..., title="EVA Duration", description="The duration of the crewed exploration"
     )

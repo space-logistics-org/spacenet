@@ -8,7 +8,7 @@ from uuid import UUID
 
 from pydantic import Field
 
-from .bases import ElementTransportEvent
+from .bases import ElementTransportEvent, EventType
 from .inst_element import InstElementUUID
 
 
@@ -20,7 +20,9 @@ class SurfaceTransport(ElementTransportEvent):
     """
     Schema for Surface Transport
     """
-
+    type: Literal[EventType.SurfaceTransport] = Field(
+        EventType.SurfaceTransport, title="Type", description="Type of event",
+    )
     name: str = Field(..., title="Name", description="The surface transport name")
 
     elements: List[InstElementUUID] = Field(

@@ -4,10 +4,11 @@ This module defines a schema for consuming resources from a given point.
 """
 from uuid import UUID
 from typing import Union, List
+from typing_extensions import Literal
 
 from pydantic import Field
 
-from . import Event
+from .bases import Event, EventType
 from .inst_element import InstElementUUID
 from .resource import ResourceAmount, GenericResourceAmount
 
@@ -23,6 +24,9 @@ class ConsumeResources(Event):
     :param InstElementUUID source: UUID of the instantiated element where the resource to be consumed is currently stored
     """
 
+    type: Literal[EventType.ConsumeResources] = Field(
+        EventType.ConsumeResources, title="Type", description="Type of event",
+    )
 
     resources: List[Union[ResourceAmount, GenericResourceAmount]] = Field(
         ..., title="Consumed Resources", description="list of resource quantities to consume"

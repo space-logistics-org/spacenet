@@ -8,7 +8,7 @@ from uuid import UUID
 
 from pydantic import Field
 
-from .bases import ElementTransportEvent
+from .bases import ElementTransportEvent, EventType
 from .inst_element import InstElementUUID
 
 
@@ -19,7 +19,9 @@ class FlightTransport(ElementTransportEvent):
     """
     Schema for Flight Transport
     """
-
+    type: Literal[EventType.FlightTransport] = Field(
+        EventType.FlightTransport, title="Type", description="Type of event",
+    )
     name: str = Field(..., title="Name", description="The flight transport name")
 
     elements: List[InstElementUUID] = Field(
@@ -27,4 +29,3 @@ class FlightTransport(ElementTransportEvent):
         title="List of Instantiated Element UUIDs",
         description="The list of UUIDs of instantiated elements being transported",
     )
-    type: Literal["FlightTransport"]

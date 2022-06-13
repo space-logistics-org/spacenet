@@ -2,11 +2,12 @@
 This module defines schemas for transferring resources between locations.
 """
 from typing import List, Union
+from typing_extensions import Literal
 from uuid import UUID
 
 from pydantic import Field
 from .resource import ResourceAmount, GenericResourceAmount
-from .bases import Event
+from .bases import Event, EventType
 from .node import NodeUUID
 from .edge import EdgeUUID
 from .inst_element import InstElementUUID
@@ -22,7 +23,9 @@ class TransferResources(Event):
     :param ResourceAmount | GenericResourceAmount resources: list of resource quantities to consume
     :param InstElementUUID location: UUID of the instantiated element where the resource to be consumed is currently stored
     """
-
+    type: Literal[EventType.TransferResources] = Field(
+        EventType.TransferResources, title="Type", description="Type of event",
+    )
     resources: Union[ResourceAmount, GenericResourceAmount] = Field(
         ..., title="Consumed Resources", description="list of resource quantities to consume"
     )

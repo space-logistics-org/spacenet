@@ -4,11 +4,12 @@ or stage event.
 """
 from enum import Enum
 from typing import List
+from typing_extensions import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field, root_validator
 
-from . import PrimitiveEvent
+from . import PrimitiveEvent, EventType
 from .burn import Burn
 from .inst_element import InstElementUUID
 
@@ -46,7 +47,9 @@ class PropulsiveBurn(PrimitiveEvent):
     Event that represents a propulsive maneuver that may be composed of one or
     more burns or stages of individual elements.
     """
-
+    type: Literal[EventType.PropulsiveBurn] = Field(
+        EventType.PropulsiveBurn, title="Type", description="Type of event",
+    )
     elements: List[InstElementUUID] = Field(
         ...,
         title="Elements List",

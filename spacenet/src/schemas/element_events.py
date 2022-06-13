@@ -3,11 +3,12 @@ This module defines schemas for specifying events that create, move, update, or 
 elements.
 """
 from typing import Dict, List, Union
+from typing_extensions import Literal
 from uuid import UUID
 
 from pydantic import Field
 
-from .bases import Event, PrimitiveEvent
+from .bases import Event, PrimitiveEvent, EventType
 
 from .inst_element import InstElementUUID
 from .node import NodeUUID
@@ -30,6 +31,9 @@ class CreateElements(PrimitiveEvent):
     :param [InstElementUUID] elements: list of the UUIDs of the instantiated elements being added to simulation
     :param EdgeUUID | InstElementUUID | NodeUUID container: the UUID of the node, edge or instianted element where the element is being created
     """
+    type: Literal[EventType.CreateElements] = Field(
+        EventType.CreateElements, title="Type", description="Type of event",
+    )
     elements: List[InstElementUUID] = Field(
         ..., description="the UUIDs of the instantiated elements being added to simulation"
     )
@@ -47,7 +51,9 @@ class MoveElements(PrimitiveEvent):
     :param EdgeUUID | InstElementUUID | NodeUUID container: the UUID of the node, edge or instianted element to which the elements are being moved
 
     """
-
+    type: Literal[EventType.MoveElements] = Field(
+        EventType.MoveElements, title="Type", description="Type of event",
+    )
     elements: List[InstElementUUID] = Field(..., description="the list of IDs of instantiated elements to move")
     container: Union[EdgeUUID, InstElementUUID, NodeUUID] = Field(
         ...,
@@ -62,7 +68,9 @@ class RemoveElements(PrimitiveEvent):
 
     :param [InstElementUUID] elements: list of the UUIDs of the instantiated elements being removed
     """
-
+    type: Literal[EventType.RemoveElements] = Field(
+        EventType.RemoveElements, title="Type", description="Type of event",
+    )
     elements: List[InstElementUUID] = Field(
         ..., description="the list of IDs of instantiated elements to remove"
     )
@@ -76,6 +84,9 @@ class ReconfigureElements(Event):
     :param Dict[InstElementUUID, SafeInt] element_states: a mapping from the IDs of instantiated elements to the index of their desired new state
     """
     #TODO: SafeInts or StateUUIDs?
+    type: Literal[EventType.ReconfigureElements] = Field(
+        EventType.ReconfigureElements, title="Type", description="Type of event",
+    )
     element_states: Dict[InstElementUUID, SafeInt] = Field(
         ...,
         description="a mapping from the IDs of instantiated elements to the index of their desired new state",

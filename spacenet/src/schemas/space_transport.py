@@ -9,7 +9,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from .bases import ElementTransportEvent
+from .bases import ElementTransportEvent, EventType
 from .burn import BurnUUID
 from .propulsive_burn import BurnStageItem
 from .inst_element import InstElementUUID
@@ -43,8 +43,9 @@ class SpaceTransport(ElementTransportEvent):
     :param [BurnStageSequence] burn_stage_sequence: list of separate Burn-Stage sequences
     :param SafeNonNegFloat delta_v: Delta V of space transport (optional)
     """
-    #TODO: should we keep exec_time?
-    type: Literal["SpaceTransport"]
+    type: Literal[EventType.SpaceTransport] = Field(
+        EventType.SpaceTransport, title="Type", description="Type of event",
+    )
     elements: List[InstElementUUID] = Field(
         ...,
         title="Element ID List",
