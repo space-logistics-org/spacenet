@@ -15,7 +15,7 @@ from .mixins import ImmutableBaseModel
 from .types import SafeNonNegFloat, SafePosFloat
 from .constants import ClassOfSupply, Environment
 
-__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUUID", "Resource", "ResourceAmount", "GenericResourceAmount"]
+__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUUID", "Resource", "ResourceAmount", "ResourceAmountRate", "GenericResourceAmountRate", "GenericResourceAmount"]
 
 class ResourceUUID(ImmutableBaseModel):
     """
@@ -53,7 +53,6 @@ class Resource(ResourceUUID):
         ..., title="Unit Volume", description="Resource volume"
     )
 
-#TODO:verify that ResourceAmount and GenericResourceAmount are correct
 class ResourceAmount(ImmutableBaseModel):
     """
     A specified amount of a resource type.
@@ -65,6 +64,18 @@ class ResourceAmount(ImmutableBaseModel):
 
     resource: ResourceUUID = Field(..., title="Resource UUID", description="UUID of the resource being used")
     amount: float = Field(..., title="Amount", description="amount of resource being used, in units specified by that resource")
+
+class ResourceAmountRate(ImmutableBaseModel):
+    """
+    A specified amount of a resource type.
+
+    :param ResourceType type: type of the resource (either discrete or continuous)
+    :param ResourceUUID | ClassofSupply resource_id: UUID or COS number of resource being used
+    :param float rate: rate of resource being used, in units specified by that resource
+    """
+
+    resource: ResourceUUID = Field(..., title="Resource UUID", description="UUID of the resource being used")
+    rate: float = Field(..., title="Rate", description="rate of resource being used, in units specified by that resource")
 
 class GenericResourceAmount(ImmutableBaseModel):
     """
@@ -78,6 +89,19 @@ class GenericResourceAmount(ImmutableBaseModel):
     class_of_supply: ClassOfSupply = Field(..., title="Class of Suppoly", description="class of suppply of the generic resource being used")
     environment: Environment = Field(..., title="Environment", description="Environment"),
     amount: float = Field(..., title="Amount", description="amount of resource being used, in units specified by that resource")
+
+class GenericResourceAmountRate(ImmutableBaseModel):
+    """
+    A specified amount of a generic resource.
+
+    :param ClassOfSupply class_of_supply: COS number of generic resource being used
+    :param Environment environment: environment of generic resource. Either pressurized or unpressurized.
+    :param float rate: rate of generic resource being used, in units specified by that resource
+    """
+
+    class_of_supply: ClassOfSupply = Field(..., title="Class of Suppoly", description="class of suppply of the generic resource being used")
+    environment: Environment = Field(..., title="Environment", description="Environment"),
+    rate: float = Field(..., title="Rate", description="rate of resource being used, in units specified by that resource")
 
 
 
