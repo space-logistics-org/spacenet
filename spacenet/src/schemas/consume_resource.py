@@ -3,7 +3,7 @@
 This module defines a schema for consuming resources from a given point.
 """
 from uuid import UUID
-from typing import Union
+from typing import Union, List
 
 from pydantic import Field
 
@@ -24,7 +24,7 @@ class ConsumeResources(Event):
     """
 
 
-    resources: Union[ResourceAmount, GenericResourceAmount] = Field(
+    resources: List[Union[ResourceAmount, GenericResourceAmount]] = Field(
         ..., title="Consumed Resources", description="list of resource quantities to consume"
     )
     source: InstElementUUID = Field(
