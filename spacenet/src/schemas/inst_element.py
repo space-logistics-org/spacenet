@@ -204,7 +204,7 @@ class InstSurfaceVehicle(InstVehicle):
         title="Maximum Fuel", description="maximum fuel (units)"
     )
     #TODO: could this also be GenericResourceAmount?
-    propellant: ResourceAmount = Field(title="Propellant", description="UUID of propellant resource and rate")
+    propellant: Optional[ResourceAmount] = Field(title="Propellant", description="UUID of propellant resource and rate")
 
 
 AllInstElements = Union[
