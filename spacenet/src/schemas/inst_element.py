@@ -12,7 +12,7 @@ from typing_extensions import Literal
 from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
-from .state import StateUUID
+from .state import State, StateUUID
 from .element import ElementType, ElementUUID
 from .resource import ResourceAmount, GenericResourceAmount
 from .constants import ClassOfSupply
@@ -74,7 +74,8 @@ class InstElement(InstElementUUID):
     )
     mass: Optional[SafeNonNegFloat] = Field(title="Mass", description="mass in kg")
     volume: Optional[SafeNonNegFloat] = Field(title="Volume", description="volume in m^3")
-    current_state: Optional[StateUUID] = Field(title="Current State", description="the current state of the element")
+    states: Optional[List[State]] = Field(title="States", description="list of states the element may possess")
+    current_state_index: Optional[SafeInt] = Field(title="Current State", description="the current state of the element")
 
     class Config:
         """
