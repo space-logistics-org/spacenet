@@ -162,6 +162,7 @@ VALID_PROPULSIVE_VEHICLE_MAP = dict(
     max_crew=st.integers(min_value=0, max_value=SQLITE_MAX_INT),
     isp=NON_NEGATIVE_FINITE_FLOATS,
     max_fuel=NON_NEGATIVE_FINITE_FLOATS,
+    #TODO: figure out how to change?
     propellant_id=st.integers(min_value=SQLITE_MIN_INT, max_value=SQLITE_MAX_INT),
     max_cargo_mass=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),
     max_cargo_volume=st.one_of(st.none(), NON_NEGATIVE_FINITE_FLOATS),

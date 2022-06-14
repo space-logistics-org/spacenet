@@ -20,24 +20,24 @@ VALID_REMOVALS, INVALID_REMOVALS = valid_invalid_from_allowed(ALLOWED_REMOVAL_PO
 
 VALID_MAP = {
     "elements": st.lists(st.uuids()),
-    "removal_point_id": st.uuids(),
+    "location": st.uuids(),
     **EVENT_VALID_MAP,
 }
 
 INVALID_MAP = {
     "elements": st.lists(INVALID_UUIDS, min_size=1),
-    "removal_point_id": INVALID_UUIDS,
+    "location": INVALID_UUIDS,
     **EVENT_INVALID_MAP,
 }
 
 
-def xfail_construct_remove(name, elements, removal_point_id, priority, mission_time, type):
+def xfail_construct_remove(name, elements, location, priority, mission_time, type):
     """
     Construct a RemoveElements event, expecting construction to fail.
 
     :param name: event name
     :param elements: UUIDs of elements to remove
-    :param removal_point_id: UUID of location to remove elements at
+    :param location: UUID of location to remove elements at
     :param priority: event priority
     :param mission_time: time event will occur relative to mission start
     :param type: kind of event
@@ -46,7 +46,7 @@ def xfail_construct_remove(name, elements, removal_point_id, priority, mission_t
         RemoveElements,
         name=name,
         elements=elements,
-        removal_point_id=removal_point_id,
+        location=location,
         priority=priority,
         mission_time=mission_time,
         type=type,
@@ -67,10 +67,10 @@ def test_invalid_elements(kw):
 
 @given(
     kw=st.fixed_dictionaries(
-        mapping={**VALID_MAP, "removal_point_id": INVALID_MAP["removal_point_id"]}
+        mapping={**VALID_MAP, "location": INVALID_MAP["location"]}
     )
 )
-def test_invalid_removal_point_id(kw):
+def test_invalid_location(kw):
     xfail_construct_remove(**kw)
 
 

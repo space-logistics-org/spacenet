@@ -17,26 +17,26 @@ pytestmark = [pytest.mark.unit, pytest.mark.event, pytest.mark.schema]
 
 VALID_MAP = {
     "elements": st.lists(st.uuids()),
-    "entry_point_id": st.uuids(),
+    "container": st.uuids(),
     **EVENT_VALID_MAP,
 }
 
 INVALID_MAP = {
     "elements": st.lists(INVALID_UUIDS, min_size=1),
-    "entry_point_id": INVALID_UUIDS,
+    "container": INVALID_UUIDS,
     **EVENT_INVALID_MAP,
 }
 
 
 def xfail_construct_make(
-    name, elements, entry_point_id, priority, mission_time, type
+    name, elements, container, priority, mission_time, type
 ) -> None:
     """
     Construct a CreateElements event, expecting construction to fail.
 
     :param name: event name
     :param elements: UUIDs of elements to create
-    :param entry_point_id: UUID of location to create elements at
+    :param container: UUID of location to create elements at
     :param priority: event priority
     :param mission_time: time event will occur relative to mission start
     :param type: kind of event
@@ -45,7 +45,7 @@ def xfail_construct_make(
         CreateElements,
         name=name,
         elements=elements,
-        entry_point_id=entry_point_id,
+        container=container,
         priority=priority,
         mission_time=mission_time,
         type=type,
@@ -66,8 +66,8 @@ def test_invalid_elements(kw):
 
 @given(
     kw=st.fixed_dictionaries(
-        mapping={**VALID_MAP, "entry_point_id": INVALID_MAP["entry_point_id"]}
+        mapping={**VALID_MAP, "container": INVALID_MAP["container"]}
     )
 )
-def test_invalid_entry_point_id(kw):
+def test_invalid_container(kw):
     xfail_construct_make(**kw)
