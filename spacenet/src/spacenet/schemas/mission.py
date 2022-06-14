@@ -14,15 +14,7 @@ from fastapi_camelcase import CamelModel
 
 from .demand_model import MissionDemandModelUUID
 from .node import NodeUUID
-from .events import (
-    FlightTransport,
-    SpaceTransport,
-    SurfaceTransport,
-    CreateElements,
-    RemoveElements,
-    MoveElements,
-    CrewedExploration,
-)
+from .events import *
 
 AllEvents = Union[
     FlightTransport,
@@ -32,6 +24,8 @@ AllEvents = Union[
     RemoveElements,
     CreateElements,
     CrewedExploration,
+    ConsumeResources,
+    ReconfigureElements
 ]
 
 

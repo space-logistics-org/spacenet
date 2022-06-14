@@ -51,7 +51,7 @@ class CrewedExploration(Event):
         title="EVAs per week",
         description="Number of EVAs to be performed a week"
     )
-    element_states: Dict[InstElementUUID, SafeInt] = Field(
+    element_states: Dict[UUID, SafeInt] = Field(
         ...,
         description="a mapping from the IDs of instantiated elements to the IDs of their desired "
         "new state",

@@ -3,7 +3,7 @@ This module defines schemas for specifying scenarios, which describe space missi
 """
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -144,5 +144,5 @@ class Scenario(CamelModel):
     resource_list: List[AllResources] = Field(
         default_factory=list
     )
-    manifest: Manifest = Field(..., title="Manifest")
+    manifest: Optional[Manifest] = Field(title="Manifest")
     configuration: Configuration = Field(..., title="Configuration")

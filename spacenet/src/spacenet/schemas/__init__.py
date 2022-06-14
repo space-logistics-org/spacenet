@@ -14,3 +14,6 @@ from .state import *
 from .scenario import *
 from .events import *
 from .burn import *
+from .crewed_exploration import *
+from .demand_model import *
+from .consume_resources import *

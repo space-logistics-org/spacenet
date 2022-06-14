@@ -90,14 +90,16 @@ class Element(ElementUUID):
     volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
     states: List[State] = Field(..., title="States", description="list of states the element may possess")
     current_state_index: SafeInt = Field(0, title="Current State", description="the current state of the element")
+    parts: Optional[List[UUID]] = Field(title="Parts filler")
+    icon: Optional[str] = Field(title="string of icon")
 
 
-    # class Config:
-    #     """
-    #     Configuration inner class forbidding additional fields
-    #     """
+    class Config:
+        """
+        Configuration inner class forbidding additional fields
+        """
 
-    #     extra = Extra.forbid
+        extra = Extra.forbid
 
 
 class CargoCarrier(Element, ABC):
@@ -106,6 +108,7 @@ class CargoCarrier(Element, ABC):
 
     :param SafeNonNegFloat max_cargo_mass: cargo capacity constraint (kg)
     :param SafeNonNegFloat max_cargo_volume: cargo capacity constraint (m^3)
+    :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo
     """
 
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
@@ -113,6 +116,11 @@ class CargoCarrier(Element, ABC):
     )
     max_cargo_volume: Optional[SafeNonNegFloat] = Field(
         0, title="Maximum Cargo Volume", description="cargo capacity constraint (m^3)",
+    )
+    cargo_environment: Environment = Field(
+        ...,
+        title="Cargo Environment",
+        description="the cargo's environment — if unpressurized, cannot add pressurized elements as cargo",
     )
 
 
@@ -135,17 +143,16 @@ class ElementCarrier(CargoCarrier):
     An element which can carry other elements.
 
     :param ElementCarrier type: the element's type
-    :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo
     :param [ElementUUID] contents: list of elements initially in carrier
+    :param SafeNonNegInt max_crew: crew capacity constraint
+
     """
 
     type: Literal[ElementType.ElementCarrier] = Field(ElementType.ElementCarrier, description="the element's type")
-    cargo_environment: Environment = Field(
-        ...,
-        title="Cargo Environment",
-        description="the cargo's environment — if unpressurized, cannot add pressurized elements as cargo",
+    contents: List[UUID] = Field([], title="Contents", description="list of elements initially in carrier")
+    max_crew: SafeNonNegInt = Field(
+        ..., title="Maximum Crew Count", description="crew capacity constraint"
     )
-    contents: List[ElementUUID] = Field([], title="Contents", description="list of elements initially in carrier")
 
 
 class Agent(Element, ABC):
@@ -182,20 +189,10 @@ class RoboticAgent(Agent):
 
     type: Literal[ElementType.RoboticAgent] = Field(ElementType.RoboticAgent, description="the element's type")
 
-
-class Vehicle(CargoCarrier, ABC):
-    """
-    An abstract base class representing a generic Vehicle, surface or propulsive.
-
-    :param SafeNonNegInt max_crew: crew capacity constraint
-    """
-
-    max_crew: SafeNonNegInt = Field(
-        ..., title="Maximum Crew Count", description="crew capacity constraint"
-    )
+#TODO: should vehicles inherit from element carriers?
 
 
-class PropulsiveVehicle(Vehicle):
+class PropulsiveVehicle(ElementCarrier):
     """
     An element representing a vehicle with its own propulsion.
 
@@ -217,7 +214,7 @@ class PropulsiveVehicle(Vehicle):
     propellant: Union[ResourceAmount, GenericResourceAmount] = Field(..., title="Propellant", description="UUID and amount of propellant used by propulsive vehicle")
 
 
-class SurfaceVehicle(Vehicle):
+class SurfaceVehicle(ElementCarrier):
     """
     An element representing a surface vehicle.
 

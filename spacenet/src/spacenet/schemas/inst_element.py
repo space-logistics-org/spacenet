@@ -77,6 +77,9 @@ class InstElement(InstElementUUID):
     volume: Optional[SafeNonNegFloat] = Field(title="Volume", description="volume in m^3")
     states: Optional[List[State]] = Field(title="States", description="list of states the element may possess")
     current_state_index: Optional[SafeInt] = Field(title="Current State", description="the current state of the element")
+    parts: Optional[List[UUID]] = Field(title="Parts filler")
+    icon: Optional[str] = Field(title="string of icon")
+
 
     class Config:
         """
@@ -92,7 +95,7 @@ class InstCargoCarrier(InstElement, ABC):
     
     :param SafeNonNegFloat max_cargo_mass: cargo capacity constraint (kg) (optional)
     :param SafeNonNegFloat max_cargo_volume: cargo capacity constraint (m^3) (optional)
-
+    :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo
     """
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
         title="Max Cargo Mass", description="cargo capacity constraint (kg)"
@@ -100,7 +103,10 @@ class InstCargoCarrier(InstElement, ABC):
     max_cargo_volume: Optional[SafeNonNegFloat] = Field(
         title="Maximum Cargo Volume", description="cargo capacity constraint (m^3)",
     )
-
+    cargo_environment: Optional[Environment] = Field(
+        title="Cargo Environment",
+        description="the cargo's environment — if unpressurized, cannot add pressurized elements as cargo",
+    )
 
 
 class InstResourceContainer(InstCargoCarrier):
@@ -118,19 +124,16 @@ class InstElementCarrier(InstCargoCarrier):
     """
     An element which can carry other elements.
 
-    :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo (optional)
+
     :param [InstElementUUID] contents: list of instantiated elements moved into carrier during spatial simulation
+    :param SafeNonNegInt max_crew: crew capacity constraint
+
     """
     type: Literal[ElementType.ElementCarrier] = Field(ElementType.ElementCarrier, description="the element's type")
-
-    cargo_environment: Optional[Environment] = Field(
-        title="Cargo Environment",
-        description="the cargo's environment — if "
-        "unpressurized, "
-        "cannot add pressurized elements as "
-        "cargo",
-    ),
     contents: List[InstElementUUID] = Field([], title="Contents", description="list of elements moved into carrier during spatial simulation")
+    max_crew: Optional[SafeNonNegInt] = Field(
+        title="Maximum Crew Count", description="crew capacity constraint"
+    )
 
 
 
@@ -161,17 +164,9 @@ class InstRoboticAgent(InstAgent):
     """
     type: Literal[ElementType.RoboticAgent] = Field(ElementType.RoboticAgent, description="the element's type")
 
-class InstVehicle(InstCargoCarrier, ABC):
-    """
-    An abstract base class representing a generic Vehicle, surface or propulsive.
-        
-    :param SafeNonNegInt max_crew: crew capacity constraint
-
-    """
-    max_crew: Optional[SafeNonNegInt] = Field(title="Maximum Crew Count", description="crew capacity constraint")
 
 
-class InstPropulsiveVehicle(InstVehicle):
+class InstPropulsiveVehicle(InstElementCarrier):
     """
     An element representing a vehicle with its own propulsion.
     
@@ -190,7 +185,7 @@ class InstPropulsiveVehicle(InstVehicle):
     )
 
 
-class InstSurfaceVehicle(InstVehicle):
+class InstSurfaceVehicle(InstElementCarrier):
     """
     An element representing a surface vehicle.
 

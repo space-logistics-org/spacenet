@@ -32,5 +32,5 @@ class ConsumeResources(Event):
         ..., title="Consumed Resources", description="list of resource quantities to consume"
     )
     source: UUID = Field(
-        ..., title="Consumed Quantity", description="UUID of the instantiated element where the resource to be consumed is currently stored"
+        ..., title="Source", description="UUID of the instantiated element where the resource to be consumed is currently stored"
     )
