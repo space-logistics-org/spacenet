@@ -215,7 +215,6 @@ class PropulsiveVehicle(Vehicle):
     max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    #TODO: could this also be GenericResourceAmount?
     propellant: Union[ResourceAmount, GenericResourceAmount] = Field(..., title="Propellant", description="UUID and amount of propellant used by propulsive vehicle")
 
 
@@ -226,7 +225,7 @@ class SurfaceVehicle(Vehicle):
     :param SurfaceVehicle type: the element's type
     :param SafeNonNegFloat max_speed: maximum speed (kph)
     :param SafeNonNegFloat max_fuel: maximum fuel (units)
-    :param propellant ResourceAmountRate: UUID and rate of propellant used by propulsive vehicle
+    :param ResourceAmount | GenericResourceAmount propellant: UUID and amount of propellant used by surface vehicle
 
     """
 
@@ -237,8 +236,7 @@ class SurfaceVehicle(Vehicle):
     max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    #TODO: fix this
-    propellant: Union[ResourceAmount, GenericResourceAmount] = Field(..., title="Propellant", description="UUID and rate of propellant used by propulsive vehicle")
+    propellant: Union[ResourceAmount, GenericResourceAmount] = Field(..., title="Propellant", description="UUID and rate of propellant used by surface vehicle")
 
 
 AllElements = Union[

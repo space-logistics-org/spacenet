@@ -7,6 +7,7 @@ from typing import Dict, List, Union
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+from fastapi_camelcase import CamelModel
 
 from .edge import AllEdges
 from .element import AllElements
@@ -19,6 +20,7 @@ from .demand_model import AllDemandModels
 from .types import SafeNonNegFloat
 
 __all__ = ["ScenarioType", "Scenario", "Manifest", "Configuration"]
+
 
 class itemDiscretizationTypes(str, Enum):
     """
@@ -110,7 +112,7 @@ class ScenarioType(str, Enum):
     solar_system = "Solar System"
 
 
-class Scenario(BaseModel):
+class Scenario(CamelModel):
     """
     A scenario describing a space mission campaign.
 
@@ -144,4 +146,3 @@ class Scenario(BaseModel):
     )
     manifest: Manifest = Field(..., title="Manifest")
     configuration: Configuration = Field(..., title="Configuration")
-

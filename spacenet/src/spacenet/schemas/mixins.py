@@ -6,6 +6,7 @@ from abc import ABC
 from typing import Optional
 
 from pydantic import BaseModel, Field
+from fastapi_camelcase import CamelModel
 
 __all__ = [
     "RequiresID",
@@ -71,7 +72,7 @@ class ReadSchema(RequiresID):
         orm_mode = True
 
 
-class ImmutableBaseModel(BaseModel):
+class ImmutableBaseModel(CamelModel):
     """
     A mixin which forbids mutation of the schema after instantiation.
     """
@@ -86,5 +87,3 @@ class ImmutableBaseModel(BaseModel):
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
-
-#TODO: go over how to use these?

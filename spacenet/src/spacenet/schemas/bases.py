@@ -9,6 +9,7 @@ from enum import Enum
 from .node import NodeUUID
 from .edge import EdgeUUID
 from pydantic import BaseModel, Field, validator
+from fastapi_camelcase import CamelModel
 
 __all__ = ["Event", "EventType", "ElementTransportEvent", "PrimitiveEvent"]
 
@@ -32,7 +33,7 @@ class EventType(str, Enum):
 
 
 
-class Event(BaseModel):
+class Event(CamelModel):
     """
     The base event schema.
     """

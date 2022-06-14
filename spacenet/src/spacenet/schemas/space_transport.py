@@ -8,6 +8,7 @@ from typing_extensions import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+from fastapi_camelcase import CamelModel
 
 from .bases import ElementTransportEvent, EventType
 from .burn import BurnUUID
@@ -21,7 +22,7 @@ __all__ = ["SpaceTransport"]
 
 
 
-class BurnStageSequence(BaseModel):
+class BurnStageSequence(CamelModel):
     """
     A sequence of burn/stage events.
 

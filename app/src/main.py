@@ -5,7 +5,7 @@ import os.path
 
 from fastapi import Depends, FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi_users.user import UserAlreadyExists
+# from fastapi_users.users import UserAlreadyExists
 from pydantic import EmailStr, ValidationError
 
 from .database import main as database_app

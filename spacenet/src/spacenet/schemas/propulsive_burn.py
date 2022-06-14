@@ -8,6 +8,7 @@ from typing_extensions import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field, root_validator
+from fastapi_camelcase import CamelModel
 
 from . import PrimitiveEvent, EventType
 from .burn import Burn
@@ -27,7 +28,7 @@ class BurnStage(Enum):
     Stage = "Stage"
 
 
-class BurnStageItem(BaseModel):
+class BurnStageItem(CamelModel):
     """
     Class for items in the burn-stage sequence
     """

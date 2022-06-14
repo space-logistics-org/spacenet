@@ -10,6 +10,7 @@ from typing import List, Union
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+from fastapi_camelcase import CamelModel
 
 from .demand_model import MissionDemandModelUUID
 from .node import NodeUUID
@@ -37,7 +38,7 @@ AllEvents = Union[
 __all__ = ["Mission"]
 
 
-class Mission(BaseModel):
+class Mission(CamelModel):
     """
     A schema representing a single mission, which is represented as a list of events.
 
