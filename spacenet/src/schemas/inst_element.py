@@ -14,7 +14,7 @@ from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import State, StateUUID
 from .element import ElementType, ElementUUID
-from .resource import ResourceAmount, GenericResourceAmount
+from .resource import ResourceAmount, GenericResourceAmount, ResourceAmountRate
 from .constants import ClassOfSupply
 
 __all__ = [
@@ -45,14 +45,15 @@ class InstElement(InstElementUUID):
     A generic element.
 
     :param ElementUUID template_id: UUID of the template for this instantiated element
-    :param str name: name of the element
+    :param str name: name of the instantiated element
     :param str description: short description of the element (optional)
     :param ClassOfSupply class_of_supply: class of supply number (optional)
     :param Environment environment: the element's environment (optional)
-    :param NonNegFloat accommodation_mass: the amount of additional COS5 required to pack the element inside a carrier (optional)
-    :param NonNegFloat mass: mass in kg (optional)
-    :param NonNegFloat volume: volume in cubic meters (optional)
-    :param StateUUID current_state: field describing the current state of the element. Set to initial state during creation. (optional)
+    :param SafeNonNegFloat accommodation_mass: the amount of additional COS5 required to pack the element inside a carrier (optional)
+    :param SafeNonNegFloat mass: mass in kg (optional)
+    :param SafeNonNegFloat volume: volume in cubic meters (optional)
+    :param [State] states: list of states the instantiated element may possess (optional)
+    :param SafeInt current_state_index: field describing the current state of the element. Set to initial state during creation. (optional)
     """
 
     template_id: ElementUUID = Field(..., description="UUID of the template for this instantiated element")
@@ -89,9 +90,8 @@ class InstCargoCarrier(InstElement, ABC):
     """
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
     
-    :param NonNegFloat max_cargo_mass: cargo capacity constraint (kg) (optional)
-    :param max_cargo_volume: cargo capacity constraint (m^3) (optional)
-    :param [InstElementUUID | ResourceUUID] contents: list of elements or resources moved into carrier during spatial simulation (optional)
+    :param SafeNonNegFloat max_cargo_mass: cargo capacity constraint (kg) (optional)
+    :param SafeNonNegFloat max_cargo_volume: cargo capacity constraint (m^3) (optional)
 
     """
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
@@ -107,7 +107,7 @@ class InstResourceContainer(InstCargoCarrier):
     """
     An element representing a container for resources.
 
-    :param [ResourceAmount] contents: list of resource quantities moved into container during spatial simulation
+    :param [ResourceAmount | GenericResourceAmount] contents: list of resource quantities moved into container during spatial simulation (optional)
     """
 
     contents: Optional[List[Union[GenericResourceAmount, ResourceAmount]]] = Field(title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
@@ -117,7 +117,7 @@ class InstElementCarrier(InstCargoCarrier):
     An element which can carry other elements.
 
     :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo (optional)
-    :param [InstElementUUID] contents: list of elements moved into carrier during spatial simulation
+    :param [InstElementUUID] contents: list of instantiated elements moved into carrier during spatial simulation
     """
 
     cargo_environment: Optional[Environment] = Field(
@@ -161,7 +161,7 @@ class InstVehicle(InstCargoCarrier, ABC):
     """
     An abstract base class representing a generic Vehicle, surface or propulsive.
         
-    :param NonNegInt max_crew: crew capacity constraint
+    :param SafeNonNegInt max_crew: crew capacity constraint
 
     """
     max_crew: Optional[SafeNonNegInt] = Field(
@@ -173,18 +173,15 @@ class InstPropulsiveVehicle(InstVehicle):
     """
     An element representing a vehicle with its own propulsion.
     
-    :param NonNegFloat isp: "specific impulse (s) (optional)
-    :param NonNegFloat max_fuel: maximum fuel (units) (optional)
-
+    :param SafeNonNegFloat isp: specific impulse (s) (optional)
+    :param SafeNonNegFloat max_fuel: maximum fuel (units) (optional)
+    :param ResourceAmountRate propellant: UUID and rate of propellant used by propulsive vehicle (optional)
     """
 
-    isp: Optional[SafeNonNegFloat] = Field(
-        title="Specific Impulse", description="specific impulse (s)"
-    )
     max_fuel: Optional[SafeNonNegFloat] = Field(
         title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant: Optional[ResourceAmount] = Field(title="Propellant", description="UUID of propellant resource and rate")
+    propellant: Optional[ResourceAmountRate] = Field(title="Propellant", description="UUID of propellant resource and rate")
     isp: Optional[SafeNonNegFloat] = Field(title="Specific Impulse", description="specific impulse (s)"
     )
 
@@ -193,8 +190,9 @@ class InstSurfaceVehicle(InstVehicle):
     """
     An element representing a surface vehicle.
 
-    :param NonNegFloat max_speed: maximum speed (kph) (optional)
-    :param NonNegFloat max_fule: maximum fuel (units) (optional)
+    :param SafeNonNegFloat max_speed: maximum speed (kph) (optional)
+    :param SafeNonNegFloat max_fule: maximum fuel (units) (optional)
+    :param propellant ResourceAmountRate: UUID and rate of propellant used by propulsive vehicle
 
     """
 
@@ -205,7 +203,7 @@ class InstSurfaceVehicle(InstVehicle):
         title="Maximum Fuel", description="maximum fuel (units)"
     )
     #TODO: could this also be GenericResourceAmount?
-    propellant: Optional[ResourceAmount] = Field(title="Propellant", description="UUID of propellant resource and rate")
+    propellant: Optional[ResourceAmountRate] = Field(title="Propellant", description="UUID of propellant resource and rate")
 
 
 AllInstElements = Union[

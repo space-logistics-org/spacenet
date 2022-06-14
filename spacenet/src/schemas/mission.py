@@ -44,7 +44,7 @@ class Mission(BaseModel):
     :param str name: name of mission
     :param datetime start_date: date of mission start
     :param [AllEvents] events: list of events occuring in mission
-    :param [MissionDemandUUID] demand_models: list of mission demand models
+    :param [MissionDemandUUID] demand_models: list of mission demand models by UUID
     :param NodeUUID origin: UUID of origin node
     :param NodeUUID destination: UUID of destination node
     :param NodeUUID return_origin: UUID of return origin node
@@ -59,7 +59,7 @@ class Mission(BaseModel):
         ..., title="Event ID List", description="list of events occuring in mission"
     )
     demand_models: List[MissionDemandModelUUID] = Field(
-        ..., title="Demand Models List", description="list of mission demand models"
+        ..., title="Demand Models List", description="list of mission demand models by UUID"
     )
     origin: NodeUUID = Field(..., title="Origin UUID", description="UUID of origin node")
     destination: NodeUUID = Field(

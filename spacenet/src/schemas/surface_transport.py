@@ -19,15 +19,15 @@ __all__ = ["SurfaceTransport"]
 class SurfaceTransport(ElementTransportEvent):
     """
     Schema for Surface Transport
+
+    :param SurfaceTransport type: type of event occuring
+    :param [InstElementUUID] elements: the list of UUIDs of instantiated elements being transported
     """
     type: Literal[EventType.SurfaceTransport] = Field(
         EventType.SurfaceTransport, title="Type", description="Type of event",
     )
-    name: str = Field(..., title="Name", description="The surface transport name")
-
     elements: List[InstElementUUID] = Field(
         ...,
         title="List of Element UUIDs",
         description="The list of IDs of instantiated elements being transported",
     )
-    type: Literal["SurfaceTransport"]

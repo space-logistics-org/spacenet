@@ -33,6 +33,7 @@ class DemandModelType(str, Enum):
     Rated = "Rated"
     SparingByMass = "Sparing By Mass"
 
+#TODO: should these somehow include type as well??
 class ElementDemandModelUUID(ImmutableBaseModel):
     """
     A representation of an element demand model containing only its UUID and serving as a base class for all other demand models.

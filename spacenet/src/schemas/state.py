@@ -26,6 +26,8 @@ class StateType(str, Enum):
 class StateUUID(ImmutableBaseModel):
     """
     A representation of a state using only its UUID. This serves as a base class for all states.
+    
+    :param UUID id: unique identifier for state
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for state")
 
@@ -33,6 +35,11 @@ class StateUUID(ImmutableBaseModel):
 class State(StateUUID):
     """
     An abbreviated representation of the state of a specific element.
+    
+    :param str name: the name of this state
+    :param str description: short description of the state
+    :param StateType type: the general classificaton of this state
+    :param [ElementDemandModelUUID] demand_models: list of element demand model UUIDs representing the demand models associated with this state
     """
     name: str = Field(..., description="the name of this state")
     description: str = Field(
@@ -41,4 +48,4 @@ class State(StateUUID):
     type: StateType = Field(
         ..., description="the general classification of this state"
     )
-    demand_models: List[ElementDemandModelUUID]
+    demand_models: List[ElementDemandModelUUID] = Field(..., title="Demand Models", description="list of demand models associated with the state")

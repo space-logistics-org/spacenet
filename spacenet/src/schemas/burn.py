@@ -23,17 +23,15 @@ class BurnUUID(ImmutableBaseModel):
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for burn")
 
-class Burn(BaseModel):
+class Burn(BurnUUID):
     """
     An individual burn to generate a specified amount of
     velocity change. Base class for propulsive burns
     
-    :param UUID id: unique identifier for individual burn
     :param timedelta time: amount of time the burn will take
     :param SafeNonNegFloat delta_v: change in velocity to be achieved by a burnS
     """
 
-    id: UUID = Field(..., title="UUID", description="UUID of individual burn")
     time: timedelta = Field(
         ..., description="amount of time the burn will take"
     )

@@ -20,6 +20,8 @@ __all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUU
 class ResourceUUID(ImmutableBaseModel):
     """
     A base class which defines a resource by its UUID only.
+    
+    :param UUID id: unique identifier for resource
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for resource")
 
@@ -37,6 +39,14 @@ class Resource(ResourceUUID):
     """
     A resource with a given class of supply as a general category, as well as specified
     physical properties such as mass and volume.
+
+    :param str name: resource name
+    :param ClassOfSupply class_of_supply: class of supply number for resource
+    :param SafePosFloat packing_factor: float greater than 0 representing resource's packing factor
+    :param str units: units of mass for resource, defaulted to kg
+    :param str description: optional field for description of resource
+    :param SafePosFloat unit_mass: resource mass
+    :param unit_volume SafeNonNegFloat: resource volume
     """
 
     name: str = Field(..., title="Name", description="Resource name")
@@ -44,6 +54,7 @@ class Resource(ResourceUUID):
         ..., title="Class of Supply", description="Class of supply number"
     ),
     packing_factor: SafePosFloat = Field(..., title="Packing Factor", description="Float greater than 0 representing resource's packing factor")
+    #TODO: what should units represent
     units: str = Field(default="kg", title="Units")
     description: Optional[str] = Field(
         default=None, title="Description", description="Short description"
@@ -57,7 +68,6 @@ class ResourceAmount(ImmutableBaseModel):
     """
     A specified amount of a resource type.
 
-    :param ResourceType type: type of the resource (either discrete or continuous)
     :param ResourceUUID | ClassofSupply resource_id: UUID or COS number of resource being used
     :param float amount: amount of resource being used, in units specified by that resource
     """
@@ -69,7 +79,6 @@ class ResourceAmountRate(ImmutableBaseModel):
     """
     A specified amount of a resource type.
 
-    :param ResourceType type: type of the resource (either discrete or continuous)
     :param ResourceUUID | ClassofSupply resource_id: UUID or COS number of resource being used
     :param float rate: rate of resource being used, in units specified by that resource
     """

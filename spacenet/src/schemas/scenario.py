@@ -51,6 +51,8 @@ class Network(BaseModel):
 class Configuration(BaseModel):
     """
     The specific configuration of the scenario specifiying whether volume and environment are constrained.
+    
+    
     """
     time_precision: SafeNonNegFloat = Field(0.05)
     demand_precision: SafeNonNegFloat = Field(0.01)
@@ -95,7 +97,7 @@ class Configuration(BaseModel):
     cargo_transfer_bag_max_mass: SafeNonNegFloat = Field(26.8)
     cargo_transfer_bag_max_volume: SafeNonNegFloat = Field(0.049)
 
-
+#TODO: check scenario types are accurate
 class ScenarioType(str, Enum):
     """
     An enumeration of the different kinds of scenario.
@@ -124,8 +126,8 @@ class Scenario(BaseModel):
     :param [AllInstElements] instantiated_elements: list of elements created in events
     :param [AllMissionDemandModels] mission_demand_models: library of mission demand models used
     :param [AllResources] resource_list: list of resources used throughout the scenario
-    :param Manifest manifest:
-    :param Configuration configuration:
+    :param Manifest manifest: object specifying packing of resources
+    :param Configuration configuration: object specifying specific settings for scenario
     """
 
     name: str = Field(..., title="Name", description="Name of Scenario")

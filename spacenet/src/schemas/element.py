@@ -13,7 +13,7 @@ from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import State, StateUUID
-from .resource import ResourceAmount, GenericResourceAmount
+from .resource import ResourceAmount, GenericResourceAmount, ResourceAmountRate
 
 __all__ = [
     "ElementType",
@@ -61,9 +61,9 @@ class Element(ElementUUID):
     :param ClassOfSupply class_of_supply: class of supply number
     :param Element type: the element's type
     :param Environment environment: the element's environment
-    :param NonNegFloat accommodation_mass: the amount of additional COS5 required to pack the element inside a carrier
-    :param NonNegFloat mass: mass in kg
-    :param NonNegFloat volume: volume in cubic meters
+    :param SafeNonNegFloat accommodation_mass: the amount of additional COS5 required to pack the element inside a carrier
+    :param SafeNonNegFloat mass: mass in kg
+    :param SafeNonNegFloat volume: volume in cubic meters
     :param [State] states: list of states the element may possess
     :param SafeInt current_state_index: field describing the current state of the element.
     """
@@ -88,7 +88,7 @@ class Element(ElementUUID):
     )
     mass: SafeNonNegFloat = Field(..., title="Mass", description="mass in kg")
     volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
-    states: List[State] = Field(..., tile="States", description="list of states the element may possess")
+    states: List[State] = Field(..., title="States", description="list of states the element may possess")
     current_state_index: SafeInt = Field(0, title="Current State", description="the current state of the element")
     icon: str = Field(..., title="icon", description="Icon of element")
 
@@ -105,8 +105,8 @@ class CargoCarrier(Element, ABC):
     """
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
 
-    :param NonNegFloat max_cargo_mass: cargo capacity constraint (kg)
-    :param max_cargo_volume: cargo capacity constraint (m^3)
+    :param SafeNonNegFloat max_cargo_mass: cargo capacity constraint (kg)
+    :param SafeNonNegFloat max_cargo_volume: cargo capacity constraint (m^3)
     """
 
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
@@ -122,20 +122,22 @@ class ResourceContainer(CargoCarrier):
     An element representing a container for resources.
 
     :param ResourceContainer type: the element's type
+    :param [ResourceAmount | GenericResourceAmount] contents: list of resource quantities initially in container
     """
 
     type: Literal[ElementType.ResourceContainer] = Field(
         ElementType.ResourceContainer, description="the element's type"
     )
-    contents: List[Union[GenericResourceAmount, ResourceAmount]] = Field([], title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
+    contents: List[Union[GenericResourceAmount, ResourceAmount]] = Field([], title="Resource Amount", description="list of resource quantities initially in container")
 
 
 class ElementCarrier(CargoCarrier):
     """
     An element which can carry other elements.
 
-    :param Carrier type: the element's type
+    :param ElementCarrier type: the element's type
     :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo
+    :param [ElementUUID] contents: list of elements initially in carrier
     """
 
     type: Literal[ElementType.ElementCarrier] = Field(ElementType.ElementCarrier, description="the element's type")
@@ -144,7 +146,7 @@ class ElementCarrier(CargoCarrier):
         title="Cargo Environment",
         description="the cargo's environment — if unpressurized, cannot add pressurized elements as cargo",
     )
-    contents: List[ElementUUID] = Field([], title="Contents", description="list of elements moved into carrier during spatial simulation")
+    contents: List[ElementUUID] = Field([], title="Contents", description="list of elements initially in carrier")
 
 
 class Agent(Element, ABC):
@@ -186,7 +188,7 @@ class Vehicle(CargoCarrier, ABC):
     """
     An abstract base class representing a generic Vehicle, surface or propulsive.
 
-    :param NonNegInt max_crew: crew capacity constraint
+    :param SafeNonNegInt max_crew: crew capacity constraint
     """
 
     max_crew: SafeNonNegInt = Field(
@@ -199,9 +201,9 @@ class PropulsiveVehicle(Vehicle):
     An element representing a vehicle with its own propulsion.
 
     :param PropulsiveVehicle type: the element's type
-    :param NonNegFloat isp: "specific impulse (s)
-    :param NonNegFloat max_fuel: maximum fuel (units)
-    :param propellant ResourceAmount: UUID of propellant resource and rate of usage
+    :param SafeNonNegFloat isp: "specific impulse (s)
+    :param SafeNonNegFloat max_fuel: maximum fuel (units)
+    :param propellant ResourceAmountRate: UUID and rate of propellant used by propulsive vehicle
     """
 
     type: Literal[ElementType.PropulsiveVehicle] = Field(
@@ -214,7 +216,7 @@ class PropulsiveVehicle(Vehicle):
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
     #TODO: could this also be GenericResourceAmount?
-    propellant: ResourceAmount = Field(..., title="Propellant", description="UUID of propellant resource and rate")
+    propellant: ResourceAmountRate = Field(..., title="Propellant", description="UUID and rate of propellant used by propulsive vehicle")
 
 
 class SurfaceVehicle(Vehicle):
@@ -222,8 +224,10 @@ class SurfaceVehicle(Vehicle):
     An element representing a surface vehicle.
 
     :param SurfaceVehicle type: the element's type
-    :param NonNegFloat max_speed: maximum speed (kph)
-    :param NonNegFloat max_fule: maximum fuel (units)
+    :param SafeNonNegFloat max_speed: maximum speed (kph)
+    :param SafeNonNegFloat max_fuel: maximum fuel (units)
+    :param propellant ResourceAmountRate: UUID and rate of propellant used by propulsive vehicle
+
     """
 
     type: Literal[ElementType.SurfaceVehicle] = Field(ElementType.SurfaceVehicle, description="the element's type")
@@ -234,7 +238,7 @@ class SurfaceVehicle(Vehicle):
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
     #TODO: could this also be GenericResourceAmount?
-    propellant: ResourceAmount = Field(..., title="Propellant", description="UUID of propellant resource and rate")
+    propellant: ResourceAmountRate = Field(..., title="Propellant", description="UUID and rate of propellant used by propulsive vehicle")
 
 
 AllElements = Union[
