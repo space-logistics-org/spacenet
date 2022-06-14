@@ -5,7 +5,7 @@ This module defines the database schema for resources and resource subclasses.
 from sqlalchemy import Column, Integer, String, Float
 
 from ..database import Base
-from spacenet.src.schemas.resource import ResourceType
+from spacenet.schemas.resource import ResourceType
 
 
 __all__ = ["Resource", "ResourceType", "ContinuousResource", "DiscreteResource"]

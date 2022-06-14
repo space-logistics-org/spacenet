@@ -19,8 +19,8 @@ from ..models.edge import Edge as EdgeModel
 from ..models.node import Node as NodeModel
 from .utilities import test_engine
 from ....auth_dependencies import current_user
-from spacenet.src.schemas.edge import EdgeType
-from spacenet.src.schemas.node import NodeType
+from spacenet.schemas.edge import EdgeType
+from spacenet.schemas.node import NodeType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,

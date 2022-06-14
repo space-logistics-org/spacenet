@@ -14,6 +14,7 @@ from .node import NodeUUID
 from .inst_element import InstElementUUID
 from .edge import EdgeUUID
 from .demand_model import ElementDemandModelUUID
+from .resource import ResourceAmount, GenericResourceAmount
 
 
 __all__ = ["CrewedExploration"]
@@ -47,14 +48,12 @@ class CrewedExploration(Event):
         title="EVAs per week",
         description="Number of EVAs to be performed a week"
     )
-    #TODO: maps to state UUIDs or safeints?
     element_states: Dict[InstElementUUID, SafeInt] = Field(
         ...,
         description="a mapping from the IDs of instantiated elements to the IDs of their desired "
         "new state",
     )
-    #TODO: this should be element, not mission, demand model right? Same question for crewed_eva.
-    additional_demands: List[ElementDemandModelUUID] = Field(
-        ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"
+    additional_demands: List[Union[ResourceAmount, GenericResourceAmount]] = Field(
+        ..., title="Additional Demands", description="List of additional resource quantities demanded"
     )
 

@@ -97,17 +97,16 @@ class Configuration(BaseModel):
     cargo_transfer_bag_max_mass: SafeNonNegFloat = Field(26.8)
     cargo_transfer_bag_max_volume: SafeNonNegFloat = Field(0.049)
 
-#TODO: check scenario types are accurate
 class ScenarioType(str, Enum):
     """
     An enumeration of the different kinds of scenario.
     """
 
-    earth = "Earth-only"
+    earth = "Earth Only"
     lunar = "Lunar"
-    moon_only = "Moon-only"
+    moon_only = "Moon Only"
     martian = "Martian"
-    mars_only = "Mars-only"
+    mars_only = "Mars Only"
     solar_system = "Solar System"
 
 

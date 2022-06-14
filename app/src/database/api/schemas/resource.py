@@ -4,8 +4,8 @@ subtypes.
 
 """
 
-from spacenet.src.schemas.mixins import ReadSchema, RequiresOnlyType
-from spacenet.src.schemas.resource import ContinuousResource, DiscreteResource
+from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
+from spacenet.schemas.resource import ContinuousResource, DiscreteResource
 
 __all__ = [
     "DiscreteResource",

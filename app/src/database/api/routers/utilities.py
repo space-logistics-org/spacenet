@@ -37,7 +37,6 @@ def union_from_iterable(it: Iterable[Type[T]]) -> Type[T]:
     """
     iterator = it.__iter__()
     try:
-    #TODO: was Union[next(iterator)] but caused some issues
         first = next(iterator)
     except StopIteration:
         raise ValueError("Provided iterable must be non-empty")

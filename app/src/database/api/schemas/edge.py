@@ -3,8 +3,8 @@ This module defines the schemas for Read and Update variants of edges and the co
 subtypes.
 """
 
-from spacenet.src.schemas import FlightEdge, SpaceEdge, SurfaceEdge
-from spacenet.src.schemas.mixins import ReadSchema, RequiresOnlyType
+from spacenet.schemas import FlightEdge, SpaceEdge, SurfaceEdge
+from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
 
 __all__ = [
     "SurfaceEdge",

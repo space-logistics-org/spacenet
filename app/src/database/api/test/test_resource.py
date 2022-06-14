@@ -12,7 +12,7 @@ from ..main import app
 from ..models.resource import Resource as ResourceModel
 from .utilities import test_engine
 from ....auth_dependencies import current_user
-from spacenet.src.schemas.resource import ResourceType
+from spacenet.schemas.resource import ResourceType
 from .utilities import (
     filter_val_not_none,
     first_subset_second,

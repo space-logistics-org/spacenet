@@ -20,16 +20,6 @@ from .types import SafeInt
 __all__ = ["CrewedEVA"]
 
 
-class EVACrew(HumanAgent):
-    """
-    Schema for a Crew Member
-
-    :param str eva_state: the state of the EVA
-    """
-
-    eva_state: str = Field(..., title="EVA State", description="The state of the EVA")
-    # TODO: type?
-
   
 class CrewedEVA(Event):
     """
@@ -52,7 +42,6 @@ class CrewedEVA(Event):
         title="Crew Vehicle",
         description="The location of the crew that will be used for the EVA",
     )
-    #TODO: maps to state UUIDs or safeints?
     element_states: Dict[InstElementUUID, SafeInt] = Field(
         ...,
         description="a mapping from the IDs of instantiated elements to the index of their desired new state",

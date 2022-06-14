@@ -7,9 +7,9 @@ from typing import List, Optional
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 
-from spacenet.src.analysis.checked_scenario import CheckedScenario
-from spacenet.src.analysis.exceptions import SimException
-from spacenet.src.analysis.simulation import Simulation, SimResult, SimError
+from spacenet.analysis.checked_scenario import CheckedScenario
+from spacenet.analysis.exceptions import SimException
+from spacenet.analysis.simulation import Simulation, SimResult, SimError
 
 router = APIRouter()
 

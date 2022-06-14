@@ -4,7 +4,7 @@ This module contains tests for events which transport elements from one node to 
 import pytest
 from hypothesis import given, strategies as st
 
-from ....src.schemas import FlightTransport, SpaceTransport, SurfaceTransport
+from .spacenet.schemas import FlightTransport, SpaceTransport, SurfaceTransport
 
 pytestmark = [pytest.mark.schema, pytest.mark.unit, pytest.mark.event]
 

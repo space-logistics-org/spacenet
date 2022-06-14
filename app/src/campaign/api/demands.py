@@ -34,7 +34,7 @@ defaultComputerEquipment = 5
 defaultTrashBagRate = 0.05
 defaultWasteContainmentRate = 0.05
 
-with open("spacenet/src/schemas/apollo_17/apollo_17.json") as json_file:
+with open("spacenet/src/spacenet/schemas/apollo_17/apollo_17.json") as json_file:
     json_data = json.load(json_file)
 
 

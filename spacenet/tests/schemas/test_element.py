@@ -8,7 +8,7 @@ from hypothesis import given, strategies as st
 from pydantic import BaseModel
 from typing_extensions import Type
 
-from ...src.schemas import (
+from spacenet.schemas import (
     Element,
     ElementCarrier,
     HumanAgent,

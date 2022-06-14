@@ -83,7 +83,6 @@ class ReconfigureElements(Event):
 
     :param Dict[InstElementUUID, SafeInt] element_states: a mapping from the IDs of instantiated elements to the index of their desired new state
     """
-    #TODO: SafeInts or StateUUIDs?
     type: Literal[EventType.ReconfigureElements] = Field(
         EventType.ReconfigureElements, title="Type", description="Type of event",
     )

@@ -17,7 +17,7 @@ from ..main import app
 from ..models.element import Element as ElementModel
 from .utilities import test_engine
 from ....auth_dependencies import current_user
-from spacenet.src.schemas.element import ElementType
+from spacenet.schemas.element import ElementType
 from .spacenet.tests.schemas.element_maps import (
     VALID_ELEMENT_MAP,
     VALID_ELEMENT_CARRIER_MAP,

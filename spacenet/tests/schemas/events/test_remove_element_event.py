@@ -4,7 +4,7 @@ This module contains tests for RemoveElements event schemas.
 import pytest
 from hypothesis import given, strategies as st
 
-from ....src.schemas.element_events import RemoveElements
+from .spacenet.schemas.element_events import RemoveElements
 from .utilities import EVENT_VALID_MAP, EVENT_INVALID_MAP
 from ..utilities import (
     INVALID_UUIDS,

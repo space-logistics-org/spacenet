@@ -4,7 +4,7 @@ This module defines the database schema for nodes and node subclasses.
 
 from sqlalchemy import Column, Integer, String, Float
 from ..database import Base
-from spacenet.src.schemas.node import NodeType
+from spacenet.schemas.node import NodeType
 
 __all__ = [
     "Node",

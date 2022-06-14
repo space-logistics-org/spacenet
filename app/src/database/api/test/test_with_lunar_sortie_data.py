@@ -9,10 +9,10 @@ from ..main import app
 from ....auth_dependencies import current_user
 from ..schemas.constants import CREATE_SCHEMAS
 from .utilities import get_current_user, get_test_db
-from spacenet.src.schemas.element import Element
-from spacenet.src.schemas.node import Node
-from spacenet.src.schemas.edge import Edge
-from spacenet.src.schemas.resource import Resource
+from spacenet.schemas.element import Element
+from spacenet.schemas.node import Node
+from spacenet.schemas.edge import Edge
+from spacenet.schemas.resource import Resource
 from .utilities import (
     lunar_sortie_elements,
     lunar_sortie_edges,

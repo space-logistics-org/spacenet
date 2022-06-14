@@ -23,7 +23,6 @@ __all__ = [
     "AllDemandModels"
 ]
 
-#TODO: is this structure possible?
 class DemandModelType(str, Enum):
     """
     An enumeration of all the types of Demand Model.
@@ -33,7 +32,6 @@ class DemandModelType(str, Enum):
     Rated = "Rated"
     SparingByMass = "Sparing By Mass"
 
-#TODO: should these somehow include type as well??
 class ElementDemandModelUUID(ImmutableBaseModel):
     """
     A representation of an element demand model containing only its UUID and serving as a base class for all other demand models.

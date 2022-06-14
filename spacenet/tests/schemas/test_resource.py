@@ -6,7 +6,7 @@ import unittest
 import pytest
 from pydantic import ValidationError
 
-from ...src.schemas.resource import (
+from spacenet.schemas.resource import (
     ClassOfSupply,
     ContinuousResource,
     DiscreteResource,

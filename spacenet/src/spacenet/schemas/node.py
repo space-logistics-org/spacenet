@@ -49,7 +49,6 @@ class Node(NodeUUID):
     """
     Base class for all nodes.
 
-
     :param str name: name of node
     :param str description: short description of the node
     :param Body body_1: Body of surface location, body of orbit, or body of major Lagrange point

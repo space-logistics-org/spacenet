@@ -3,8 +3,8 @@ This module defines the schemas for Read and Update variants of nodes and the co
 subtypes. 
 """
 
-from spacenet.src.schemas.mixins import ReadSchema, RequiresOnlyType
-from spacenet.src.schemas.node import LagrangeNode, OrbitalNode, SurfaceNode
+from spacenet.schemas.mixins import ReadSchema, RequiresOnlyType
+from spacenet.schemas.node import LagrangeNode, OrbitalNode, SurfaceNode
 
 __all__ = [
     "LagrangeNode",

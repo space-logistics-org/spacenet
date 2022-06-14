@@ -15,7 +15,7 @@ from ..main import app
 from ..models.resource import Resource as ResourceModel
 from .utilities import test_engine
 from ....auth_dependencies import current_user
-from spacenet.src.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from spacenet.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from .utilities import get_current_user, get_test_db
 from ..schemas.constants import CREATE_TO_UPDATE
 from ..schemas.resource import (

@@ -4,7 +4,7 @@ This module contains tests for MoveElements event schemas.
 import pytest
 from hypothesis import given, strategies as st
 
-from ....src.schemas.element_events import MoveElements
+from .spacenet.schemas.element_events import MoveElements
 from .utilities import (
     EVENT_INVALID_MAP,
     EVENT_VALID_MAP,

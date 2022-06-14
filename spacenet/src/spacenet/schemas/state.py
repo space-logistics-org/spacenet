@@ -49,3 +49,4 @@ class State(StateUUID):
         ..., description="the general classification of this state"
     )
     demand_models: List[ElementDemandModelUUID] = Field(..., title="Demand Models", description="list of demand models associated with the state")
+    #TODO: make new class including templateID and type

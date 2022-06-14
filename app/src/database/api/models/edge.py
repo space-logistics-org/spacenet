@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declared_attr
 
 from ..database import Base
-from spacenet.src.schemas.edge import EdgeType
+from spacenet.schemas.edge import EdgeType
 
 __all__ = ["EdgeType", "Edge", "FlightEdge", "SpaceEdge", "SurfaceEdge"]
 

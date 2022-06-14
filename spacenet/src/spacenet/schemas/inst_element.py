@@ -175,12 +175,13 @@ class InstPropulsiveVehicle(InstVehicle):
     
     :param SafeNonNegFloat isp: specific impulse (s) (optional)
     :param SafeNonNegFloat max_fuel: maximum fuel (units) (optional)
-    :param ResourceAmountRate propellant: UUID and rate of propellant used by propulsive vehicle (optional)
+    :param ResourceAmount propellant: UUID and amount of propellant used by propulsive vehicle (optional)
     """
 
     max_fuel: Optional[SafeNonNegFloat] = Field(
         title="Maximum Fuel", description="maximum fuel (units)"
     )
+    #TODO: fix this
     propellant: Optional[ResourceAmountRate] = Field(title="Propellant", description="UUID of propellant resource and rate")
     isp: Optional[SafeNonNegFloat] = Field(title="Specific Impulse", description="specific impulse (s)"
     )

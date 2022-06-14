@@ -11,12 +11,12 @@ from hypothesis import strategies as st
 from hypothesis.strategies import SearchStrategy
 from pydantic import BaseModel, ValidationError
 
-from spacenet.src import schemas
-from ...src.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
-from ...src.schemas.element import *
-from ...src.schemas.edge import FlightEdge, SpaceEdge, SurfaceEdge, EdgeType
-from ...src.schemas.node import SurfaceNode, OrbitalNode, LagrangeNode, NodeType
-from ...src.schemas.resource import DiscreteResource, ContinuousResource, ResourceType
+from spacenet import schemas
+from spacenet.schemas.constants import SQLITE_MAX_INT, SQLITE_MIN_INT
+from spacenet.schemas.element import *
+from spacenet.schemas.edge import FlightEdge, SpaceEdge, SurfaceEdge, EdgeType
+from spacenet.schemas.node import SurfaceNode, OrbitalNode, LagrangeNode, NodeType
+from spacenet.schemas.resource import DiscreteResource, ContinuousResource, ResourceType
 
 __all__ = [
     "lunar_sortie_elements",

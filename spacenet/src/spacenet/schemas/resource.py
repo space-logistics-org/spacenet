@@ -26,7 +26,6 @@ class ResourceUUID(ImmutableBaseModel):
     id: UUID = Field(default_factory=uuid4, description="unique identifier for resource")
 
 
-#TODO: why do some resource in quick start scenario have type "Resource"?
 class ResourceType(str, Enum):
     """
     An enumeration of the different kinds of resource.
@@ -43,7 +42,7 @@ class Resource(ResourceUUID):
     :param str name: resource name
     :param ClassOfSupply class_of_supply: class of supply number for resource
     :param SafePosFloat packing_factor: float greater than 0 representing resource's packing factor
-    :param str units: units of mass for resource, defaulted to kg
+    :param str units: user customizable field for what 1.0 quantity of resource represents
     :param str description: optional field for description of resource
     :param SafePosFloat unit_mass: resource mass
     :param unit_volume SafeNonNegFloat: resource volume
@@ -54,8 +53,7 @@ class Resource(ResourceUUID):
         ..., title="Class of Supply", description="Class of supply number"
     ),
     packing_factor: SafePosFloat = Field(..., title="Packing Factor", description="Float greater than 0 representing resource's packing factor")
-    #TODO: what should units represent
-    units: str = Field(default="kg", title="Units")
+    units: str = Field(default="kg", title="Units", description="user customizable field for what 1.0 quantity of resource represents")
     description: Optional[str] = Field(
         default=None, title="Description", description="Short description"
     )

@@ -6,9 +6,9 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.testclient import TestClient
 from hypothesis import assume, given, strategies as st
 
-from spacenet.src.analysis.checked_scenario import CheckedScenario
-from spacenet.src.analysis.exceptions import SimException
-from spacenet.src.analysis.simulation import Simulation
+from spacenet.analysis.checked_scenario import CheckedScenario
+from spacenet.analysis.exceptions import SimException
+from spacenet.analysis.simulation import Simulation
 from spacenet.tests.analysis.utilities import build_checked_scenario
 from ..main import app
 from ..spatial_simulation import ResultAndErrors

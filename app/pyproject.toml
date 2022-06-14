@@ -19,7 +19,7 @@ dependencies = [
     "sqlalchemy>=1.4",
     "uvicorn",
     "requests",
-    "fastapi-users==6.1.0",
+    "fastapi-users",
     "databases[sqlite]",
     "python-jose",
     "passlib",
