@@ -62,13 +62,13 @@ class Mission(CamelModel):
     demand_models: List[MissionDemandModelUUID] = Field(
         ..., title="Demand Models List", description="list of mission demand models by UUID"
     )
-    origin: NodeUUID = Field(..., title="Origin UUID", description="UUID of origin node")
-    destination: NodeUUID = Field(
+    origin: UUID = Field(..., title="Origin UUID", description="UUID of origin node")
+    destination: UUID = Field(
         ..., title="Destination UUID", description="UUID of destination node"
     )
-    return_origin: NodeUUID = Field(
+    return_origin: UUID = Field(
         ..., title="Return Origin UUID", description="UUID of return origin node"
     )
-    return_destination: NodeUUID = Field(
+    return_destination: UUID = Field(
         ..., title="Return Destination ID", description="ID of return destination node"
     )

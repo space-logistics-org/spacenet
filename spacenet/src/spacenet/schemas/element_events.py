@@ -34,10 +34,10 @@ class CreateElements(PrimitiveEvent):
     type: Literal[EventType.CreateElements] = Field(
         EventType.CreateElements, title="Type", description="Type of event",
     )
-    elements: List[InstElementUUID] = Field(
+    elements: List[UUID] = Field(
         ..., description="the UUIDs of the instantiated elements being added to simulation"
     )
-    container: Union[EdgeUUID, InstElementUUID, NodeUUID] = Field(
+    container: UUID = Field(
         ..., description="the UUID of the node, edge or instianted element where the element is being created"
     )
 
@@ -54,8 +54,8 @@ class MoveElements(PrimitiveEvent):
     type: Literal[EventType.MoveElements] = Field(
         EventType.MoveElements, title="Type", description="Type of event",
     )
-    elements: List[InstElementUUID] = Field(..., description="the list of IDs of instantiated elements to move")
-    container: Union[EdgeUUID, InstElementUUID, NodeUUID] = Field(
+    elements: List[UUID] = Field(..., description="the list of IDs of instantiated elements to move")
+    container: UUID = Field(
         ...,
         description="the ID of the new location which the elements are being moved to",
     )
@@ -71,7 +71,7 @@ class RemoveElements(PrimitiveEvent):
     type: Literal[EventType.RemoveElements] = Field(
         EventType.RemoveElements, title="Type", description="Type of event",
     )
-    elements: List[InstElementUUID] = Field(
+    elements: List[UUID] = Field(
         ..., description="the list of IDs of instantiated elements to remove"
     )
 
@@ -86,7 +86,7 @@ class ReconfigureElements(Event):
     type: Literal[EventType.ReconfigureElements] = Field(
         EventType.ReconfigureElements, title="Type", description="Type of event",
     )
-    element_states: Dict[InstElementUUID, SafeInt] = Field(
+    element_states: Dict[UUID, SafeInt] = Field(
         ...,
         description="a mapping from the IDs of instantiated elements to the index of their desired new state",
     )

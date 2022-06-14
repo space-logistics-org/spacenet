@@ -13,7 +13,7 @@ from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import State, StateUUID
-from .element import ElementType, ElementUUID
+from .element import ElementType
 from .resource import ResourceAmount, GenericResourceAmount, ResourceAmountRate
 from .constants import ClassOfSupply
 
@@ -44,7 +44,7 @@ class InstElement(InstElementUUID):
     """
     A generic element.
 
-    :param ElementUUID template_id: UUID of the template for this instantiated element
+    :param UUID template_id: UUID of the template for this instantiated element
     :param str name: name of the instantiated element
     :param str description: short description of the element (optional)
     :param ClassOfSupply class_of_supply: class of supply number (optional)
@@ -55,8 +55,8 @@ class InstElement(InstElementUUID):
     :param [State] states: list of states the instantiated element may possess (optional)
     :param SafeInt current_state_index: field describing the current state of the element. Set to initial state during creation. (optional)
     """
-
-    template_id: ElementUUID = Field(..., description="UUID of the template for this instantiated element")
+    type: Literal[ElementType.Element] = Field(ElementType.Element, description="the element's type")
+    template_id: UUID = Field(..., description="UUID of the template for this instantiated element")
     name: str = Field(..., title="Name", description="name of the element")
     description: Optional[str] = Field(
         title="Description", description="short description of the element"
@@ -109,7 +109,9 @@ class InstResourceContainer(InstCargoCarrier):
 
     :param [ResourceAmount | GenericResourceAmount] contents: list of resource quantities moved into container during spatial simulation (optional)
     """
-
+    type: Literal[ElementType.ResourceContainer] = Field(
+        ElementType.ResourceContainer, description="the element's type"
+    )
     contents: Optional[List[Union[GenericResourceAmount, ResourceAmount]]] = Field(title="Resource Amount", description="list of resource quantities moved into container during spatial simulation")
 
 class InstElementCarrier(InstCargoCarrier):
@@ -119,6 +121,7 @@ class InstElementCarrier(InstCargoCarrier):
     :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo (optional)
     :param [InstElementUUID] contents: list of instantiated elements moved into carrier during spatial simulation
     """
+    type: Literal[ElementType.ElementCarrier] = Field(ElementType.ElementCarrier, description="the element's type")
 
     cargo_environment: Optional[Environment] = Field(
         title="Cargo Environment",
@@ -149,13 +152,14 @@ class InstHumanAgent(InstAgent):
     """
     An element representing a human agent, like a crew member.
     """
-    pass
+    type: Literal[ElementType.HumanAgent] = Field(ElementType.HumanAgent, description="the element's type")
+
 
 class InstRoboticAgent(InstAgent):
     """
     An element representing a robotic agent.
     """
-    pass
+    type: Literal[ElementType.RoboticAgent] = Field(ElementType.RoboticAgent, description="the element's type")
 
 class InstVehicle(InstCargoCarrier, ABC):
     """
@@ -175,7 +179,9 @@ class InstPropulsiveVehicle(InstVehicle):
     :param SafeNonNegFloat max_fuel: maximum fuel (units) (optional)
     :param ResourceAmount | GenericResourceAmount propellant: UUID and amount of propellant used by propulsive vehicle (optional)
     """
-
+    type: Literal[ElementType.PropulsiveVehicle] = Field(
+        ElementType.PropulsiveVehicle, description="the element's type"
+    )
     max_fuel: Optional[SafeNonNegFloat] = Field(
         title="Maximum Fuel", description="maximum fuel (units)"
     )
@@ -193,7 +199,7 @@ class InstSurfaceVehicle(InstVehicle):
     :param ResourceAmount | GenericResourceAmount propellant: UUID and amount of propellant used by surface vehicle (optional)
 
     """
-
+    type: Literal[ElementType.SurfaceVehicle] = Field(ElementType.SurfaceVehicle, description="the element's type")
     max_speed: Optional[SafeNonNegFloat] = Field(
         title="Maximum Speed", description="maximum speed (kph)"
     )

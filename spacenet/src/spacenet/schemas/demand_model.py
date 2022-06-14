@@ -7,6 +7,7 @@ from typing import Union, List
 from enum import Enum
 
 from pydantic import BaseModel, Field
+from fastapi_camelcase import CamelModel
 from typing_extensions import Literal
 from .mixins import ImmutableBaseModel
 
@@ -20,6 +21,7 @@ __all__ = [
     "TimedImpulseDemandModel",
     "RatedDemandModel",
     "CrewConsumablesDemandModel",
+    "instDemandModel",
     "AllDemandModels"
 ]
 
@@ -166,7 +168,15 @@ class SparingByMassDemandModel(ElementDemandModel):
     pressurizedSparesRate: float = Field(..., title="Pressurized Spares Rate")
     partsListEnabled: bool = Field(..., title="Parts List Enabled")
 
+class instDemandModel(CamelModel):
+    """
+    Instantiated demand model referencing a template demand model.
 
+    :param DemandModelType type: type of demand model being instantiated. Same as type of template demand model.
+    :param UUID template_id: UUID of the demand model upon which this instantiated demand model is based
+    """
+    type: DemandModelType = Field(..., title="type", description="type of demand model being instantiated. Same as type of template demand model.")
+    template_id: UUID = Field(..., title="Template ID", description="UUID of the demand model upon which this instantiated demand model is based")
 
 
 AllDemandModels = Union[

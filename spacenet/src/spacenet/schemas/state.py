@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, StrictBool, conint
 
 from .mixins import ImmutableBaseModel
 from .constants import SQLITE_MAX_INT, SQLITE_MIN_INT
-from .demand_model import ElementDemandModelUUID
+from .demand_model import instDemandModel
 
 __all__ = ["State", "StateType", "StateUUID"]
 
@@ -39,7 +39,7 @@ class State(StateUUID):
     :param str name: the name of this state
     :param str description: short description of the state
     :param StateType type: the general classificaton of this state
-    :param [ElementDemandModelUUID] demand_models: list of element demand model UUIDs representing the demand models associated with this state
+    :param [instDemandModel] demand_models: list of instantiated demand models associated with this state
     """
     name: str = Field(..., description="the name of this state")
     description: str = Field(
@@ -48,5 +48,4 @@ class State(StateUUID):
     type: StateType = Field(
         ..., description="the general classification of this state"
     )
-    demand_models: List[ElementDemandModelUUID] = Field(..., title="Demand Models", description="list of demand models associated with the state")
-    #TODO: make new class including templateID and type
+    demand_models: List[instDemandModel] = Field(..., title="Demand Models", description="list of instantiated demand models associated with this state")

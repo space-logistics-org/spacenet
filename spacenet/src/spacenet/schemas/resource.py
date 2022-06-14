@@ -41,7 +41,7 @@ class Resource(ResourceUUID):
 
     :param str name: resource name
     :param ClassOfSupply class_of_supply: class of supply number for resource
-    :param SafePosFloat packing_factor: float greater than 0 representing resource's packing factor
+    :param SafeNonNegFloat packing_factor: nonnegative float representing resource's packing factor
     :param str units: user customizable field for what 1.0 quantity of resource represents
     :param str description: optional field for description of resource
     :param SafePosFloat unit_mass: resource mass
@@ -52,7 +52,7 @@ class Resource(ResourceUUID):
     class_of_supply: ClassOfSupply = Field(
         ..., title="Class of Supply", description="Class of supply number"
     ),
-    packing_factor: SafePosFloat = Field(..., title="Packing Factor", description="Float greater than 0 representing resource's packing factor")
+    packing_factor: SafeNonNegFloat = Field(..., title="Packing Factor", description="Nonnegative float representing resource's packing factor")
     units: str = Field(default="kg", title="Units", description="user customizable field for what 1.0 quantity of resource represents")
     description: Optional[str] = Field(
         default=None, title="Description", description="Short description"
@@ -70,7 +70,7 @@ class ResourceAmount(ImmutableBaseModel):
     :param float amount: amount of resource being used, in units specified by that resource
     """
 
-    resource: ResourceUUID = Field(..., title="Resource UUID", description="UUID of the resource being used")
+    resource: UUID = Field(..., title="Resource UUID", description="UUID of the resource being used")
     amount: float = Field(..., title="Amount", description="amount of resource being used, in units specified by that resource")
 
 class ResourceAmountRate(ImmutableBaseModel):
@@ -81,7 +81,7 @@ class ResourceAmountRate(ImmutableBaseModel):
     :param float rate: rate of resource being used, in units specified by that resource
     """
 
-    resource: ResourceUUID = Field(..., title="Resource UUID", description="UUID of the resource being used")
+    resource: UUID = Field(..., title="Resource UUID", description="UUID of the resource being used")
     rate: float = Field(..., title="Rate", description="rate of resource being used, in units specified by that resource")
 
 class GenericResourceAmount(ImmutableBaseModel):

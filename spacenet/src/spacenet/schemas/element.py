@@ -90,15 +90,14 @@ class Element(ElementUUID):
     volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
     states: List[State] = Field(..., title="States", description="list of states the element may possess")
     current_state_index: SafeInt = Field(0, title="Current State", description="the current state of the element")
-    icon: str = Field(..., title="icon", description="Icon of element")
 
 
-    class Config:
-        """
-        Configuration inner class forbidding additional fields
-        """
+    # class Config:
+    #     """
+    #     Configuration inner class forbidding additional fields
+    #     """
 
-        extra = Extra.forbid
+    #     extra = Extra.forbid
 
 
 class CargoCarrier(Element, ABC):

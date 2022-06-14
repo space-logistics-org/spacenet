@@ -37,15 +37,15 @@ class CrewedEVA(Event):
         ..., title="EVA Duration", description="The duration of the EVA"
     )
 
-    vehicle: InstElementUUID = Field(
+    vehicle: UUID = Field(
         ...,
         title="Crew Vehicle",
         description="The location of the crew that will be used for the EVA",
     )
-    element_states: Dict[InstElementUUID, SafeInt] = Field(
+    element_states: Dict[UUID, SafeInt] = Field(
         ...,
         description="a mapping from the IDs of instantiated elements to the index of their desired new state",
     )
-    additional_demands: List[ElementDemandModelUUID] = Field(
+    additional_demands: List[UUID] = Field(
         ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"
     )

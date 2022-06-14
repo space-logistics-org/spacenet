@@ -51,8 +51,8 @@ class Edge(EdgeUUID):
 
     :param str name: name of the edge
     :param str description: short description of the edge
-    :param NodeUUID origin_id: UUID of the origin node
-    :param NodeUUID destination_id: UUID of the destination node
+    :param NodeUUID origin: UUID of the origin node
+    :param NodeUUID destination: UUID of the destination node
     :param [InstElementUUID] contents: UUIDs of elements stored at this edge during the spatial simulation
 
     """
@@ -63,13 +63,13 @@ class Edge(EdgeUUID):
     description: str = Field(
         ..., title="Description", description="short description of the edge",
     )
-    origin_id: NodeUUID = Field(
+    origin: UUID = Field(
         ..., title="Origin Node", description="UUID of the origin node"
     )
-    destination_id: NodeUUID = Field(
+    destination: UUID = Field(
         ..., title="Destination Node", description="UUID of the destination node",
     )
-    contents: List[InstElementUUID] = Field([], title="Contents", description="elements stored at this edge during the spatial simulation")
+    contents: List[UUID] = Field([], title="Contents", description="elements stored at this edge during the spatial simulation")
 
 
 

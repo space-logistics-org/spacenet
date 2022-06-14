@@ -51,7 +51,7 @@ class Event(CamelModel):
         title="Mission Time",
         description="The time this event starts at, relative to the start of the mission",
     ),
-    location: Union[NodeUUID, EdgeUUID] = Field(..., title="Location", description="The UUID of the node or edge at which the event begins")
+    location: UUID = Field(..., title="Location", description="The UUID of the node or edge at which the event begins")
 
 
 class ElementTransportEvent(Event):
@@ -59,7 +59,7 @@ class ElementTransportEvent(Event):
     A schema representing a basic event transporting elements from one node to another.
     """
 
-    edge: EdgeUUID = Field(
+    edge: UUID = Field(
         ..., description="The ID of the edge between origin and destination nodes"
     )
 

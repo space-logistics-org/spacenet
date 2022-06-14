@@ -29,8 +29,8 @@ class BurnStageSequence(CamelModel):
     :param BurnUUID burn: UUID of burn that is occurring
     :param [BurnStageItem] burn_stage_sequence: list of the burns and stages to be performed in the event
     """
-    burn: BurnUUID = Field(..., title="Burn", description="UUID of burn")
-    burn_stage_sequence: List[BurnStageItem] = Field(
+    burn: UUID = Field(..., title="Burn", description="UUID of burn")
+    actions: List[BurnStageItem] = Field(
         ..., description="List of the burns and stages to be performed in the event"
     )
 
@@ -47,7 +47,7 @@ class SpaceTransport(ElementTransportEvent):
     type: Literal[EventType.SpaceTransport] = Field(
         EventType.SpaceTransport, title="Type", description="Type of event",
     )
-    elements: List[InstElementUUID] = Field(
+    elements: List[UUID] = Field(
         ...,
         title="Element ID List",
         description="A list of the UUIDs of the instantiated elements that will be transported",

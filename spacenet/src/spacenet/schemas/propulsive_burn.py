@@ -33,7 +33,7 @@ class BurnStageItem(CamelModel):
     Class for items in the burn-stage sequence
     """
 
-    element: InstElementUUID = Field(
+    element: UUID = Field(
         ..., title="Element", description="Element to be burned or staged."
     )
     type: BurnStage = Field(
@@ -51,7 +51,7 @@ class PropulsiveBurn(PrimitiveEvent):
     type: Literal[EventType.PropulsiveBurn] = Field(
         EventType.PropulsiveBurn, title="Type", description="Type of event",
     )
-    elements: List[InstElementUUID] = Field(
+    elements: List[UUID] = Field(
         ...,
         title="Elements List",
         description="List of the elements to be included in the burn event.",

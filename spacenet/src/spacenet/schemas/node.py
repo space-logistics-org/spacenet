@@ -64,7 +64,7 @@ class Node(NodeUUID):
         title="Body 1",
         description="Body of surface location, body of orbit, or body of major Lagrange point",
     )
-    contents: List[InstElementUUID] = Field([], title="Contents", description="elements stored at this node during the spatial simulation")
+    contents: List[UUID] = Field([], title="Contents", description="elements stored at this node during the spatial simulation")
 
 
 class SurfaceNode(Node):

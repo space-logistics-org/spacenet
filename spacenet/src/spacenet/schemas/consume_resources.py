@@ -31,6 +31,6 @@ class ConsumeResources(Event):
     resources: List[Union[ResourceAmount, GenericResourceAmount]] = Field(
         ..., title="Consumed Resources", description="list of resource quantities to consume"
     )
-    source: InstElementUUID = Field(
+    source: UUID = Field(
         ..., title="Consumed Quantity", description="UUID of the instantiated element where the resource to be consumed is currently stored"
     )

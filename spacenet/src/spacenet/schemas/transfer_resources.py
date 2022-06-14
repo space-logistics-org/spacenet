@@ -30,7 +30,7 @@ class TransferResources(Event):
     resources: Union[ResourceAmount, GenericResourceAmount] = Field(
         ..., title="Consumed Resources", description="list of resource quantities to consume"
     )
-    container: Union[NodeUUID, EdgeUUID, InstElementUUID] = Field(
+    container: UUID = Field(
         ...,
         description="the UUID of the node, edge or instantiated element to which the resources are being moved",
     )

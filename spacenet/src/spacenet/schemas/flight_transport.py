@@ -26,7 +26,7 @@ class FlightTransport(ElementTransportEvent):
         EventType.FlightTransport, title="Type", description="Type of event",
     )
 
-    elements: List[InstElementUUID] = Field(
+    elements: List[UUID] = Field(
         ...,
         title="List of Instantiated Element UUIDs",
         description="The list of UUIDs of instantiated elements being transported",

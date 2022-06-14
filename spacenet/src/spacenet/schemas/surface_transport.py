@@ -26,7 +26,7 @@ class SurfaceTransport(ElementTransportEvent):
     type: Literal[EventType.SurfaceTransport] = Field(
         EventType.SurfaceTransport, title="Type", description="Type of event",
     )
-    elements: List[InstElementUUID] = Field(
+    elements: List[UUID] = Field(
         ...,
         title="List of Element UUIDs",
         description="The list of IDs of instantiated elements being transported",
