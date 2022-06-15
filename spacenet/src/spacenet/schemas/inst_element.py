@@ -172,7 +172,7 @@ class InstPropulsiveVehicle(InstElementCarrier):
     
     :param SafeNonNegFloat isp: specific impulse (s) (optional)
     :param SafeNonNegFloat max_fuel: maximum fuel (units) (optional)
-    :param ResourceAmount | GenericResourceAmount propellant: UUID and amount of propellant used by propulsive vehicle (optional)
+    :param ResourceAmount | GenericResourceAmount propellant: UUID and amount of fuel used by propulsive vehicle (optional)
     """
     type: Literal[ElementType.PropulsiveVehicle] = Field(
         ElementType.PropulsiveVehicle, description="the element's type"
@@ -180,7 +180,7 @@ class InstPropulsiveVehicle(InstElementCarrier):
     max_fuel: Optional[SafeNonNegFloat] = Field(
         title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant: Optional[Union[ResourceAmount, GenericResourceAmount]] = Field(title="Propellant", description="UUID and amount of propellant used by propulsive vehicle (optional)")
+    fuel: Optional[Union[ResourceAmount, GenericResourceAmount]] = Field(title="Propellant", description="UUID and amount of propellant used by propulsive vehicle (optional)")
     isp: Optional[SafeNonNegFloat] = Field(title="Specific Impulse", description="specific impulse (s)"
     )
 
@@ -191,7 +191,7 @@ class InstSurfaceVehicle(InstElementCarrier):
 
     :param SafeNonNegFloat max_speed: maximum speed (kph) (optional)
     :param SafeNonNegFloat max_fule: maximum fuel (units) (optional)
-    :param ResourceAmount | GenericResourceAmount propellant: UUID and amount of propellant used by surface vehicle (optional)
+    :param ResourceAmount | GenericResourceAmount fuel: UUID and amount of fuel used by surface vehicle (optional)
 
     """
     type: Literal[ElementType.SurfaceVehicle] = Field(ElementType.SurfaceVehicle, description="the element's type")
@@ -201,7 +201,7 @@ class InstSurfaceVehicle(InstElementCarrier):
     max_fuel: Optional[SafeNonNegFloat] = Field(
         title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant: Optional[Union[ResourceAmount, GenericResourceAmount]] = Field(title="Propellant", description="UUID and amount of propellant used by surface vehicle (optional)")
+    fuel: Optional[Union[ResourceAmount, GenericResourceAmount]] = Field(title="Fuel", description="UUID and amount of fuel used by surface vehicle (optional)")
 
 
 AllInstElements = Union[

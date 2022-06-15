@@ -199,7 +199,7 @@ class PropulsiveVehicle(ElementCarrier):
     :param PropulsiveVehicle type: the element's type
     :param SafeNonNegFloat isp: "specific impulse (s)
     :param SafeNonNegFloat max_fuel: maximum fuel (units)
-    :param ResourceAmount | GenericResourceAmount propellant: UUID and amount of propellant used by propulsive vehicle
+    :param ResourceAmount | GenericResourceAmount fuel: UUID and amount of fuel used by propulsive vehicle
     """
 
     type: Literal[ElementType.PropulsiveVehicle] = Field(
@@ -211,7 +211,7 @@ class PropulsiveVehicle(ElementCarrier):
     max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant: Union[ResourceAmount, GenericResourceAmount] = Field(..., title="Propellant", description="UUID and amount of propellant used by propulsive vehicle")
+    fuel: Union[ResourceAmount, GenericResourceAmount] = Field(..., title="Fuel", description="UUID and amount of fuel used by propulsive vehicle")
 
 
 class SurfaceVehicle(ElementCarrier):
@@ -221,7 +221,7 @@ class SurfaceVehicle(ElementCarrier):
     :param SurfaceVehicle type: the element's type
     :param SafeNonNegFloat max_speed: maximum speed (kph)
     :param SafeNonNegFloat max_fuel: maximum fuel (units)
-    :param ResourceAmount | GenericResourceAmount propellant: UUID and amount of propellant used by surface vehicle
+    :param ResourceAmount | GenericResourceAmount fuel: UUID and amount of propellant used by surface vehicle
 
     """
 
@@ -232,7 +232,7 @@ class SurfaceVehicle(ElementCarrier):
     max_fuel: SafeNonNegFloat = Field(
         ..., title="Maximum Fuel", description="maximum fuel (units)"
     )
-    propellant: Union[ResourceAmount, GenericResourceAmount] = Field(..., title="Propellant", description="UUID and rate of propellant used by surface vehicle")
+    fuel: Union[ResourceAmount, GenericResourceAmount] = Field(..., title="Fuel", description="UUID and rate of fuel used by surface vehicle")
 
 
 AllElements = Union[
