@@ -6,7 +6,7 @@ Created on Fri Jul  9 06:55:31 2021
 This module defines schemas for specifying missions which compose campaigns.
 """
 from datetime import datetime
-from typing import List, Union
+from typing import List, Union, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -25,7 +25,8 @@ AllEvents = Union[
     CreateElements,
     CrewedExploration,
     ConsumeResources,
-    ReconfigureElements
+    ReconfigureElements,
+    ReconfigureElement
 ]
 
 
@@ -60,9 +61,9 @@ class Mission(CamelModel):
     destination: UUID = Field(
         ..., title="Destination UUID", description="UUID of destination node"
     )
-    return_origin: UUID = Field(
-        ..., title="Return Origin UUID", description="UUID of return origin node"
+    return_origin: Optional[UUID] = Field(
+        title="Return Origin UUID", description="UUID of return origin node"
     )
-    return_destination: UUID = Field(
-        ..., title="Return Destination ID", description="ID of return destination node"
+    return_destination: Optional[UUID] = Field(
+        title="Return Destination ID", description="ID of return destination node"
     )
