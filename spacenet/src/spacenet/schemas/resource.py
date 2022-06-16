@@ -5,10 +5,7 @@ from enum import Enum
 from typing import List, Optional, Union
 from uuid import uuid4, UUID
 
-from pydantic import (
-    BaseModel,
-    Field,
-)
+from pydantic import Field
 from typing_extensions import Literal
 
 from .mixins import ImmutableBaseModel
@@ -66,7 +63,7 @@ class ResourceAmount(ImmutableBaseModel):
     """
     A specified amount of a resource type.
 
-    :param ResourceUUID | ClassofSupply resource_id: UUID or COS number of resource being used
+    :param UUID resource: UUID of resource being used
     :param float amount: amount of resource being used, in units specified by that resource
     """
 
@@ -77,7 +74,7 @@ class ResourceAmountRate(ImmutableBaseModel):
     """
     A specified amount of a resource type.
 
-    :param ResourceUUID | ClassofSupply resource_id: UUID or COS number of resource being used
+    :param UUID resource: UUID of resource being used
     :param float rate: rate of resource being used, in units specified by that resource
     """
 

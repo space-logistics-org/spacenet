@@ -25,10 +25,11 @@ class CrewedEVA(Event):
     """
     An event for a single crewed extravehicular activity.
 
+    :param CrewedEVA type: the type of event
     :param timedelta eva_duration: the duration of the EVA
-    :param InstElementUUID vehicle: the UUID of the instantiated vehicle that will be used for the EVA
-    :param Dict[InstElementUUID, SafeInt] crew_states: a mapping from the UUIDs of crew members in the exploration to the index number of their new state
-    :param [DemandModelUUID] additional_demands: list of UUIDs of demand models needed for EVA
+    :param UUID vehicle: the UUID of the instantiated vehicle that will be used for the EVA
+    :param Dict[UUID, SafeInt] element_states: a mapping from the UUIDs of instantiated elements in the exploration to the index of their new state
+    :param [UUID] additional_demands: list of UUIDs of demand models needed for EVA
     """
     type: Literal[EventType.CrewedEVA] = Field(
         EventType.CrewedEVA, title="Type", description="Type of event",
@@ -40,7 +41,7 @@ class CrewedEVA(Event):
     vehicle: UUID = Field(
         ...,
         title="Crew Vehicle",
-        description="The location of the crew that will be used for the EVA",
+        description="The UUID of the instantiated vehicle that will be used for the EVA",
     )
     element_states: Dict[UUID, SafeInt] = Field(
         ...,

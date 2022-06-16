@@ -31,10 +31,13 @@ class BurnStage(Enum):
 class BurnStageItem(CamelModel):
     """
     Class for items in the burn-stage sequence
+
+    :param UUID element: UUID of instantiated propulsive vehicle to go through a burn or stage
+    :param BurnStage: whether the target element will be burned or staged
     """
 
     element: UUID = Field(
-        ..., title="Element", description="Element to be burned or staged."
+        ..., title="Element", description="UUID of instantiated propulsive vehicle to go through a burn or staged"
     )
     type: BurnStage = Field(
         ...,
@@ -47,16 +50,22 @@ class PropulsiveBurn(PrimitiveEvent):
     """
     Event that represents a propulsive maneuver that may be composed of one or
     more burns or stages of individual elements.
+
+    :param ProplsiveBurn type: the type of event
+    :param [UUID] elements: list of UUIDs of instantiated elements to be included in the burn event
+    :param UUID burn: UUID of burn upon which this event is based 
+    :param [BurnStageItem] burn_stage_sequence: list of the burns and stages to be performed in the event
+    
     """
+    #TODO: verify burn structure
     type: Literal[EventType.PropulsiveBurn] = Field(
         EventType.PropulsiveBurn, title="Type", description="Type of event",
     )
     elements: List[UUID] = Field(
         ...,
-        title="Elements List",
-        description="List of the elements to be included in the burn event.",
+        title="Elements List", description="List of the elements to be included in the burn event.",
     )
-    burn: Burn = Field(..., title="Burn", description="Burn item")
+    burn: UUID = Field(..., title="Burn", description="UUID of burn upon which this event is based")
     burn_stage_sequence: List[BurnStageItem] = Field(
         ...,
         title="Burn/Stage Sequence",

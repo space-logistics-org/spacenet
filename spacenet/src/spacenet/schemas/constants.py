@@ -14,7 +14,7 @@ __all__ = [
 
 class Environment(str, Enum):
     """
-    An enumeration of the environments an element can be carried in or carry elements in.
+    An enumeration of the environments an element can be carried in or carry elements in, either pressurized or unpressurized
     """
 
     Pressurized = "Pressurized"

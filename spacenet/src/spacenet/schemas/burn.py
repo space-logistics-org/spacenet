@@ -29,12 +29,12 @@ class Burn(BurnUUID):
     velocity change. Base class for propulsive burns
     
     :param timedelta time: amount of time the burn will take
-    :param SafeNonNegFloat delta_v: change in velocity to be achieved by a burnS
+    :param SafeNonNegFloat delta_v: change in velocity to be achieved by this burn
     """
 
     time: timedelta = Field(
         ..., description="amount of time the burn will take"
     )
     delta_v: SafeNonNegFloat = Field(
-        ..., description="Change in velocity to be achieved by a burn"
+        ..., description="Change in velocity to be achieved by this burn"
     )

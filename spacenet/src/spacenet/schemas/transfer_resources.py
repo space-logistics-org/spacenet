@@ -8,9 +8,6 @@ from uuid import UUID
 from pydantic import Field
 from .resource import ResourceAmount, GenericResourceAmount
 from .bases import Event, EventType
-from .node import NodeUUID
-from .edge import EdgeUUID
-from .inst_element import InstElementUUID
 
 __all__ = ["TransferResources"]
 
@@ -22,7 +19,7 @@ class TransferResources(Event):
 
     :param TransferResources type: type of event occurring
     :param ResourceAmount | GenericResourceAmount resources: list of resource quantities to transfer
-    :param InstElementUUID container: UUID of the instantiated resource container to which the resource should be transferred
+    :param UUID container: UUID of the instantiated resource container to which the resource should be transferred
     """
     type: Literal[EventType.TransferResources] = Field(
         EventType.TransferResources, title="Type", description="Type of event",

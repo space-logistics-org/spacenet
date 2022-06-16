@@ -20,7 +20,7 @@ class FlightTransport(ElementTransportEvent):
     Schema for Flight Transport
 
     :param FlightTransport type: type of event
-    :param [InstElementUUID] elements: list of UUIDs of instantiated elements being transported
+    :param [UUID] elements: list of UUIDs of instantiated elements being transported
     """
     type: Literal[EventType.FlightTransport] = Field(
         EventType.FlightTransport, title="Type", description="Type of event",

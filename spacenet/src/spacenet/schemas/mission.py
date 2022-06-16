@@ -40,11 +40,11 @@ class Mission(CamelModel):
     :param str name: name of mission
     :param datetime start_date: date of mission start
     :param [AllEvents] events: list of events occuring in mission
-    :param [MissionDemandUUID] demand_models: list of mission demand models by UUID
-    :param NodeUUID origin: UUID of origin node
-    :param NodeUUID destination: UUID of destination node
-    :param NodeUUID return_origin: UUID of return origin node
-    :param NodeUUID return_destination: UUID of return destination node
+    :param [UUID] demand_models: list of mission demand models by UUID
+    :param UUID origin: UUID of origin node
+    :param UUID destination: UUID of destination node
+    :param UUID return_origin: UUID of return origin node (not necessary for one-way missions)
+    :param UUID return_destination: UUID of return destination node (not necessary for one-way missions)
     """
 
     name: str = Field(..., title="Name", description="name of mission")
@@ -62,8 +62,8 @@ class Mission(CamelModel):
         ..., title="Destination UUID", description="UUID of destination node"
     )
     return_origin: Optional[UUID] = Field(
-        title="Return Origin UUID", description="UUID of return origin node"
+        title="Return Origin UUID", description="UUID of return origin node (not necessary for one-way missions)"
     )
     return_destination: Optional[UUID] = Field(
-        title="Return Destination ID", description="ID of return destination node"
+        title="Return Destination ID", description="ID of return destination node (not necessary for one-way missions"
     )

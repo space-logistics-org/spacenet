@@ -25,12 +25,13 @@ class CrewedExploration(Event):
     """
     Crewed Exploration Event schema
 
+    :param CrewedExploration type: the type of event
     :param timedelta eva_duration: the duration of the crewed exploration
     :param timedelta duration: the total duration of the exporation
-    :param InstElementUUID vehicle: the UUID of the instantiated vehicle in which the crewed exploration will take place
+    :param tUUID vehicle: the UUID of the instantiated vehicle in which the crewed exploration will take place
     :param SafeNonNegFloat eva_per_week: number of EVAs to be performed per week
-    :param Dict[InstElementUUID, SafeInt] crew_states: a mapping from the UUIDs of crew members in the exploration to the index number of their new state
-    :param [DemandModelUUID] additional_demands: list of UUIDs of demand models needed for EVA
+    :param Dict[UUID, SafeInt] element_states: a mapping from the UUIDs of elements in the exploration to the index of their new state
+    :param [UUID] additional_demands: list of UUIDs of demand models needed for EVA
     """
     type: Literal[EventType.CrewedExploration] = Field(
         EventType.CrewedExploration, title="Type", description="Type of event",
@@ -44,7 +45,7 @@ class CrewedExploration(Event):
     vehicle: UUID = Field(
         ...,
         title="Crew Vehicle",
-        description="the UUID of the instantiated vehicle in which the crewed exploration will take place",
+        description="The UUID of the instantiated vehicle in which the crewed exploration will take place",
     )
     eva_per_week: SafeNonNegFloat = Field(
         ...,
@@ -53,10 +54,9 @@ class CrewedExploration(Event):
     )
     element_states: Dict[UUID, SafeInt] = Field(
         ...,
-        description="a mapping from the IDs of instantiated elements to the IDs of their desired "
-        "new state",
+        description="A mapping from the UUIDs of elements in the exploration to the index of their new state"
     )
-    additional_demands: List[Union[ResourceAmount, GenericResourceAmount]] = Field(
-        ..., title="Additional Demands", description="List of additional resource quantities demanded"
+    additional_demands: List[UUID] = Field(
+        ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"
     )
 

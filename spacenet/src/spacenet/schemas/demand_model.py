@@ -16,8 +16,11 @@ from .mixins import ImmutableBaseModel
 
 
 __all__ = [
+    "DemandModelType",
     "MissionDemandModelUUID",
     "ElementDemandModelUUID",
+    "MissionDemandModel",
+    "ElementDemandModel",
     "TimedImpulseDemandModel",
     "RatedDemandModel",
     "CrewConsumablesDemandModel",
@@ -135,11 +138,11 @@ class TimedImpulseDemandModel(ElementDemandModel, MissionDemandModel):
 
     :param bool processed: flag using in simulation to determine whether or not a demand has been processed.
     :param TimedImpulse type: demand model's type
-    :param [Demand] demands: a list of demands of the given demand model
+    :param [Demand] demands: a list of demands to occur at one instant in time
     """
     processed: bool = Field(default=False, title="flag")
-    type: Literal[DemandModelType.TimedImpulse] = Field(DemandModelType.TimedImpulse, description="the demand model's type")
-    demands: List[Union[ResourceAmount, GenericResourceAmount]] = Field(..., description="a list of the demands of the given demand model")
+    type: Literal[DemandModelType.TimedImpulse] = Field(DemandModelType.TimedImpulse, description="The demand model's type")
+    demands: List[Union[ResourceAmount, GenericResourceAmount]] = Field(..., description="A list of the demands to occur at one instant in time")
 
 
 class RatedDemandModel(ElementDemandModel, MissionDemandModel):
@@ -147,10 +150,10 @@ class RatedDemandModel(ElementDemandModel, MissionDemandModel):
     Demand model consuming a resource in one instant.
 
     :param Rated type: demand model's type
-    :param [Demand] demands: a list of the rated demands of the given demand model
+    :param [Demand] demands: a list of resources and rates at which they are demanded
     """
-    type: Literal[DemandModelType.Rated] = Field(DemandModelType.Rated, description="the demand model's type")
-    demands: List[Union[ResourceAmountRate, GenericResourceAmountRate]] = Field(..., description="a list of the rated demands of the given demand model")
+    type: Literal[DemandModelType.Rated] = Field(DemandModelType.Rated, description="The demand model's type")
+    demands: List[Union[ResourceAmountRate, GenericResourceAmountRate]] = Field(..., description="A list of resources and rates at which they are demanded")
 
 
 class SparingByMassDemandModel(ElementDemandModel):
@@ -163,10 +166,10 @@ class SparingByMassDemandModel(ElementDemandModel):
     :param bool partsListEnabled: true if the element's part list should be used to drive demand resources
 
     """
-    type: Literal[DemandModelType.SparingByMass] = Field(DemandModelType.SparingByMass, description="the demand model's type")
-    unpressurizedSparesRate: float = Field(..., title="Unpressurized Spares Rate")
-    pressurizedSparesRate: float = Field(..., title="Pressurized Spares Rate")
-    partsListEnabled: bool = Field(..., title="Parts List Enabled")
+    type: Literal[DemandModelType.SparingByMass] = Field(DemandModelType.SparingByMass, description="The demand model's type")
+    unpressurizedSparesRate: float = Field(..., title="Unpressurized Spares Rate", description="Percentage of an element's mass demanded as unpressurized spares each year")
+    pressurizedSparesRate: float = Field(..., title="Pressurized Spares Rate", description="Percentage of an element's mass demanded as pressurized spares each year")
+    partsListEnabled: bool = Field(..., title="Parts List Enabled", description="True if the element's part list should be used to drive demand resources")
 
 class instDemandModel(CamelModel):
     """

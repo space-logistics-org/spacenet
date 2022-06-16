@@ -51,12 +51,12 @@ class Edge(EdgeUUID):
 
     :param str name: name of the edge
     :param str description: short description of the edge
-    :param NodeUUID origin: UUID of the origin node
-    :param NodeUUID destination: UUID of the destination node
-    :param [InstElementUUID] contents: UUIDs of elements stored at this edge during the spatial simulation
+    :param UUID origin: UUID of the origin node
+    :param UUID destination: UUID of the destination node
+    :param [UUID] contents: list of UUIDs of elements stored at this edge during the spatial simulation
 
     """
-
+#TODO: elements stored in edge during simulation or in edge all along?
     name: str = Field(
         ..., title="Name", description="name of the edge",
     )
@@ -69,7 +69,7 @@ class Edge(EdgeUUID):
     destination: UUID = Field(
         ..., title="Destination Node", description="UUID of the destination node",
     )
-    contents: List[UUID] = Field([], title="Contents", description="elements stored at this edge during the spatial simulation")
+    contents: List[UUID] = Field([], title="Contents", description="list of UUIDs of elements stored at this edge during the spatial simulation")
 
 
 
@@ -78,14 +78,14 @@ class SurfaceEdge(Edge):
     An edge between two surface nodes.
 
     :param SurfaceEdge type: type of edge
-    :param NonNegFloat distance: distance of surface edge
+    :param NonNegFloat distance: distance edge traverses
     """
 
     type: Literal[EdgeType.Surface] = Field(
         EdgeType.Surface, title="Type", description="Type of edge",
     )
     distance: SafeNonNegFloat = Field(
-        ..., title="Distance", description="Distance of surface edge"
+        ..., title="Distance", description="Distance edge traverses"
     )
 
 
@@ -95,6 +95,7 @@ class SpaceEdge(Edge):
 
     :param SpaceEdge type: the edge's type
     :param timedelta duration: duration of space edge
+    :param [Burn] burns: list of propulsive burns that take place along this space edge
     """
 
     type: Literal[EdgeType.Space] = Field(
@@ -103,7 +104,7 @@ class SpaceEdge(Edge):
     duration: timedelta = Field(
         ..., title="Duration", description="Duration of space edge"
     )
-    burns: List[Burn] = Field(..., title="Burns", description="List of burns included in the space edge")
+    burns: List[Burn] = Field(..., title="Burns", description="List of propulsive burns that take place along this space edge")
 
 
 class FlightEdge(Edge):
@@ -113,8 +114,8 @@ class FlightEdge(Edge):
 
     :param FlightEdge type: the edge's type
     :param timedelta duration: duration of flight edge
-    :param NonNegInt max_crew: crew capacity for flight
-    :param NonNegFloat max_cargo: cargo capacity for flight
+    :param NonNegInt max_crew: crew capacity along the entire edge
+    :param NonNegFloat max_cargo: cargo capacity along the entire edge
     """
 
     type: Literal[EdgeType.Flight] = Field(
@@ -124,10 +125,10 @@ class FlightEdge(Edge):
         ..., title="duration", description="Duration of flight edge"
     )
     max_crew: SafeNonNegInt = Field(
-        ..., title="Max Crew", description="Crew capacity for flight",
+        ..., title="Max Crew", description="Crew capacity along the entire edge",
     )
     max_cargo: SafeNonNegFloat = Field(
-        ..., title="Max Cargo", description="Cargo capacity for flight"
+        ..., title="Max Cargo", description="Cargo capacity along the entire edge"
     )
 
 AllEdges = Union[FlightEdge, SpaceEdge, SurfaceEdge]

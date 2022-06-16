@@ -52,7 +52,7 @@ class Node(NodeUUID):
     :param str name: name of node
     :param str description: short description of the node
     :param Body body_1: Body of surface location, body of orbit, or body of major Lagrange point
-    :param [InstElementUUID] contents: UUIDs of elements stored at this node during the spatial simulation
+    :param [UUID] contents: UUIDs of instantiated elements stored at this node during the spatial simulation
     """
 
     name: str = Field(..., title="Name", description="name of the node")
@@ -64,7 +64,7 @@ class Node(NodeUUID):
         title="Body 1",
         description="Body of surface location, body of orbit, or body of major Lagrange point",
     )
-    contents: List[UUID] = Field([], title="Contents", description="elements stored at this node during the spatial simulation")
+    contents: List[UUID] = Field([], title="Contents", description="UUIDs of instantiated elements stored at this node during the spatial simulation")
 
 
 class SurfaceNode(Node):

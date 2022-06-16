@@ -13,7 +13,7 @@ Database
 .. automodule:: spacenet.schemas
    :members:
 
-Nodes
+Types
 ------
 
 .. autoclass:: spacenet.schemas.node.Body
@@ -21,6 +21,18 @@ Nodes
 
 .. autoclass:: spacenet.schemas.node.NodeType
    :members:
+
+.. autoclass:: spacenet.schemas.edge.EdgeType
+   :members:
+
+.. autoclass:: spacenet.schemas.element.ElementType
+   :members: 
+
+.. autoclass:: spacenet.schemas.resource.ResourceType
+   :members:
+
+Nodes
+------
 
 .. autoclass:: spacenet.schemas.node.NodeUUID
    :members:
@@ -42,9 +54,6 @@ Nodes
 Edges
 -------
 
-.. autoclass:: spacenet.schemas.edge.EdgeType
-   :members:
-
 .. autoclass:: spacenet.schemas.edge.EdgeUUID
    :members:
 
@@ -61,9 +70,6 @@ Edges
 
 Elements
 --------
-
-.. autoclass:: spacenet.schemas.element.ElementType
-   :members: 
 
 .. autoclass:: spacenet.schemas.element.ElementUUID
    :members:  
@@ -88,9 +94,6 @@ Elements
 
 .. autoclass:: spacenet.schemas.element.RoboticAgent
    :members:  
-
-.. autoclass:: spacenet.schemas.element.Vehicle
-   :members: 
 
 .. autoclass:: spacenet.schemas.element.PropulsiveVehicle
    :members: 
@@ -127,9 +130,6 @@ Instantiated Elements
 .. autoclass:: spacenet.schemas.inst_element.InstRoboticAgent
    :members:  
 
-.. autoclass:: spacenet.schemas.inst_element.InstVehicle
-   :members: 
-
 .. autoclass:: spacenet.schemas.inst_element.InstPropulsiveVehicle
    :members: 
 
@@ -140,13 +140,22 @@ Instantiated Elements
 Resources
 ----------
 
-.. autoclass:: spacenet.schemas.resource.ResourceType
-   :members:
-
 .. autoclass:: spacenet.schemas.resource.ResourceUUID
    :members:
 
 .. autoclass:: spacenet.schemas.resource.Resource
+   :members:
+
+.. autoclass:: spacenet.schemas.resource.ResourceAmount
+   :members:
+
+.. autoclass:: spacenet.schemas.resource.ResourceAmountRate
+   :members:
+
+.. autoclass:: spacenet.schemas.resource.GenericResourceAmount
+   :members:
+
+.. autoclass:: spacenet.schemas.resource.GenericResourceAmountRate
    :members:
 
 .. autoclass:: spacenet.schemas.resource.ContinuousResource
@@ -172,6 +181,15 @@ States
 Campaign
 =========
 
+Types
+------
+.. autoclass:: spacenet.schemas.bases.EventType
+   :members:
+
+.. autoclass:: spacenet.schemas.propulsive_burn.BurnStage
+   :members:
+
+
 Element Events
 ----------------
 
@@ -184,16 +202,28 @@ Element Events
 .. autoclass:: spacenet.schemas.element_events.RemoveElements
    :members:
 
+.. autoclass:: spacenet.schemas.element_events.ReconfigureElement
+   :members:
+
 .. autoclass:: spacenet.schemas.element_events.ReconfigureElements
    :members:
 
 Transport Events
 -----------------
 
-.. autoclass:: spacenet.schemas.edge.Burn
+.. autoclass:: spacenet.schemas.burn.Burn
+   :members:
+
+.. autoclass:: spacenet.schemas.propulsive_burn.BurnStageItem
+   :members:
+
+.. autoclass:: spacenet.schemas.propulsive_burn.PropulsiveBurn
    :members:
 
 .. autoclass:: spacenet.schemas.flight_transport.FlightTransport
+   :members:
+
+.. autoclass:: spacenet.schemas.space_transport.BurnStageSequence
    :members:
 
 .. autoclass:: spacenet.schemas.space_transport.SpaceTransport
@@ -202,8 +232,6 @@ Transport Events
 .. autoclass:: spacenet.schemas.surface_transport.SurfaceTransport
    :members:
 
-.. autoclass:: spacenet.schemas.propulsive_burn.PropulsiveBurn
-   :members:
 
 Resource Events
 -----------------
@@ -211,42 +239,29 @@ Resource Events
 .. autoclass:: spacenet.schemas.transfer_resources.TransferResources
    :members:
 
-.. autoclass:: spacenet.schemas.consume_resource.ConsumeResource
+.. autoclass:: spacenet.schemas.consume_resources.ConsumeResources
    :members:
 
-Mission Demand Models
+Demand Models
 ----------------------
 
-.. autoclass:: spacenet.schemas.mission_demand_model.MissionDemandUUID
+.. autoclass:: spacenet.schemas.demand_model.MissionDemandModel
    :members:
 
-.. autoclass:: spacenet.schemas.mission_demand_model.TimedImpulseDemandModel
+.. autoclass:: spacenet.schemas.demand_model.ElementDemandModel
    :members:
 
-.. autoclass:: spacenet.schemas.mission_demand_model.RatedDemandModel
+.. autoclass:: spacenet.schemas.demand_model.TimedImpulseDemandModel
    :members:
 
-.. autoclass:: spacenet.schemas.mission_demand_model.CrewConsumablesDemandModel
+.. autoclass:: spacenet.schemas.demand_model.RatedDemandModel
    :members:
 
-Element Demand Models
-----------------------
-
-.. autoclass:: spacenet.schemas.element_demand_model.DemandModelUUID
+.. autoclass:: spacenet.schemas.demand_model.CrewConsumablesDemandModel
    :members:
 
-.. autoclass:: spacenet.schemas.element_demand_model.CrewConsumablesDemandModel
+.. autoclass:: spacenet.schemas.demand_model.SparingByMassDemandModel
    :members:
-
-.. autoclass:: spacenet.schemas.element_demand_model.TimedImpulseDemandModel
-   :members:
-
-.. autoclass:: spacenet.schemas.element_demand_model.RatedDemandModel
-   :members:
-
-.. autoclass:: spacenet.schemas.element_demand_model.SparingByMassDemandModel
-   :members:
-
 
 Exploration Events
 -------------------
@@ -265,4 +280,14 @@ High Level Schemas
    :members:
 
 .. autoclass:: spacenet.schemas.scenario.Scenario
+   :members:
+
+===========
+Constants
+===========
+
+.. autoclass:: spacenet.schemas.constants.Environment
+   :members:
+
+.. autoclass:: spacenet.schemas.constants.ClassOfSupply
    :members:

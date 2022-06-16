@@ -26,7 +26,7 @@ class BurnStageSequence(CamelModel):
     """
     A sequence of burn/stage events.
 
-    :param BurnUUID burn: UUID of burn that is occurring
+    :param UUID burn: UUID of burn that is occurring
     :param [BurnStageItem] burn_stage_sequence: list of the burns and stages to be performed in the event
     """
     burn: UUID = Field(..., title="Burn", description="UUID of burn")
@@ -40,7 +40,7 @@ class SpaceTransport(ElementTransportEvent):
     Schema for Space Transport
 
     :param SpaceTransport type: type of the event
-    :param [InstElementUUID] elements: list of the UUIDs of the instantiated elements that will be transported
+    :param [UUID] elements: list of the UUIDs of the instantiated elements that will be transported
     :param [BurnStageSequence] burn_stage_sequence: list of separate Burn-Stage sequences
     :param SafeNonNegFloat delta_v: Delta V of space transport (optional)
     """

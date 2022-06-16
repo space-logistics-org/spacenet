@@ -7,6 +7,7 @@ from typing_extensions import Literal
 from uuid import UUID
 
 from pydantic import Field
+from spacenet.schemas.state import StateType
 
 from .bases import Event, PrimitiveEvent, EventType
 
@@ -29,17 +30,18 @@ class CreateElements(PrimitiveEvent):
     An event which brings elements "into" a simulation
     at a specific time and location (node, edge, or inside an element carrier).
 
-    :param [InstElementUUID] elements: list of the UUIDs of the instantiated elements being added to simulation
-    :param EdgeUUID | InstElementUUID | NodeUUID container: the UUID of the node, edge or instianted element where the element is being created
+    :param CreateElements type: the type of event
+    :param [UUID] elements: list of the UUIDs of the instantiated elements being added to simulation
+    :param UUID container: the UUID of the node, edge or instianted element where the element is being created
     """
     type: Literal[EventType.CreateElements] = Field(
         EventType.CreateElements, title="Type", description="Type of event",
     )
     elements: List[UUID] = Field(
-        ..., description="the UUIDs of the instantiated elements being added to simulation"
+        ..., description="The UUIDs of the instantiated elements being added to simulation"
     )
     container: UUID = Field(
-        ..., description="the UUID of the node, edge or instianted element where the element is being created"
+        ..., description="The UUID of the node, edge or instianted element where the element is being created"
     )
 
 
@@ -48,32 +50,33 @@ class MoveElements(PrimitiveEvent):
     An event which moves elements at a specific time and location (node or edge)
     to a new location (node, edge, or element carrier).
 
-    :param [InstElementUUID] elements: list of the UUIDs of the instantiated elements being moved
-    :param EdgeUUID | InstElementUUID | NodeUUID container: the UUID of the node, edge or instianted element to which the elements are being moved
+    :param MoveElements type: the type of event
+    :param [UUID] elements: list of the UUIDs of the instantiated elements being moved
+    :param UUID container: the UUID of the node, edge or instianted element to which the elements are being moved
 
     """
     type: Literal[EventType.MoveElements] = Field(
         EventType.MoveElements, title="Type", description="Type of event",
     )
-    elements: List[UUID] = Field(..., description="the list of IDs of instantiated elements to move")
+    elements: List[UUID] = Field(..., description="List of the UUIDs of the instantiated elements being moved")
     container: UUID = Field(
         ...,
-        description="the ID of the new location which the elements are being moved to",
+        description="The UUID of the new location which the elements are being moved to",
     )
 
 
 class RemoveElements(PrimitiveEvent):
     """
-    An event which deletes elements from the simulation
-    at a specific time and location (node or edge).
+    An event which deletes elements from the simulation at a specific time and location (node or edge).
 
-    :param [InstElementUUID] elements: list of the UUIDs of the instantiated elements being removed
+    :param RemoveElements type: the type of event
+    :param [UUID] elements: list of the UUIDs of the instantiated elements being removed
     """
     type: Literal[EventType.RemoveElements] = Field(
         EventType.RemoveElements, title="Type", description="Type of event",
     )
     elements: List[UUID] = Field(
-        ..., description="the list of IDs of instantiated elements to remove"
+        ..., description="List of the UUIDs of the intantiated elements to remove"
     )
 
 class ReconfigureElement(Event):
@@ -81,6 +84,7 @@ class ReconfigureElement(Event):
     An event which changes the operational state for an individual element
     at a specific time and location (node or edge).
 
+    :param ReconfigureElement type: the type of event
     :param UUID element: UUID of the element whose state is to be changed
     :param SafeInt state_index: index of the element's new operational state
     """
@@ -91,7 +95,7 @@ class ReconfigureElement(Event):
         ...,
         description="UUID of the element whose state is to be changed",
     )
-    state_index: SafeInt = Field(..., title="State Index", description="index of the element's new operational state")
+    state_index: SafeInt = Field(..., title="State Index", description="Index of the element's new operational state")
 
 class ReconfigureElements(Event):
     """
@@ -103,7 +107,10 @@ class ReconfigureElements(Event):
     type: Literal[EventType.ReconfigureElements] = Field(
         EventType.ReconfigureElements, title="Type", description="Type of event",
     )
-    element_states: Dict[UUID, SafeInt] = Field(
-        ...,
-        description="a mapping from the IDs of instantiated elements to the index of their desired new state",
-    )
+    # element_states: Dict[UUID, SafeInt] = Field(
+    #     ...,
+    #     description="a mapping from the IDs of instantiated elements to the index of their desired new state",
+    # )
+    elements: List[UUID]
+    stateType: StateType
+    #TODO: change??

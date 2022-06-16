@@ -44,6 +44,7 @@ class InstElement(InstElementUUID):
     """
     A generic element.
 
+    :param Element type: the element's type
     :param UUID template_id: UUID of the template for this instantiated element
     :param str name: name of the instantiated element
     :param str description: short description of the element (optional)
@@ -77,6 +78,7 @@ class InstElement(InstElementUUID):
     volume: Optional[SafeNonNegFloat] = Field(title="Volume", description="volume in m^3")
     states: Optional[List[State]] = Field(title="States", description="list of states the element may possess")
     current_state_index: Optional[SafeInt] = Field(title="Current State", description="the current state of the element")
+    #TODO: parts and icon functionality currently hidden in spacenet cloud
     parts: Optional[List[UUID]] = Field(title="Parts filler")
     icon: Optional[str] = Field(title="string of icon")
 
@@ -95,7 +97,7 @@ class InstCargoCarrier(InstElement, ABC):
     
     :param SafeNonNegFloat max_cargo_mass: cargo capacity constraint (kg) (optional)
     :param SafeNonNegFloat max_cargo_volume: cargo capacity constraint (m^3) (optional)
-    :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo
+    :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo (optional)
     """
     max_cargo_mass: Optional[SafeNonNegFloat] = Field(
         title="Max Cargo Mass", description="cargo capacity constraint (kg)"
@@ -113,6 +115,7 @@ class InstResourceContainer(InstCargoCarrier):
     """
     An element representing a container for resources.
 
+    :param ResourceContainer type: the element's type
     :param [ResourceAmount | GenericResourceAmount] contents: list of resource quantities moved into container during spatial simulation (optional)
     """
     type: Literal[ElementType.ResourceContainer] = Field(
@@ -124,8 +127,8 @@ class InstElementCarrier(InstCargoCarrier):
     """
     An element which can carry other elements.
 
-
-    :param [InstElementUUID] contents: list of instantiated elements moved into carrier during spatial simulation
+    :param ElementCarrier type: the element's type
+    :param [UUID] contents: list of instantiated elements moved into carrier during spatial simulation
     :param SafeNonNegInt max_crew: crew capacity constraint
 
     """
@@ -154,6 +157,8 @@ class InstAgent(InstElement, ABC):
 class InstHumanAgent(InstAgent):
     """
     An element representing a human agent, like a crew member.
+
+    :param HumanAgent type: the element's type
     """
     type: Literal[ElementType.HumanAgent] = Field(ElementType.HumanAgent, description="the element's type")
 
@@ -161,6 +166,8 @@ class InstHumanAgent(InstAgent):
 class InstRoboticAgent(InstAgent):
     """
     An element representing a robotic agent.
+
+    :param RoboticAgent type: the element's type
     """
     type: Literal[ElementType.RoboticAgent] = Field(ElementType.RoboticAgent, description="the element's type")
 
@@ -170,9 +177,10 @@ class InstPropulsiveVehicle(InstElementCarrier):
     """
     An element representing a vehicle with its own propulsion.
     
+    :param PropulsiveVehicle type: the element's type
     :param SafeNonNegFloat isp: specific impulse (s) (optional)
     :param SafeNonNegFloat max_fuel: maximum fuel (units) (optional)
-    :param ResourceAmount | GenericResourceAmount propellant: UUID and amount of fuel used by propulsive vehicle (optional)
+    :param ResourceAmount | GenericResourceAmount fuel: UUID and amount of fuel used by propulsive vehicle (optional)
     """
     type: Literal[ElementType.PropulsiveVehicle] = Field(
         ElementType.PropulsiveVehicle, description="the element's type"
@@ -189,6 +197,7 @@ class InstSurfaceVehicle(InstElementCarrier):
     """
     An element representing a surface vehicle.
 
+    :param SurfaceVehicle type: the element's type
     :param SafeNonNegFloat max_speed: maximum speed (kph) (optional)
     :param SafeNonNegFloat max_fule: maximum fuel (units) (optional)
     :param ResourceAmount | GenericResourceAmount fuel: UUID and amount of fuel used by surface vehicle (optional)
