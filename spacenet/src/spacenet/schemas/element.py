@@ -90,7 +90,7 @@ class Element(ElementUUID):
     volume: SafeNonNegFloat = Field(..., title="Volume", description="volume in m^3")
     states: List[State] = Field(..., title="States", description="list of states the element may possess")
     current_state_index: SafeInt = Field(0, title="Current State", description="the current state of the element")
-    parts: Optional[List[UUID]] = Field(title="Parts filler")
+    parts: Optional[List] = Field(title="Parts filler")
     icon: Optional[str] = Field(title="string of icon")
 
 
