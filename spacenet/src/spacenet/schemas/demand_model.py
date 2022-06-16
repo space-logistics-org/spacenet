@@ -104,8 +104,7 @@ class CrewConsumablesDemandModel(MissionDemandModel):
     reserves_duration: float = Field(..., title="Reserves Duration")
     water_recovery_rate: float = Field(..., title="Water Recovery Rate")
     clothing_lifetime: float = Field(..., title="Clothing Lifetime")
-    #TODO: include this??
-    # transit_demand_omitted: bool = Field(..., title="Transit Demand Omitted")
+    transit_demands_omitted: bool = Field(..., title="Transit Demand Omitted")
     water_rate: float = Field(default=3.6, title="Water Rate")
     eva_water_rate: float = Field(default=0.6875, title="EVA Water Rate")
     food_support_rate: float = Field(default=0.05556, title="Food Support Rate")
