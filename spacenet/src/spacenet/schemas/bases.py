@@ -24,6 +24,7 @@ class EventType(str, Enum):
     MoveElements = "Move Elements"
     RemoveElements = "Remove Elements"
     ReconfigureElements = "Reconfigure Elements"
+    ReconfigureElement = "Reconfigure Element"
     FlightTransport = "Flight Transport"
     PropulsiveBurn = "Propulsive Burn"
     SpaceTransport = "Space Transport"

@@ -18,6 +18,7 @@ from .types import SafeInt
 __all__ = [
     "CreateElements",
     "MoveElements",
+    "ReconfigureElement",
     "ReconfigureElements",
     "RemoveElements",
 ]
@@ -75,6 +76,22 @@ class RemoveElements(PrimitiveEvent):
         ..., description="the list of IDs of instantiated elements to remove"
     )
 
+class ReconfigureElement(Event):
+    """
+    An event which changes the operational state for an individual element
+    at a specific time and location (node or edge).
+
+    :param UUID element: UUID of the element whose state is to be changed
+    :param SafeInt state_index: index of the element's new operational state
+    """
+    type: Literal[EventType.ReconfigureElement] = Field(
+        EventType.ReconfigureElement, title="Type", description="Type of event",
+    )
+    element: UUID = Field(
+        ...,
+        description="UUID of the element whose state is to be changed",
+    )
+    state_index: SafeInt = Field(..., title="State Index", description="index of the element's new operational state")
 
 class ReconfigureElements(Event):
     """

@@ -28,7 +28,7 @@ class CrewedExploration(Event):
     :param timedelta eva_duration: the duration of the crewed exploration
     :param timedelta duration: the total duration of the exporation
     :param InstElementUUID vehicle: the UUID of the instantiated vehicle in which the crewed exploration will take place
-    :param SafeNonNegInt eva_per_week: number of EVAs to be performed per week
+    :param SafeNonNegFloat eva_per_week: number of EVAs to be performed per week
     :param Dict[InstElementUUID, SafeInt] crew_states: a mapping from the UUIDs of crew members in the exploration to the index number of their new state
     :param [DemandModelUUID] additional_demands: list of UUIDs of demand models needed for EVA
     """
@@ -46,7 +46,7 @@ class CrewedExploration(Event):
         title="Crew Vehicle",
         description="the UUID of the instantiated vehicle in which the crewed exploration will take place",
     )
-    eva_per_week: SafeNonNegInt = Field(
+    eva_per_week: SafeNonNegFloat = Field(
         ...,
         title="EVAs per week",
         description="Number of EVAs to be performed a week"
