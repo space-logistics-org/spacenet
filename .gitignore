@@ -160,3 +160,15 @@ uvicorn-script.py
 .coverage
 **/admin_user.json
 **/auth_secret.json
+
+#local work
+test_scenario.py
+env_variables.md
+spacenet/tests/schemas/good_consume_resources.json
+spacenet/tests/schemas/good_crew_consumables.json
+spacenet/tests/schemas/good_crewed_exploration.json
+spacenet/tests/schemas/good_propulsive_vehicle.json
+spacenet/tests/schemas/good_reconfigure_element.json
+spacenet/tests/schemas/good_reconfigure_elements.json
+spacenet/tests/schemas/good_element_carrier.json
+.gitignore

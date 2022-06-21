@@ -107,10 +107,5 @@ class ReconfigureElements(Event):
     type: Literal[EventType.ReconfigureElements] = Field(
         EventType.ReconfigureElements, title="Type", description="Type of event",
     )
-    # element_states: Dict[UUID, SafeInt] = Field(
-    #     ...,
-    #     description="a mapping from the IDs of instantiated elements to the index of their desired new state",
-    # )
     elements: List[UUID]
     stateType: StateType
-    #TODO: change??
