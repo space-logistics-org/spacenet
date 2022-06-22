@@ -48,7 +48,7 @@ class Resource(ResourceUUID):
     name: str = Field(..., title="Name", description="Resource name")
     class_of_supply: ClassOfSupply = Field(
         ..., title="Class of Supply", description="Class of supply number"
-    ),
+    )
     packing_factor: SafeNonNegFloat = Field(..., title="Packing Factor", description="Nonnegative float representing resource's packing factor")
     units: str = Field(default="kg", title="Units", description="user customizable field for what 1.0 quantity of resource represents")
     description: Optional[str] = Field(
