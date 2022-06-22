@@ -54,7 +54,7 @@ class Event(CamelModel):
         ...,
         title="Mission Time",
         description="The time this event starts at, relative to the start of the mission",
-    ),
+    )
     location: UUID = Field(..., title="Location", description="The UUID of the node or edge at which the event begins")
 
 
