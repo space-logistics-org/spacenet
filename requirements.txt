@@ -8,4 +8,4 @@ fastapi
 fastapi_users
 sqlalchemy
 deal
-fastapi_camelcase
+fastapi-camelcase
