@@ -14,7 +14,8 @@ classifiers = [
 ]
 dependencies = [
   "pydantic",
-  "deal"
+  "deal".
+  "fastapi-camelcase"
 ]
 
 [project.urls]
