@@ -91,7 +91,7 @@ class GenericResourceAmount(ImmutableBaseModel):
     """
 
     class_of_supply: ClassOfSupply = Field(..., title="Class of Suppoly", description="class of suppply of the generic resource being used")
-    environment: Environment = Field(..., title="Environment", description="Environment"),
+    environment: Environment = Field(..., title="Environment", description="Environment")
     amount: float = Field(..., title="Amount", description="amount of resource being used, in units specified by that resource")
 
 class GenericResourceAmountRate(ImmutableBaseModel):
@@ -104,7 +104,7 @@ class GenericResourceAmountRate(ImmutableBaseModel):
     """
 
     class_of_supply: ClassOfSupply = Field(..., title="Class of Suppoly", description="class of suppply of the generic resource being used")
-    environment: Environment = Field(..., title="Environment", description="Environment"),
+    environment: Environment = Field(..., title="Environment", description="Environment")
     rate: float = Field(..., title="Rate", description="rate of resource being used, in units specified by that resource")
 
 
