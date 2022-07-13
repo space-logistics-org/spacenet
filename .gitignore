@@ -171,4 +171,5 @@ spacenet/tests/schemas/good_propulsive_vehicle.json
 spacenet/tests/schemas/good_reconfigure_element.json
 spacenet/tests/schemas/good_reconfigure_elements.json
 spacenet/tests/schemas/good_element_carrier.json
+spacenet/tests/schemas/create_scenarios.py
 .gitignore
