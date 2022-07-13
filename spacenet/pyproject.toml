@@ -1,28 +1,3 @@
-[project]
-name = "spacenet"
-version = "3.0.0"
-description = "SpaceNet Toolkit"
-readme = "README.md"
-requires-python = ">=3.6"
-authors = [
-  {name="Paul Grogan", email="paul@ptgrogan.com"},
-  {name="Sarah Bentley", email="sbentley@mit.edu"}
-]
-classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
-  "Programming Language :: Python"
-]
-dependencies = [
-  "pydantic",
-  "deal",
-  "fastapi-camelcase"
-]
-
-[project.urls]
-homepage = "https://spacenet.readthedocs.io"
-repository = "https://github.com/space-logistics-org/spacenet"
-documentation = "https://spacenet.readthedocs.io"
-
 [build-system]
 requires = [
     "setuptools >= 57.0.0",
