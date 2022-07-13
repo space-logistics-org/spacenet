@@ -17,3 +17,5 @@ from .burn import *
 from .crewed_exploration import *
 from .demand_model import *
 from .consume_resources import *
+from .inst_element import *
+from .mission import *

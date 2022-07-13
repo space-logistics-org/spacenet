@@ -17,7 +17,7 @@ from .inst_element import InstElementUUID
 from .types import SafeNonNegFloat
 
 
-__all__ = ["SpaceTransport"]
+__all__ = ["BurnStageSequence", "SpaceTransport"]
 
 
 
