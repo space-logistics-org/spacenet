@@ -12,6 +12,12 @@ The `spacenet/` directory contains Python library functions to define SpaceNet o
 
 This project requires Python 3.7 with `setuptools`.
 
+To install the SpaceNet library, navigate to the top-level spacenet directory and run the following command:
+
+```
+pip install -e .
+```
+
 To install SpaceNet dependencies, run:
 ```shell
 python -m pip install spacenet/
