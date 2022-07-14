@@ -26,7 +26,6 @@ __all__ = [
     "InstRoboticAgent",
     "InstPropulsiveVehicle",
     "InstSurfaceVehicle",
-    "InstElementType",
     "AllInstElements",
 ]
 
@@ -94,7 +93,7 @@ class InstElement(InstElementUUID):
 class InstCargoCarrier(InstElement, ABC):
     """
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
-    
+
     :param SafeNonNegFloat max_cargo_mass: cargo capacity constraint (kg) (optional)
     :param SafeNonNegFloat max_cargo_volume: cargo capacity constraint (m^3) (optional)
     :param Environment cargo_environment: the cargo's environment - if unpressurized, cannot add pressurized elements as cargo (optional)
@@ -143,7 +142,7 @@ class InstElementCarrier(InstCargoCarrier):
 class InstAgent(InstElement, ABC):
     """
     An abstract base class representing a generic Agent element.
-    
+
     :param active_time_fraction: the fraction of the day that an agent is active (available) (optional)
     :type active_time_fraction: float from 0 to 1
 
@@ -176,7 +175,7 @@ class InstRoboticAgent(InstAgent):
 class InstPropulsiveVehicle(InstElementCarrier):
     """
     An element representing a vehicle with its own propulsion.
-    
+
     :param PropulsiveVehicle type: the element's type
     :param SafeNonNegFloat isp: specific impulse (s) (optional)
     :param SafeNonNegFloat max_fuel: maximum fuel (units) (optional)

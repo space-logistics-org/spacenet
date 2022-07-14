@@ -20,7 +20,7 @@ from .demand_model import AllDemandModels
 from .types import SafeNonNegFloat
 from .constants import ClassOfSupply
 
-__all__ = ["ScenarioType", "Scenario", "Manifest", "Configuration"]
+__all__ = ["ScenarioType", "Network", "Scenario", "Manifest", "Configuration"]
 
 
 class itemDiscretizationTypes(str, Enum):
@@ -55,6 +55,8 @@ class Network(BaseModel):
 class Configuration(CamelModel):
     """
     The specific configuration of the scenario specifiying whether volume and environment are constrained.
+
+
     """
     time_precision: SafeNonNegFloat = Field(0.05)
     demand_precision: SafeNonNegFloat = Field(0.01)
