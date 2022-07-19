@@ -4,14 +4,17 @@ This module defines schemas for specifying the operational state of elements.
 from typing import List, Optional, Union
 from enum import Enum
 from uuid import uuid4, UUID
+from fastapi_camelcase import CamelModel
+
 
 from pydantic import BaseModel, Field, StrictBool, conint
 
+from .types import SafeInt
 from .mixins import ImmutableBaseModel
 from .constants import SQLITE_MAX_INT, SQLITE_MIN_INT
 from .demand_model import instDemandModel
 
-__all__ = ["State", "StateType", "StateUUID"]
+__all__ = ["State", "StateType", "StateUUID", "ElementState"]
 
 class StateType(str, Enum):
     """
@@ -49,3 +52,13 @@ class State(StateUUID):
         ..., description="the general classification of this state"
     )
     demand_models: List[instDemandModel] = Field(..., title="Demand Models", description="list of instantiated demand models associated with this state")
+
+class ElementState(CamelModel):
+    '''
+    A utility class for specifying an element's new state.
+
+    :param UUID element: UUID of the instantiated element whose state is to be changed
+    :param SafeInt state_index: Index of the state to which this element should be reconfigured
+    '''
+    element: UUID = Field(..., title="element", description="UUID of the instantiated element whose state is to be changed")
+    state_index: SafeInt = Field(..., title="State Index", description="Index of the state to which this element should be reconfigured")

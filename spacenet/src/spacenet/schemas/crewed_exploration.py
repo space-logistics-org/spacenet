@@ -10,6 +10,7 @@ from pydantic import Field
 from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .constants import SQLITE_MAX_INT
 from .bases import Event, EventType
+from .state import ElementState
 from .node import NodeUUID
 from .inst_element import InstElementUUID
 from .edge import EdgeUUID
@@ -30,7 +31,7 @@ class CrewedExploration(Event):
     :param timedelta duration: the total duration of the exporation
     :param tUUID vehicle: the UUID of the instantiated vehicle in which the crewed exploration will take place
     :param SafeNonNegFloat eva_per_week: number of EVAs to be performed per week
-    :param Dict[UUID, SafeInt] element_states: a mapping from the UUIDs of elements in the exploration to the index of their new state
+    :param List[ElementState] element_states: a list of objects specifying instantiated elements and the states to which they should be changed
     :param [UUID] additional_demands: list of UUIDs of demand models needed for EVA
     """
     type: Literal[EventType.CrewedExploration] = Field(
@@ -52,9 +53,9 @@ class CrewedExploration(Event):
         title="EVAs per week",
         description="Number of EVAs to be performed a week"
     )
-    element_states: Dict[UUID, SafeInt] = Field(
+    element_states: List[ElementState] = Field(
         ...,
-        description="A mapping from the UUIDs of elements in the exploration to the index of their new state"
+        description="a list of objects specifying instantiated elements and the states to which they should be changed",
     )
     additional_demands: List[UUID] = Field(
         ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"

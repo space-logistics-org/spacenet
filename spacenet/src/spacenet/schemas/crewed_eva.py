@@ -11,6 +11,7 @@ from pydantic import Field
 from . import Event, EventType
 from .element import HumanAgent
 from .demand_model import ElementDemandModelUUID
+from .state import ElementState
 from .types import SafeFloat
 from .node import NodeUUID
 from .inst_element import InstElementUUID
@@ -18,7 +19,6 @@ from .types import SafeInt
 
 
 __all__ = ["CrewedEVA"]
-
 
   
 class CrewedEVA(Event):
@@ -28,7 +28,7 @@ class CrewedEVA(Event):
     :param CrewedEVA type: the type of event
     :param timedelta eva_duration: the duration of the EVA
     :param UUID vehicle: the UUID of the instantiated vehicle that will be used for the EVA
-    :param Dict[UUID, SafeInt] element_states: a mapping from the UUIDs of instantiated elements in the exploration to the index of their new state
+    :param List[ElementState] element_states: a list of objects specifying instantiated elements and the states to which they should be changed
     :param [UUID] additional_demands: list of UUIDs of demand models needed for EVA
     """
     type: Literal[EventType.CrewedEVA] = Field(
@@ -43,9 +43,9 @@ class CrewedEVA(Event):
         title="Crew Vehicle",
         description="The UUID of the instantiated vehicle that will be used for the EVA",
     )
-    element_states: Dict[UUID, SafeInt] = Field(
+    element_states: List[ElementState] = Field(
         ...,
-        description="a mapping from the IDs of instantiated elements to the index of their desired new state",
+        description="a list of objects specifying instantiated elements and the states to which they should be changed",
     )
     additional_demands: List[UUID] = Field(
         ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"

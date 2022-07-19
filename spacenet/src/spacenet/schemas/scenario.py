@@ -76,42 +76,6 @@ class Configuration(CamelModel):
     generic_packing_factor_pressurized: SafeNonNegFloat = Field(0.2)
     generic_packing_factor_unpressurized: SafeNonNegFloat = Field(0.6)
 
-    custom_unpressurized_items: List[ClassOfSupply] = Field([], title="Custom Pressurized Container Items", description="Classes of supply to automatically pack in custom unpressurized containers according to the generic unpressurized packing factor")
-    custom_pressurized_items: List[ClassOfSupply] = Field([601, 602, 603, 701, 702, 703, 801, 802, 803, 804, 805, 806, 901, 902, 8041, 8042, 9021, 9022, 9023, 9024], title="Custom Pressurized Container Items", description="Classes of supply to automatically pack in custom pressurized containers according to the generic pressurized packing factor")
-
-    small_gas_tank_mass: SafeNonNegFloat = Field(10.8)
-    small_gas_tank_volume: SafeNonNegFloat = Field(0.275)
-    small_gas_tank_max_mass: SafeNonNegFloat = Field(10.0)
-    small_gas_tank_max_volume: SafeNonNegFloat = Field(0.275)
-
-    large_gas_tank_mass: SafeNonNegFloat = Field(108.0)
-    large_gas_tank_volume: SafeNonNegFloat = Field(2.75)
-    large_gas_tank_max_mass: SafeNonNegFloat = Field(100.0)
-    large_gas_tank_max_volume: SafeNonNegFloat = Field(2.75)
-
-    gas_tank_items: List[ClassOfSupply] = Field([203], title="Gas Tank Items", description="Classes of supply to automatically pack in gas tanks, either small of large")
-
-
-    small_liquid_tank_mass: SafeNonNegFloat = Field(11.4567)
-    small_liquid_tank_volume: SafeNonNegFloat = Field(0.0249)
-    small_liquid_tank_max_mass: SafeNonNegFloat = Field(24.9333)
-    small_liquid_tank_max_volume: SafeNonNegFloat = Field(0.0249)
-
-    large_liquid_tank_mass: SafeNonNegFloat = Field(34.37)
-    large_liquid_tank_volume: SafeNonNegFloat = Field(0.0748)
-    large_liquid_tank_max_mass: SafeNonNegFloat = Field(74.8)
-    large_liquid_tank_max_volume: SafeNonNegFloat = Field(0.0748)
-
-    liquid_tank_items: List[ClassOfSupply] = Field([1, 101, 102, 104, 105, 106, 201], title="Liquid Tank Items", description="Classes of supply to automatically pack in liquid tanks, either small of large")
-
-    cargo_transfer_bag_mass: SafeNonNegFloat = Field(0.83)
-    cargo_transfer_bag_volume: SafeNonNegFloat = Field(0.053)
-    cargo_transfer_bag_max_mass: SafeNonNegFloat = Field(26.8)
-    cargo_transfer_bag_max_volume: SafeNonNegFloat = Field(0.049)
-    cargo_transfer_bag_items: List[ClassOfSupply] = Field([103, 2, 202, 204, 205, 206, 301, 302, 303, 304, 305, 306, 401, 402, 403, 404, 405, 4011, 4012], title="Cargo Transfer Bag Items", description="Classes of supply to automatically pack in CTBs")
-
-    no_pack_items: List[ClassOfSupply] = Field([501, 502], title="COS not to pack", description="List of classes of supply to not pack in the packing algorithm")
-
 class ScenarioType(str, Enum):
     """
     An enumeration of the different kinds of scenario.
