@@ -7,9 +7,15 @@ from pydantic import BaseModel, Field
 from datetime import timedelta
 
 
-def parse_node(data: dict) -> Union[SurfaceNode, OrbitalNode, LagrangeNode]:
+def _parse_node(data: dict) -> Union[SurfaceNode, OrbitalNode, LagrangeNode]:
     """
     Helper function to manage node polymorphism.
+
+    Args:
+        data (dict): the node in dictionary format
+
+    Returns:
+        Union[SurfaceNode, OrbitalNode, LagrangeNode]: the node in SpaceNet format
     """
     for model_cls in [SurfaceNode, OrbitalNode, LagrangeNode]:
         try:
@@ -19,9 +25,15 @@ def parse_node(data: dict) -> Union[SurfaceNode, OrbitalNode, LagrangeNode]:
     raise ValueError("No valid node type found")
 
 
-def parse_edge(data: dict) -> Union[SurfaceEdge, SpaceEdge, FlightEdge]:
+def _parse_edge(data: dict) -> Union[SurfaceEdge, SpaceEdge, FlightEdge]:
     """
     Helper function to manage edge polymorphism.
+
+    Args:
+        data (dict): the edge in dictionary format
+
+    Returns:
+        Union[SurfaceEdge, SpaceEdge, FlightEdge]: the edge in SpaceNet format
     """
     for model_cls in [SurfaceEdge, SpaceEdge, FlightEdge]:
         try:
@@ -31,9 +43,15 @@ def parse_edge(data: dict) -> Union[SurfaceEdge, SpaceEdge, FlightEdge]:
     raise ValueError("No valid edge type found for " + str(data))
 
 
-def parse_resource(data: dict) -> Union[ContinuousResource, DiscreteResource]:
+def _parse_resource(data: dict) -> Union[ContinuousResource, DiscreteResource]:
     """
     Helper function to manage resource polymorphism.
+
+    Args:
+        data (dict): the resource in dictionary format
+
+    Returns:
+        Union[ContinuousResource, DiscreteResource]: the resource in SpaceNet format
     """
     for model_cls in [ContinuousResource, DiscreteResource]:
         try:
@@ -43,7 +61,7 @@ def parse_resource(data: dict) -> Union[ContinuousResource, DiscreteResource]:
     raise ValueError("No valid resource found for " + str(data))
 
 
-def parse_element(
+def _parse_element(
     data: dict,
 ) -> Union[
     Element,
@@ -57,6 +75,12 @@ def parse_element(
 ]:
     """
     Helper function to manage element polymorphism.
+
+    Args:
+        data (dict): the element in dictionary format
+
+    Returns:
+        Union[Element, CargoCarrier, ResourceContainer, ElementCarrier, HumanAgent, RoboticAgent, PropulsiveVehicle, SurfaceVehicle]: the element in SpaceNet format
     """
     for model_cls in [
         Element,
@@ -75,11 +99,17 @@ def parse_element(
     raise ValueError("No valid element found for " + str(data))
 
 
-def parse_demand_model(
+def _parse_demand_model(
     data: dict,
 ) -> Union[TimedImpulseDemandModel, RatedDemandModel, SparingByMassDemandModel]:
     """
-    Helper function to manage element polymorphism.
+    Helper function to manage demand model polymorphism.
+
+    Args:
+        data (dict): the demand model in dictionary format
+
+    Returns:
+        Union[TimedImpulseDemandModel, RatedDemandModel, SparingByMassDemandModel]: the demand model in SpaceNet format
     """
     for model_cls in [
         TimedImpulseDemandModel,
@@ -94,6 +124,9 @@ def parse_demand_model(
 
 
 class ModelDatabase(BaseModel):
+    """
+    Database stores models for nodes, edges, resources, demand models, and elements.
+    """
     nodes: List[Union[SurfaceNode, OrbitalNode, LagrangeNode]] = Field(
         [], description="List of nodes"
     )
@@ -120,14 +153,23 @@ class ModelDatabase(BaseModel):
     ] = Field([], description="List of elements")
 
 
-def load_db(file_name: str) -> List:
+def load_db(file_name: str) -> ModelDatabase:
+    """
+    Loads a database from file (Excel).
+
+    Args:
+        file_name (str): the database file
+
+    Returns:
+        ModelDatabase: the model database
+    """
     # open the database file
     with open(file_name, "rb") as db_file:
         # read the nodes sheet
         nodes = pd.read_excel(db_file, "nodes")
         # parse the nodes, dropping the `id` field to generate a new uuid
         nodes["model"] = (
-            nodes.drop("id", axis=1).apply(lambda r: parse_node(r.to_dict()), axis=1)
+            nodes.drop("id", axis=1).apply(lambda r: _parse_node(r.to_dict()), axis=1)
             if not nodes.empty
             else None
         )
@@ -165,7 +207,7 @@ def load_db(file_name: str) -> List:
         )
         # parse the edges, dropping the `id` field to generate a new uuid
         edges["model"] = (
-            edges.drop("id", axis=1).apply(lambda r: parse_edge(r.to_dict()), axis=1)
+            edges.drop("id", axis=1).apply(lambda r: _parse_edge(r.to_dict()), axis=1)
             if not edges.empty
             else None
         )
@@ -175,7 +217,7 @@ def load_db(file_name: str) -> List:
         # parse the resources, dropping the `id` field to generate a new uuid
         resources["model"] = (
             resources.drop("id", axis=1).apply(
-                lambda r: parse_resource(r.to_dict()), axis=1
+                lambda r: _parse_resource(r.to_dict()), axis=1
             )
             if not resources.empty
             else None
@@ -215,7 +257,7 @@ def load_db(file_name: str) -> List:
         # parse the demand models, dropping the `id` field to generate a new uuid
         demand_models["model"] = (
             demand_models.drop("id", axis=1).apply(
-                lambda r: parse_demand_model(r.to_dict()), axis=1
+                lambda r: _parse_demand_model(r.to_dict()), axis=1
             )
             if not demand_models.empty
             else None
@@ -270,11 +312,12 @@ def load_db(file_name: str) -> List:
         # parse the elements, dropping the `id` field to generate a new uuid
         elements["model"] = (
             elements.drop("id", axis=1).apply(
-                lambda r: parse_element(r.to_dict()), axis=1
+                lambda r: _parse_element(r.to_dict()), axis=1
             )
             if not elements.empty
             else None
         )
+
     return ModelDatabase(
         nodes=nodes.model.to_list(),
         edges=edges.model.to_list(),
