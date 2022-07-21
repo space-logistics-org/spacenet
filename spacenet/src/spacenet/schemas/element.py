@@ -95,14 +95,6 @@ class Element(ElementUUID):
     icon: Optional[str] = Field(title="string of icon")
 
 
-    class Config:
-        """
-        Configuration inner class forbidding additional fields
-        """
-
-        extra = Extra.forbid
-
-
 class CargoCarrier(Element, ABC):
     """
     Abstract base class representing a carrier of some sort of cargo, elements or resources.
