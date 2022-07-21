@@ -584,7 +584,10 @@ lunar_sortie = Mission(
             duration="P7D",
             eva_per_week=5.0,
             eva_duration="PT8H",
-            element_states={crew_member_1_1.id: -1, crew_member_1_2.id: -1,},
+            element_states=[
+                ElementState(element=crew_member_1_1.id, state_index=-1),
+                ElementState(element=crew_member_1_2.id, state_index=-1),
+            ],
             additional_demands=[],
         ),
         CreateElements(
