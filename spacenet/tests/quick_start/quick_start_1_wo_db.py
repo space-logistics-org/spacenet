@@ -761,5 +761,4 @@ scenario = Scenario(
     ),
 )
 
-# FIXME print(scenario.json())
-print(scenario.dict())
+print(scenario.json(exclude_unset=True, indent=2))
