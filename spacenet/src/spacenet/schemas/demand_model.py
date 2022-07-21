@@ -23,6 +23,7 @@ __all__ = [
     "ElementDemandModel",
     "TimedImpulseDemandModel",
     "RatedDemandModel",
+    "SparingByMassDemandModel",
     "CrewConsumablesDemandModel",
     "instDemandModel",
     "AllDemandModels"
