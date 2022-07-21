@@ -96,6 +96,7 @@ llpo_pac = SpaceEdge(
         Burn(time="P4D", delta_v=5.0),
     ],
 )
+
 ##########################################
 # RESOURCES
 ##########################################
@@ -470,8 +471,8 @@ lunar_sortie = Mission(
             elements=[
                 altair_am_1.id,
                 altair_dm_1.id,
-                ares_v_core.id,
-                ares_v_srbs.id,
+                ares_v_core_1.id,
+                ares_v_srbs_1.id,
                 eds_1.id,
             ],
         ),
@@ -492,18 +493,18 @@ lunar_sortie = Mission(
             elements=[
                 altair_am_1.id,
                 altair_dm_1.id,
-                ares_v_core.id,
-                ares_v_srbs.id,
+                ares_v_core_1.id,
+                ares_v_srbs_1.id,
                 eds_1.id,
             ],
             burn_stage_sequence=[
                 BurnStageSequence(
                     burn=ksc_leo.burns[0].id,
                     actions=[
-                        BurnStageItem(type="Burn", element=ares_v_srbs.id),
-                        BurnStageItem(type="Stage", element=ares_v_srbs.id),
-                        BurnStageItem(type="Burn", element=ares_v_core.id),
-                        BurnStageItem(type="Stage", element=ares_v_core.id),
+                        BurnStageItem(type="Burn", element=ares_v_srbs_1.id),
+                        BurnStageItem(type="Stage", element=ares_v_srbs_1.id),
+                        BurnStageItem(type="Burn", element=ares_v_srbs_1.id),
+                        BurnStageItem(type="Stage", element=ares_v_srbs_1.id),
                         BurnStageItem(type="Burn", element=eds_1.id),
                     ],
                 )
@@ -519,8 +520,8 @@ lunar_sortie = Mission(
                 altair_am_1.id,
                 altair_dm_1.id,
                 eds_1.id,
-                orion_cm.id,
-                orion_sm.id,
+                orion_cm_1.id,
+                orion_sm_1.id,
             ],
             burn_stage_sequence=[
                 BurnStageSequence(
@@ -579,7 +580,7 @@ lunar_sortie = Mission(
             name="Lunar | Crewed Exploration",
             missionTime="P7DT12H",
             priority=1,
-            location=llpo.id,
+            location=lsp.id,
             vehicle=altair_am_1.id,
             duration="P7D",
             eva_per_week=5.0,
