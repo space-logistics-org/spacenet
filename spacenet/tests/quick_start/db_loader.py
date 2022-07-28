@@ -179,7 +179,7 @@ def load_db(file_name: str) -> ModelDatabase:
         # parse the burns, dropping the `id` field to gneerate a new uuid and
         burns["model"] = (
             burns.drop("id", axis=1).apply(
-                lambda r: Burn(time=timedelta(hours=r.time), delta_v=r.delta_v), axis=1
+                lambda r: Burn(time=timedelta(days=r.time), delta_v=r.delta_v), axis=1
             )
             if not burns.empty
             else None
@@ -199,6 +199,8 @@ def load_db(file_name: str) -> ModelDatabase:
             if not edges.empty
             else None
         )
+        # convert the numeric duration (in days) to a Python timedelta
+        edges["duration"] = edges.duration.apply(lambda i: timedelta(days=i))
         # add the `burns` field by matching with burn edge_ids
         edges["burns"] = (
             edges.id.apply(lambda i: burns[burns.edge_id == i].model.to_list())
