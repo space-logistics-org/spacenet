@@ -96,6 +96,7 @@ llpo_pac = SpaceEdge(
         Burn(time="P4D", delta_v=5.0),
     ],
 )
+
 ##########################################
 # RESOURCES
 ##########################################
@@ -392,7 +393,7 @@ ares_v_core_1 = InstPropulsiveVehicle(
 ares_v_srbs_1 = InstPropulsiveVehicle(
     template_id=ares_v_srbs.id, name="Lunar | " + ares_v_srbs.name
 )
-eds_1 = InstElementCarrier(template_id=eds.id, name="Lunar | " + eds.name)
+eds_1 = InstPropulsiveVehicle(template_id=eds.id, name="Lunar | " + eds.name)
 cargo_1 = InstElement(template_id=cargo.id, name="Lunar | " + cargo.name)
 samples_1 = InstElement(template_id=samples.id, name="Lunar | " + samples.name)
 
@@ -470,8 +471,8 @@ lunar_sortie = Mission(
             elements=[
                 altair_am_1.id,
                 altair_dm_1.id,
-                ares_v_core.id,
-                ares_v_srbs.id,
+                ares_v_core_1.id,
+                ares_v_srbs_1.id,
                 eds_1.id,
             ],
         ),
@@ -492,18 +493,18 @@ lunar_sortie = Mission(
             elements=[
                 altair_am_1.id,
                 altair_dm_1.id,
-                ares_v_core.id,
-                ares_v_srbs.id,
+                ares_v_core_1.id,
+                ares_v_srbs_1.id,
                 eds_1.id,
             ],
             burn_stage_sequence=[
                 BurnStageSequence(
                     burn=ksc_leo.burns[0].id,
                     actions=[
-                        BurnStageItem(type="Burn", element=ares_v_srbs.id),
-                        BurnStageItem(type="Stage", element=ares_v_srbs.id),
-                        BurnStageItem(type="Burn", element=ares_v_core.id),
-                        BurnStageItem(type="Stage", element=ares_v_core.id),
+                        BurnStageItem(type="Burn", element=ares_v_srbs_1.id),
+                        BurnStageItem(type="Stage", element=ares_v_srbs_1.id),
+                        BurnStageItem(type="Burn", element=ares_v_srbs_1.id),
+                        BurnStageItem(type="Stage", element=ares_v_srbs_1.id),
                         BurnStageItem(type="Burn", element=eds_1.id),
                     ],
                 )
@@ -519,8 +520,8 @@ lunar_sortie = Mission(
                 altair_am_1.id,
                 altair_dm_1.id,
                 eds_1.id,
-                orion_cm.id,
-                orion_sm.id,
+                orion_cm_1.id,
+                orion_sm_1.id,
             ],
             burn_stage_sequence=[
                 BurnStageSequence(
@@ -579,12 +580,15 @@ lunar_sortie = Mission(
             name="Lunar | Crewed Exploration",
             missionTime="P7DT12H",
             priority=1,
-            location=llpo.id,
+            location=lsp.id,
             vehicle=altair_am_1.id,
             duration="P7D",
             eva_per_week=5.0,
             eva_duration="PT8H",
-            element_states={crew_member_1_1.id: -1, crew_member_1_2.id: -1,},
+            element_states=[
+                ElementState(element=crew_member_1_1.id, state_index=-1),
+                ElementState(element=crew_member_1_2.id, state_index=-1),
+            ],
             additional_demands=[],
         ),
         CreateElements(
@@ -757,5 +761,4 @@ scenario = Scenario(
     ),
 )
 
-# FIXME print(scenario.json())
-print(scenario.dict())
+print(scenario.json(exclude_unset=True, indent=2))
