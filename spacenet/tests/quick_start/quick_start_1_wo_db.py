@@ -393,7 +393,7 @@ ares_v_core_1 = InstPropulsiveVehicle(
 ares_v_srbs_1 = InstPropulsiveVehicle(
     template_id=ares_v_srbs.id, name="Lunar | " + ares_v_srbs.name
 )
-eds_1 = InstElementCarrier(template_id=eds.id, name="Lunar | " + eds.name)
+eds_1 = InstPropulsiveVehicle(template_id=eds.id, name="Lunar | " + eds.name)
 cargo_1 = InstElement(template_id=cargo.id, name="Lunar | " + cargo.name)
 samples_1 = InstElement(template_id=samples.id, name="Lunar | " + samples.name)
 
