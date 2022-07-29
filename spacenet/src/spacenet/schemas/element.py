@@ -13,7 +13,7 @@ from .types import SafeInt, SafeNonNegFloat, SafeNonNegInt
 from .mixins import ImmutableBaseModel
 from .constants import ClassOfSupply, Environment
 from .state import State, StateUUID
-from .resource import ResourceAmount, GenericResourceAmount
+from .resource import ResourceAmount, GenericResourceAmount, Part
 
 __all__ = [
     "ElementType",
@@ -88,19 +88,11 @@ class Element(ElementUUID):
     )
     mass: SafeNonNegFloat = Field(..., title="Mass", description="Mass in kg")
     volume: SafeNonNegFloat = Field(..., title="Volume", description="Volume in m^3")
-    states: List[State] = Field(..., title="States", description="List of states the element may possess")
-    current_state_index: SafeInt = Field(0, title="Current State", description="The index of the current state of the element. Initialized at the initial state")
+    states: List[State] = Field([], title="States", description="List of states the element may possess")
+    current_state_index: Optional[SafeInt] = Field(None, title="Current State", description="The index of the current state of the element. Initialized at the initial state")
     #TODO: parts and icons are currently hidden and not implemented in SpaceNet Cloud
-    parts: Optional[List] = Field(title="Parts filler")
+    parts: List[Part] = Field([], title="Parts of this element")
     icon: Optional[str] = Field(title="string of icon")
-
-
-    class Config:
-        """
-        Configuration inner class forbidding additional fields
-        """
-
-        extra = Extra.forbid
 
 
 class CargoCarrier(Element, ABC):

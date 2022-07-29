@@ -5,7 +5,7 @@ from enum import Enum
 from typing import List, Optional, Union
 from uuid import uuid4, UUID
 
-from pydantic import Field
+from pydantic import Field, confloat
 from typing_extensions import Literal
 
 from .mixins import ImmutableBaseModel
@@ -17,7 +17,7 @@ __all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUU
 class ResourceUUID(ImmutableBaseModel):
     """
     A base class which defines a resource by its UUID only.
-    
+
     :param UUID id: unique identifier for resource
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for resource")
@@ -127,5 +127,17 @@ class ContinuousResource(Resource):
     type: Literal[ResourceType.Continuous] = Field(
         ResourceType.Continuous, title="Type", description="Resource type"
     )
+
+class Part(ImmutableBaseModel):
+    """
+    A discrete resource (part) applied as a constituent component of an element.
+    """
+    resource: DiscreteResource = Field(..., description="Resource of the part")
+    mean_time_to_failure: Optional[confloat(gt=0)] = Field(None, description="Mean operating time (hours) to failure.")
+    mean_time_to_repair: Optional[confloat(gt=0)] = Field(None, description="Mean crew time (hours) to repair.")
+    mass_to_repair: Optional[confloat(ge=0)] = Field(None, description="Mass of generic COS 4 required to perform a repair.")
+    quantity: confloat(ge=1) = Field(1, description="Quantity of resource used.")
+    duty_cycle: confloat(ge=0, le=1) = Field(1, description="Fraction of time this part is in use.")
+
 
 AllResources = Union[DiscreteResource, ContinuousResource]
