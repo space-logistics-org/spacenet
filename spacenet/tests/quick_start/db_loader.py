@@ -247,11 +247,21 @@ def load_db(file_name: str) -> ModelDatabase:
                     resource=resources[resources.id == r.resource_id].iloc[0].model.id,
                     amount=r.amount,
                 )
-                if r.resource_id > 0
+                if r.resource_id > 0 and pd.notna(r.amount)
+                else ResourceAmountRate(
+                    resource=resources[resources.id == r.resource_id].iloc[0].model.id,
+                    rate=r.rate,
+                )
+                if r.resource_id > 0 and pd.notna(r.rate)
                 else GenericResourceAmount(
                     class_of_supply=-r.resource_id,
                     environment=Environment.Unpressurized,
                     amount=r.amount,
+                ) if pd.notna(r.amount)
+                else GenericResourceAmountRate(
+                    class_of_supply=-r.resource_id,
+                    environment=Environment.Unpressurized,
+                    rate=r.rate,
                 ),
                 axis=1,
             )
@@ -307,7 +317,9 @@ def load_db(file_name: str) -> ModelDatabase:
         states["demand_models"] = (
             states.id.apply(
                 lambda i: [
-                    instDemandModel(type=m.type, template_id=m.id)
+                    InstTimedImpulseDemandModel(name=m.name, template_id=m.id) if m.type==DemandModelType.TimedImpulse
+                    else InstRatedDemandModel(name=m.name, template_id=m.id) if m.type==DemandModelType.Rated
+                    else InstSparingByMassDemandModel(name=m.name, template_id=m.id)
                     for m in demand_models[demand_models.state_id == i].model.to_list()
                 ]
             )
