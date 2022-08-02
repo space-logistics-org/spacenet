@@ -12,7 +12,7 @@ from .mixins import ImmutableBaseModel
 from .types import SafeNonNegFloat, SafePosFloat
 from .constants import ClassOfSupply, Environment
 
-__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUUID", "Resource", "ResourceAmount", "ResourceAmountRate", "GenericResourceAmountRate", "GenericResourceAmount"]
+__all__ = ["ResourceType", "ContinuousResource", "DiscreteResource", "ResourceUUID", "Resource", "ResourceAmount", "ResourceAmountRate", "GenericResourceAmountRate", "GenericResourceAmount", "Part"]
 
 class ResourceUUID(ImmutableBaseModel):
     """
