@@ -5,6 +5,7 @@ spacenet module.
 from .edge import *
 from .element import *
 from .bases import *
+from .constants import *
 from .element_events import *
 from .mixins import *
 from .node import *
