@@ -76,6 +76,27 @@ class Configuration(CamelModel):
     generic_packing_factor_pressurized: SafeNonNegFloat = Field(0.2)
     generic_packing_factor_unpressurized: SafeNonNegFloat = Field(0.6)
 
+    small_gas_tank_mass: SafeNonNegFloat = Field(10.8)
+    small_gas_tank_volume: SafeNonNegFloat = Field(0.275)
+    small_gas_tank_max_mass: SafeNonNegFloat = Field(10.0)
+    small_gas_t_tank_max_volume: SafeNonNegFloat = Field(0.275)
+    large_gas_tank_mass: SafeNonNegFloat = Field(108.0)
+    large_gas_tank_volume: SafeNonNegFloat = Field(2.75)
+    large_gas_tank_max_mass: SafeNonNegFloat = Field(100.0)
+    large_gas_tank_max_volume: SafeNonNegFloat = Field(2.75)
+    small_liquid_t_tank_mass: SafeNonNegFloat = Field(11.4567)
+    small_liquid_tank_volume: SafeNonNegFloat = Field(0.0249)
+    small_liquid_tank_max_mass: SafeNonNegFloat = Field(24.9333)
+    small_liquid_tank_max_volume: SafeNonNegFloat = Field(0.0249)
+    large_liquid_tank_mass: SafeNonNegFloat = Field(34.37)
+    large_liquid_tank_volume: SafeNonNegFloat = Field(0.0748)
+    large_liquid_tank_max_mass: SafeNonNegFloat = Field(74.8)
+    large_liquid_tank_max_volume: SafeNonNegFloat = Field(0.0748)
+    cargo_transfer_bag_mass: SafeNonNegFloat = Field(0.83)
+    cargo_transfer_bag_volume: SafeNonNegFloat = Field(0.053)
+    cargo_transfer_bag_max_mass: SafeNonNegFloat = Field(26.8)
+    cargo_transfer_bag_max_volume: SafeNonNegFloat = Field(0.049)
+
 class ScenarioType(str, Enum):
     """
     An enumeration of the different kinds of scenario.

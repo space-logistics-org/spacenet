@@ -727,31 +727,7 @@ scenario = Scenario(
         orion_sm_1,
     ],
     demand_models=[],
-    configuration=Configuration(
-        **{
-            "environmentConstrained": True,
-            "smallGasTankMass": 10.8,
-            "smallGasTankVolume": 0.275,
-            "smallGasTankMaxMass": 10.0,
-            "smallGasTankMaxVolume": 0.275,
-            "largeGasTankMass": 108.0,
-            "largeGasTankVolume": 2.75,
-            "largeGasTankMaxMass": 100.0,
-            "largeGasTankMaxVolume": 2.75,
-            "smallLiquidTankMass": 11.4567,
-            "smallLiquidTankVolume": 0.0249,
-            "smallLiquidTankMaxMass": 24.9333,
-            "smallLiquidTankMaxVolume": 0.0249,
-            "largeLiquidTankMass": 34.37,
-            "largeLiquidTankVolume": 0.0748,
-            "largeLiquidTankMaxMass": 74.8,
-            "largeLiquidTankMaxVolume": 0.0748,
-            "cargoTransferBagMass": 0.83,
-            "cargoTransferBagVolume": 0.053,
-            "cargoTransferBagMaxMass": 26.8,
-            "cargoTransferBagMaxVolume": 0.049,
-        }
-    ),
+    configuration=Configuration(environmentConstrained=True),
 )
 
 with open("completed_quick_start_1_wo_db.json", "w") as f:
