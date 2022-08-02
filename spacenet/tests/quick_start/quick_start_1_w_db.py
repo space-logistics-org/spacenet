@@ -398,4 +398,5 @@ scenario = Scenario(
     ),
 )
 
-print(scenario.json(exclude_unset=True, indent=2))
+with open("completed_quick_start_1_w_db.json", "w") as f:
+    f.write(scenario.json(exclude_none=True, indent=2, by_alias=True))
