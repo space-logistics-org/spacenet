@@ -56,6 +56,9 @@ def _parse_resource(data: dict) -> Union[ContinuousResource, DiscreteResource]:
     Returns:
         Union[ContinuousResource, DiscreteResource]: the resource in SpaceNet format
     """
+    # fix `description` null value
+    if pd.isna(data["description"]):
+        data["description"] = None
     # loop through candidate model classes
     for model_cls in [ContinuousResource, DiscreteResource]:
         try:
