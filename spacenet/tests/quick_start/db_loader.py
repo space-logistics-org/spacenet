@@ -176,9 +176,9 @@ def load_db(file_name: str) -> ModelDatabase:
 
         # read the burns sheet
         burns = pd.read_excel(db_file, "burns")
-        # parse the burns, dropping the `id` field to gneerate a new uuid and
+        # parse the burns
         burns["model"] = (
-            burns.drop("id", axis=1).apply(
+            burns.apply(
                 lambda r: Burn(time=timedelta(days=r.time), delta_v=r.delta_v), axis=1
             )
             if not burns.empty
@@ -227,9 +227,9 @@ def load_db(file_name: str) -> ModelDatabase:
 
         # read the demands sheet
         demands = pd.read_excel(db_file, "demands")
-        # parse the states, dropping the `id` field to generate a new uuid
+        # parse the demands
         demands["model"] = (
-            demands.drop("id", axis=1).apply(
+            demands.apply(
                 lambda r: ResourceAmount(
                     resource=resources[resources.id == r.resource_id].iloc[0].model.id,
                     amount=r.amount,
@@ -265,6 +265,24 @@ def load_db(file_name: str) -> ModelDatabase:
             else None
         )
 
+        # read the parts sheet
+        parts = pd.read_excel(db_file, "parts")
+        # parse the parts
+        parts["model"] = (
+            parts.apply(
+                lambda r: Part(
+                    resource=resources[resources.id == r.resource_id].iloc[0].model.id,
+                    mean_time_to_failure=timedelta(hours=r.mean_time_to_failure),
+                    mean_time_to_repair=timedelta(hours=r.mean_time_to_repair),
+                    mass_to_repair=r.mass_to_repair,
+                    quantity=r.quantity,
+                    duty_cycle = r.duty_cycle,
+                ),
+                axis=1)
+            if not parts.empty
+            else None
+        )
+
         # read the states sheet
         states = pd.read_excel(db_file, "states")
         # add the `demand_models` field
@@ -285,6 +303,12 @@ def load_db(file_name: str) -> ModelDatabase:
 
         # read the elements sheet
         elements = pd.read_excel(db_file, "elements")
+        # add the `parts` field
+        elements["parts"] = (
+            elements.id.apply(lambda i: parts[parts.element_id == i].model.to_list())
+            if not elements.empty
+            else None
+        )
         # add the `states` field
         elements["states"] = (
             elements.id.apply(lambda i: states[states.element_id == i].model.to_list())
