@@ -108,4 +108,4 @@ class ReconfigureElements(Event):
         EventType.ReconfigureElements, title="Type", description="Type of event",
     )
     elements: List[UUID]
-    stateType: StateType
+    state_type: StateType
