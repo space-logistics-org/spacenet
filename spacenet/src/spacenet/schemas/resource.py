@@ -5,6 +5,7 @@ from enum import Enum
 from typing import List, Optional, Union
 from uuid import uuid4, UUID
 
+from datetime import timedelta
 from pydantic import Field, confloat
 from typing_extensions import Literal
 
@@ -132,9 +133,9 @@ class Part(ImmutableBaseModel):
     """
     A discrete resource (part) applied as a constituent component of an element.
     """
-    resource: DiscreteResource = Field(..., description="Resource of the part")
-    mean_time_to_failure: Optional[confloat(gt=0)] = Field(None, description="Mean operating time (hours) to failure.")
-    mean_time_to_repair: Optional[confloat(gt=0)] = Field(None, description="Mean crew time (hours) to repair.")
+    resource: UUID = Field(..., description="UUID of the part resource")
+    mean_time_to_failure: Optional[timedelta] = Field(None, description="Mean operating time to failure.")
+    mean_time_to_repair: Optional[timedelta] = Field(None, description="Mean crew time to repair.")
     mass_to_repair: Optional[confloat(ge=0)] = Field(None, description="Mass of generic COS 4 required to perform a repair.")
     quantity: confloat(ge=1) = Field(1, description="Quantity of resource used.")
     duty_cycle: confloat(ge=0, le=1) = Field(1, description="Fraction of time this part is in use.")
