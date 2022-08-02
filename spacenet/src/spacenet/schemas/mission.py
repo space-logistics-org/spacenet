@@ -12,7 +12,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 from fastapi_camelcase import CamelModel
 
-from .demand_model import MissionDemandModelUUID
+from .inst_demand_model import AllInstMissionDemandModels
 from .node import NodeUUID
 from .events import *
 
@@ -54,7 +54,7 @@ class Mission(CamelModel):
     events: List[AllEvents] = Field(
         ..., title="Event ID List", description="list of events occuring in mission"
     )
-    demand_models: List[MissionDemandModelUUID] = Field(
+    demand_models: List[AllInstMissionDemandModels] = Field(
         ..., title="Demand Models List", description="list of mission demand models by UUID"
     )
     origin: UUID = Field(..., title="Origin UUID", description="UUID of origin node")

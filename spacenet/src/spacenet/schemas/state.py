@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field, StrictBool, conint
 from .types import SafeInt
 from .mixins import ImmutableBaseModel
 from .constants import SQLITE_MAX_INT, SQLITE_MIN_INT
-from .demand_model import instDemandModel
+from .inst_demand_model import InstElementDemandModel
 
 __all__ = ["State", "StateType", "StateUUID", "ElementState"]
 
@@ -29,7 +29,7 @@ class StateType(str, Enum):
 class StateUUID(ImmutableBaseModel):
     """
     A representation of a state using only its UUID. This serves as a base class for all states.
-    
+
     :param UUID id: unique identifier for state
     """
     id: UUID = Field(default_factory=uuid4, description="unique identifier for state")
@@ -38,20 +38,20 @@ class StateUUID(ImmutableBaseModel):
 class State(StateUUID):
     """
     An abbreviated representation of the state of a specific element.
-    
+
     :param str name: the name of this state
     :param str description: short description of the state
     :param StateType type: the general classificaton of this state
-    :param [instDemandModel] demand_models: list of instantiated demand models associated with this state
+    :param [InstDemandModel] demand_models: list of instantiated demand models associated with this state
     """
     name: str = Field(..., description="the name of this state")
     description: str = Field(
-        ..., title="Description", description="short description of the state"
+        "", title="Description", description="short description of the state"
     )
     type: StateType = Field(
         ..., description="the general classification of this state"
     )
-    demand_models: List[instDemandModel] = Field(..., title="Demand Models", description="list of instantiated demand models associated with this state")
+    demand_models: List[InstElementDemandModel] = Field(..., title="Demand Models", description="list of instantiated demand models associated with this state")
 
 class ElementState(CamelModel):
     '''
