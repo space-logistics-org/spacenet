@@ -333,6 +333,27 @@ def load_db(file_name: str) -> ModelDatabase:
             else None
         )
 
+        # read the resource contents sheet
+        contents = pd.read_excel(db_file, "contents")
+        # parse the contents
+        contents["model"] = (
+            contents.apply(
+                lambda r: ResourceAmount(
+                    resource=resources[resources.id == r.resource_id].iloc[0].model.id,
+                    amount=r.amount,
+                )
+                if r.resource_id > 0
+                else GenericResourceAmount(
+                    class_of_supply=-r.resource_id,
+                    environment=Environment.Unpressurized,
+                    amount=r.amount,
+                ),
+                axis=1,
+            )
+            if not contents.empty
+            else None
+        )
+
         # read the elements sheet
         elements = pd.read_excel(db_file, "elements")
         # add the `parts` field
@@ -344,6 +365,14 @@ def load_db(file_name: str) -> ModelDatabase:
         # add the `states` field
         elements["states"] = (
             elements.id.apply(lambda i: states[states.element_id == i].model.to_list())
+            if not elements.empty
+            else None
+        )
+        # add the `contents` field
+        elements["contents"] = (
+            elements.id.apply(
+                lambda i: contents[contents.container_id == i].model.to_list()
+            )
             if not elements.empty
             else None
         )
