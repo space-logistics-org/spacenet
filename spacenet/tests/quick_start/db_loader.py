@@ -3,6 +3,7 @@ from pydantic import ValidationError
 from typing import Union, List
 
 import pandas as pd
+import numpy as np
 from pydantic import BaseModel, Field
 from datetime import timedelta
 
@@ -17,6 +18,7 @@ def _parse_node(data: dict) -> Union[SurfaceNode, OrbitalNode, LagrangeNode]:
     Returns:
         Union[SurfaceNode, OrbitalNode, LagrangeNode]: the node in SpaceNet format
     """
+    # loop through candidate model classes
     for model_cls in [SurfaceNode, OrbitalNode, LagrangeNode]:
         try:
             return model_cls(**data)
@@ -35,6 +37,7 @@ def _parse_edge(data: dict) -> Union[SurfaceEdge, SpaceEdge, FlightEdge]:
     Returns:
         Union[SurfaceEdge, SpaceEdge, FlightEdge]: the edge in SpaceNet format
     """
+    # loop through candidate model classes
     for model_cls in [SurfaceEdge, SpaceEdge, FlightEdge]:
         try:
             return model_cls(**data)
@@ -53,6 +56,10 @@ def _parse_resource(data: dict) -> Union[ContinuousResource, DiscreteResource]:
     Returns:
         Union[ContinuousResource, DiscreteResource]: the resource in SpaceNet format
     """
+    # fix `description` null value
+    if pd.isna(data["description"]):
+        data["description"] = None
+    # loop through candidate model classes
     for model_cls in [ContinuousResource, DiscreteResource]:
         try:
             return model_cls(**data)
@@ -82,6 +89,10 @@ def _parse_element(
     Returns:
         Union[Element, CargoCarrier, ResourceContainer, ElementCarrier, HumanAgent, RoboticAgent, PropulsiveVehicle, SurfaceVehicle]: the element in SpaceNet format
     """
+    # fix `current_state_index` null value
+    if pd.isna(data["current_state_index"]):
+        data["current_state_index"] = None
+    # loop through candidate model classes
     for model_cls in [
         Element,
         CargoCarrier,
@@ -111,6 +122,7 @@ def _parse_demand_model(
     Returns:
         Union[TimedImpulseDemandModel, RatedDemandModel, SparingByMassDemandModel]: the demand model in SpaceNet format
     """
+    # loop through candidate model classes
     for model_cls in [
         TimedImpulseDemandModel,
         RatedDemandModel,
@@ -127,6 +139,7 @@ class ModelDatabase(BaseModel):
     """
     Database stores models for nodes, edges, resources, demand models, and elements.
     """
+
     nodes: List[Union[SurfaceNode, OrbitalNode, LagrangeNode]] = Field(
         [], description="List of nodes"
     )
@@ -176,9 +189,9 @@ def load_db(file_name: str) -> ModelDatabase:
 
         # read the burns sheet
         burns = pd.read_excel(db_file, "burns")
-        # parse the burns, dropping the `id` field to gneerate a new uuid and
+        # parse the burns
         burns["model"] = (
-            burns.drop("id", axis=1).apply(
+            burns.apply(
                 lambda r: Burn(time=timedelta(days=r.time), delta_v=r.delta_v), axis=1
             )
             if not burns.empty
@@ -204,7 +217,7 @@ def load_db(file_name: str) -> ModelDatabase:
         # add the `burns` field by matching with burn edge_ids
         edges["burns"] = (
             edges.id.apply(lambda i: burns[burns.edge_id == i].model.to_list())
-            if not edges.empty
+            if not (edges.empty or burns.empty)
             else None
         )
         # parse the edges, dropping the `id` field to generate a new uuid
@@ -227,18 +240,28 @@ def load_db(file_name: str) -> ModelDatabase:
 
         # read the demands sheet
         demands = pd.read_excel(db_file, "demands")
-        # parse the states, dropping the `id` field to generate a new uuid
+        # parse the demands
         demands["model"] = (
-            demands.drop("id", axis=1).apply(
+            demands.apply(
                 lambda r: ResourceAmount(
                     resource=resources[resources.id == r.resource_id].iloc[0].model.id,
                     amount=r.amount,
                 )
-                if r.resource_id > 0
+                if r.resource_id > 0 and pd.notna(r.amount)
+                else ResourceAmountRate(
+                    resource=resources[resources.id == r.resource_id].iloc[0].model.id,
+                    rate=r.rate,
+                )
+                if r.resource_id > 0 and pd.notna(r.rate)
                 else GenericResourceAmount(
                     class_of_supply=-r.resource_id,
                     environment=Environment.Unpressurized,
                     amount=r.amount,
+                ) if pd.notna(r.amount)
+                else GenericResourceAmountRate(
+                    class_of_supply=-r.resource_id,
+                    environment=Environment.Unpressurized,
+                    rate=r.rate,
                 ),
                 axis=1,
             )
@@ -265,13 +288,40 @@ def load_db(file_name: str) -> ModelDatabase:
             else None
         )
 
+        # read the parts sheet
+        parts = pd.read_excel(db_file, "parts")
+        # parse the parts
+        parts["model"] = (
+            parts.apply(
+                lambda r: Part(
+                    resource=resources[resources.id == r.resource_id].iloc[0].model.id,
+                    mean_time_to_failure=timedelta(hours=float(r.mean_time_to_failure))
+                    if r.mean_time_to_failure > 0
+                    else None,
+                    mean_time_to_repair=timedelta(hours=float(r.mean_time_to_repair))
+                    if r.mean_time_to_repair > 0
+                    else None,
+                    mass_to_repair=r.mass_to_repair,
+                    quantity=r.quantity,
+                    duty_cycle=r.duty_cycle,
+                ),
+                axis=1,
+            )
+            if not parts.empty
+            else None
+        )
+
         # read the states sheet
         states = pd.read_excel(db_file, "states")
         # add the `demand_models` field
         states["demand_models"] = (
             states.id.apply(
-                lambda i: instDemandModel(type=m.type, template_id=m.id)
-                for m in demand_models[demand_models.state_id == i].model.to_list()
+                lambda i: [
+                    InstTimedImpulseDemandModel(name=m.name, template_id=m.id) if m.type==DemandModelType.TimedImpulse
+                    else InstRatedDemandModel(name=m.name, template_id=m.id) if m.type==DemandModelType.Rated
+                    else InstSparingByMassDemandModel(name=m.name, template_id=m.id)
+                    for m in demand_models[demand_models.state_id == i].model.to_list()
+                ]
             )
             if not states.empty
             else None
@@ -283,14 +333,70 @@ def load_db(file_name: str) -> ModelDatabase:
             else None
         )
 
+        # read the resource contents sheet
+        contents = pd.read_excel(db_file, "contents")
+        # parse the contents
+        contents["model"] = (
+            contents.apply(
+                lambda r: ResourceAmount(
+                    resource=resources[resources.id == r.resource_id].iloc[0].model.id,
+                    amount=r.amount,
+                )
+                if r.resource_id > 0
+                else GenericResourceAmount(
+                    class_of_supply=-r.resource_id,
+                    environment=Environment.Unpressurized,
+                    amount=r.amount,
+                ),
+                axis=1,
+            )
+            if not contents.empty
+            else None
+        )
+
         # read the elements sheet
         elements = pd.read_excel(db_file, "elements")
+        # add the `parts` field
+        elements["parts"] = (
+            elements.id.apply(lambda i: parts[parts.element_id == i].model.to_list())
+            if not elements.empty
+            else None
+        )
         # add the `states` field
         elements["states"] = (
             elements.id.apply(lambda i: states[states.element_id == i].model.to_list())
             if not elements.empty
             else None
         )
+        # add the `contents` field
+        elements["contents"] = (
+            elements.id.apply(
+                lambda i: contents[contents.container_id == i].model.to_list()
+            )
+            if not elements.empty
+            else None
+        )
+        # coerce `max_crew` to an integer data type
+        elements["max_crew"] = elements.max_crew.astype("Int64")
+        # add the `current_state_index` field
+        elements["current_state_index"] = (
+            elements.apply(
+                lambda r: np.where(
+                    states[states.element_id == r.id].initial_state == True
+                )[0][0]
+                if not (
+                    states[
+                        (states.element_id == r.id) & (states.initial_state == True)
+                    ].empty
+                )
+                else None,
+                axis=1,
+            )
+            if not (elements.empty or states.empty)
+            else None
+        )
+        # coerce `current_state_index` to an integer data type
+        elements["current_state_index"] = elements.current_state_index.astype("Int64")
         # add the `fuel` field
         elements["fuel"] = (
             elements.apply(

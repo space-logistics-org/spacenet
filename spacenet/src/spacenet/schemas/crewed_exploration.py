@@ -58,6 +58,5 @@ class CrewedExploration(Event):
         description="a list of objects specifying instantiated elements and the states to which they should be changed",
     )
     additional_demands: List[UUID] = Field(
-        ..., title="Additional Demands", description="List of UUIDs of demand models needed for EVA"
+        [], title="Additional Demands", description="List of UUIDs of demand models needed for EVA"
     )
-

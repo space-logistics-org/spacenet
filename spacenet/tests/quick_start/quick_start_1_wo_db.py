@@ -1,4 +1,5 @@
 from spacenet.schemas import *
+from datetime import datetime, timedelta, timezone
 
 ##########################################
 # NODES
@@ -49,20 +50,20 @@ ksc_leo = SpaceEdge(
     description="Earth Ascent",
     origin=ksc.id,
     destination=leo.id,
-    duration="PT6H",
-    burns=[Burn(time="PT0S", delta_v=9500.0)],
+    duration=timedelta(hours=6),
+    burns=[Burn(time=timedelta(0), delta_v=9500.0)],
 )
 leo_llpo = SpaceEdge(
     name="LEO-LLPO",
     description="Lunar Orbit Injection",
     origin=leo.id,
     destination=llpo.id,
-    duration="P4D",
+    duration=timedelta(days=4),
     burns=[
-        Burn(time="PT0S", delta_v=3150.0),
-        Burn(time="PT12H", delta_v=2.0),
-        Burn(time="P2DT12H", delta_v=2.0),
-        Burn(time="P4D", delta_v=950.0),
+        Burn(time=timedelta(0), delta_v=3150.0),
+        Burn(time=timedelta(hours=12), delta_v=2.0),
+        Burn(time=timedelta(days=2, hours=12), delta_v=2.0),
+        Burn(time=timedelta(days=4), delta_v=950.0),
     ],
 )
 llpo_lsp = SpaceEdge(
@@ -70,30 +71,36 @@ llpo_lsp = SpaceEdge(
     description="Lunar Descent",
     origin=llpo.id,
     destination=lsp.id,
-    duration="PT12H",
-    burns=[Burn(time="PT0S", delta_v=2030.0), Burn(time="PT6H", delta_v=11.0),],
+    duration=timedelta(hours=12),
+    burns=[
+        Burn(time=timedelta(0), delta_v=2030.0),
+        Burn(time=timedelta(hours=6), delta_v=11.0),
+    ],
 )
 lsp_llpo = SpaceEdge(
     name="LSP-LLPO",
     description="Lunar Ascent",
     origin=lsp.id,
     destination=llpo.id,
-    duration="PT12H",
-    burns=[Burn(time="PT0S", delta_v=1875.0), Burn(time="PT6H", delta_v=31.0),],
+    duration=timedelta(hours=12),
+    burns=[
+        Burn(time=timedelta(0), delta_v=1875.0),
+        Burn(time=timedelta(hours=6), delta_v=31.0),
+    ],
 )
 llpo_pac = SpaceEdge(
     name="LLPO-PAC",
     description="Trans-Earth Injection",
     origin=llpo.id,
     destination=pac.id,
-    duration="P4D",
+    duration=timedelta(days=4),
     burns=[
-        Burn(time="PT0S", delta_v=612.3),
-        Burn(time="PT12H", delta_v=276.5),
-        Burn(time="P1D", delta_v=333.6),
-        Burn(time="P1DT12H", delta_v=3.2),
-        Burn(time="P3D", delta_v=3.2),
-        Burn(time="P4D", delta_v=5.0),
+        Burn(time=timedelta(0), delta_v=612.3),
+        Burn(time=timedelta(hours=12), delta_v=276.5),
+        Burn(time=timedelta(days=1), delta_v=333.6),
+        Burn(time=timedelta(days=1, hours=12), delta_v=3.2),
+        Burn(time=timedelta(days=3), delta_v=3.2),
+        Burn(time=timedelta(days=4), delta_v=5.0),
     ],
 )
 
@@ -402,7 +409,7 @@ samples_1 = InstElement(template_id=samples.id, name="Lunar | " + samples.name)
 ##########################################
 lunar_sortie = Mission(
     name="Lunar Sortie",
-    startDate="2019-07-01T04:00:00.000Z",
+    start_date=datetime(2019, 7, 1, 4, tzinfo=timezone.utc),
     origin=ksc.id,
     destination=lsp.id,
     return_origin=lsp.id,
@@ -411,7 +418,7 @@ lunar_sortie = Mission(
     events=[
         CreateElements(
             name="Lunar | Create Elements",
-            missionTime="PT0S",
+            mission_time=timedelta(0),
             priority=1,
             location=ksc.id,
             container=ksc.id,
@@ -425,7 +432,7 @@ lunar_sortie = Mission(
         ),
         CreateElements(
             name="Lunar | Create Elements",
-            missionTime="PT0S",
+            mission_time=timedelta(0),
             priority=2,
             location=ksc.id,
             container=orion_cm_1.id,
@@ -438,7 +445,7 @@ lunar_sortie = Mission(
         ),
         SpaceTransport(
             name="Lunar | Space Transport",
-            missionTime="PT0S",
+            mission_time=timedelta(0),
             priority=3,
             location=ksc.id,
             edge=ksc_leo.id,
@@ -464,7 +471,7 @@ lunar_sortie = Mission(
         ),
         CreateElements(
             name="Lunar | Create Elements",
-            missionTime="P1D",
+            mission_time=timedelta(days=1),
             priority=1,
             location=ksc.id,
             container=ksc.id,
@@ -478,7 +485,7 @@ lunar_sortie = Mission(
         ),
         CreateElements(
             name="Lunar | Create Elements",
-            missionTime="P1D",
+            mission_time=timedelta(days=1),
             priority=2,
             location=ksc.id,
             container=altair_dm_1.id,
@@ -486,7 +493,7 @@ lunar_sortie = Mission(
         ),
         SpaceTransport(
             name="Lunar | Space Transport",
-            missionTime="P1D",
+            mission_time=timedelta(days=1),
             priority=3,
             location=ksc.id,
             edge=ksc_leo.id,
@@ -512,7 +519,7 @@ lunar_sortie = Mission(
         ),
         SpaceTransport(
             name="Lunar | Space Transport",
-            missionTime="P2D",
+            mission_time=timedelta(days=2),
             priority=1,
             location=leo.id,
             edge=leo_llpo.id,
@@ -547,7 +554,7 @@ lunar_sortie = Mission(
         ),
         MoveElements(
             name="Lunar | Move Elements",
-            missionTime="P6D",
+            mission_time=timedelta(days=6),
             priority=1,
             location=llpo.id,
             container=altair_am_1.id,
@@ -560,7 +567,7 @@ lunar_sortie = Mission(
         ),
         SpaceTransport(
             name="Lunar | Space Transport",
-            missionTime="P7D",
+            mission_time=timedelta(days=7),
             priority=1,
             location=llpo.id,
             edge=llpo_lsp.id,
@@ -578,13 +585,13 @@ lunar_sortie = Mission(
         ),
         CrewedExploration(
             name="Lunar | Crewed Exploration",
-            missionTime="P7DT12H",
+            mission_time=timedelta(days=7, hours=12),
             priority=1,
             location=lsp.id,
             vehicle=altair_am_1.id,
-            duration="P7D",
+            duration=timedelta(days=7),
             eva_per_week=5.0,
-            eva_duration="PT8H",
+            eva_duration=timedelta(hours=8),
             element_states=[
                 ElementState(element=crew_member_1_1.id, state_index=-1),
                 ElementState(element=crew_member_1_2.id, state_index=-1),
@@ -593,7 +600,7 @@ lunar_sortie = Mission(
         ),
         CreateElements(
             name="Lunar | Create Elements",
-            missionTime="P14DT12H",
+            mission_time=timedelta(days=14, hours=12),
             priority=1,
             location=lsp.id,
             container=altair_am_1.id,
@@ -601,7 +608,7 @@ lunar_sortie = Mission(
         ),
         SpaceTransport(
             name="Lunar | Space Transport",
-            missionTime="P14DT12H",
+            mission_time=timedelta(days=14, hours=12),
             priority=2,
             location=lsp.id,
             edge=lsp_llpo.id,
@@ -619,7 +626,7 @@ lunar_sortie = Mission(
         ),
         MoveElements(
             name="Lunar | Move Elements",
-            missionTime="P15D",
+            mission_time=timedelta(days=15),
             priority=1,
             location=llpo.id,
             container=orion_cm_1.id,
@@ -633,7 +640,7 @@ lunar_sortie = Mission(
         ),
         SpaceTransport(
             name="Lunar | Space Transport",
-            missionTime="P15D",
+            mission_time=timedelta(days=15),
             priority=2,
             location=llpo.id,
             edge=llpo_pac.id,
@@ -678,7 +685,7 @@ scenario = Scenario(
     name="Quick Start Scenario 1",
     description="A sample scenario analyzing the transportation feasibility of a lunar mission.",
     created_by="SpaceNet User",
-    start_date="2019-07-02T01:05:16.051Z",
+    start_date=datetime(2019, 7, 1, 4, tzinfo=timezone.utc),
     scenario_type="Lunar",
     network=Network(
         nodes=[ksc, pac, leo, llpo, lsp],
@@ -720,45 +727,8 @@ scenario = Scenario(
         orion_sm_1,
     ],
     demand_models=[],
-    configuration=Configuration(
-        **{
-            "timePrecision": 0.05,
-            "demandPrecision": 0.01,
-            "massPrecision": 0.01,
-            "volumePrecision": 1.0e-6,
-            "volumeConstrained": False,
-            "environmentConstrained": True,
-            "itemDiscretization": "None",
-            "itemAggregation": 0.0,
-            "scavangeSpares": False,
-            "detailedEva": True,
-            "detailedExploration": True,
-            "genericPackingFactorGas": 1.0,
-            "genericPackingFactorLiquid": 0.5,
-            "genericPackingFactorPressurized": 0.2,
-            "genericPackingFactorUnpressurized": 0.6,
-            "smallGasTankMass": 10.8,
-            "smallGasTankVolume": 0.275,
-            "smallGasTankMaxMass": 10.0,
-            "smallGasTankMaxVolume": 0.275,
-            "largeGasTankMass": 108.0,
-            "largeGasTankVolume": 2.75,
-            "largeGasTankMaxMass": 100.0,
-            "largeGasTankMaxVolume": 2.75,
-            "smallLiquidTankMass": 11.4567,
-            "smallLiquidTankVolume": 0.0249,
-            "smallLiquidTankMaxMass": 24.9333,
-            "smallLiquidTankMaxVolume": 0.0249,
-            "largeLiquidTankMass": 34.37,
-            "largeLiquidTankVolume": 0.0748,
-            "largeLiquidTankMaxMass": 74.8,
-            "largeLiquidTankMaxVolume": 0.0748,
-            "cargoTransferBagMass": 0.83,
-            "cargoTransferBagVolume": 0.053,
-            "cargoTransferBagMaxMass": 26.8,
-            "cargoTransferBagMaxVolume": 0.049,
-        }
-    ),
+    configuration=Configuration(environmentConstrained=True),
 )
 
-print(scenario.json(exclude_unset=True, indent=2))
+with open("completed_quick_start_1_wo_db.json", "w") as f:
+    f.write(scenario.json(exclude_none=True, indent=2, by_alias=True))

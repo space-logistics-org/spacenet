@@ -25,7 +25,6 @@ __all__ = [
     "RatedDemandModel",
     "SparingByMassDemandModel",
     "CrewConsumablesDemandModel",
-    "instDemandModel",
     "AllDemandModels"
 ]
 
@@ -62,6 +61,7 @@ class ElementDemandModel(ElementDemandModelUUID):
     :param str name: name of demand model
     """
     name: str = Field(..., title="Name")
+    description: str = Field("", title="Description")
 
 class MissionDemandModel(MissionDemandModelUUID):
     """
@@ -70,41 +70,41 @@ class MissionDemandModel(MissionDemandModelUUID):
     :param str name: name of demand model
     """
     name: str = Field(..., title="Name")
+    description: str = Field("", title="Description")
 
 class CrewConsumablesDemandModel(MissionDemandModel):
     """
     Demands for consumables by crew.
 
-    :param CrewConsumables type: 
-    :param float reserves_duration: 
-    :param float water_recovery_rate: 
-    :param float clothing_lifetime: 
-    :param float transit_demand_omitted: 
-    :param float water_rate: 
-    :param float eva_water_rate: 
-    :param float food_support_rate: 
-    :param float ambient_food_rate: 
-    :param float rf_food_rate: 
-    :param float oxygen_rate: 
-    :param float eva_oxygen_rate: 
-    :param float nitrogen_rate: 
-    :param float hygiene_rate: 
-    :param float hygiene_kit: 
-    :param float clothing_rate: 
-    :param float personal_items: 
-    :param float office_equipment: 
-    :param float eva_suit: 
-    :param float eva_lithium_hydroxide: 
-    :param float health_equipment: 
-    :param float health_consumables: 
-    :param float safety_equipment: 
-    :param float comm_equipment: 
-    :param float computer_equipment: 
-    :param float trash_bag_rate: 
-    :param float waste_containment_rate: 
+    :param CrewConsumables type:
+    :param float reserves_duration:
+    :param float water_recovery_rate:
+    :param float clothing_lifetime:
+    :param float transit_demand_omitted:
+    :param float water_rate:
+    :param float eva_water_rate:
+    :param float food_support_rate:
+    :param float ambient_food_rate:
+    :param float rf_food_rate:
+    :param float oxygen_rate:
+    :param float eva_oxygen_rate:
+    :param float nitrogen_rate:
+    :param float hygiene_rate:
+    :param float hygiene_kit:
+    :param float clothing_rate:
+    :param float personal_items:
+    :param float office_equipment:
+    :param float eva_suit:
+    :param float eva_lithium_hydroxide:
+    :param float health_equipment:
+    :param float health_consumables:
+    :param float safety_equipment:
+    :param float comm_equipment:
+    :param float computer_equipment:
+    :param float trash_bag_rate:
+    :param float waste_containment_rate:
     """
     type: Literal[DemandModelType.CrewConsumables] = Field(DemandModelType.CrewConsumables, description="the demand model's type")
-
     reserves_duration: float = Field(..., title="Reserves Duration")
     water_recovery_rate: float = Field(..., title="Water Recovery Rate")
     clothing_lifetime: float = Field(..., title="Clothing Lifetime")
@@ -141,8 +141,8 @@ class TimedImpulseDemandModel(ElementDemandModel, MissionDemandModel):
     :param TimedImpulse type: demand model's type
     :param [Demand] demands: a list of demands to occur at one instant in time
     """
-    processed: bool = Field(default=False, title="flag")
     type: Literal[DemandModelType.TimedImpulse] = Field(DemandModelType.TimedImpulse, description="The demand model's type")
+    processed: bool = Field(default=False, title="flag")
     demands: List[Union[ResourceAmount, GenericResourceAmount]] = Field(..., description="A list of the demands to occur at one instant in time")
 
 
@@ -165,22 +165,11 @@ class SparingByMassDemandModel(ElementDemandModel):
     :param float unpressurizedSparesRate: percentage of an element's mass demanded as unpressurized spares each year
     :param float pressurizedSparesRate: percentage of an element's mass demanded as pressurized spares each year
     :param bool partsListEnabled: true if the element's part list should be used to drive demand resources
-
     """
     type: Literal[DemandModelType.SparingByMass] = Field(DemandModelType.SparingByMass, description="The demand model's type")
-    unpressurizedSparesRate: float = Field(..., title="Unpressurized Spares Rate", description="Percentage of an element's mass demanded as unpressurized spares each year")
-    pressurizedSparesRate: float = Field(..., title="Pressurized Spares Rate", description="Percentage of an element's mass demanded as pressurized spares each year")
-    partsListEnabled: bool = Field(..., title="Parts List Enabled", description="True if the element's part list should be used to drive demand resources")
-
-class instDemandModel(CamelModel):
-    """
-    Instantiated demand model referencing a template demand model.
-
-    :param DemandModelType type: type of demand model being instantiated. Same as type of template demand model.
-    :param UUID template_id: UUID of the demand model upon which this instantiated demand model is based
-    """
-    type: DemandModelType = Field(..., title="type", description="type of demand model being instantiated. Same as type of template demand model.")
-    template_id: UUID = Field(..., title="Template ID", description="UUID of the demand model upon which this instantiated demand model is based")
+    unpressurized_spares_rate: float = Field(..., title="Unpressurized Spares Rate", description="Percentage of an element's mass demanded as unpressurized spares each year")
+    pressurized_spares_rate: float = Field(..., title="Pressurized Spares Rate", description="Percentage of an element's mass demanded as pressurized spares each year")
+    parts_list_enabled: bool = Field(..., title="Parts List Enabled", description="True if the element's part list should be used to drive demand resources")
 
 
 AllDemandModels = Union[
