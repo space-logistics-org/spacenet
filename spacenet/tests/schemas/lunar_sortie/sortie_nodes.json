@@ -1,0 +1,49 @@
+[
+  {
+    "id":"c121abf7-05fd-4921-a99d-7d9902649609",
+    "name": "KSC",
+    "description": "Kennedy Space Center",
+    "body_1": "Earth",
+    "latitude": 28.6,
+    "longitude": -80.6,
+    "type": "SurfaceNode"
+  },
+  {
+    "id":"c39a3b1e-b67b-4da3-8fe4-a45c33e520cb",
+    "name": "PAC",
+    "description": "Pacific Ocean Splashdown",
+    "body_1": "Earth",
+    "latitude": 35,
+    "longitude": -117.9,
+    "type": "SurfaceNode"
+  },
+  {
+    "id":"cc85c675-eb21-4a13-92dd-bec6f13d78d9",
+    "name": "LSP",
+    "description": "Lunar South Pole",
+    "body_1": "Moon",
+    "latitude": -89.9,
+    "longitude": -180,
+    "type": "SurfaceNode"
+  },
+  {
+    "id":"82769800-88cd-4f00-be4c-c7264cb6b38c",
+    "name": "LEO",
+    "description": "Low Earth Orbit",
+    "body_1": "Earth",
+    "apoapsis": 296,
+    "periapsis": 296,
+    "inclination": 28.5,
+    "type": "OrbitalNode"
+  },
+  {
+    "id":"5cac96b1-d24a-454d-bc15-b3bd7563946e",
+    "name": "LLPO",
+    "description": "Low Lunar Polar Orbit",
+    "body_1": "Moon",
+    "apoapsis": 100,
+    "periapsis": 100,
+    "inclination": 90,
+    "type": "OrbitalNode"
+  }
+]
