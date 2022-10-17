@@ -63,7 +63,7 @@ class InstCrewConsumablesDemandModel(InstMissionDemandModel):
     :param float eva_water_rate: rate (kg/person/hour) of water (generic COS 201) demands during extra-vehicular activity
     :param float food_support_rate: rate (kg/person/day) of food support equipment (generic COS 202) demands
     :param float ambient_food_rate: rate (kg/person/day) of ambient food (generic COS 202) demands
-    :param float rf_food_rate: rate (kg/person/day) of refrigerated food (generic COS 202) demands
+    :param float rf_food_rate: rate (kg/person/day) of RF food (generic COS 202) demands
     :param float oxygen_rate: rate (kg/person/day) of oxygen (generic COS 203) demands
     :param float eva_oxygen_rate: rate (kg/person/hour) of oxygen (generic COS 203) demands during extra-vehicular activity
     :param float nitrogen_rate: rate (kg/person/day) of nitrogen (generic COS 203) demands
@@ -118,7 +118,7 @@ class InstCrewConsumablesDemandModel(InstMissionDemandModel):
     )
     rf_food_rate: Optional[float] = Field(
         title="Rf Food Rate",
-        description="Rate (kg/person/day) of refrigerated food (generic COS 202) demands",
+        description="Rate (kg/person/day) of RF food (generic COS 202) demands",
     )
     oxygen_rate: Optional[float] = Field(
         title="Oxygen Rate",
