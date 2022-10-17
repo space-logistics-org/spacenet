@@ -72,7 +72,6 @@ def _parse_element(
     data: dict,
 ) -> Union[
     Element,
-    CargoCarrier,
     ResourceContainer,
     ElementCarrier,
     HumanAgent,
@@ -87,7 +86,7 @@ def _parse_element(
         data (dict): the element in dictionary format
 
     Returns:
-        Union[Element, CargoCarrier, ResourceContainer, ElementCarrier, HumanAgent, RoboticAgent, PropulsiveVehicle, SurfaceVehicle]: the element in SpaceNet format
+        Union[Element, ResourceContainer, ElementCarrier, HumanAgent, RoboticAgent, PropulsiveVehicle, SurfaceVehicle]: the element in SpaceNet format
     """
     # fix `current_state_index` null value
     if pd.isna(data["current_state_index"]):
@@ -95,7 +94,6 @@ def _parse_element(
     # loop through candidate model classes
     for model_cls in [
         Element,
-        CargoCarrier,
         ResourceContainer,
         ElementCarrier,
         HumanAgent,
@@ -155,7 +153,6 @@ class ModelDatabase(BaseModel):
     elements: List[
         Union[
             Element,
-            CargoCarrier,
             ResourceContainer,
             ElementCarrier,
             HumanAgent,
@@ -257,7 +254,8 @@ def load_db(file_name: str) -> ModelDatabase:
                     class_of_supply=-r.resource_id,
                     environment=Environment.Unpressurized,
                     amount=r.amount,
-                ) if pd.notna(r.amount)
+                )
+                if pd.notna(r.amount)
                 else GenericResourceAmountRate(
                     class_of_supply=-r.resource_id,
                     environment=Environment.Unpressurized,
@@ -317,8 +315,10 @@ def load_db(file_name: str) -> ModelDatabase:
         states["demand_models"] = (
             states.id.apply(
                 lambda i: [
-                    InstTimedImpulseDemandModel(name=m.name, template_id=m.id) if m.type==DemandModelType.TimedImpulse
-                    else InstRatedDemandModel(name=m.name, template_id=m.id) if m.type==DemandModelType.Rated
+                    InstTimedImpulseDemandModel(name=m.name, template_id=m.id)
+                    if m.type == DemandModelType.TimedImpulse
+                    else InstRatedDemandModel(name=m.name, template_id=m.id)
+                    if m.type == DemandModelType.Rated
                     else InstSparingByMassDemandModel(name=m.name, template_id=m.id)
                     for m in demand_models[demand_models.state_id == i].model.to_list()
                 ]
