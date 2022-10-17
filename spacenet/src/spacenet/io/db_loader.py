@@ -100,9 +100,7 @@ def _parse_element(data: dict) -> s.AllElements:
     raise ValueError("No valid element found for " + str(data))
 
 
-def _parse_demand_model(
-    data: dict,
-) -> s.AllElementDemandModels:
+def _parse_demand_model(data: dict,) -> s.AllElementDemandModels:
     """
     Helper function to manage demand model polymorphism.
 
@@ -130,16 +128,12 @@ class ModelDatabase(BaseModel):
     Database stores models for nodes, edges, resources, demand models, and elements.
     """
 
-    nodes: List[s.AllNodes] = Field(
-        [], description="List of nodes"
+    nodes: List[s.AllNodes] = Field([], description="List of nodes")
+    edges: List[s.AllEdges] = Field([], description="List of edges")
+    resources: List[s.AllResources] = Field([], description="List of resources")
+    demand_models: List[s.AllElementDemandModels] = Field(
+        [], description="List of demand models"
     )
-    edges: List[s.AllEdges] = Field(
-        [], description="List of edges"
-    )
-    resources: List[s.AllResources] = Field(
-        [], description="List of resources"
-    )
-    demand_models: List[s.AllElementDemandModels] = Field([], description="List of demand models")
     elements: List[s.AllElements] = Field([], description="List of elements")
 
 
@@ -361,13 +355,11 @@ def load_db(file_name: str) -> ModelDatabase:
         # add the `current_state_index` field
         elements["current_state_index"] = (
             elements.apply(
-                lambda r: np.where(
-                    states[states.element_id == r.id].initial_state
-                )[0][0]
+                lambda r: np.where(states[states.element_id == r.id].initial_state)[0][
+                    0
+                ]
                 if not (
-                    states[
-                        (states.element_id == r.id) & (states.initial_state)
-                    ].empty
+                    states[(states.element_id == r.id) & (states.initial_state)].empty
                 )
                 else None,
                 axis=1,
