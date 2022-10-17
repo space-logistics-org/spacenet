@@ -1,7 +1,7 @@
 from spacenet.schemas import *
 from datetime import datetime, timedelta, timezone
 
-from db_loader import load_db
+from spacenet.io import load_db
 
 db = load_db("quick_start_1.xlsx")
 

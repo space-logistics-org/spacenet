@@ -1,14 +1,16 @@
-from spacenet.schemas import *
-from pydantic import ValidationError
-from typing import Union, List
+"""Methods to load data from a spreadsheet (Excel) file database."""
 
-import pandas as pd
-import numpy as np
-from pydantic import BaseModel, Field
+from typing import List
 from datetime import timedelta
 
+import numpy as np
+import pandas as pd
+from pydantic import ValidationError, BaseModel, Field
 
-def _parse_node(data: dict) -> Union[SurfaceNode, OrbitalNode, LagrangeNode]:
+from .. import schemas as s
+
+
+def _parse_node(data: dict) -> s.AllNodes:
     """
     Helper function to manage node polymorphism.
 
@@ -16,18 +18,18 @@ def _parse_node(data: dict) -> Union[SurfaceNode, OrbitalNode, LagrangeNode]:
         data (dict): the node in dictionary format
 
     Returns:
-        Union[SurfaceNode, OrbitalNode, LagrangeNode]: the node in SpaceNet format
+        AllNodes: the node in SpaceNet format
     """
     # loop through candidate model classes
-    for model_cls in [SurfaceNode, OrbitalNode, LagrangeNode]:
+    for model_cls in [s.SurfaceNode, s.OrbitalNode, s.LagrangeNode]:
         try:
             return model_cls(**data)
-        except ValidationError as e:
+        except ValidationError:
             pass
     raise ValueError("No valid node type found")
 
 
-def _parse_edge(data: dict) -> Union[SurfaceEdge, SpaceEdge, FlightEdge]:
+def _parse_edge(data: dict) -> s.AllEdges:
     """
     Helper function to manage edge polymorphism.
 
@@ -35,18 +37,18 @@ def _parse_edge(data: dict) -> Union[SurfaceEdge, SpaceEdge, FlightEdge]:
         data (dict): the edge in dictionary format
 
     Returns:
-        Union[SurfaceEdge, SpaceEdge, FlightEdge]: the edge in SpaceNet format
+        AllEdges: the edge in SpaceNet format
     """
     # loop through candidate model classes
-    for model_cls in [SurfaceEdge, SpaceEdge, FlightEdge]:
+    for model_cls in [s.SurfaceEdge, s.SpaceEdge, s.FlightEdge]:
         try:
             return model_cls(**data)
-        except ValidationError as e:
+        except ValidationError:
             pass
     raise ValueError("No valid edge type found for " + str(data))
 
 
-def _parse_resource(data: dict) -> Union[ContinuousResource, DiscreteResource]:
+def _parse_resource(data: dict) -> s.AllResources:
     """
     Helper function to manage resource polymorphism.
 
@@ -54,31 +56,21 @@ def _parse_resource(data: dict) -> Union[ContinuousResource, DiscreteResource]:
         data (dict): the resource in dictionary format
 
     Returns:
-        Union[ContinuousResource, DiscreteResource]: the resource in SpaceNet format
+        AllResources: the resource in SpaceNet format
     """
     # fix `description` null value
     if pd.isna(data["description"]):
         data["description"] = None
     # loop through candidate model classes
-    for model_cls in [ContinuousResource, DiscreteResource]:
+    for model_cls in [s.ContinuousResource, s.DiscreteResource]:
         try:
             return model_cls(**data)
-        except ValidationError as e:
+        except ValidationError:
             pass
     raise ValueError("No valid resource found for " + str(data))
 
 
-def _parse_element(
-    data: dict,
-) -> Union[
-    Element,
-    ResourceContainer,
-    ElementCarrier,
-    HumanAgent,
-    RoboticAgent,
-    PropulsiveVehicle,
-    SurfaceVehicle,
-]:
+def _parse_element(data: dict) -> s.AllElements:
     """
     Helper function to manage element polymorphism.
 
@@ -86,31 +78,31 @@ def _parse_element(
         data (dict): the element in dictionary format
 
     Returns:
-        Union[Element, ResourceContainer, ElementCarrier, HumanAgent, RoboticAgent, PropulsiveVehicle, SurfaceVehicle]: the element in SpaceNet format
+        AllElements: the element in SpaceNet format
     """
     # fix `current_state_index` null value
     if pd.isna(data["current_state_index"]):
         data["current_state_index"] = None
     # loop through candidate model classes
     for model_cls in [
-        Element,
-        ResourceContainer,
-        ElementCarrier,
-        HumanAgent,
-        RoboticAgent,
-        PropulsiveVehicle,
-        SurfaceVehicle,
+        s.Element,
+        s.ResourceContainer,
+        s.ElementCarrier,
+        s.HumanAgent,
+        s.RoboticAgent,
+        s.PropulsiveVehicle,
+        s.SurfaceVehicle,
     ]:
         try:
             return model_cls(**data)
-        except ValidationError as e:
+        except ValidationError:
             pass
     raise ValueError("No valid element found for " + str(data))
 
 
 def _parse_demand_model(
     data: dict,
-) -> Union[TimedImpulseDemandModel, RatedDemandModel, SparingByMassDemandModel]:
+) -> s.AllElementDemandModels:
     """
     Helper function to manage demand model polymorphism.
 
@@ -118,17 +110,17 @@ def _parse_demand_model(
         data (dict): the demand model in dictionary format
 
     Returns:
-        Union[TimedImpulseDemandModel, RatedDemandModel, SparingByMassDemandModel]: the demand model in SpaceNet format
+        AllElementDemandModels: the demand model in SpaceNet format
     """
     # loop through candidate model classes
     for model_cls in [
-        TimedImpulseDemandModel,
-        RatedDemandModel,
-        SparingByMassDemandModel,
+        s.TimedImpulseDemandModel,
+        s.RatedDemandModel,
+        s.SparingByMassDemandModel,
     ]:
         try:
             return model_cls(**data)
-        except ValidationError as e:
+        except ValidationError:
             pass
     raise ValueError("No valid demand model found for " + str(data))
 
@@ -138,29 +130,17 @@ class ModelDatabase(BaseModel):
     Database stores models for nodes, edges, resources, demand models, and elements.
     """
 
-    nodes: List[Union[SurfaceNode, OrbitalNode, LagrangeNode]] = Field(
+    nodes: List[s.AllNodes] = Field(
         [], description="List of nodes"
     )
-    edges: List[Union[SurfaceEdge, SpaceEdge, FlightEdge]] = Field(
+    edges: List[s.AllEdges] = Field(
         [], description="List of edges"
     )
-    resources: List[Union[ContinuousResource, DiscreteResource]] = Field(
+    resources: List[s.AllResources] = Field(
         [], description="List of resources"
     )
-    demand_models: List[
-        Union[TimedImpulseDemandModel, RatedDemandModel, SparingByMassDemandModel]
-    ] = Field([], description="List of demand models")
-    elements: List[
-        Union[
-            Element,
-            ResourceContainer,
-            ElementCarrier,
-            HumanAgent,
-            RoboticAgent,
-            PropulsiveVehicle,
-            SurfaceVehicle,
-        ]
-    ] = Field([], description="List of elements")
+    demand_models: List[s.AllElementDemandModels] = Field([], description="List of demand models")
+    elements: List[s.AllElements] = Field([], description="List of elements")
 
 
 def load_db(file_name: str) -> ModelDatabase:
@@ -189,7 +169,7 @@ def load_db(file_name: str) -> ModelDatabase:
         # parse the burns
         burns["model"] = (
             burns.apply(
-                lambda r: Burn(time=timedelta(days=r.time), delta_v=r.delta_v), axis=1
+                lambda r: s.Burn(time=timedelta(days=r.time), delta_v=r.delta_v), axis=1
             )
             if not burns.empty
             else None
@@ -240,25 +220,25 @@ def load_db(file_name: str) -> ModelDatabase:
         # parse the demands
         demands["model"] = (
             demands.apply(
-                lambda r: ResourceAmount(
+                lambda r: s.ResourceAmount(
                     resource=resources[resources.id == r.resource_id].iloc[0].model.id,
                     amount=r.amount,
                 )
                 if r.resource_id > 0 and pd.notna(r.amount)
-                else ResourceAmountRate(
+                else s.ResourceAmountRate(
                     resource=resources[resources.id == r.resource_id].iloc[0].model.id,
                     rate=r.rate,
                 )
                 if r.resource_id > 0 and pd.notna(r.rate)
-                else GenericResourceAmount(
+                else s.GenericResourceAmount(
                     class_of_supply=-r.resource_id,
-                    environment=Environment.Unpressurized,
+                    environment=s.Environment.UNPRESSURIZED,
                     amount=r.amount,
                 )
                 if pd.notna(r.amount)
-                else GenericResourceAmountRate(
+                else s.GenericResourceAmountRate(
                     class_of_supply=-r.resource_id,
-                    environment=Environment.Unpressurized,
+                    environment=s.Environment.UNPRESSURIZED,
                     rate=r.rate,
                 ),
                 axis=1,
@@ -291,7 +271,7 @@ def load_db(file_name: str) -> ModelDatabase:
         # parse the parts
         parts["model"] = (
             parts.apply(
-                lambda r: Part(
+                lambda r: s.Part(
                     resource=resources[resources.id == r.resource_id].iloc[0].model.id,
                     mean_time_to_failure=timedelta(hours=float(r.mean_time_to_failure))
                     if r.mean_time_to_failure > 0
@@ -315,11 +295,11 @@ def load_db(file_name: str) -> ModelDatabase:
         states["demand_models"] = (
             states.id.apply(
                 lambda i: [
-                    InstTimedImpulseDemandModel(name=m.name, template_id=m.id)
-                    if m.type == DemandModelType.TimedImpulse
-                    else InstRatedDemandModel(name=m.name, template_id=m.id)
-                    if m.type == DemandModelType.Rated
-                    else InstSparingByMassDemandModel(name=m.name, template_id=m.id)
+                    s.InstTimedImpulseDemandModel(name=m.name, template_id=m.id)
+                    if m.type == s.DemandModelType.TIMED_IMPULSE
+                    else s.InstRatedDemandModel(name=m.name, template_id=m.id)
+                    if m.type == s.DemandModelType.RATED
+                    else s.InstSparingByMassDemandModel(name=m.name, template_id=m.id)
                     for m in demand_models[demand_models.state_id == i].model.to_list()
                 ]
             )
@@ -328,7 +308,7 @@ def load_db(file_name: str) -> ModelDatabase:
         )
         # parse the states, dropping the `id` field to generate a new uuid
         states["model"] = (
-            states.drop("id", axis=1).apply(lambda r: State(**r.to_dict()), axis=1)
+            states.drop("id", axis=1).apply(lambda r: s.State(**r.to_dict()), axis=1)
             if not states.empty
             else None
         )
@@ -338,14 +318,14 @@ def load_db(file_name: str) -> ModelDatabase:
         # parse the contents
         contents["model"] = (
             contents.apply(
-                lambda r: ResourceAmount(
+                lambda r: s.ResourceAmount(
                     resource=resources[resources.id == r.resource_id].iloc[0].model.id,
                     amount=r.amount,
                 )
                 if r.resource_id > 0
-                else GenericResourceAmount(
+                else s.GenericResourceAmount(
                     class_of_supply=-r.resource_id,
-                    environment=Environment.Unpressurized,
+                    environment=s.Environment.UNPRESSURIZED,
                     amount=r.amount,
                 ),
                 axis=1,
@@ -382,11 +362,11 @@ def load_db(file_name: str) -> ModelDatabase:
         elements["current_state_index"] = (
             elements.apply(
                 lambda r: np.where(
-                    states[states.element_id == r.id].initial_state == True
+                    states[states.element_id == r.id].initial_state
                 )[0][0]
                 if not (
                     states[
-                        (states.element_id == r.id) & (states.initial_state == True)
+                        (states.element_id == r.id) & (states.initial_state)
                     ].empty
                 )
                 else None,
@@ -400,14 +380,14 @@ def load_db(file_name: str) -> ModelDatabase:
         # add the `fuel` field
         elements["fuel"] = (
             elements.apply(
-                lambda r: ResourceAmount(
+                lambda r: s.ResourceAmount(
                     resource=resources[resources.id == r.fuel_id].iloc[0].model.id,
                     amount=r.max_fuel,
                 )
                 if pd.notna(r.fuel_id) and r.fuel_id > 0
-                else GenericResourceAmount(
+                else s.GenericResourceAmount(
                     class_of_supply=-r.fuel_id,
-                    environment=Environment.Unpressurized,
+                    environment=s.Environment.UNPRESSURIZED,
                     amount=r.max_fuel,
                 )
                 if pd.notna(r.fuel_id)

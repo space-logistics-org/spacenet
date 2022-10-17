@@ -1,6 +1,7 @@
 """Defines object schemas for demand models."""
 
 from .demand_model import (
+    DemandModelType,
     ElementDemandModelUUID,
     MissionDemandModelUUID,
     CrewConsumablesDemandModel,
