@@ -34,6 +34,16 @@ class CreateElements(Event):
         description="Node, edge, or instantiated carrier where the elements are to be created",
     )
 
+    def execute(self, state: State):
+        """Executes this event."""
+        container = state.get_location(container)
+        if container is None:
+            container = state.get_element(container)
+        if container is None:
+            raise RuntimeError()
+        for element in elements:
+            container.contents.append(element)
+
 
 class MoveElements(Event):
     """

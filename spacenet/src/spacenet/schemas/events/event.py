@@ -2,11 +2,13 @@
 
 from abc import ABC
 from datetime import timedelta
-from uuid import UUID
 from enum import Enum
+from uuid import UUID
 
 from pydantic import Field
 from fastapi_camelcase import CamelModel
+
+from ..simulation import state
 
 
 class EventType(str, Enum):
@@ -58,3 +60,7 @@ class Event(CamelModel, ABC):
     location: UUID = Field(
         ..., title="Location", description="Event location unique identifier"
     )
+
+    def execute(self, state: State):
+        """Stub for event behavior."""
+        pass
