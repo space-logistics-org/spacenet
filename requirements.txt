@@ -1,11 +1,7 @@
-pytest
-pytest-lazy-fixture
-hypothesis
-flake8
-pytest-env
-databases
-fastapi
-fastapi_users
-sqlalchemy
-deal
+docutils==0.17.1
+enum_tools
 fastapi-camelcase
+numpy
+openpyxl
+pandas
+pydantic

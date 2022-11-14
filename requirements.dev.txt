@@ -1,0 +1,13 @@
+autodoc_pydantic
+black
+coverage
+docutils==0.17.1
+enum_tools
+fastapi-camelcase
+numpy
+openpyxl
+pandas
+pydantic
+pylint-pydantic
+sphinx
+sphinx-rtd-theme
