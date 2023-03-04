@@ -13,4 +13,6 @@ sphinx:
 python:
    install:
      - method: pip
-       path: spacenet
+       path: .
+       extra_requirements:
+         - docs

@@ -1,7 +1,0 @@
-docutils==0.17.1
-enum_tools
-fastapi-camelcase
-numpy
-openpyxl
-pandas
-pydantic

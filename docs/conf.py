@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'SpaceNet'
-copyright = '2022, spacelogistics.org'
+copyright = '2023, spacelogistics.org'
 author = 'Paul Grogan, Sarah Bentley'
 
 import spacenet
@@ -31,7 +31,8 @@ release = spacenet.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'enum_tools.autoenum',
+    "enum_tools.autoenum",
+    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
@@ -58,8 +59,11 @@ napoleon_use_param = True
 napoleon_use_rtype = True
 autodoc_pydantic_model_show_json = True
 autodoc_pydantic_model_show_config = False
+autodoc_pydantic_model_show_config_summary = False
+autodoc_pydantic_model_show_field_summary = False
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
+    "typing_extensions": ("https://typing.readthedocs.io/en/latest/", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.

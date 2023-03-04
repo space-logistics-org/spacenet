@@ -8,6 +8,7 @@ Body
 ====
 
 .. autoenum:: spacenet.schemas.Body
+  :members:
 
 Surface Node
 ============
