@@ -2,10 +2,31 @@
 name = "spacenet-app"
 version = "3.0.0"
 description = "SpaceNet Application"
+requires-python = ">=3.6"
 authors = [
-  "Paul Grogan <pgrogan@stevens.edu>"
+  {name="Paul Grogan", email="paul@ptgrogan.com"}
+]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Programming Language :: Python"
 ]
 readme = "README.md"
+
+dependencies = [
+    "aiofiles",
+    "fastapi",
+    "pydantic",
+    "sqlalchemy>=1.4",
+    "uvicorn",
+    "requests",
+    "fastapi-users",
+    "databases[sqlite]",
+    "python-jose",
+    "passlib",
+    "python-multipart"
+]
+
+[project.urls]
 homepage = "https://github.com/space-logistics-org/spacenet"
 repository = "https://github.com/space-logistics-org/spacenet"
 documentation = "https://github.com/space-logistics-org/spacenet"

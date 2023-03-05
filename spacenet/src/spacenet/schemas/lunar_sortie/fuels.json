@@ -1,0 +1,32 @@
+[
+  {
+    "id": "edc088a0-773f-4dcb-8636-ee7d4ff5aa11",
+    "name": "PBAN Solid",
+    "description": "Solid rocket fuel",
+    "class_of_supply": 105,
+    "units": "kg",
+    "unit_mass": 1,
+    "unit_volume": 0,
+    "type": "Continuous"
+  },
+  {
+    "id": "e3403120-8b37-422e-9bc4-5f302baebb76",
+    "name": "LH2/LOX",
+    "description": "Liquid oxygen / liquid hydrogen cryogenic fuel",
+    "class_of_supply": 101,
+    "units": "kg",
+    "unit_mass": 1,
+    "unit_volume": 0,
+    "type": "Continuous"
+  },
+  {
+    "id": "0ca6c983-f086-4737-be62-d3a0e13cf5c7",
+    "name": "MMH/N2O4",
+    "description": "Hypergolic fuel",
+    "class_of_supply": 102,
+    "units": "kg",
+    "unit_mass": 1,
+    "unit_volume": 0,
+    "type": "Continuous"
+  }
+]

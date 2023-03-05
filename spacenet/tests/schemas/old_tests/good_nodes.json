@@ -1,0 +1,151 @@
+[
+  {
+    "type": "OrbitalNode",
+    "name": "ISSO",
+    "body_1": "Earth",
+    "apoapsis": 360.0,
+    "periapsis": 347.0,
+    "inclination": 51.6,
+    "description": "International Space Station Orbit"
+  },
+  {
+    "type": "OrbitalNode",
+    "name": "LLPO",
+    "body_1": "Moon",
+    "apoapsis": 100.0,
+    "periapsis": 100.0,
+    "inclination": 90.0,
+    "description": "Low Lunar Polar Orbit"
+  },
+  {
+    "type": "OrbitalNode",
+    "name": "LEO",
+    "body_1": "Earth",
+    "apoapsis": 166.7,
+    "periapsis": 166.7,
+    "inclination": 38.0,
+    "description": "Low Earth Parking Orbit"
+  },
+  {
+    "type": "OrbitalNode",
+    "name": "RMO",
+    "body_1": "Mars",
+    "apoapsis": 250.0,
+    "periapsis": 33793.0,
+    "inclination": 70.0,
+    "description": "Reference Mars Orbit"
+  },
+  {
+    "type": "OrbitalNode",
+    "name": "AO10",
+    "body_1": "Sun",
+    "apoapsis": 151093980.0,
+    "periapsis": 121174380.0,
+    "inclination": 2.62,
+    "description": "Near-Earth Object 1999 AO10"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "KSC",
+    "body_1": "Earth",
+    "latitude": 28.6,
+    "longitude": -80.6,
+    "description": "Kennedy Space Center"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "TSC",
+    "body_1": "Earth",
+    "latitude": 30.4,
+    "longitude": 131.0,
+    "description": "Tanegashima"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "LSP",
+    "body_1": "Moon",
+    "latitude": -89.9,
+    "longitude": -180.0,
+    "description": "Lunar South Pole"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "MH",
+    "body_1": "Moon",
+    "latitude": 14.0,
+    "longitude": -56.0,
+    "description": "Marius Hills"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "MV",
+    "body_1": "Mars",
+    "latitude": 24.0,
+    "longitude": 19.0,
+    "description": "Mawrth Vallis"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "GC",
+    "body_1": "Mars",
+    "latitude": -4.6,
+    "longitude": 137.2,
+    "description": "Gale Crater"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "SL1",
+    "body_1": "Moon",
+    "latitude": -65.0,
+    "longitude": -180.0,
+    "description": "placeholder"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "SL2",
+    "body_1": "Moon",
+    "latitude": -55.0,
+    "longitude": 110.0,
+    "description": "placeholder"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "SL3",
+    "body_1": "Moon",
+    "latitude": -60.0,
+    "longitude": 70.0,
+    "description": "placeholder"
+  },
+  {
+    "type": "SurfaceNode",
+    "name": "MC",
+    "body_1": "Moon",
+    "latitude": -84.9,
+    "longitude": 12.9,
+    "description": "Malapert Crater"
+  },
+  {
+    "type": "LagrangeNode",
+    "name": "E2",
+    "body_1": "Earth",
+    "body_2": "Sun",
+    "lp_number": 2,
+    "description": "Earth-Sun Lagrange 2"
+  },
+  {
+    "type": "LagrangeNode",
+    "name": "MN4",
+    "body_1": "Moon",
+    "body_2": "Earth",
+    "lp_number": 4,
+    "description": "Moon-Earth Lagrange 4"
+  },
+  {
+    "type": "LagrangeNode",
+    "name": "MS5",
+    "body_1": "Mars",
+    "body_2": "Sun",
+    "lp_number": 5,
+    "description": "Mars-Sun Lagrange 5"
+  }
+]
