@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from fastapi import Depends, FastAPI
 from starlette.responses import RedirectResponse
 
+import spacenet
+
 from .utils.db import User, create_db_and_tables
 from .utils.schemas import UserCreate, UserRead, UserUpdate
 from .utils.users import (
@@ -20,7 +22,7 @@ load_dotenv()
 ADMIN_EMAIL = os.getenv("SPACENET_ADMIN_EMAIL", "admin@example.com")
 ADMIN_PASSWORD = os.getenv("SPACENET_ADMIN_PASSWORD", "admin")
 
-app = FastAPI()
+app = FastAPI(title="SpaceNet App", version=spacenet.__version__)
 
 app.include_router(
     fastapi_users.get_auth_router(cookie_backend), prefix="", tags=["auth"]
