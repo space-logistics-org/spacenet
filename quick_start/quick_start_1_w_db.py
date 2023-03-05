@@ -3,7 +3,8 @@ from datetime import datetime, timedelta, timezone
 from spacenet.io import load_db
 from spacenet.schemas import *
 
-db = load_db("quick_start_1.xlsx")
+with open("quick_start_1.xlsx", "rb") as db_file:
+    db = load_db(db_file)
 
 ##########################################
 # INSTANTIATED ELEMENTS
