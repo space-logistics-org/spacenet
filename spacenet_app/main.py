@@ -13,6 +13,7 @@ from .utils.users import (
     fastapi_users,
     jwt_backend,
 )
+from .validation import router as validation_router
 
 load_dotenv()
 ADMIN_EMAIL = os.getenv("SPACENET_ADMIN_EMAIL", "admin@example.com")
@@ -36,6 +37,11 @@ app.include_router(
     fastapi_users.get_users_router(UserRead, UserUpdate),
     prefix="/users",
     tags=["users"],
+)
+app.include_router(
+    validation_router,
+    prefix="/validation",
+    tags=["validation"]
 )
 
 
