@@ -1,0 +1,840 @@
+{
+  "name": "Quick Start Scenario 2",
+  "createdBy": "SpaceNet User",
+  "description": "A sample scenario analyzing the feasibility of a lunar outpost.",
+  "startDate": "2019-07-01T04:00:00+00:00",
+  "scenarioType": "Lunar",
+  "network": {
+    "nodes": [
+      {
+        "id": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+        "name": "KSC",
+        "description": "Kennedy Space Center",
+        "contents": [],
+        "type": "Surface Node",
+        "body1": "Earth",
+        "latitude": 28.6,
+        "longitude": -80.6
+      },
+      {
+        "id": "0b5edc50-7da3-4736-a6f8-5c2ef7124bce",
+        "name": "PAC",
+        "description": "Pacific Ocean Splash-down",
+        "contents": [],
+        "type": "Surface Node",
+        "body1": "Earth",
+        "latitude": 35.0,
+        "longitude": -117.9
+      },
+      {
+        "id": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+        "name": "LSP",
+        "description": "Lunar South Pole",
+        "contents": [],
+        "type": "Surface Node",
+        "body1": "Moon",
+        "latitude": -89.9,
+        "longitude": -180.0
+      }
+    ],
+    "edges": [
+      {
+        "id": "cfc32b0e-57eb-48ca-9bb8-fab6bb24c569",
+        "name": "Crewed Delivery",
+        "description": "Crewed Delivery Flight",
+        "contents": [],
+        "type": "Flight Edge",
+        "origin": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+        "destination": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+        "duration": 648000.0,
+        "maxCrew": 4,
+        "maxCargo": 15500.0
+      },
+      {
+        "id": "6c0118c3-5ef7-45c2-9226-c5b5ca618c11",
+        "name": "Crewed Return",
+        "description": "Crewed Return Flight",
+        "contents": [],
+        "type": "Flight Edge",
+        "origin": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+        "destination": "0b5edc50-7da3-4736-a6f8-5c2ef7124bce",
+        "duration": 475200.0,
+        "maxCrew": 4,
+        "maxCargo": 3500.0
+      },
+      {
+        "id": "30037bce-f8b4-4031-8b35-8e352ffaa5df",
+        "name": "Cargo Delivery",
+        "description": "Cargo Delivery Flight",
+        "contents": [],
+        "type": "Flight Edge",
+        "origin": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+        "destination": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+        "duration": 648000.0,
+        "maxCrew": 0,
+        "maxCargo": 13000.0
+      }
+    ]
+  },
+  "missionList": [
+    {
+      "name": "Automated Check-out Mission",
+      "startDate": "2019-07-01T04:00:00+00:00",
+      "events": [
+        {
+          "name": "Autom | Create Elements",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "elements": [
+            "e77f6698-0521-4ac6-ab07-3de606e83498",
+            "bdcf1bcd-93a5-45b3-ae56-6fc405096a46"
+          ],
+          "container": "6bb093e7-ff42-499b-a75b-d9ee397366b9"
+        },
+        {
+          "name": "Autom | Flight Transport",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "edge": "cfc32b0e-57eb-48ca-9bb8-fab6bb24c569",
+          "elements": [
+            "e77f6698-0521-4ac6-ab07-3de606e83498",
+            "bdcf1bcd-93a5-45b3-ae56-6fc405096a46"
+          ]
+        }
+      ],
+      "demandModels": [],
+      "origin": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+      "destination": "cc15b16a-b640-4342-8a55-d1472bc89fb6"
+    },
+    {
+      "name": "7-Day Surface Exploration",
+      "startDate": "2019-12-01T04:00:00+00:00",
+      "events": [
+        {
+          "name": "7-Day | Create Elements",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "elements": [
+            "da08d962-c968-4a39-9d44-39bdd9f6938f",
+            "89fad67e-a18e-468b-9a38-910ff682639f"
+          ],
+          "container": "6bb093e7-ff42-499b-a75b-d9ee397366b9"
+        },
+        {
+          "name": "7-Day | Create Elements",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "elements": [
+            "830ebc6f-7ba2-460b-a462-00953314589f",
+            "1732138c-3607-4904-b115-c6dbe64d5c34",
+            "d2b7991e-d3a6-4cf8-aab3-8978a4f114b3",
+            "93997f61-e67e-400c-a99b-7c8fd329dbe3"
+          ],
+          "container": "da08d962-c968-4a39-9d44-39bdd9f6938f"
+        },
+        {
+          "name": "7-Day | Flight Transport",
+          "type": "Flight Transport",
+          "priority": 3,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "edge": "cfc32b0e-57eb-48ca-9bb8-fab6bb24c569",
+          "elements": [
+            "da08d962-c968-4a39-9d44-39bdd9f6938f",
+            "89fad67e-a18e-468b-9a38-910ff682639f"
+          ]
+        },
+        {
+          "name": "7-Day | Crewed Exploration",
+          "type": "Crewed Exploration",
+          "priority": 1,
+          "missionTime": 648000.0,
+          "location": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+          "evaDuration": 28800.0,
+          "duration": 604800.0,
+          "vehicle": "da08d962-c968-4a39-9d44-39bdd9f6938f",
+          "evaPerWeek": 5,
+          "elementStates": [
+            {
+              "element": "830ebc6f-7ba2-460b-a462-00953314589f",
+              "stateIndex": -1
+            },
+            {
+              "element": "1732138c-3607-4904-b115-c6dbe64d5c34",
+              "stateIndex": -1
+            }
+          ],
+          "additionalDemands": []
+        },
+        {
+          "name": "7-Day | Move Elements",
+          "type": "Move Elements",
+          "priority": 1,
+          "missionTime": 1252800.0,
+          "location": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+          "elements": [
+            "830ebc6f-7ba2-460b-a462-00953314589f",
+            "1732138c-3607-4904-b115-c6dbe64d5c34",
+            "d2b7991e-d3a6-4cf8-aab3-8978a4f114b3",
+            "93997f61-e67e-400c-a99b-7c8fd329dbe3"
+          ],
+          "container": "89fad67e-a18e-468b-9a38-910ff682639f"
+        },
+        {
+          "name": "7-Day | Flight Transport",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": 1252800.0,
+          "location": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+          "edge": "6c0118c3-5ef7-45c2-9226-c5b5ca618c11",
+          "elements": [
+            "89fad67e-a18e-468b-9a38-910ff682639f"
+          ]
+        },
+        {
+          "name": "7-Day | Remove Elements",
+          "type": "Remove Elements",
+          "priority": 1,
+          "missionTime": 1728000.0,
+          "location": "0b5edc50-7da3-4736-a6f8-5c2ef7124bce",
+          "elements": [
+            "89fad67e-a18e-468b-9a38-910ff682639f"
+          ]
+        }
+      ],
+      "demandModels": [
+        {
+          "name": "Crew Consumables Demand Model",
+          "type": "Crew Consumables",
+          "templateId": "54e63476-3bce-4be4-9be4-b677f1f0a91a"
+        }
+      ],
+      "origin": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+      "destination": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+      "returnOrigin": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+      "returnDestination": "0b5edc50-7da3-4736-a6f8-5c2ef7124bce"
+    },
+    {
+      "name": "Habitat Delivery",
+      "startDate": "2020-03-01T04:00:00+00:00",
+      "events": [
+        {
+          "name": "Habit | Create Elements",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "elements": [
+            "83e83b90-0961-4167-b4dd-b5b36ee2cfb1"
+          ],
+          "container": "6bb093e7-ff42-499b-a75b-d9ee397366b9"
+        },
+        {
+          "name": "Habit | Create Elements",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "elements": [
+            "11cb25ec-975a-47a4-8574-5f48c717d668",
+            "887a2b03-12d2-4710-8a3d-666ff588a302"
+          ],
+          "container": "83e83b90-0961-4167-b4dd-b5b36ee2cfb1"
+        },
+        {
+          "name": "Habit | Flight Transport",
+          "type": "Flight Transport",
+          "priority": 3,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "edge": "30037bce-f8b4-4031-8b35-8e352ffaa5df",
+          "elements": [
+            "83e83b90-0961-4167-b4dd-b5b36ee2cfb1"
+          ]
+        }
+      ],
+      "demandModels": [],
+      "origin": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+      "destination": "cc15b16a-b640-4342-8a55-d1472bc89fb6"
+    },
+    {
+      "name": "14-Day Surface Exploration",
+      "startDate": "2020-07-01T04:00:00+00:00",
+      "events": [
+        {
+          "name": "14-Da | Create Elements",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "elements": [
+            "fdf86bc1-73fa-48e6-8a98-cb828d396ffe",
+            "cec27eea-1442-468a-b693-0f836bdf20d7"
+          ],
+          "container": "6bb093e7-ff42-499b-a75b-d9ee397366b9"
+        },
+        {
+          "name": "14-Da | Create Elements",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "elements": [
+            "e59d1d9d-0a3c-4f07-99bc-6ae88273ee0e",
+            "78148ad2-5832-4699-a9e7-734426c6c809",
+            "e45529ce-e833-4aa0-8079-6e0ba012e312",
+            "825c103e-4886-45af-a944-4e43557510e2"
+          ],
+          "container": "fdf86bc1-73fa-48e6-8a98-cb828d396ffe"
+        },
+        {
+          "name": "14-Da | Flight Transport",
+          "type": "Flight Transport",
+          "priority": 3,
+          "missionTime": 0.0,
+          "location": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+          "edge": "cfc32b0e-57eb-48ca-9bb8-fab6bb24c569",
+          "elements": [
+            "fdf86bc1-73fa-48e6-8a98-cb828d396ffe",
+            "cec27eea-1442-468a-b693-0f836bdf20d7"
+          ]
+        },
+        {
+          "name": "14-Da | Move Elements",
+          "type": "Move Elements",
+          "priority": 1,
+          "missionTime": 648000.0,
+          "location": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+          "elements": [
+            "e59d1d9d-0a3c-4f07-99bc-6ae88273ee0e",
+            "78148ad2-5832-4699-a9e7-734426c6c809",
+            "e45529ce-e833-4aa0-8079-6e0ba012e312",
+            "825c103e-4886-45af-a944-4e43557510e2"
+          ],
+          "container": "11cb25ec-975a-47a4-8574-5f48c717d668"
+        },
+        {
+          "name": "14-Da | Reconfigure Group",
+          "type": "Reconfigure Elements",
+          "priority": 2,
+          "missionTime": 648000.0,
+          "location": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+          "elements": [
+            "11cb25ec-975a-47a4-8574-5f48c717d668",
+            "887a2b03-12d2-4710-8a3d-666ff588a302"
+          ],
+          "stateType": "Active"
+        },
+        {
+          "name": "14-Da | Crewed Exploration",
+          "type": "Crewed Exploration",
+          "priority": 3,
+          "missionTime": 648000.0,
+          "location": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+          "evaDuration": 28800.0,
+          "duration": 1209600.0,
+          "vehicle": "11cb25ec-975a-47a4-8574-5f48c717d668",
+          "evaPerWeek": 5,
+          "elementStates": [
+            {
+              "element": "e59d1d9d-0a3c-4f07-99bc-6ae88273ee0e",
+              "stateIndex": -1
+            },
+            {
+              "element": "78148ad2-5832-4699-a9e7-734426c6c809",
+              "stateIndex": -1
+            }
+          ],
+          "additionalDemands": []
+        },
+        {
+          "name": "14-Da | Move Elements",
+          "type": "Move Elements",
+          "priority": 1,
+          "missionTime": 1857600.0,
+          "location": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+          "elements": [
+            "e59d1d9d-0a3c-4f07-99bc-6ae88273ee0e",
+            "78148ad2-5832-4699-a9e7-734426c6c809",
+            "e45529ce-e833-4aa0-8079-6e0ba012e312",
+            "825c103e-4886-45af-a944-4e43557510e2"
+          ],
+          "container": "cec27eea-1442-468a-b693-0f836bdf20d7"
+        },
+        {
+          "name": "14-Da | Reconfigure Group",
+          "type": "Reconfigure Elements",
+          "priority": 2,
+          "missionTime": 1857600.0,
+          "location": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+          "elements": [
+            "11cb25ec-975a-47a4-8574-5f48c717d668",
+            "887a2b03-12d2-4710-8a3d-666ff588a302"
+          ],
+          "stateType": "Dormant"
+        },
+        {
+          "name": "14-Da | Flight Transport",
+          "type": "Flight Transport",
+          "priority": 3,
+          "missionTime": 1857600.0,
+          "location": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+          "edge": "6c0118c3-5ef7-45c2-9226-c5b5ca618c11",
+          "elements": [
+            "cec27eea-1442-468a-b693-0f836bdf20d7"
+          ]
+        },
+        {
+          "name": "14-Da | Remove Elements",
+          "type": "Remove Elements",
+          "priority": 1,
+          "missionTime": 2332800.0,
+          "location": "0b5edc50-7da3-4736-a6f8-5c2ef7124bce",
+          "elements": [
+            "cec27eea-1442-468a-b693-0f836bdf20d7"
+          ]
+        }
+      ],
+      "demandModels": [
+        {
+          "name": "Crew Consumables Demand Model",
+          "type": "Crew Consumables",
+          "templateId": "54e63476-3bce-4be4-9be4-b677f1f0a91a"
+        }
+      ],
+      "origin": "6bb093e7-ff42-499b-a75b-d9ee397366b9",
+      "destination": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+      "returnOrigin": "cc15b16a-b640-4342-8a55-d1472bc89fb6",
+      "returnDestination": "0b5edc50-7da3-4736-a6f8-5c2ef7124bce"
+    }
+  ],
+  "elementTemplates": [
+    {
+      "id": "a0ce5d81-0a32-4714-92cf-8ee116b51d75",
+      "name": "Crewed Lander",
+      "type": "Element Carrier",
+      "description": "Abstracted lander for delivering crew to the lunar surface",
+      "classOfSupply": 9021,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 12000.0,
+      "volume": 0.0,
+      "states": [
+        {
+          "id": "22dd157d-6536-450d-9e03-81d7251f4e0a",
+          "name": "Crew Lander Active",
+          "type": "Active",
+          "demandModels": []
+        },
+        {
+          "id": "a11db2a5-dc0b-40b4-b010-d9a71e68d43f",
+          "name": "Crew Lander Decommissioned",
+          "type": "Decommissioned",
+          "demandModels": []
+        }
+      ],
+      "currentStateIndex": 0,
+      "parts": [],
+      "maxCargoMass": 400.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 4
+    },
+    {
+      "id": "413329b4-cec3-4d00-8edd-18e3e600d0bd",
+      "name": "Crewed Return Capsule",
+      "type": "Element Carrier",
+      "description": "Abstracted return capsule for returning crew to Earth",
+      "classOfSupply": 9022,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 3000.0,
+      "volume": 0.0,
+      "states": [
+        {
+          "id": "7e53d748-76ba-443d-9ec2-e04236e213c5",
+          "name": "Crew Return Dormant",
+          "type": "Dormant",
+          "demandModels": []
+        },
+        {
+          "id": "26a9f602-a517-4854-9262-1b2bf755d3b7",
+          "name": "Crew Return Active",
+          "type": "Active",
+          "demandModels": []
+        }
+      ],
+      "currentStateIndex": 0,
+      "parts": [],
+      "maxCargoMass": 100.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 4
+    },
+    {
+      "id": "0a5326a7-cca7-4bfe-8c44-e1d7e023298e",
+      "name": "Cargo Lander",
+      "type": "Element Carrier",
+      "description": "Abstracted lander for delivering cargo to the lunar surface",
+      "classOfSupply": 9021,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 1000.0,
+      "volume": 0.0,
+      "states": [
+        {
+          "id": "fc54415e-38a3-4d8b-81bb-5c1b26e6defc",
+          "name": "Cargo Lander Active",
+          "type": "Active",
+          "demandModels": []
+        },
+        {
+          "id": "b10cd954-49f1-428f-8f14-07e74a639684",
+          "name": "Cargo Lander Decommissioned",
+          "type": "Decommissioned",
+          "demandModels": []
+        }
+      ],
+      "currentStateIndex": 0,
+      "parts": [],
+      "maxCargoMass": 12000.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0
+    },
+    {
+      "id": "7f31748d-b14b-4453-99e2-bff0b3c6787c",
+      "name": "Crew Member",
+      "type": "Human Agent",
+      "description": "Crew member",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 100.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "activeTimeFraction": 0.66
+    },
+    {
+      "id": "e97bd09b-80d2-4554-9b0d-c4a20ad79fd1",
+      "name": "Crew Habitat",
+      "type": "Element Carrier",
+      "description": "Lunar crew habitat",
+      "classOfSupply": 801,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 7500.0,
+      "volume": 0.0,
+      "states": [
+        {
+          "id": "4773d2d6-db33-4d15-9097-2f77ad8808fa",
+          "name": "Habitat Dormant",
+          "type": "Dormant",
+          "demandModels": []
+        },
+        {
+          "id": "c144c444-1084-4adc-bc21-b71f5cd14a98",
+          "name": "Habitat Active",
+          "type": "Active",
+          "demandModels": [
+            {
+              "name": "Habitat Sparing by Mass",
+              "type": "Sparing By Mass",
+              "templateId": "685493c9-5773-47fd-8ef7-a7d949966c6e"
+            }
+          ]
+        }
+      ],
+      "currentStateIndex": 0,
+      "parts": [
+        {
+          "resource": "ee0a903c-88f3-4877-a1d5-13d0e7f3ef18",
+          "massToRepair": 0.0,
+          "quantity": 5.0,
+          "dutyCycle": 1.0
+        }
+      ],
+      "maxCargoMass": 1500.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 4
+    },
+    {
+      "id": "878a9c78-0f14-4d6a-a73b-15b6e4011fde",
+      "name": "Power Supply Unit",
+      "type": "Element",
+      "description": "An element to provide the habitat with power",
+      "classOfSupply": 803,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 2500.0,
+      "volume": 0.0,
+      "states": [
+        {
+          "id": "b1b3f30b-ee50-4b4a-90e6-2a43c11412f8",
+          "name": "Power Supply Dormant",
+          "type": "Dormant",
+          "demandModels": []
+        },
+        {
+          "id": "78be7565-e41b-41e1-925f-92ef9ec32ef0",
+          "name": "Power Supply Active",
+          "type": "Active",
+          "demandModels": [
+            {
+              "name": "Power Supply Sparing by Mass",
+              "type": "Sparing By Mass",
+              "templateId": "0c35de09-07d5-4d3e-a564-b2933a8536ab"
+            }
+          ]
+        }
+      ],
+      "currentStateIndex": 0,
+      "parts": [
+        {
+          "resource": "46df486c-5281-4d3d-9525-09d812dd4e67",
+          "meanTimeToRepair": 7200.0,
+          "massToRepair": 0.0,
+          "quantity": 3.0,
+          "dutyCycle": 1.0
+        }
+      ]
+    }
+  ],
+  "instantiatedElements": [
+    {
+      "id": "e77f6698-0521-4ac6-ab07-3de606e83498",
+      "type": "Element Carrier",
+      "templateId": "a0ce5d81-0a32-4714-92cf-8ee116b51d75",
+      "name": "Autom | Crewed Lander",
+      "contents": []
+    },
+    {
+      "id": "bdcf1bcd-93a5-45b3-ae56-6fc405096a46",
+      "type": "Element Carrier",
+      "templateId": "413329b4-cec3-4d00-8edd-18e3e600d0bd",
+      "name": "Autom | Crewed Return Capsule",
+      "contents": []
+    },
+    {
+      "id": "da08d962-c968-4a39-9d44-39bdd9f6938f",
+      "type": "Element Carrier",
+      "templateId": "a0ce5d81-0a32-4714-92cf-8ee116b51d75",
+      "name": "7-Day | Crewed Lander",
+      "contents": []
+    },
+    {
+      "id": "89fad67e-a18e-468b-9a38-910ff682639f",
+      "type": "Element Carrier",
+      "templateId": "413329b4-cec3-4d00-8edd-18e3e600d0bd",
+      "name": "7-Day | Crewed Return Capsule",
+      "contents": []
+    },
+    {
+      "id": "830ebc6f-7ba2-460b-a462-00953314589f",
+      "type": "Human Agent",
+      "templateId": "7f31748d-b14b-4453-99e2-bff0b3c6787c",
+      "name": "7-Day | Crew Member A"
+    },
+    {
+      "id": "1732138c-3607-4904-b115-c6dbe64d5c34",
+      "type": "Human Agent",
+      "templateId": "7f31748d-b14b-4453-99e2-bff0b3c6787c",
+      "name": "7-Day | Crew Member B"
+    },
+    {
+      "id": "d2b7991e-d3a6-4cf8-aab3-8978a4f114b3",
+      "type": "Human Agent",
+      "templateId": "7f31748d-b14b-4453-99e2-bff0b3c6787c",
+      "name": "7-Day | Crew Member C"
+    },
+    {
+      "id": "93997f61-e67e-400c-a99b-7c8fd329dbe3",
+      "type": "Human Agent",
+      "templateId": "7f31748d-b14b-4453-99e2-bff0b3c6787c",
+      "name": "7-Day | Crew Member D"
+    },
+    {
+      "id": "83e83b90-0961-4167-b4dd-b5b36ee2cfb1",
+      "type": "Element Carrier",
+      "templateId": "0a5326a7-cca7-4bfe-8c44-e1d7e023298e",
+      "name": "Habitat | Cargo Lander",
+      "contents": []
+    },
+    {
+      "id": "11cb25ec-975a-47a4-8574-5f48c717d668",
+      "type": "Element Carrier",
+      "templateId": "e97bd09b-80d2-4554-9b0d-c4a20ad79fd1",
+      "name": "Habitat | Crew Habitat",
+      "contents": []
+    },
+    {
+      "id": "887a2b03-12d2-4710-8a3d-666ff588a302",
+      "type": "Element",
+      "templateId": "878a9c78-0f14-4d6a-a73b-15b6e4011fde",
+      "name": "Habitat | Power Supply Unit"
+    },
+    {
+      "id": "fdf86bc1-73fa-48e6-8a98-cb828d396ffe",
+      "type": "Element Carrier",
+      "templateId": "a0ce5d81-0a32-4714-92cf-8ee116b51d75",
+      "name": "14-Da | Crewed Lander",
+      "contents": []
+    },
+    {
+      "id": "cec27eea-1442-468a-b693-0f836bdf20d7",
+      "type": "Element Carrier",
+      "templateId": "413329b4-cec3-4d00-8edd-18e3e600d0bd",
+      "name": "14-Da | Crewed Return Capsule",
+      "contents": []
+    },
+    {
+      "id": "e59d1d9d-0a3c-4f07-99bc-6ae88273ee0e",
+      "type": "Human Agent",
+      "templateId": "7f31748d-b14b-4453-99e2-bff0b3c6787c",
+      "name": "14-Da | Crew Member A"
+    },
+    {
+      "id": "78148ad2-5832-4699-a9e7-734426c6c809",
+      "type": "Human Agent",
+      "templateId": "7f31748d-b14b-4453-99e2-bff0b3c6787c",
+      "name": "14-Da | Crew Member B"
+    },
+    {
+      "id": "e45529ce-e833-4aa0-8079-6e0ba012e312",
+      "type": "Human Agent",
+      "templateId": "7f31748d-b14b-4453-99e2-bff0b3c6787c",
+      "name": "14-Da | Crew Member C"
+    },
+    {
+      "id": "825c103e-4886-45af-a944-4e43557510e2",
+      "type": "Human Agent",
+      "templateId": "7f31748d-b14b-4453-99e2-bff0b3c6787c",
+      "name": "14-Da | Crew Member D"
+    }
+  ],
+  "demandModels": [
+    {
+      "id": "54e63476-3bce-4be4-9be4-b677f1f0a91a",
+      "name": "Crew Consumables Demand Model",
+      "type": "Crew Consumables",
+      "reservesDuration": 0.0,
+      "waterRecoveryRate": 0.42,
+      "clothingLifetime": 4.0,
+      "transitDemandsOmitted": true,
+      "waterRate": 3.6,
+      "evaWaterRate": 0.6875,
+      "foodSupportRate": 0.05556,
+      "ambientFoodRate": 0.76389,
+      "rfFoodRate": 1.61667,
+      "oxygenRate": 3.85714,
+      "evaOxygenRate": 0.07875,
+      "nitrogenRate": 2.21429,
+      "hygieneRate": 0.27778,
+      "hygieneKit": 1.8,
+      "clothingRate": 2.3,
+      "personalItems": 10,
+      "officeEquipment": 5,
+      "evaSuit": 107,
+      "evaLithiumHydroxide": 0.3625,
+      "healthEquipment": 20,
+      "healthConsumables": 0.1,
+      "safetyEquipment": 25,
+      "commEquipment": 20,
+      "computerEquipment": 5,
+      "trashBagRate": 0.05,
+      "wasteContainmentRate": 0.05
+    },
+    {
+      "id": "685493c9-5773-47fd-8ef7-a7d949966c6e",
+      "name": "Habitat Sparing by Mass",
+      "type": "Sparing By Mass",
+      "unpressurizedSparesRate": 0.01,
+      "pressurizedSparesRate": 0.04,
+      "partsListEnabled": false
+    },
+    {
+      "id": "0c35de09-07d5-4d3e-a564-b2933a8536ab",
+      "name": "Power Supply Sparing by Mass",
+      "type": "Sparing By Mass",
+      "unpressurizedSparesRate": 0.05,
+      "pressurizedSparesRate": 0.0,
+      "partsListEnabled": false
+    }
+  ],
+  "resourceList": [
+    {
+      "id": "ee0a903c-88f3-4877-a1d5-13d0e7f3ef18",
+      "name": "Habitat Spare",
+      "classOfSupply": 401,
+      "environment": "Pressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "unitMass": 10.0,
+      "unitVolume": 0.0,
+      "type": "Discrete"
+    },
+    {
+      "id": "46df486c-5281-4d3d-9525-09d812dd4e67",
+      "name": "Power Supply Spare",
+      "classOfSupply": 401,
+      "environment": "Unpressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "unitMass": 10.0,
+      "unitVolume": 0.0,
+      "type": "Discrete"
+    }
+  ],
+  "manifest": {},
+  "configuration": {
+    "timePrecision": 0.05,
+    "demandPrecision": 0.01,
+    "massPrecision": 0.01,
+    "volumePrecision": 1e-06,
+    "volumeConstrained": false,
+    "itemDiscretization": "None",
+    "itemAggregation": 0.0,
+    "environmentConstrained": true,
+    "scavengeSpares": false,
+    "detailedEva": true,
+    "detailedExploration": true,
+    "genericPackingFactorGas": 1.0,
+    "genericPackingFactorLiquid": 0.5,
+    "genericPackingFactorPressurized": 0.2,
+    "genericPackingFactorUnpressurized": 0.6,
+    "smallGasTankMass": 10.8,
+    "smallGasTankVolume": 0.275,
+    "smallGasTankMaxMass": 10.0,
+    "smallGasTTankMaxVolume": 0.275,
+    "largeGasTankMass": 108.0,
+    "largeGasTankVolume": 2.75,
+    "largeGasTankMaxMass": 100.0,
+    "largeGasTankMaxVolume": 2.75,
+    "smallLiquidTTankMass": 11.4567,
+    "smallLiquidTankVolume": 0.0249,
+    "smallLiquidTankMaxMass": 24.9333,
+    "smallLiquidTankMaxVolume": 0.0249,
+    "largeLiquidTankMass": 34.37,
+    "largeLiquidTankVolume": 0.0748,
+    "largeLiquidTankMaxMass": 74.8,
+    "largeLiquidTankMaxVolume": 0.0748,
+    "cargoTransferBagMass": 0.83,
+    "cargoTransferBagVolume": 0.053,
+    "cargoTransferBagMaxMass": 26.8,
+    "cargoTransferBagMaxVolume": 0.049
+  }
+}
