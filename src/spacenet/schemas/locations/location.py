@@ -9,7 +9,7 @@ from uuid import UUID, uuid4
 from fastapi_camelcase import CamelModel
 from pydantic import Field
 
-from ..elements import AllInstElements
+from ..elements import InstElementUUID
 
 
 class LocationUUID(CamelModel):
@@ -31,27 +31,8 @@ class Location(LocationUUID, ABC):
         title="Description",
         description="Short description of this location.",
     )
-    contents: List[AllInstElements] = Field(
+    contents: List[InstElementUUID] = Field(
         [],
         title="Contents",
-        description="List of elements located at this location.",
+        description="List of elements (by unique identifiers) located at this location.",
     )
-
-    def add_element(self, element: AllInstElements) -> None:
-        """
-        Add an element to this location.
-
-        Args:
-            element (:obj:`InstElementUUID`): The element instance to add.
-        """
-        if element not in self.contents:
-            self.contents.append(element)
-
-    def remove_element(self, element: AllInstElements) -> None:
-        """
-        Remove an element from this location.
-
-        Args:
-            element (:obj:`InstElementUUID`): The element instance to remove.
-        """
-        self.contents.remove(element)
