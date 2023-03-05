@@ -43,7 +43,7 @@ app.include_router(
 )
 app.include_router(
     validation_router,
-    prefix="/validation",
+    prefix="/validate",
     tags=["validation"]
 )
 
