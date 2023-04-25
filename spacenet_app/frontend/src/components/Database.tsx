@@ -36,10 +36,11 @@ const Database = (props: {database: object, setDatabase: Function}) => {
           Modal for uploading database if one is not already added, or switching to a different database.
         </Modal.Body>
         <Modal.Footer>
+          <input type="file" onChange={(event) => {console.log('file uploaded'); console.log(event.target.files ? typeof event.target.files[0] : 'ww'); props.setDatabase(event.target.files ? event.target.files[0] : null)}}  name="database" accept=".xlsx" className="form-control"/>
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleClose}>Save</Button>
+          <Button variant="primary" onClick={handleClose} type="submit">Save</Button>
         </Modal.Footer>
       </Modal>
     </>

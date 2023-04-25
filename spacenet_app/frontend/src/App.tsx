@@ -12,8 +12,22 @@ import { useState } from 'react'
 
 const App = () => {
   const [scenario, setScenario] = useState({})
-  const [database, setDatabase] = useState({})
+  const [database, setDatabaseState] = useState({})
 
+
+  const setDatabase = (database : File) => {
+    const blob = database.text()
+    // get blob 
+    // $.ajax({
+    //   type: "POST",
+    //   url: "~/pythoncode.py",
+    //   data: { param: text}
+    // }).done(function( o ) {
+    //    // do something
+    // });
+    const res = {}
+    setDatabaseState(res)
+  }
 
   return (
     <Container fluid>
