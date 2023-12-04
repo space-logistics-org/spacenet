@@ -100,7 +100,12 @@ crewed_7_day = Mission(
             priority=2,
             location=db.get_node("KSC").id,
             container=crewed_lander_1.id,
-            elements=[crew_1_1.id, crew_1_2.id, crew_1_3.id, crew_1_4.id,],
+            elements=[
+                crew_1_1.id,
+                crew_1_2.id,
+                crew_1_3.id,
+                crew_1_4.id,
+            ],
         ),
         FlightTransport(
             name="7-Day | Flight Transport",
@@ -130,7 +135,12 @@ crewed_7_day = Mission(
             priority=1,
             location=db.get_node("LSP").id,
             container=crewed_return_1.id,
-            elements=[crew_1_1.id, crew_1_2.id, crew_1_3.id, crew_1_4.id,],
+            elements=[
+                crew_1_1.id,
+                crew_1_2.id,
+                crew_1_3.id,
+                crew_1_4.id,
+            ],
         ),
         FlightTransport(
             name="7-Day | Flight Transport",
@@ -209,7 +219,12 @@ crewed_14_day = Mission(
             priority=2,
             location=db.get_node("KSC").id,
             container=crewed_lander_2.id,
-            elements=[crew_2_1.id, crew_2_2.id, crew_2_3.id, crew_2_4.id,],
+            elements=[
+                crew_2_1.id,
+                crew_2_2.id,
+                crew_2_3.id,
+                crew_2_4.id,
+            ],
         ),
         FlightTransport(
             name="14-Da | Flight Transport",
@@ -225,7 +240,12 @@ crewed_14_day = Mission(
             priority=1,
             location=db.get_node("LSP").id,
             container=habitat.id,
-            elements=[crew_2_1.id, crew_2_2.id, crew_2_3.id, crew_2_4.id,],
+            elements=[
+                crew_2_1.id,
+                crew_2_2.id,
+                crew_2_3.id,
+                crew_2_4.id,
+            ],
         ),
         ReconfigureElements(
             name="14-Da | Reconfigure Group",
@@ -255,7 +275,12 @@ crewed_14_day = Mission(
             priority=1,
             location=db.get_node("LSP").id,
             container=crewed_return_2.id,
-            elements=[crew_2_1.id, crew_2_2.id, crew_2_3.id, crew_2_4.id,],
+            elements=[
+                crew_2_1.id,
+                crew_2_2.id,
+                crew_2_3.id,
+                crew_2_4.id,
+            ],
         ),
         ReconfigureElements(
             name="14-Da | Reconfigure Group",
@@ -292,7 +317,10 @@ scenario = Scenario(
     created_by="SpaceNet User",
     start_date=datetime(2019, 7, 1, 4, tzinfo=timezone.utc),
     scenario_type="Lunar",
-    network=Network(nodes=db.nodes, edges=db.edges,),
+    network=Network(
+        nodes=db.nodes,
+        edges=db.edges,
+    ),
     mission_list=[checkout, crewed_7_day, hab_delivery, crewed_14_day],
     resource_list=db.resources,
     element_templates=db.elements,

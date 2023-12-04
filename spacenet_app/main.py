@@ -41,20 +41,18 @@ app.include_router(
     prefix="/users",
     tags=["users"],
 )
-app.include_router(
-    validation_router,
-    prefix="/validate",
-    tags=["validation"]
-)
+app.include_router(validation_router, prefix="/validate", tags=["validation"])
 
 
 @app.get("/")
 async def temp_redirect_to_docs():
     return RedirectResponse(url="/docs")
 
+
 @app.get("/public")
 async def example_public_endpoint():
     return {"message": "Hello World"}
+
 
 @app.get("/private")
 async def example_private_endpoint(user: User = Depends(current_active_user)):

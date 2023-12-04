@@ -38,7 +38,9 @@ class Element(ElementUUID):
         ClassOfSupply.COS_0, title="Class of Supply", description="Class of supply"
     )
     environment: Environment = Field(
-        Environment.UNPRESSURIZED, title="Environment", description="Required stowage environment"
+        Environment.UNPRESSURIZED,
+        title="Environment",
+        description="Required stowage environment",
     )
     accommodation_mass: float = Field(
         0,

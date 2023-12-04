@@ -490,7 +490,9 @@ lunar_sortie = Mission(
             priority=2,
             location=ksc.id,
             container=altair_dm_1.id,
-            elements=[cargo_1.id,],
+            elements=[
+                cargo_1.id,
+            ],
         ),
         SpaceTransport(
             name="Lunar | Space Transport",
@@ -541,15 +543,21 @@ lunar_sortie = Mission(
                 ),
                 BurnStageSequence(
                     burn=leo_llpo.burns[1].id,
-                    actions=[BurnStageItem(type="Burn", element=altair_dm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=altair_dm_1.id),
+                    ],
                 ),
                 BurnStageSequence(
                     burn=leo_llpo.burns[2].id,
-                    actions=[BurnStageItem(type="Burn", element=altair_dm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=altair_dm_1.id),
+                    ],
                 ),
                 BurnStageSequence(
                     burn=leo_llpo.burns[3].id,
-                    actions=[BurnStageItem(type="Burn", element=altair_dm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=altair_dm_1.id),
+                    ],
                 ),
             ],
         ),
@@ -572,15 +580,22 @@ lunar_sortie = Mission(
             priority=1,
             location=llpo.id,
             edge=llpo_lsp.id,
-            elements=[altair_am_1.id, altair_dm_1.id,],
+            elements=[
+                altair_am_1.id,
+                altair_dm_1.id,
+            ],
             burn_stage_sequence=[
                 BurnStageSequence(
                     burn=llpo_lsp.burns[0].id,
-                    actions=[BurnStageItem(type="Burn", element=altair_dm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=altair_dm_1.id),
+                    ],
                 ),
                 BurnStageSequence(
                     burn=llpo_lsp.burns[1].id,
-                    actions=[BurnStageItem(type="Burn", element=altair_dm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=altair_dm_1.id),
+                    ],
                 ),
             ],
         ),
@@ -605,7 +620,9 @@ lunar_sortie = Mission(
             priority=1,
             location=lsp.id,
             container=altair_am_1.id,
-            elements=[samples_1.id,],
+            elements=[
+                samples_1.id,
+            ],
         ),
         SpaceTransport(
             name="Lunar | Space Transport",
@@ -617,11 +634,15 @@ lunar_sortie = Mission(
             burn_stage_sequence=[
                 BurnStageSequence(
                     burn=lsp_llpo.burns[0].id,
-                    actions=[BurnStageItem(type="Burn", element=altair_am_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=altair_am_1.id),
+                    ],
                 ),
                 BurnStageSequence(
                     burn=lsp_llpo.burns[1].id,
-                    actions=[BurnStageItem(type="Burn", element=altair_am_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=altair_am_1.id),
+                    ],
                 ),
             ],
         ),
@@ -649,23 +670,33 @@ lunar_sortie = Mission(
             burn_stage_sequence=[
                 BurnStageSequence(
                     burn=llpo_pac.burns[0].id,
-                    actions=[BurnStageItem(type="Burn", element=orion_sm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=orion_sm_1.id),
+                    ],
                 ),
                 BurnStageSequence(
                     burn=llpo_pac.burns[1].id,
-                    actions=[BurnStageItem(type="Burn", element=orion_sm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=orion_sm_1.id),
+                    ],
                 ),
                 BurnStageSequence(
                     burn=llpo_pac.burns[2].id,
-                    actions=[BurnStageItem(type="Burn", element=orion_sm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=orion_sm_1.id),
+                    ],
                 ),
                 BurnStageSequence(
                     burn=llpo_pac.burns[3].id,
-                    actions=[BurnStageItem(type="Burn", element=orion_sm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=orion_sm_1.id),
+                    ],
                 ),
                 BurnStageSequence(
                     burn=llpo_pac.burns[4].id,
-                    actions=[BurnStageItem(type="Burn", element=orion_sm_1.id),],
+                    actions=[
+                        BurnStageItem(type="Burn", element=orion_sm_1.id),
+                    ],
                 ),
                 BurnStageSequence(
                     burn=llpo_pac.burns[5].id,

@@ -147,7 +147,7 @@ class ModelDatabase(CamelModel):
 
         Args:
             name (str): the node name
-        
+
         Returns:
             str: The matchine node if it exsits, otherwise `None`.
         """
@@ -159,7 +159,7 @@ class ModelDatabase(CamelModel):
 
         Args:
             name (str): the edge name
-        
+
         Returns:
             str: The matchine edge if it exsits, otherwise `None`.
         """
@@ -171,13 +171,15 @@ class ModelDatabase(CamelModel):
 
         Args:
             name (str): the resource name
-        
+
         Returns:
             str: The matchine resource if it exsits, otherwise `None`.
         """
         return next(filter(lambda o: o.name == name, self.resources))
 
-    def instantiate_element(self, cls, template_name: str, prefix: str=None, suffix: str=None) -> s.AllInstElements:
+    def instantiate_element(
+        self, cls, template_name: str, prefix: str = None, suffix: str = None
+    ) -> s.AllInstElements:
         """
         Instantiates an element for a given template.
 
@@ -186,12 +188,14 @@ class ModelDatabase(CamelModel):
             template_name (str): the template name
             prefix (str, Optional): the prefix to apply before the instance name
             suffix (str, Optional): the suffix to apply after the instance name
-        
+
         Returns:
             s.AllInstElements: An instantiated element.
         """
         return cls(
-            template_id=next(filter(lambda o: o.name == template_name, self.elements)).id,
+            template_id=next(
+                filter(lambda o: o.name == template_name, self.elements)
+            ).id,
             name=(prefix + " | " if prefix is not None else "")
             + next(filter(lambda o: o.name == template_name, self.elements)).name
             + (" " + suffix if suffix is not None else ""),
@@ -414,12 +418,8 @@ def load_db(db_file: BinaryIO) -> ModelDatabase:
     # add the `current_state_index` field
     elements["current_state_index"] = (
         elements.apply(
-            lambda r: np.where(states[states.element_id == r.id].initial_state)[0][
-                0
-            ]
-            if not (
-                states[(states.element_id == r.id) & (states.initial_state)].empty
-            )
+            lambda r: np.where(states[states.element_id == r.id].initial_state)[0][0]
+            if not (states[(states.element_id == r.id) & (states.initial_state)].empty)
             else None,
             axis=1,
         )
@@ -450,9 +450,7 @@ def load_db(db_file: BinaryIO) -> ModelDatabase:
     )
     # parse the elements, dropping the `id` field to generate a new uuid
     elements["model"] = (
-        elements.drop("id", axis=1).apply(
-            lambda r: _parse_element(r.to_dict()), axis=1
-        )
+        elements.drop("id", axis=1).apply(lambda r: _parse_element(r.to_dict()), axis=1)
         if not elements.empty
         else None
     )
