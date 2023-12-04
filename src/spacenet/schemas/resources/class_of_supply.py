@@ -36,7 +36,7 @@ class ClassOfSupply(IntEnum):
     COS_204 = 204  # doc: Hygiene Items
     COS_205 = 205  # doc: Clothing
     COS_206 = 206  # doc: Personal Items
-    COS_301 = 301  # doc: Office Equipemnt and Supplies
+    COS_301 = 301  # doc: Office Equipment and Supplies
     COS_302 = 302  # doc: EVA Equipment and Consumables
     COS_303 = 303  # doc: Health Equipment and Consumables
     COS_304 = 304  # doc: Safety Equipment
