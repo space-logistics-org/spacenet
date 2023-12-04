@@ -1,15 +1,17 @@
 import unittest
 from uuid import uuid4
 
-from spacenet.schemas import ClassOfSupply, Environment, ResourceAmount, ResourceAmountRate
+from spacenet.schemas import (
+    ClassOfSupply,
+    Environment,
+    ResourceAmount,
+    ResourceAmountRate,
+)
 
 
 class TestResourceAmount(unittest.TestCase):
     def setUp(self):
-        self.test_data = {
-            "resource": uuid4(),
-            "amount": 10.5
-        }
+        self.test_data = {"resource": uuid4(), "amount": 10.5}
         self.test_amount = ResourceAmount(**self.test_data)
 
     def test_good_data(self):
@@ -19,10 +21,7 @@ class TestResourceAmount(unittest.TestCase):
 
 class TestResourceAmountRate(unittest.TestCase):
     def setUp(self):
-        self.test_data = {
-            "resource": uuid4(),
-            "rate": 10.5
-        }
+        self.test_data = {"resource": uuid4(), "rate": 10.5}
         self.test_rate = ResourceAmountRate(**self.test_data)
 
     def test_good_data(self):

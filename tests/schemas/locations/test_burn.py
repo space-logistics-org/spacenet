@@ -4,12 +4,10 @@ from datetime import timedelta
 
 from spacenet.schemas import Burn
 
+
 class TestBurn(unittest.TestCase):
     def setUp(self):
-        self.test_data = {
-            "time": timedelta(hours=1),
-            "delta_v": 100
-        }
+        self.test_data = {"time": timedelta(hours=1), "delta_v": 100}
         self.test_burn = Burn(**self.test_data)
 
     def test_good_data(self):
