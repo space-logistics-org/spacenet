@@ -3,7 +3,7 @@ This module defines a schema for specifying flight transport events, representin
 a vehicle is known to be able to traverse the given edge.
 """
 from abc import ABC
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from fastapi_camelcase import CamelModel
@@ -23,11 +23,6 @@ class TransportEvent(Event, ABC):
         ...,
         description="Edge (by unique identifier) along which this transport traverses",
     )
-    elements: List[UUID] = Field(
-        ...,
-        title="List of Elements",
-        description="List of instantiated elements (by unique identifier) to transport",
-    )
 
 
 class FlightTransport(TransportEvent):
@@ -40,6 +35,11 @@ class FlightTransport(TransportEvent):
         title="Type",
         description="Event type",
     )
+    elements: List[UUID] = Field(
+        ...,
+        title="List of Elements",
+        description="List of instantiated elements (by unique identifier) to transport",
+    )
 
 
 class SurfaceTransport(TransportEvent):
@@ -51,6 +51,26 @@ class SurfaceTransport(TransportEvent):
         EventType.SURFACE_TRANSPORT,
         title="Type",
         description="Event type",
+    )
+    vehicle: UUID = Field(
+        ...,
+        title="Surface Vehicle",
+        description="Surface vehicle (by unique identifier) to transport",
+    )
+    transport_state: Optional[int] = Field(
+        title="Transport State Index",
+        description="Index of the transport state",
+        ge=-1,
+    )
+    speed: float = Field(
+        ..., title="Transport Speed", description="Transport speed (m/s)", gt=0
+    )
+    duty_cycle: float = Field(
+        1,
+        title="Duty Cycle",
+        description="Fraction of the time the vehicle is moving at the transport speed",
+        gt=0,
+        le=1,
     )
 
 
@@ -74,6 +94,11 @@ class SpaceTransport(TransportEvent):
         EventType.SPACE_TRANSPORT,
         title="Type",
         description="Event type",
+    )
+    elements: List[UUID] = Field(
+        ...,
+        title="List of Elements",
+        description="List of instantiated elements (by unique identifier) to transport",
     )
     burn_stage_sequence: List[BurnStageSequence] = Field(
         ...,
