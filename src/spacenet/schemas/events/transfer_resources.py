@@ -1,7 +1,7 @@
 """
 Defines object schemas for events that act upon resources.
 """
-from typing import Union
+from typing import List, Union
 from uuid import UUID
 
 from pydantic import Field
@@ -22,7 +22,7 @@ class TransferResources(Event):
         title="Type",
         description="Event type",
     )
-    resources: Union[ResourceAmount, GenericResourceAmount] = Field(
+    resources: List[Union[ResourceAmount, GenericResourceAmount]] = Field(
         ...,
         title="Transferred Resources",
         description="list of resource amounts to transfer",
