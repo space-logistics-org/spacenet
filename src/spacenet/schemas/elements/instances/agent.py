@@ -17,7 +17,7 @@ class InstAgent(InstElement, ABC):
     """
 
     active_time_fraction: Optional[float] = Field(
-        title="Active Time Fraction",
+        None, title="Active Time Fraction",
         description="fraction time an agent is available (0 to 1 inclusive)",
         ge=0,
         le=1,

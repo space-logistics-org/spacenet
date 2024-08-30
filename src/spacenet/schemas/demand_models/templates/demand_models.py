@@ -40,8 +40,8 @@ class ElementDemandModel(ElementDemandModelUUID, ABC):
 
     name: str = Field(..., title="Name")
     type: DemandModelType = Field(..., description="Demand model type")
-    description: Optional[str] = Field(
-        default=None, title="Description", description="Short description (optional)"
+    description: str = Field(
+        "", title="Description", description="Short description (optional)"
     )
 
 
@@ -52,8 +52,8 @@ class MissionDemandModel(MissionDemandModelUUID, ABC):
 
     name: str = Field(..., title="Name")
     type: DemandModelType = Field(..., description="Demand model type")
-    description: Optional[str] = Field(
-        default=None, title="Description", description="Short description (optional)"
+    description: str = Field(
+        "", title="Description", description="Short description (optional)"
     )
 
 

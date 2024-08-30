@@ -31,8 +31,8 @@ class Element(ElementUUID):
     type: Literal[ElementType.ELEMENT] = Field(
         ElementType.ELEMENT, description="Element type"
     )
-    description: Optional[str] = Field(
-        None, title="Description", description="Short description (optional)"
+    description: str = Field(
+        "", title="Description", description="Short description (optional)"
     )
     class_of_supply: ClassOfSupply = Field(
         ClassOfSupply.COS_0, title="Class of Supply", description="Class of supply"
@@ -62,7 +62,7 @@ class Element(ElementUUID):
     parts: List[Part] = Field(
         [], title="Parts", description="List of constituent parts"
     )
-    icon: Optional[str] = Field(title="Icon")
+    icon: Optional[str] = Field(None, title="Icon")
 
 
 class CargoCarrier(Element, ABC):

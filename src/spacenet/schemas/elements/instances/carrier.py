@@ -25,7 +25,7 @@ class InstElementCarrier(InstCargoCarrier):
         description="List of instantiated elements (by unique identifiers) inside the carrier",
     )
     max_crew: Optional[int] = Field(
-        title="Maximum Crew Count",
+        None, title="Maximum Crew Count",
         description="Maximum number of human agents (crew)",
         ge=0,
     )
@@ -40,13 +40,13 @@ class InstPropulsiveVehicle(InstElementCarrier):
         ElementType.PROPULSIVE_VEHICLE, description="Element type"
     )
     isp: Optional[float] = Field(
-        title="Specific Impulse", description="specific impulse (s)", ge=0
+        None, title="Specific Impulse", description="specific impulse (s)", ge=0
     )
     max_fuel: Optional[float] = Field(
-        title="Maximum Fuel", description="maximum propellant amount (units)", ge=0
+        None, title="Maximum Fuel", description="maximum propellant amount (units)", ge=0
     )
     fuel: Optional[Union[ResourceAmount, GenericResourceAmount]] = Field(
-        title="Propellant", description="type and amount of propellant"
+        None, title="Propellant", description="type and amount of propellant"
     )
 
 
@@ -60,11 +60,11 @@ class InstSurfaceVehicle(InstElementCarrier):
         ElementType.SURFACE_VEHICLE, description="Element type"
     )
     max_speed: Optional[float] = Field(
-        title="Maximum Speed", description="Maximum speed (km/hr)", ge=0
+        None, title="Maximum Speed", description="Maximum speed (km/hr)", ge=0
     )
     max_fuel: Optional[float] = Field(
-        title="Maximum Fuel", description="Maximum fuel amount (units)", ge=0
+        None, title="Maximum Fuel", description="Maximum fuel amount (units)", ge=0
     )
     fuel: Optional[Union[ResourceAmount, GenericResourceAmount]] = Field(
-        title="Fuel", description="Type and amount of fuel"
+        None, title="Fuel", description="Type and amount of fuel"
     )

@@ -32,33 +32,33 @@ class InstElement(InstElementUUID):
     template_id: UUID = Field(..., description="Element template unique identifier")
     name: str = Field(..., title="Name", description="Element name")
     description: Optional[str] = Field(
-        title="Description", description="Short description (optional)"
+        None, title="Description", description="Short description (optional)"
     )
     class_of_supply: Optional[ClassOfSupply] = Field(
-        title="Class of Supply", description="Class of supply"
+        None, title="Class of Supply", description="Class of supply"
     )
     environment: Optional[Environment] = Field(
-        title="Environment", description="Required stowage environment"
+        None, title="Environment", description="Required stowage environment"
     )
     accommodation_mass: Optional[float] = Field(
-        title="Accommodation Mass",
+        None, title="Accommodation Mass",
         description="Amount of COS 5 (kg) required for stowage",
         ge=0,
     )
-    mass: Optional[float] = Field(title="Mass", description="Mass (kg)", ge=0)
-    volume: Optional[float] = Field(title="Volume", description="Volume (m^3)", ge=0)
+    mass: Optional[float] = Field(None, title="Mass", description="Mass (kg)", ge=0)
+    volume: Optional[float] = Field(None, title="Volume", description="Volume (m^3)", ge=0)
     states: Optional[List[State]] = Field(
-        title="States", description="List of operational states"
+        None, title="States", description="List of operational states"
     )
     current_state_index: Optional[int] = Field(
-        title="Current State",
+        None, title="Current State",
         description="Index of the current operational state",
         ge=-1,
     )
     parts: Optional[List[UUID]] = Field(
-        title="Parts", description="List of constituent parts"
+        None, title="Parts", description="List of constituent parts"
     )
-    icon: Optional[str] = Field(title="Icon")
+    icon: Optional[str] = Field(None, title="Icon")
 
 
 class InstCargoCarrier(InstElement, ABC):
@@ -67,14 +67,14 @@ class InstCargoCarrier(InstElement, ABC):
     """
 
     max_cargo_mass: Optional[float] = Field(
-        title="Max Cargo Mass", description="Cargo mass capacity constraint (kg)", ge=0
+        None, title="Max Cargo Mass", description="Cargo mass capacity constraint (kg)", ge=0
     )
     max_cargo_volume: Optional[float] = Field(
-        title="Maximum Cargo Volume",
+        None, title="Maximum Cargo Volume",
         description="Cargo volume capacity constraint (m^3)",
         ge=0,
     )
     cargo_environment: Optional[Environment] = Field(
-        title="Cargo Environment",
+        None, title="Cargo Environment",
         description="Cargo stowage environment",
     )

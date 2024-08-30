@@ -19,5 +19,5 @@ class InstResourceContainer(InstCargoCarrier):
         ElementType.RESOURCE_CONTAINER, description="Element type"
     )
     contents: Optional[List[Union[GenericResourceAmount, ResourceAmount]]] = Field(
-        title="Resource Amount", description="List of contained resource amounts"
+        None, title="Resource Amount", description="List of contained resource amounts"
     )
