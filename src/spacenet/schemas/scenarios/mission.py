@@ -44,10 +44,10 @@ class Mission(CamelModel):
         ..., title="Destination UUID", description="Destination node unique identifier"
     )
     return_origin: Optional[UUID] = Field(
-        title="Return Origin UUID",
+        None, title="Return Origin UUID",
         description="Return origin node unique identifier (not necessary for one-way missions)",
     )
     return_destination: Optional[UUID] = Field(
-        title="Return Destination ID",
+        None, title="Return Destination ID",
         description="Return destination node unique identifier (not necessary for one-way missions)",
     )

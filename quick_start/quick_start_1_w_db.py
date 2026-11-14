@@ -375,4 +375,4 @@ scenario = Scenario(
 )
 
 with open("completed_quick_start_1_w_db.json", "w", encoding="utf-8") as f:
-    f.write(scenario.json(exclude_none=True, indent=2, by_alias=True))
+    f.write(scenario.model_dump_json(exclude_none=True, indent=2, by_alias=True))
