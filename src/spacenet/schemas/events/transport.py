@@ -58,8 +58,9 @@ class SurfaceTransport(TransportEvent):
         description="Surface vehicle (by unique identifier) to transport",
     )
     transport_state: Optional[int] = Field(
+        None,
         title="Transport State Index",
-        description="Index of the transport state",
+        description="Index of the vehicle state during transport (-1 if unchanged)",
         ge=-1,
     )
     speed: float = Field(

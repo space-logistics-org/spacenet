@@ -10,6 +10,7 @@ from typing_extensions import Literal
 
 from ...resources import ClassOfSupply, Environment
 from ..element import ElementType
+from ..part import Part
 from ..state import State
 
 
@@ -55,7 +56,7 @@ class InstElement(InstElementUUID):
         description="Index of the current operational state",
         ge=-1,
     )
-    parts: Optional[List[UUID]] = Field(
+    parts: Optional[List[Part]] = Field(
         None, title="Parts", description="List of constituent parts"
     )
     icon: Optional[str] = Field(None, title="Icon")

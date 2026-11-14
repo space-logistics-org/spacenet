@@ -513,8 +513,8 @@ lunar_sortie = Mission(
                     actions=[
                         BurnStageItem(type="Burn", element=ares_v_srbs_1.id),
                         BurnStageItem(type="Stage", element=ares_v_srbs_1.id),
-                        BurnStageItem(type="Burn", element=ares_v_srbs_1.id),
-                        BurnStageItem(type="Stage", element=ares_v_srbs_1.id),
+                        BurnStageItem(type="Burn", element=ares_v_core_1.id),
+                        BurnStageItem(type="Stage", element=ares_v_core_1.id),
                         BurnStageItem(type="Burn", element=eds_1.id),
                     ],
                 )

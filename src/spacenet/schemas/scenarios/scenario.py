@@ -268,7 +268,9 @@ class Scenario(CamelModel):
 
     name: str = Field(..., title="Name", description="Scenario name")
     created_by: str = Field(..., title="CreatedBy", description="Scenario author")
-    description: str = Field(None, title="Description", description="Short description")
+    description: Optional[str] = Field(
+        None, title="Description", description="Short description"
+    )
     start_date: datetime = Field(
         ..., title="Start Date", description="Time of scenario start"
     )

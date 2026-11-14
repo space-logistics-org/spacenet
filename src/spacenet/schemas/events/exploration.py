@@ -95,7 +95,7 @@ class CrewedExploration(Event):
         ...,
         description="List of reconfiguration states for each participating element",
     )
-    additional_demands: List[UUID] = Field(
+    additional_demands: List[Union[ResourceAmount, GenericResourceAmount]] = Field(
         [],
         title="Additional Demands",
         description="List of additional resource amounts to be consumed",

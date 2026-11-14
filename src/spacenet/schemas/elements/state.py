@@ -9,7 +9,7 @@ from uuid import uuid4, UUID
 from fastapi_camelcase import CamelModel
 from pydantic import Field
 
-from ..demand_models import InstElementDemandModel
+from ..demand_models import AllInstElementDemandModels
 
 
 class StateType(str, Enum):
@@ -41,6 +41,6 @@ class State(StateUUID):
         None, title="Description", description="Short description (optional)"
     )
     type: StateType = Field(..., description="State type")
-    demand_models: List[InstElementDemandModel] = Field(
+    demand_models: List[AllInstElementDemandModels] = Field(
         [], title="Demand Models", description="List of instantiated demand models"
     )

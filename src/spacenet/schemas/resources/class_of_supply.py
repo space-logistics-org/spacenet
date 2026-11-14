@@ -78,6 +78,62 @@ class ClassOfSupply(IntEnum):
         """
         return COS_TO_NAME[self]
 
+    def is_subclass_of(self, class_of_supply: "ClassOfSupply") -> bool:
+        """
+        Checks if this class of supply is a (strict) sub-class of another,
+        e.g., COS 201 and COS 2011 are sub-classes of COS 2. COS 10
+        (miscellaneous) has no sub-classes and is not a sub-class of COS 1.
+
+        Args:
+            class_of_supply (:obj:`ClassOfSupply`): The potential super-class.
+
+        Returns:
+            bool: True, if this is a sub-class of the other class of supply.
+        """
+        superclass_id = str(int(class_of_supply))
+        subclass_id = str(int(self))
+        if len(superclass_id) >= len(subclass_id):
+            return False
+        if int(self) == 10 or int(class_of_supply) == 10:
+            return False
+        return subclass_id.startswith(superclass_id)
+
+    def is_superclass_of(self, class_of_supply: "ClassOfSupply") -> bool:
+        """
+        Checks if this class of supply is a (strict) super-class of another.
+
+        Args:
+            class_of_supply (:obj:`ClassOfSupply`): The potential sub-class.
+
+        Returns:
+            bool: True, if this is a super-class of the other class of supply.
+        """
+        return ClassOfSupply(class_of_supply).is_subclass_of(self)
+
+    def is_instance_of(self, class_of_supply: "ClassOfSupply") -> bool:
+        """
+        Checks if this class of supply is equal to or a sub-class of another.
+
+        Args:
+            class_of_supply (:obj:`ClassOfSupply`): The other class of supply.
+
+        Returns:
+            bool: True, if this is an instance of the other class of supply.
+        """
+        return int(self) == int(class_of_supply) or self.is_subclass_of(class_of_supply)
+
+    def get_base_class(self) -> "ClassOfSupply":
+        """
+        Gets the top-level (base) class of supply (COS 0 through COS 10).
+
+        Returns:
+            :obj:`ClassOfSupply`: The base class of supply.
+        """
+        for i in range(11):
+            if self.is_instance_of(ClassOfSupply(i)):
+                return ClassOfSupply(i)
+        return None
+
 
 COS_TO_NAME = {
     ClassOfSupply.COS_0: "None",
