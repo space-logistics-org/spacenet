@@ -2,6 +2,7 @@
 // switches between tabs.
 
 import { api, ApiError } from "./api.js";
+import { openModels } from "./dialogs/models.js";
 import { openOptions } from "./dialogs/options.js";
 import { store } from "./store.js";
 import * as demands from "./tabs/demands.js";
@@ -134,6 +135,7 @@ function bindMenu() {
       toast(`Could not load ${file.name}: ${error.message}`, "danger");
     }
   });
+  $("action-models").addEventListener("click", () => openModels());
   $("action-options").addEventListener("click", openOptions);
 }
 

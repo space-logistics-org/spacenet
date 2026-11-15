@@ -138,6 +138,57 @@ class TestScenario(ApiTestCase):
         )
         self.assertEqual(response.status_code, 422)
 
+    def test_validate_models(self):
+        # the object models of a scenario are valid and returned as they are
+        scenario = self.post("/scenario/validate", scenario=load_json(QUICK_START_2))
+        models = {
+            "nodes": scenario["network"]["nodes"],
+            "edges": scenario["network"]["edges"],
+            "resources": scenario["resourceList"],
+            "elements": scenario["elementTemplates"],
+            "demandModels": scenario["demandModels"],
+        }
+        for kind, items in models.items():
+            self.assertGreater(len(items), 0, kind)
+            for item in items:
+                self.assertEqual(
+                    self.post(f"/library/{kind}/validate", model=item), item
+                )
+
+    def test_validate_new_model(self):
+        node = self.post(
+            "/library/nodes/validate",
+            model={
+                "type": "Surface Node",
+                "name": "Base",
+                "latitude": -89.5,
+                "longitude": 0,
+            },
+        )
+        self.assertEqual(node["body1"], "Earth")
+        self.assertEqual(len(node["id"]), 36)
+        model = self.post(
+            "/library/demandModels/validate",
+            model={"type": "Crew Consumables", "name": "Crew"},
+        )
+        self.assertEqual(model["waterRecoveryRate"], 0.42)
+
+    def test_validate_invalid_model(self):
+        detail = self.post(
+            "/library/nodes/validate",
+            422,
+            model={"type": "Surface Node", "name": "Base", "latitude": 91},
+        )["detail"]
+        self.assertEqual(
+            sorted(item["loc"][0] for item in detail), ["latitude", "longitude"]
+        )
+        # the type must be one of the kind of model
+        detail = self.post(
+            "/library/edges/validate", 422, model={"type": "Surface Node", "name": "x"}
+        )["detail"]
+        self.assertIn("Unknown type", detail[0]["msg"])
+        self.post("/library/planets/validate", 422, model={"name": "x"})
+
 
 class TestAnalysis(ApiTestCase):
     def test_missions(self):

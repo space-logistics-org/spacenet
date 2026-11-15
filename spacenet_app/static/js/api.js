@@ -72,6 +72,9 @@ export const api = {
 
   validate: (scenario) => post("/scenario/validate", { scenario }),
 
+  /** Validates a node, edge, resource, element template, or demand model. */
+  validateModel: (kind, model) => post(`/library/${kind}/validate`, { model }),
+
   async loadDatabase(file) {
     const body = new FormData();
     body.append("upload", file);

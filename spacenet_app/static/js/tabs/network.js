@@ -1,5 +1,6 @@
 // Network tab: selects the nodes and edges of the scenario from the library.
 
+import { addModel, editModel } from "../dialogs/models.js";
 import { drawNetwork } from "../networkMap.js";
 import { store } from "../store.js";
 import { alertDialog, button, clear, clone, fmt, h, isoToDays, select, textInput } from "../util.js";
@@ -150,7 +151,12 @@ function details(item) {
   return h(
     "div",
     { class: "card card-body py-2 mt-2" },
-    h("div", { class: "fw-semibold" }, item.name),
+    h(
+      "div",
+      { class: "d-flex justify-content-between align-items-center" },
+      h("span", { class: "fw-semibold" }, item.name),
+      button("Edit…", () => editModel(item.origin ? "edges" : "nodes", item))
+    ),
     h(
       "table",
       { class: "table table-sm mb-0 sn-table" },
@@ -229,7 +235,7 @@ export function render() {
             h(
               "td",
               { colspan: 5, class: "text-secondary" },
-              "No library objects. Load a model database or open a scenario."
+              "No library objects. Load a model database, open a scenario, or add a new object."
             )
           )
     )
@@ -304,6 +310,12 @@ export function render() {
         // edges first so that nodes are no longer used by them
         const sorted = [...items].sort((a, b) => Number(Boolean(b.origin)) - Number(Boolean(a.origin)));
         sorted.filter((i) => included.has(i.id) && !getUses(i.id).length).forEach((i) => toggle(i, true));
+      }),
+      " ",
+      button(isNodes ? "New Node…" : "New Edge…", async () => {
+        const saved = await addModel(isNodes ? "nodes" : "edges", state.type);
+        if (saved) state.selected = new Set([saved.id]);
+        render();
       })
     ),
     selectedItems.length === 1 ? details(selectedItems[0]) : null

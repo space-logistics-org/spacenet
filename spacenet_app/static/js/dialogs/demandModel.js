@@ -1,6 +1,6 @@
-// Dialog to add or edit a mission-level demand model. A demand model is an
-// instance of a template; a new template is added to the scenario if none
-// is chosen.
+// Dialog to add or edit a demand model of a mission or of an element state.
+// A demand model is an instance of a template; a new template is added to
+// the scenario if none is chosen.
 
 import { resourceTable, schemaForm } from "../components.js";
 import { store } from "../store.js";
@@ -21,7 +21,13 @@ export function openDemandModel({ model }) {
   let templateId = draft.templateId ?? templates()[0]?.id ?? NEW;
   // demands of a new template
   const newDemands = [];
-  const usesDemands = type !== "Crew Consumables";
+  const usesDemands = type === "Timed Impulse" || type === "Rated";
+  // schema of the parameters of other types (crew consumables, sparing by mass)
+  const templateName = `${type.replace(/ /g, "")}DemandModel`;
+  const parameters = () =>
+    Object.keys(store.schema.$defs[`Inst${templateName}`].properties).filter(
+      (name) => !BASE_FIELDS.includes(name)
+    );
   const quantity = type === "Rated" ? "rate" : "amount";
   const quantityLabel = type === "Rated" ? "Rate (per day)" : "Amount";
   let override = Array.isArray(draft.demands);
@@ -84,8 +90,6 @@ export function openDemandModel({ model }) {
             )
       );
     } else {
-      const definition = store.schema.$defs.InstCrewConsumablesDemandModel;
-      const names = Object.keys(definition.properties).filter((name) => !BASE_FIELDS.includes(name));
       parts.push(
         h("h6", {}, "Parameters"),
         h(
@@ -93,9 +97,9 @@ export function openDemandModel({ model }) {
           { class: "small text-secondary mb-2" },
           "Empty parameters use the value of the template (shown as a placeholder)."
         ),
-        schemaForm(definition, draft, names, null, {
+        schemaForm(store.schema.$defs[`Inst${templateName}`], draft, parameters(), null, {
           optional: true,
-          placeholders: chosen ?? defaults("CrewConsumablesDemandModel"),
+          placeholders: chosen ?? defaults(templateName),
         })
       );
     }
@@ -122,7 +126,19 @@ export function openDemandModel({ model }) {
           if (templateId === NEW) {
             // a new template is added to the scenario
             const created = { id: uuid(), name: draft.name, type, description: "" };
-            if (usesDemands) created.demands = newDemands;
+            if (usesDemands) {
+              created.demands = newDemands;
+            } else {
+              // the parameters define the new template (required ones default to none)
+              const definition = store.schema.$defs[templateName];
+              for (const name of parameters()) {
+                if (draft[name] !== undefined && draft[name] !== null) created[name] = draft[name];
+                else if (definition.required?.includes(name)) {
+                  created[name] = definition.properties[name].type === "boolean" ? false : 0;
+                }
+                delete draft[name];
+              }
+            }
             store.update((scenario) => scenario.demandModels.push(created));
             templateId = created.id;
             delete draft.demands;

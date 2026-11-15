@@ -83,16 +83,26 @@ export const store = {
 
   // ------------------------------------------------------------- library
 
-  /** Library objects: those of the scenario followed by those of the database. */
-  library(kind) {
+  /** Objects of a kind (nodes, edges, resources, elements, demandModels) of the scenario. */
+  collection(kind) {
     const scenario = this.scenario;
-    const own = {
+    return {
       nodes: scenario.network.nodes,
       edges: scenario.network.edges,
       resources: scenario.resourceList,
       elements: scenario.elementTemplates,
       demandModels: scenario.demandModels,
     }[kind];
+  },
+
+  /** True, if an object is part of the scenario (rather than only of the database). */
+  owns(kind, id) {
+    return this.collection(kind).some((item) => item.id === id);
+  },
+
+  /** Library objects: those of the scenario followed by those of the database. */
+  library(kind) {
+    const own = this.collection(kind);
     // a database assigns new identifiers each time it is loaded, so objects
     // of the scenario also replace database objects with the same name
     const ids = new Set(own.map((item) => item.id));
@@ -153,23 +163,93 @@ export const store = {
    * (e.g., the template and resources of an added element) to the scenario.
    */
   include(kind, id) {
-    const scenario = this.scenario;
-    const target = {
-      resources: scenario.resourceList,
-      elements: scenario.elementTemplates,
-      demandModels: scenario.demandModels,
-    }[kind];
+    const target = this.collection(kind);
     if (!id || target.some((item) => item.id === id)) return;
     const item = (this.database[kind] || []).find((candidate) => candidate.id === id);
     if (!item) return;
     target.push(clone(item));
-    // include objects referenced by unique identifier
+    this.includeReferences(item);
+  },
+
+  /** Adds the database objects referenced (by unique identifier) by an object to the scenario. */
+  includeReferences(item) {
     const text = JSON.stringify(item);
-    for (const other of ["resources", "demandModels", "elements"]) {
+    for (const other of ["nodes", "resources", "demandModels", "elements"]) {
       for (const candidate of this.database[other] || []) {
-        if (candidate.id !== id && text.includes(candidate.id)) this.include(other, candidate.id);
+        if (candidate.id !== item.id && text.includes(candidate.id)) {
+          this.include(other, candidate.id);
+        }
       }
     }
+  },
+
+  // -------------------------------------------------------------- models
+
+  /**
+   * Saves an added or edited object model. Objects of the scenario and new
+   * objects are saved to the scenario; other objects are saved to the
+   * database kept by the browser.
+   */
+  saveModel(kind, model) {
+    const stored = this.database[kind] || [];
+    const index = stored.findIndex((item) => item.id === model.id);
+    if (index >= 0 && !this.owns(kind, model.id)) {
+      stored[index] = model;
+      this.setDatabase(this.database);
+      return;
+    }
+    this.update(() => {
+      const own = this.collection(kind);
+      const position = own.findIndex((item) => item.id === model.id);
+      if (position >= 0) own[position] = model;
+      else own.push(model);
+      this.includeReferences(model);
+    });
+  },
+
+  /** Removes an object model from the scenario or (if it is not part of it) the database. */
+  removeModel(kind, id) {
+    if (this.owns(kind, id)) {
+      this.update(() => {
+        const own = this.collection(kind);
+        own.splice(own.findIndex((item) => item.id === id), 1);
+      });
+    } else {
+      this.database[kind] = (this.database[kind] || []).filter((item) => item.id !== id);
+      this.setDatabase(this.database);
+    }
+  },
+
+  /** Lists the objects which reference an object model (and prevent its removal). */
+  modelUses(kind, id) {
+    const uses = [];
+    const check = (label, items) => {
+      for (const item of items || []) {
+        if (item.id !== id && JSON.stringify(item).includes(id)) uses.push(`${label} ${item.name}`);
+      }
+    };
+    const labels = [
+      ["Node", "nodes"],
+      ["Edge", "edges"],
+      ["Resource", "resources"],
+      ["Element", "elements"],
+      ["Demand model", "demandModels"],
+    ];
+    if (!this.owns(kind, id)) {
+      for (const [label, other] of labels) check(label, this.database[other]);
+      return uses;
+    }
+    const scenario = this.scenario;
+    for (const [label, other] of labels) check(label, this.collection(other));
+    check("Instantiated element", scenario.instantiatedElements);
+    for (const mission of scenario.missionList) {
+      const events = mission.events.filter((event) => JSON.stringify(event).includes(id));
+      for (const event of events) uses.push(`Event ${event.name} (${mission.name})`);
+      if (!events.length && JSON.stringify(mission).includes(id)) uses.push(`Mission ${mission.name}`);
+    }
+    if (this.location(id)?.contents?.length) uses.push("Initial elements");
+    if (JSON.stringify(scenario.manifest).includes(id)) uses.push("Manifest");
+    return uses;
   },
 
   /** Removes instantiated elements which are no longer referenced. */
