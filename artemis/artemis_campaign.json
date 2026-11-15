@@ -83,7 +83,8 @@
           {
             "id": "19bf705b-2f6a-47e5-86d7-cb04dfa0423e",
             "time": "PT0S",
-            "deltaV": 9500.0
+            "deltaV": 9500.0,
+            "type": "OMS"
           }
         ]
       },
@@ -100,27 +101,32 @@
           {
             "id": "8d4bd4e3-800c-4c4f-9e2a-e5435cce3515",
             "time": "PT0S",
-            "deltaV": 3124.0
+            "deltaV": 3124.0,
+            "type": "OMS"
           },
           {
             "id": "5331fd27-76e3-4f6f-a41a-21a640ea828b",
             "time": "PT7H12M",
-            "deltaV": 30.0
+            "deltaV": 30.0,
+            "type": "OMS"
           },
           {
             "id": "82e93b6b-c7b4-4c66-80b3-17c11b256102",
             "time": "P3DT2H24M",
-            "deltaV": 242.0
+            "deltaV": 242.0,
+            "type": "OMS"
           },
           {
             "id": "b6947535-09f5-4272-8866-5e67afe4498f",
             "time": "P4DT9H36M",
-            "deltaV": 1.0
+            "deltaV": 1.0,
+            "type": "OMS"
           },
           {
             "id": "fea4259a-75e8-4a18-aa8e-d3875a4f291b",
             "time": "P6DT9H36M",
-            "deltaV": 126.0
+            "deltaV": 126.0,
+            "type": "OMS"
           }
         ]
       },
@@ -137,12 +143,14 @@
           {
             "id": "b1712b18-70c2-4de9-a0c5-462b61ce1502",
             "time": "PT0S",
-            "deltaV": 126.4
+            "deltaV": 126.4,
+            "type": "OMS"
           },
           {
             "id": "a6bc4681-8d1a-4b19-997a-b63387922f32",
             "time": "PT12H",
-            "deltaV": 648.6
+            "deltaV": 648.6,
+            "type": "OMS"
           }
         ]
       },
@@ -159,12 +167,14 @@
           {
             "id": "1a5a15c8-279c-4d6e-919a-c54e8ad43659",
             "time": "PT0S",
-            "deltaV": 19.4
+            "deltaV": 19.4,
+            "type": "OMS"
           },
           {
             "id": "667ca063-6d51-4694-8744-692bba9d7957",
             "time": "PT4H48M",
-            "deltaV": 1692.5
+            "deltaV": 1692.5,
+            "type": "OMS"
           }
         ]
       },
@@ -181,12 +191,14 @@
           {
             "id": "9484032c-c6fe-4588-9193-b0778a59a847",
             "time": "PT0S",
-            "deltaV": 1692.4
+            "deltaV": 1692.4,
+            "type": "OMS"
           },
           {
             "id": "55824456-c89a-4a6c-98d1-e9fb74d87c10",
             "time": "PT4H48M",
-            "deltaV": 19.4
+            "deltaV": 19.4,
+            "type": "OMS"
           }
         ]
       },
@@ -203,12 +215,14 @@
           {
             "id": "e905ed7d-a1f9-45e4-964b-16f6ad0a424d",
             "time": "PT0S",
-            "deltaV": 649.2
+            "deltaV": 649.2,
+            "type": "OMS"
           },
           {
             "id": "1a819ff4-4864-4e99-8b75-7bb1a1aa48ea",
             "time": "PT12H",
-            "deltaV": 125.1
+            "deltaV": 125.1,
+            "type": "OMS"
           }
         ]
       },
@@ -225,17 +239,20 @@
           {
             "id": "9825329c-2887-400b-8e0a-348109ef53b7",
             "time": "PT0S",
-            "deltaV": 147.0
+            "deltaV": 147.0,
+            "type": "OMS"
           },
           {
             "id": "29fb3422-f6b8-4dbc-98ba-19a2933a550b",
             "time": "P1DT14H24M",
-            "deltaV": 2.0
+            "deltaV": 2.0,
+            "type": "OMS"
           },
           {
             "id": "78316093-f2c6-45e5-8e3e-e218565f5893",
             "time": "P2DT19H12M",
-            "deltaV": 263.0
+            "deltaV": 263.0,
+            "type": "OMS"
           }
         ]
       }
@@ -671,12 +688,19 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 0,
-      "isp": 414.0,
-      "maxFuel": 987000.0,
-      "fuel": {
-        "resource": "9a3aaf5d-8800-4c99-802d-6ef367a36f95",
-        "amount": 987000.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 414.0,
+          "fuelTank": {
+            "maxAmount": 987000.0,
+            "contents": {
+              "resource": "9a3aaf5d-8800-4c99-802d-6ef367a36f95",
+              "amount": 987000.0
+            }
+          }
+        }
+      ]
     },
     {
       "id": "a57925f8-3e6f-47cc-bc1a-d73d3a98686f",
@@ -695,12 +719,19 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 0,
-      "isp": 269.0,
-      "maxFuel": 1256000.0,
-      "fuel": {
-        "resource": "1ec78f20-3221-4e97-82bd-b6755288536c",
-        "amount": 1256000.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 269.0,
+          "fuelTank": {
+            "maxAmount": 1256000.0,
+            "contents": {
+              "resource": "1ec78f20-3221-4e97-82bd-b6755288536c",
+              "amount": 1256000.0
+            }
+          }
+        }
+      ]
     },
     {
       "id": "98934813-8307-40aa-861b-61f65418f2ac",
@@ -719,12 +750,19 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 0,
-      "isp": 465.0,
-      "maxFuel": 28576.0,
-      "fuel": {
-        "resource": "9a3aaf5d-8800-4c99-802d-6ef367a36f95",
-        "amount": 28576.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 465.0,
+          "fuelTank": {
+            "maxAmount": 28576.0,
+            "contents": {
+              "resource": "9a3aaf5d-8800-4c99-802d-6ef367a36f95",
+              "amount": 28576.0
+            }
+          }
+        }
+      ]
     },
     {
       "id": "dd5c7fda-dfc7-45f8-9c72-e58d920ec2e9",
@@ -756,12 +794,19 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 4,
-      "isp": 316.0,
-      "maxFuel": 9276.0,
-      "fuel": {
-        "resource": "3b5fe73d-eb47-4b69-ae85-1ee9895f175e",
-        "amount": 9276.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 316.0,
+          "fuelTank": {
+            "maxAmount": 9276.0,
+            "contents": {
+              "resource": "3b5fe73d-eb47-4b69-ae85-1ee9895f175e",
+              "amount": 9276.0
+            }
+          }
+        }
+      ]
     },
     {
       "id": "b2d6aaed-7d86-47a9-9c01-1acb067b9b92",
@@ -856,12 +901,19 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 2,
-      "isp": 363.0,
-      "maxFuel": 32285.0,
-      "fuel": {
-        "resource": "b12bbb68-1f05-4185-9ef5-302dfde2cc5c",
-        "amount": 32285.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 363.0,
+          "fuelTank": {
+            "maxAmount": 32285.0,
+            "contents": {
+              "resource": "b12bbb68-1f05-4185-9ef5-302dfde2cc5c",
+              "amount": 32285.0
+            }
+          }
+        }
+      ]
     }
   ],
   "instantiatedElements": [
@@ -1008,7 +1060,10 @@
       "type": "Continuous"
     }
   ],
-  "manifest": {},
+  "manifest": {
+    "containers": [],
+    "loads": []
+  },
   "configuration": {
     "timePrecision": 0.05,
     "demandPrecision": 0.01,
@@ -1028,12 +1083,12 @@
     "smallGasTankMass": 10.8,
     "smallGasTankVolume": 0.275,
     "smallGasTankMaxMass": 10.0,
-    "smallGasTTankMaxVolume": 0.275,
+    "smallGasTankMaxVolume": 0.275,
     "largeGasTankMass": 108.0,
     "largeGasTankVolume": 2.75,
     "largeGasTankMaxMass": 100.0,
     "largeGasTankMaxVolume": 2.75,
-    "smallLiquidTTankMass": 11.4567,
+    "smallLiquidTankMass": 11.4567,
     "smallLiquidTankVolume": 0.0249,
     "smallLiquidTankMaxMass": 24.9333,
     "smallLiquidTankMaxVolume": 0.0249,

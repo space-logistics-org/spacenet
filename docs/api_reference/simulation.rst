@@ -116,6 +116,9 @@ Elements
 .. autoclass:: spacenet.simulation.SimPropulsiveVehicle
   :members:
 
+.. autoclass:: spacenet.simulation.SimPropulsionSystem
+  :members:
+
 .. autoclass:: spacenet.simulation.SimSurfaceVehicle
   :members:
 

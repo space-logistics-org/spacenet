@@ -14,6 +14,7 @@ from spacenet.simulation import (
     SimCarrier,
     SimCrewMember,
     SimElement,
+    SimPropulsionSystem,
     SimPropulsiveVehicle,
     SimResource,
     SimResourceContainer,
@@ -305,22 +306,45 @@ class TestElements(unittest.TestCase):
 
     def test_propulsive_vehicle_mass_includes_fuel(self):
         fuel = SimResource.generic(self.settings, 101)
+        tank = SimResourceTank(self.settings, resource=fuel, amount=50, max_amount=60)
+        rcs_tank = SimResourceTank(self.settings, resource=fuel, amount=5, max_amount=5)
         vehicle = SimPropulsiveVehicle(
             self.settings,
             name="v",
             mass=100,
-            fuel=fuel,
-            fuel_amount=50,
-            max_fuel=60,
-            isp=300,
+            propulsion_systems=[
+                SimPropulsionSystem("OMS", isp=300, fuel_tank=tank),
+                SimPropulsionSystem("RCS", isp=200, fuel_tank=rcs_tank),
+            ],
         )
-        self.assertEqual(vehicle.total_mass, 150)
-        self.assertEqual(vehicle.get_total_mass(s.ClassOfSupply.COS_1), 50)
+        self.assertEqual(vehicle.total_mass, 155)
+        self.assertEqual(vehicle.get_total_mass(s.ClassOfSupply.COS_1), 55)
+        self.assertIs(vehicle.fuel_tank, tank)
         self.assertIs(vehicle.fuel_tank.container, vehicle)
+        self.assertEqual(vehicle.fuel_tanks, [tank, rcs_tank])
+        self.assertEqual(tank.name, "v OMS Fuel Tank")
+        self.assertEqual(rcs_tank.name, "v RCS Fuel Tank")
+        self.assertEqual(vehicle.get_propulsion_system(s.PropulsionType.RCS).isp, 200)
         demands = DemandSet([Demand(fuel, 20)])
         vehicle.satisfy_demands(demands, None)
         self.assertEqual(vehicle.fuel_tank.amount, 30)
         self.assertEqual(len(demands), 0)
+
+    def test_propulsion_systems_share_fuel_tank(self):
+        fuel = SimResource.generic(self.settings, 101)
+        tank = SimResourceTank(self.settings, resource=fuel, amount=50, max_amount=60)
+        vehicle = SimPropulsiveVehicle(
+            self.settings,
+            name="v",
+            mass=100,
+            propulsion_systems=[
+                SimPropulsionSystem("OMS", isp=300, fuel_tank=tank),
+                SimPropulsionSystem("RCS", isp=200, fuel_tank=tank),
+            ],
+        )
+        self.assertEqual(vehicle.fuel_tanks, [tank])
+        self.assertEqual(vehicle.total_mass, 150)
+        self.assertEqual(tank.name, "v OMS Fuel Tank")
 
 
 class TestState(unittest.TestCase):
@@ -367,7 +391,10 @@ class TestState(unittest.TestCase):
         stage = builder.vehicle(fuel=9000, isp=321)
         element = State(builder.build()).get_element(stage.id)
         self.assertIsInstance(element, SimPropulsiveVehicle)
-        self.assertEqual(element.isp, 321)
+        (system,) = element.propulsion_systems
+        self.assertEqual(system.propulsion_type, s.PropulsionType.OMS)
+        self.assertEqual(system.isp, 321)
+        self.assertIs(system.fuel_tank, element.fuel_tank)
         self.assertEqual(element.fuel_tank.amount, 9000)
         self.assertEqual(element.fuel_tank.max_amount, 9000)
         self.assertEqual(element.fuel_tank.resource.name, "Fuel")

@@ -7,7 +7,7 @@
   "network": {
     "nodes": [
       {
-        "id": "e84dcdb2-84b0-464f-b79b-5eae814e27dd",
+        "id": "e109d05f-6cdd-4574-b96a-a8352ea39d59",
         "name": "KSC",
         "description": "Kennedy Space Center",
         "contents": [],
@@ -17,7 +17,7 @@
         "longitude": -80.6
       },
       {
-        "id": "7e0c8c07-ed62-47f8-8a6e-0044c70623d8",
+        "id": "b8089218-1eeb-4fb4-b7ad-5fe618ee81e3",
         "name": "PAC",
         "description": "Pacific Ocean Splash-down",
         "contents": [],
@@ -27,7 +27,7 @@
         "longitude": -117.9
       },
       {
-        "id": "bd3c42cc-946c-49b5-92af-089e39759526",
+        "id": "498ac561-6224-4f94-8520-80808f4bf541",
         "name": "LEO",
         "description": "Low Earth Orbit",
         "contents": [],
@@ -38,7 +38,7 @@
         "inclination": 28.5
       },
       {
-        "id": "027cf7b9-11fd-45a4-8b0f-c0d360e4bf09",
+        "id": "41aa3165-2fae-4c0f-b21a-926c47dd1bee",
         "name": "LLPO",
         "description": "Low Lunar Polar Orbit",
         "contents": [],
@@ -49,7 +49,7 @@
         "inclination": 90.0
       },
       {
-        "id": "af4162f1-47ab-45de-abdc-f1193d7ad608",
+        "id": "3a4b3ade-96ca-49d6-a12a-424f59080e88",
         "name": "LSP",
         "description": "Lunar South Pole",
         "contents": [],
@@ -61,137 +61,152 @@
     ],
     "edges": [
       {
-        "id": "3e76886e-97a8-404c-acf3-73d1d9a0b64f",
+        "id": "286ad668-20d2-4869-a0e7-a82f4d25ea3d",
         "name": "KSC-LEO",
         "description": "Earth Ascent",
         "contents": [],
         "type": "Space Edge",
-        "origin": "e84dcdb2-84b0-464f-b79b-5eae814e27dd",
-        "destination": "bd3c42cc-946c-49b5-92af-089e39759526",
+        "origin": "e109d05f-6cdd-4574-b96a-a8352ea39d59",
+        "destination": "498ac561-6224-4f94-8520-80808f4bf541",
         "duration": "PT6H",
         "burns": [
           {
-            "id": "48f3a909-49ae-46cf-93bc-1ab2525d801e",
+            "id": "ac690e9e-d403-45d0-8c94-faa96b2549d9",
             "time": "PT0S",
-            "deltaV": 9500.0
+            "deltaV": 9500.0,
+            "type": "OMS"
           }
         ]
       },
       {
-        "id": "48a66af6-2c88-4e8f-864b-2a11de5dbece",
+        "id": "f8459b51-4de9-42f8-a37e-423ba7bf53b8",
         "name": "LEO-LLPO",
         "description": "Lunar Orbit Injection",
         "contents": [],
         "type": "Space Edge",
-        "origin": "bd3c42cc-946c-49b5-92af-089e39759526",
-        "destination": "027cf7b9-11fd-45a4-8b0f-c0d360e4bf09",
+        "origin": "498ac561-6224-4f94-8520-80808f4bf541",
+        "destination": "41aa3165-2fae-4c0f-b21a-926c47dd1bee",
         "duration": "P4D",
         "burns": [
           {
-            "id": "65e42745-f72f-4c05-8925-31256487ec70",
+            "id": "9e367dbe-f54c-403a-bea4-42eb298c7056",
             "time": "PT0S",
-            "deltaV": 3150.0
+            "deltaV": 3150.0,
+            "type": "OMS"
           },
           {
-            "id": "acdba487-27a0-49a6-87c0-55cc9defbd4d",
+            "id": "5f392da3-4f7a-4f6a-b594-28524eb5269a",
             "time": "PT12H",
-            "deltaV": 2.0
+            "deltaV": 2.0,
+            "type": "RCS"
           },
           {
-            "id": "805b4902-fdfa-46b1-b585-4ffbf6e1ea8f",
+            "id": "11986e62-1cc9-4b21-9fa8-a6d514347785",
             "time": "P2DT12H",
-            "deltaV": 2.0
+            "deltaV": 2.0,
+            "type": "RCS"
           },
           {
-            "id": "a4243b2c-56cb-493b-a92b-b8866337ff28",
+            "id": "ac2e8925-d64e-494c-b618-769cf41dab90",
             "time": "P4D",
-            "deltaV": 950.0
+            "deltaV": 950.0,
+            "type": "OMS"
           }
         ]
       },
       {
-        "id": "097a96fa-6ebe-4ba5-a992-9ea65b0a8e35",
+        "id": "446c1b85-0613-42d7-8548-2cd7397c6cd7",
         "name": "LLPO-LSP",
         "description": "Lunar Descent",
         "contents": [],
         "type": "Space Edge",
-        "origin": "027cf7b9-11fd-45a4-8b0f-c0d360e4bf09",
-        "destination": "af4162f1-47ab-45de-abdc-f1193d7ad608",
+        "origin": "41aa3165-2fae-4c0f-b21a-926c47dd1bee",
+        "destination": "3a4b3ade-96ca-49d6-a12a-424f59080e88",
         "duration": "PT12H",
         "burns": [
           {
-            "id": "e4d21986-7bea-4c68-b869-dcdee879d2e3",
+            "id": "ffac9f0d-068a-44c1-82ff-0496ba941224",
             "time": "PT0S",
-            "deltaV": 2030.0
+            "deltaV": 2030.0,
+            "type": "OMS"
           },
           {
-            "id": "6b85a6c6-d975-4b34-a510-1ce181d5d561",
+            "id": "1661ece6-7187-4ffd-a6f1-724ab0aeab46",
             "time": "PT6H",
-            "deltaV": 11.0
+            "deltaV": 11.0,
+            "type": "RCS"
           }
         ]
       },
       {
-        "id": "d121b8ff-c677-4cbc-8663-f7de75ae3afb",
+        "id": "a66127f2-6934-4d5e-ba6d-1a2824e0de34",
         "name": "LSP-LLPO",
         "description": "Lunar Ascent",
         "contents": [],
         "type": "Space Edge",
-        "origin": "af4162f1-47ab-45de-abdc-f1193d7ad608",
-        "destination": "027cf7b9-11fd-45a4-8b0f-c0d360e4bf09",
+        "origin": "3a4b3ade-96ca-49d6-a12a-424f59080e88",
+        "destination": "41aa3165-2fae-4c0f-b21a-926c47dd1bee",
         "duration": "PT12H",
         "burns": [
           {
-            "id": "0918b0c5-6b74-4c0d-a5f0-9ed8db68e357",
+            "id": "b3733265-35b3-457a-86bd-b7ad6b36bcf7",
             "time": "PT0S",
-            "deltaV": 1875.0
+            "deltaV": 1875.0,
+            "type": "OMS"
           },
           {
-            "id": "00425876-c912-4dc4-852a-f04737851779",
+            "id": "377866fb-8def-458a-82f7-66e315057238",
             "time": "PT6H",
-            "deltaV": 31.0
+            "deltaV": 31.0,
+            "type": "RCS"
           }
         ]
       },
       {
-        "id": "a446858c-5cce-415a-8bdd-8e600c075bad",
+        "id": "2774f7e6-c68b-4b5d-880e-5ae9f8b41e62",
         "name": "LLPO-PAC",
         "description": "Trans-Earth Injection",
         "contents": [],
         "type": "Space Edge",
-        "origin": "027cf7b9-11fd-45a4-8b0f-c0d360e4bf09",
-        "destination": "7e0c8c07-ed62-47f8-8a6e-0044c70623d8",
+        "origin": "41aa3165-2fae-4c0f-b21a-926c47dd1bee",
+        "destination": "b8089218-1eeb-4fb4-b7ad-5fe618ee81e3",
         "duration": "P4D",
         "burns": [
           {
-            "id": "c0669226-da57-4bd1-bf93-80feefd5e1f1",
+            "id": "96db1c04-c1dc-4e4c-9425-1affff54a6a1",
             "time": "PT0S",
-            "deltaV": 612.3
+            "deltaV": 612.3,
+            "type": "OMS"
           },
           {
-            "id": "9b63b8cd-151b-402f-9f59-13e3501c6730",
+            "id": "e42d870b-d79e-47b0-9ef1-62aff9e45b31",
             "time": "PT12H",
-            "deltaV": 276.5
+            "deltaV": 276.5,
+            "type": "OMS"
           },
           {
-            "id": "81fee56b-96ee-4958-a215-ae80e0daffc0",
+            "id": "1c9666ad-db14-4ac4-baa6-532759ff83be",
             "time": "P1D",
-            "deltaV": 333.6
+            "deltaV": 333.6,
+            "type": "OMS"
           },
           {
-            "id": "ed5d5e7c-1735-44df-b86b-d5846ee750e2",
+            "id": "03a0e023-57fe-4953-bc86-0d5ae9549308",
             "time": "P1DT12H",
-            "deltaV": 3.2
+            "deltaV": 3.2,
+            "type": "RCS"
           },
           {
-            "id": "08c42a88-5939-467f-b18b-6c5d9486d4a9",
+            "id": "f99a3137-3aea-408a-b1a1-28c7a8a5c32a",
             "time": "P3D",
-            "deltaV": 3.2
+            "deltaV": 3.2,
+            "type": "RCS"
           },
           {
-            "id": "e9d2a95c-6be6-4539-b4b7-0906945fb9a4",
+            "id": "41aca24c-9701-40f1-adc3-9c79fbe4f343",
             "time": "P4D",
-            "deltaV": 5.0
+            "deltaV": 5.0,
+            "type": "RCS"
           }
         ]
       }
@@ -207,66 +222,66 @@
           "type": "Create Elements",
           "priority": 1,
           "missionTime": "PT0S",
-          "location": "e84dcdb2-84b0-464f-b79b-5eae814e27dd",
+          "location": "e109d05f-6cdd-4574-b96a-a8352ea39d59",
           "elements": [
-            "58607c96-1449-4d2e-95fa-533fa2a503ce",
-            "1db67f06-8fd3-4e10-b056-9c9de14eb07f",
-            "d804adb4-5375-48a6-b376-5f9c188ecaea",
-            "f3ef6566-d982-4681-8a93-76251b895c9f",
-            "fade49dd-33b6-4b7c-8d88-8e45176c68f4"
+            "2d893c6d-1a70-410c-a632-aec4ced2ea20",
+            "63543a61-d6e1-4d94-970e-321f960f97e6",
+            "b08b45e2-eafe-4aab-9e1a-2f283534b6ca",
+            "48a09f77-125c-48e7-9890-f2f4d92b56d9",
+            "b6db8aea-73fa-46d1-8d70-909d7ebd4ad8"
           ],
-          "container": "e84dcdb2-84b0-464f-b79b-5eae814e27dd"
+          "container": "e109d05f-6cdd-4574-b96a-a8352ea39d59"
         },
         {
           "name": "Lunar | Create Elements",
           "type": "Create Elements",
           "priority": 2,
           "missionTime": "PT0S",
-          "location": "e84dcdb2-84b0-464f-b79b-5eae814e27dd",
+          "location": "e109d05f-6cdd-4574-b96a-a8352ea39d59",
           "elements": [
-            "eb445e7c-dee3-4aed-8449-a454d9f49c49",
-            "3386aa6f-a4b7-4510-b5c4-8fff0c3b6459",
-            "0aab5be3-1b77-4c0f-869a-7bf4c2084f68",
-            "fd10e777-487f-4a1d-898d-0f7921ea6212"
+            "8768d02d-05ec-47a2-bba0-66af26f22fe7",
+            "8a7934c1-b036-4b5f-b072-efb05a484b54",
+            "d5e5eb3e-3e09-4b05-a276-cac1d1f62c2b",
+            "b7062d1c-c35d-4048-bca4-3602522e46e9"
           ],
-          "container": "d804adb4-5375-48a6-b376-5f9c188ecaea"
+          "container": "b08b45e2-eafe-4aab-9e1a-2f283534b6ca"
         },
         {
           "name": "Lunar | Space Transport",
           "type": "Space Transport",
           "priority": 3,
           "missionTime": "PT0S",
-          "location": "e84dcdb2-84b0-464f-b79b-5eae814e27dd",
-          "edge": "3e76886e-97a8-404c-acf3-73d1d9a0b64f",
+          "location": "e109d05f-6cdd-4574-b96a-a8352ea39d59",
+          "edge": "286ad668-20d2-4869-a0e7-a82f4d25ea3d",
           "elements": [
-            "58607c96-1449-4d2e-95fa-533fa2a503ce",
-            "1db67f06-8fd3-4e10-b056-9c9de14eb07f",
-            "d804adb4-5375-48a6-b376-5f9c188ecaea",
-            "f3ef6566-d982-4681-8a93-76251b895c9f",
-            "fade49dd-33b6-4b7c-8d88-8e45176c68f4"
+            "2d893c6d-1a70-410c-a632-aec4ced2ea20",
+            "63543a61-d6e1-4d94-970e-321f960f97e6",
+            "b08b45e2-eafe-4aab-9e1a-2f283534b6ca",
+            "48a09f77-125c-48e7-9890-f2f4d92b56d9",
+            "b6db8aea-73fa-46d1-8d70-909d7ebd4ad8"
           ],
           "burnStageSequence": [
             {
-              "burn": "48f3a909-49ae-46cf-93bc-1ab2525d801e",
+              "burn": "ac690e9e-d403-45d0-8c94-faa96b2549d9",
               "actions": [
                 {
-                  "element": "58607c96-1449-4d2e-95fa-533fa2a503ce",
+                  "element": "2d893c6d-1a70-410c-a632-aec4ced2ea20",
                   "type": "Burn"
                 },
                 {
-                  "element": "58607c96-1449-4d2e-95fa-533fa2a503ce",
+                  "element": "2d893c6d-1a70-410c-a632-aec4ced2ea20",
                   "type": "Stage"
                 },
                 {
-                  "element": "fade49dd-33b6-4b7c-8d88-8e45176c68f4",
+                  "element": "b6db8aea-73fa-46d1-8d70-909d7ebd4ad8",
                   "type": "Stage"
                 },
                 {
-                  "element": "1db67f06-8fd3-4e10-b056-9c9de14eb07f",
+                  "element": "63543a61-d6e1-4d94-970e-321f960f97e6",
                   "type": "Burn"
                 },
                 {
-                  "element": "1db67f06-8fd3-4e10-b056-9c9de14eb07f",
+                  "element": "63543a61-d6e1-4d94-970e-321f960f97e6",
                   "type": "Stage"
                 }
               ]
@@ -278,63 +293,63 @@
           "type": "Create Elements",
           "priority": 1,
           "missionTime": "P1D",
-          "location": "e84dcdb2-84b0-464f-b79b-5eae814e27dd",
+          "location": "e109d05f-6cdd-4574-b96a-a8352ea39d59",
           "elements": [
-            "e766e9eb-976f-4b02-93cf-8ec45b7582e5",
-            "e833d353-2531-47b3-b283-aca7c0ef319c",
-            "2a6c15e6-8536-40fe-a8fd-b64a121137ff",
-            "119a1443-c243-4be9-914c-c457bd058373",
-            "8e19d911-aa0d-469b-9cc0-e9f7e823929d"
+            "1cb65a07-032c-4bbb-9210-7554b997b46a",
+            "c33161c2-0f35-4397-91e1-3c74d4f95235",
+            "583d2d83-398e-4756-b966-5f36c1ee4d8e",
+            "d5ae4dd1-23a6-4e1a-8978-ef21af740774",
+            "859b1eba-1b85-4c70-94e6-eef817bdd45c"
           ],
-          "container": "e84dcdb2-84b0-464f-b79b-5eae814e27dd"
+          "container": "e109d05f-6cdd-4574-b96a-a8352ea39d59"
         },
         {
           "name": "Lunar | Create Elements",
           "type": "Create Elements",
           "priority": 2,
           "missionTime": "P1D",
-          "location": "e84dcdb2-84b0-464f-b79b-5eae814e27dd",
+          "location": "e109d05f-6cdd-4574-b96a-a8352ea39d59",
           "elements": [
-            "62a2d7bd-04c7-4c98-b820-1a6b8b4ef341"
+            "048cd37b-6270-404e-b185-a2c918e3625e"
           ],
-          "container": "e833d353-2531-47b3-b283-aca7c0ef319c"
+          "container": "c33161c2-0f35-4397-91e1-3c74d4f95235"
         },
         {
           "name": "Lunar | Space Transport",
           "type": "Space Transport",
           "priority": 3,
           "missionTime": "P1D",
-          "location": "e84dcdb2-84b0-464f-b79b-5eae814e27dd",
-          "edge": "3e76886e-97a8-404c-acf3-73d1d9a0b64f",
+          "location": "e109d05f-6cdd-4574-b96a-a8352ea39d59",
+          "edge": "286ad668-20d2-4869-a0e7-a82f4d25ea3d",
           "elements": [
-            "e766e9eb-976f-4b02-93cf-8ec45b7582e5",
-            "e833d353-2531-47b3-b283-aca7c0ef319c",
-            "2a6c15e6-8536-40fe-a8fd-b64a121137ff",
-            "119a1443-c243-4be9-914c-c457bd058373",
-            "8e19d911-aa0d-469b-9cc0-e9f7e823929d"
+            "1cb65a07-032c-4bbb-9210-7554b997b46a",
+            "c33161c2-0f35-4397-91e1-3c74d4f95235",
+            "583d2d83-398e-4756-b966-5f36c1ee4d8e",
+            "d5ae4dd1-23a6-4e1a-8978-ef21af740774",
+            "859b1eba-1b85-4c70-94e6-eef817bdd45c"
           ],
           "burnStageSequence": [
             {
-              "burn": "48f3a909-49ae-46cf-93bc-1ab2525d801e",
+              "burn": "ac690e9e-d403-45d0-8c94-faa96b2549d9",
               "actions": [
                 {
-                  "element": "119a1443-c243-4be9-914c-c457bd058373",
+                  "element": "d5ae4dd1-23a6-4e1a-8978-ef21af740774",
                   "type": "Burn"
                 },
                 {
-                  "element": "119a1443-c243-4be9-914c-c457bd058373",
+                  "element": "d5ae4dd1-23a6-4e1a-8978-ef21af740774",
                   "type": "Stage"
                 },
                 {
-                  "element": "2a6c15e6-8536-40fe-a8fd-b64a121137ff",
+                  "element": "583d2d83-398e-4756-b966-5f36c1ee4d8e",
                   "type": "Burn"
                 },
                 {
-                  "element": "2a6c15e6-8536-40fe-a8fd-b64a121137ff",
+                  "element": "583d2d83-398e-4756-b966-5f36c1ee4d8e",
                   "type": "Stage"
                 },
                 {
-                  "element": "8e19d911-aa0d-469b-9cc0-e9f7e823929d",
+                  "element": "859b1eba-1b85-4c70-94e6-eef817bdd45c",
                   "type": "Burn"
                 }
               ]
@@ -346,52 +361,52 @@
           "type": "Space Transport",
           "priority": 1,
           "missionTime": "P2D",
-          "location": "bd3c42cc-946c-49b5-92af-089e39759526",
-          "edge": "48a66af6-2c88-4e8f-864b-2a11de5dbece",
+          "location": "498ac561-6224-4f94-8520-80808f4bf541",
+          "edge": "f8459b51-4de9-42f8-a37e-423ba7bf53b8",
           "elements": [
-            "e766e9eb-976f-4b02-93cf-8ec45b7582e5",
-            "e833d353-2531-47b3-b283-aca7c0ef319c",
-            "8e19d911-aa0d-469b-9cc0-e9f7e823929d",
-            "d804adb4-5375-48a6-b376-5f9c188ecaea",
-            "f3ef6566-d982-4681-8a93-76251b895c9f"
+            "1cb65a07-032c-4bbb-9210-7554b997b46a",
+            "c33161c2-0f35-4397-91e1-3c74d4f95235",
+            "859b1eba-1b85-4c70-94e6-eef817bdd45c",
+            "b08b45e2-eafe-4aab-9e1a-2f283534b6ca",
+            "48a09f77-125c-48e7-9890-f2f4d92b56d9"
           ],
           "burnStageSequence": [
             {
-              "burn": "65e42745-f72f-4c05-8925-31256487ec70",
+              "burn": "9e367dbe-f54c-403a-bea4-42eb298c7056",
               "actions": [
                 {
-                  "element": "8e19d911-aa0d-469b-9cc0-e9f7e823929d",
+                  "element": "859b1eba-1b85-4c70-94e6-eef817bdd45c",
                   "type": "Burn"
                 },
                 {
-                  "element": "8e19d911-aa0d-469b-9cc0-e9f7e823929d",
+                  "element": "859b1eba-1b85-4c70-94e6-eef817bdd45c",
                   "type": "Stage"
                 }
               ]
             },
             {
-              "burn": "acdba487-27a0-49a6-87c0-55cc9defbd4d",
+              "burn": "5f392da3-4f7a-4f6a-b594-28524eb5269a",
               "actions": [
                 {
-                  "element": "e833d353-2531-47b3-b283-aca7c0ef319c",
+                  "element": "c33161c2-0f35-4397-91e1-3c74d4f95235",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "805b4902-fdfa-46b1-b585-4ffbf6e1ea8f",
+              "burn": "11986e62-1cc9-4b21-9fa8-a6d514347785",
               "actions": [
                 {
-                  "element": "e833d353-2531-47b3-b283-aca7c0ef319c",
+                  "element": "c33161c2-0f35-4397-91e1-3c74d4f95235",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "a4243b2c-56cb-493b-a92b-b8866337ff28",
+              "burn": "ac2e8925-d64e-494c-b618-769cf41dab90",
               "actions": [
                 {
-                  "element": "e833d353-2531-47b3-b283-aca7c0ef319c",
+                  "element": "c33161c2-0f35-4397-91e1-3c74d4f95235",
                   "type": "Burn"
                 }
               ]
@@ -403,41 +418,41 @@
           "type": "Move Elements",
           "priority": 1,
           "missionTime": "P6D",
-          "location": "027cf7b9-11fd-45a4-8b0f-c0d360e4bf09",
+          "location": "41aa3165-2fae-4c0f-b21a-926c47dd1bee",
           "elements": [
-            "eb445e7c-dee3-4aed-8449-a454d9f49c49",
-            "3386aa6f-a4b7-4510-b5c4-8fff0c3b6459",
-            "0aab5be3-1b77-4c0f-869a-7bf4c2084f68",
-            "fd10e777-487f-4a1d-898d-0f7921ea6212"
+            "8768d02d-05ec-47a2-bba0-66af26f22fe7",
+            "8a7934c1-b036-4b5f-b072-efb05a484b54",
+            "d5e5eb3e-3e09-4b05-a276-cac1d1f62c2b",
+            "b7062d1c-c35d-4048-bca4-3602522e46e9"
           ],
-          "container": "e766e9eb-976f-4b02-93cf-8ec45b7582e5"
+          "container": "1cb65a07-032c-4bbb-9210-7554b997b46a"
         },
         {
           "name": "Lunar | Space Transport",
           "type": "Space Transport",
           "priority": 1,
           "missionTime": "P7D",
-          "location": "027cf7b9-11fd-45a4-8b0f-c0d360e4bf09",
-          "edge": "097a96fa-6ebe-4ba5-a992-9ea65b0a8e35",
+          "location": "41aa3165-2fae-4c0f-b21a-926c47dd1bee",
+          "edge": "446c1b85-0613-42d7-8548-2cd7397c6cd7",
           "elements": [
-            "e766e9eb-976f-4b02-93cf-8ec45b7582e5",
-            "e833d353-2531-47b3-b283-aca7c0ef319c"
+            "1cb65a07-032c-4bbb-9210-7554b997b46a",
+            "c33161c2-0f35-4397-91e1-3c74d4f95235"
           ],
           "burnStageSequence": [
             {
-              "burn": "e4d21986-7bea-4c68-b869-dcdee879d2e3",
+              "burn": "ffac9f0d-068a-44c1-82ff-0496ba941224",
               "actions": [
                 {
-                  "element": "e833d353-2531-47b3-b283-aca7c0ef319c",
+                  "element": "c33161c2-0f35-4397-91e1-3c74d4f95235",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "6b85a6c6-d975-4b34-a510-1ce181d5d561",
+              "burn": "1661ece6-7187-4ffd-a6f1-724ab0aeab46",
               "actions": [
                 {
-                  "element": "e833d353-2531-47b3-b283-aca7c0ef319c",
+                  "element": "c33161c2-0f35-4397-91e1-3c74d4f95235",
                   "type": "Burn"
                 }
               ]
@@ -449,18 +464,18 @@
           "type": "Crewed Exploration",
           "priority": 1,
           "missionTime": "P7DT12H",
-          "location": "af4162f1-47ab-45de-abdc-f1193d7ad608",
+          "location": "3a4b3ade-96ca-49d6-a12a-424f59080e88",
           "evaDuration": "PT8H",
           "duration": "P7D",
-          "vehicle": "e766e9eb-976f-4b02-93cf-8ec45b7582e5",
+          "vehicle": "1cb65a07-032c-4bbb-9210-7554b997b46a",
           "evaPerWeek": 5,
           "elementStates": [
             {
-              "element": "eb445e7c-dee3-4aed-8449-a454d9f49c49",
+              "element": "8768d02d-05ec-47a2-bba0-66af26f22fe7",
               "stateIndex": -1
             },
             {
-              "element": "3386aa6f-a4b7-4510-b5c4-8fff0c3b6459",
+              "element": "8a7934c1-b036-4b5f-b072-efb05a484b54",
               "stateIndex": -1
             }
           ],
@@ -471,37 +486,37 @@
           "type": "Create Elements",
           "priority": 1,
           "missionTime": "P14DT12H",
-          "location": "af4162f1-47ab-45de-abdc-f1193d7ad608",
+          "location": "3a4b3ade-96ca-49d6-a12a-424f59080e88",
           "elements": [
-            "72b14aaf-5739-4d1f-b0cb-e55a4c1ce4ee"
+            "9ee313a1-69db-4f58-80b8-4e57b2db5edc"
           ],
-          "container": "e766e9eb-976f-4b02-93cf-8ec45b7582e5"
+          "container": "1cb65a07-032c-4bbb-9210-7554b997b46a"
         },
         {
           "name": "Lunar | Space Transport",
           "type": "Space Transport",
           "priority": 2,
           "missionTime": "P14DT12H",
-          "location": "af4162f1-47ab-45de-abdc-f1193d7ad608",
-          "edge": "d121b8ff-c677-4cbc-8663-f7de75ae3afb",
+          "location": "3a4b3ade-96ca-49d6-a12a-424f59080e88",
+          "edge": "a66127f2-6934-4d5e-ba6d-1a2824e0de34",
           "elements": [
-            "e766e9eb-976f-4b02-93cf-8ec45b7582e5"
+            "1cb65a07-032c-4bbb-9210-7554b997b46a"
           ],
           "burnStageSequence": [
             {
-              "burn": "0918b0c5-6b74-4c0d-a5f0-9ed8db68e357",
+              "burn": "b3733265-35b3-457a-86bd-b7ad6b36bcf7",
               "actions": [
                 {
-                  "element": "e766e9eb-976f-4b02-93cf-8ec45b7582e5",
+                  "element": "1cb65a07-032c-4bbb-9210-7554b997b46a",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "00425876-c912-4dc4-852a-f04737851779",
+              "burn": "377866fb-8def-458a-82f7-66e315057238",
               "actions": [
                 {
-                  "element": "e766e9eb-976f-4b02-93cf-8ec45b7582e5",
+                  "element": "1cb65a07-032c-4bbb-9210-7554b997b46a",
                   "type": "Burn"
                 }
               ]
@@ -513,82 +528,82 @@
           "type": "Move Elements",
           "priority": 1,
           "missionTime": "P15D",
-          "location": "027cf7b9-11fd-45a4-8b0f-c0d360e4bf09",
+          "location": "41aa3165-2fae-4c0f-b21a-926c47dd1bee",
           "elements": [
-            "eb445e7c-dee3-4aed-8449-a454d9f49c49",
-            "3386aa6f-a4b7-4510-b5c4-8fff0c3b6459",
-            "0aab5be3-1b77-4c0f-869a-7bf4c2084f68",
-            "fd10e777-487f-4a1d-898d-0f7921ea6212",
-            "72b14aaf-5739-4d1f-b0cb-e55a4c1ce4ee"
+            "8768d02d-05ec-47a2-bba0-66af26f22fe7",
+            "8a7934c1-b036-4b5f-b072-efb05a484b54",
+            "d5e5eb3e-3e09-4b05-a276-cac1d1f62c2b",
+            "b7062d1c-c35d-4048-bca4-3602522e46e9",
+            "9ee313a1-69db-4f58-80b8-4e57b2db5edc"
           ],
-          "container": "d804adb4-5375-48a6-b376-5f9c188ecaea"
+          "container": "b08b45e2-eafe-4aab-9e1a-2f283534b6ca"
         },
         {
           "name": "Lunar | Space Transport",
           "type": "Space Transport",
           "priority": 2,
           "missionTime": "P15D",
-          "location": "027cf7b9-11fd-45a4-8b0f-c0d360e4bf09",
-          "edge": "a446858c-5cce-415a-8bdd-8e600c075bad",
+          "location": "41aa3165-2fae-4c0f-b21a-926c47dd1bee",
+          "edge": "2774f7e6-c68b-4b5d-880e-5ae9f8b41e62",
           "elements": [
-            "d804adb4-5375-48a6-b376-5f9c188ecaea",
-            "f3ef6566-d982-4681-8a93-76251b895c9f"
+            "b08b45e2-eafe-4aab-9e1a-2f283534b6ca",
+            "48a09f77-125c-48e7-9890-f2f4d92b56d9"
           ],
           "burnStageSequence": [
             {
-              "burn": "c0669226-da57-4bd1-bf93-80feefd5e1f1",
+              "burn": "96db1c04-c1dc-4e4c-9425-1affff54a6a1",
               "actions": [
                 {
-                  "element": "f3ef6566-d982-4681-8a93-76251b895c9f",
+                  "element": "48a09f77-125c-48e7-9890-f2f4d92b56d9",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "9b63b8cd-151b-402f-9f59-13e3501c6730",
+              "burn": "e42d870b-d79e-47b0-9ef1-62aff9e45b31",
               "actions": [
                 {
-                  "element": "f3ef6566-d982-4681-8a93-76251b895c9f",
+                  "element": "48a09f77-125c-48e7-9890-f2f4d92b56d9",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "81fee56b-96ee-4958-a215-ae80e0daffc0",
+              "burn": "1c9666ad-db14-4ac4-baa6-532759ff83be",
               "actions": [
                 {
-                  "element": "f3ef6566-d982-4681-8a93-76251b895c9f",
+                  "element": "48a09f77-125c-48e7-9890-f2f4d92b56d9",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "ed5d5e7c-1735-44df-b86b-d5846ee750e2",
+              "burn": "03a0e023-57fe-4953-bc86-0d5ae9549308",
               "actions": [
                 {
-                  "element": "f3ef6566-d982-4681-8a93-76251b895c9f",
+                  "element": "48a09f77-125c-48e7-9890-f2f4d92b56d9",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "08c42a88-5939-467f-b18b-6c5d9486d4a9",
+              "burn": "f99a3137-3aea-408a-b1a1-28c7a8a5c32a",
               "actions": [
                 {
-                  "element": "f3ef6566-d982-4681-8a93-76251b895c9f",
+                  "element": "48a09f77-125c-48e7-9890-f2f4d92b56d9",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "e9d2a95c-6be6-4539-b4b7-0906945fb9a4",
+              "burn": "41aca24c-9701-40f1-adc3-9c79fbe4f343",
               "actions": [
                 {
-                  "element": "f3ef6566-d982-4681-8a93-76251b895c9f",
+                  "element": "48a09f77-125c-48e7-9890-f2f4d92b56d9",
                   "type": "Stage"
                 },
                 {
-                  "element": "d804adb4-5375-48a6-b376-5f9c188ecaea",
+                  "element": "b08b45e2-eafe-4aab-9e1a-2f283534b6ca",
                   "type": "Burn"
                 }
               ]
@@ -597,15 +612,15 @@
         }
       ],
       "demandModels": [],
-      "origin": "e84dcdb2-84b0-464f-b79b-5eae814e27dd",
-      "destination": "af4162f1-47ab-45de-abdc-f1193d7ad608",
-      "returnOrigin": "af4162f1-47ab-45de-abdc-f1193d7ad608",
-      "returnDestination": "7e0c8c07-ed62-47f8-8a6e-0044c70623d8"
+      "origin": "e109d05f-6cdd-4574-b96a-a8352ea39d59",
+      "destination": "3a4b3ade-96ca-49d6-a12a-424f59080e88",
+      "returnOrigin": "3a4b3ade-96ca-49d6-a12a-424f59080e88",
+      "returnDestination": "b8089218-1eeb-4fb4-b7ad-5fe618ee81e3"
     }
   ],
   "elementTemplates": [
     {
-      "id": "c8fa2807-16b9-4f85-8679-9e4d561f1b42",
+      "id": "aacdf7c2-8e9a-4110-9b0d-30df1ce8ea09",
       "name": "Altair AM",
       "type": "Propulsive Vehicle",
       "description": "Altair Ascent Module",
@@ -621,15 +636,27 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 4,
-      "isp": 320.0,
-      "maxFuel": 3000.0,
-      "fuel": {
-        "resource": "00bd29c5-89cf-42b9-aa00-f4bf9ac1f7df",
-        "amount": 3000.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 320.0,
+          "fuelTank": {
+            "maxAmount": 3000.0,
+            "contents": {
+              "resource": "a53f0f86-bbb8-4e6d-9585-71c8e60f5d1f",
+              "amount": 3000.0
+            }
+          }
+        },
+        {
+          "type": "RCS",
+          "isp": 300.0,
+          "sharedFuelTank": "OMS"
+        }
+      ]
     },
     {
-      "id": "936b4a00-de50-4ead-9627-b4a4a64ed17b",
+      "id": "458ec528-d4ab-4322-b412-371d1618eef8",
       "name": "Altair DM",
       "type": "Propulsive Vehicle",
       "description": "Altair Descent Module",
@@ -645,15 +672,33 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 0,
-      "isp": 448.0,
-      "maxFuel": 24900.0,
-      "fuel": {
-        "resource": "460498c1-2599-4ece-8526-82a63b618aaa",
-        "amount": 24900.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 448.0,
+          "fuelTank": {
+            "maxAmount": 24900.0,
+            "contents": {
+              "resource": "452b9b1f-e8d0-4277-b6db-433c6952d04c",
+              "amount": 24900.0
+            }
+          }
+        },
+        {
+          "type": "RCS",
+          "isp": 300.0,
+          "fuelTank": {
+            "maxAmount": 425.0,
+            "contents": {
+              "resource": "452b9b1f-e8d0-4277-b6db-433c6952d04c",
+              "amount": 425.0
+            }
+          }
+        }
+      ]
     },
     {
-      "id": "061bf724-2719-4d73-a41b-8d621a7ed444",
+      "id": "52858896-8d39-464e-bb63-2a0a8083e1f5",
       "name": "Ares I First Stage",
       "type": "Propulsive Vehicle",
       "description": "Ares I Launch Vehicle, First Propulsive Stage",
@@ -669,15 +714,22 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 0,
-      "isp": 267.0,
-      "maxFuel": 620000.0,
-      "fuel": {
-        "resource": "78242359-5c0d-4e42-b081-216b48c60409",
-        "amount": 620000.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 267.0,
+          "fuelTank": {
+            "maxAmount": 620000.0,
+            "contents": {
+              "resource": "46228693-a66c-4f5f-9398-407da74cb995",
+              "amount": 620000.0
+            }
+          }
+        }
+      ]
     },
     {
-      "id": "345ef45a-da3c-4722-b4fd-39806c751c58",
+      "id": "2d365fb4-628c-414e-aca2-58eeb72a85cc",
       "name": "Ares I Upper Stage",
       "type": "Propulsive Vehicle",
       "description": "Ares I Launch Vehicle, Second Propulsive Stage",
@@ -693,15 +745,22 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 0,
-      "isp": 448.0,
-      "maxFuel": 125000.0,
-      "fuel": {
-        "resource": "78242359-5c0d-4e42-b081-216b48c60409",
-        "amount": 125000.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 448.0,
+          "fuelTank": {
+            "maxAmount": 125000.0,
+            "contents": {
+              "resource": "46228693-a66c-4f5f-9398-407da74cb995",
+              "amount": 125000.0
+            }
+          }
+        }
+      ]
     },
     {
-      "id": "84e3af58-c073-464a-ba2e-acf6c488efe9",
+      "id": "458beb02-4d37-4898-9f79-1bee5d1a006f",
       "name": "Ares V Core",
       "type": "Propulsive Vehicle",
       "description": "Ares V Launch Vehicle, Core Engine",
@@ -717,15 +776,22 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 0,
-      "isp": 414.0,
-      "maxFuel": 1587000.0,
-      "fuel": {
-        "resource": "460498c1-2599-4ece-8526-82a63b618aaa",
-        "amount": 1587000.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 414.0,
+          "fuelTank": {
+            "maxAmount": 1587000.0,
+            "contents": {
+              "resource": "452b9b1f-e8d0-4277-b6db-433c6952d04c",
+              "amount": 1587000.0
+            }
+          }
+        }
+      ]
     },
     {
-      "id": "bd59323a-45eb-4606-8a7c-d8f52f0f57b7",
+      "id": "91e24d45-027e-4c67-98b7-54dad5e4feda",
       "name": "Ares V SRBs",
       "type": "Propulsive Vehicle",
       "description": "Ares V Launch Vehicle, Solid Rocket Boosters",
@@ -741,15 +807,22 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 0,
-      "isp": 270.0,
-      "maxFuel": 1375000.0,
-      "fuel": {
-        "resource": "78242359-5c0d-4e42-b081-216b48c60409",
-        "amount": 1375000.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 270.0,
+          "fuelTank": {
+            "maxAmount": 1375000.0,
+            "contents": {
+              "resource": "46228693-a66c-4f5f-9398-407da74cb995",
+              "amount": 1375000.0
+            }
+          }
+        }
+      ]
     },
     {
-      "id": "ec81219c-5f1d-4363-9ae0-2ec4580e871d",
+      "id": "4cfab372-4bab-4499-bd9e-1c3a7cd40b3d",
       "name": "Crew Member",
       "type": "Human Agent",
       "description": "Crew Member",
@@ -763,7 +836,7 @@
       "activeTimeFraction": 0.66
     },
     {
-      "id": "e9a57510-56cc-466c-b3da-2869315fdd75",
+      "id": "a8a49057-9250-405e-afaf-dfd1b310d618",
       "name": "EDS",
       "type": "Propulsive Vehicle",
       "description": "Earth Departure System",
@@ -779,15 +852,22 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 0,
-      "isp": 448.0,
-      "maxFuel": 253000.0,
-      "fuel": {
-        "resource": "460498c1-2599-4ece-8526-82a63b618aaa",
-        "amount": 253000.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 448.0,
+          "fuelTank": {
+            "maxAmount": 253000.0,
+            "contents": {
+              "resource": "452b9b1f-e8d0-4277-b6db-433c6952d04c",
+              "amount": 253000.0
+            }
+          }
+        }
+      ]
     },
     {
-      "id": "26bb622a-376b-477e-b59f-632c3f7f2b41",
+      "id": "13d844ad-dbe0-4daf-9131-6d36f951d9f1",
       "name": "Lunar Surface Samples",
       "type": "Element",
       "description": "Lunar Surface Samples",
@@ -800,7 +880,7 @@
       "parts": []
     },
     {
-      "id": "4192bede-715e-45be-9f8d-341c751bbbd2",
+      "id": "1670e2c2-7d9d-4252-bb91-ec67ce76eca2",
       "name": "Notional Cargo",
       "type": "Element",
       "description": "Notional Cargo",
@@ -813,7 +893,7 @@
       "parts": []
     },
     {
-      "id": "5c41f5bb-71eb-4d0b-8361-c713f2fbf36c",
+      "id": "3338cb33-1614-47ac-8e07-f1dd4af8c4c7",
       "name": "Orion CM",
       "type": "Propulsive Vehicle",
       "description": "Orion Crew Module",
@@ -829,15 +909,22 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 4,
-      "isp": 301.0,
-      "maxFuel": 175.0,
-      "fuel": {
-        "resource": "00bd29c5-89cf-42b9-aa00-f4bf9ac1f7df",
-        "amount": 175.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "RCS",
+          "isp": 301.0,
+          "fuelTank": {
+            "maxAmount": 175.0,
+            "contents": {
+              "resource": "a53f0f86-bbb8-4e6d-9585-71c8e60f5d1f",
+              "amount": 175.0
+            }
+          }
+        }
+      ]
     },
     {
-      "id": "7ca06128-2c92-48a6-82f2-1dce0e72a522",
+      "id": "e4e08d3c-ceaa-4061-893c-9c7f50dda55d",
       "name": "Orion LAS",
       "type": "Element Carrier",
       "description": "Orion Launch Abort System",
@@ -855,7 +942,7 @@
       "maxCrew": 0
     },
     {
-      "id": "22c767dc-74b5-4615-9b92-dce29fa37fa3",
+      "id": "2a7c1bf4-5036-4f62-a201-0ccedc7dae94",
       "name": "Orion SM",
       "type": "Propulsive Vehicle",
       "description": "Orion Service Module",
@@ -871,118 +958,130 @@
       "cargoEnvironment": "Unpressurized",
       "contents": [],
       "maxCrew": 4,
-      "isp": 301.0,
-      "maxFuel": 10000.0,
-      "fuel": {
-        "resource": "00bd29c5-89cf-42b9-aa00-f4bf9ac1f7df",
-        "amount": 10000.0
-      }
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 328.0,
+          "fuelTank": {
+            "maxAmount": 10000.0,
+            "contents": {
+              "resource": "a53f0f86-bbb8-4e6d-9585-71c8e60f5d1f",
+              "amount": 10000.0
+            }
+          }
+        },
+        {
+          "type": "RCS",
+          "isp": 301.0,
+          "sharedFuelTank": "OMS"
+        }
+      ]
     }
   ],
   "instantiatedElements": [
     {
-      "id": "e766e9eb-976f-4b02-93cf-8ec45b7582e5",
+      "id": "1cb65a07-032c-4bbb-9210-7554b997b46a",
       "type": "Propulsive Vehicle",
-      "templateId": "c8fa2807-16b9-4f85-8679-9e4d561f1b42",
+      "templateId": "aacdf7c2-8e9a-4110-9b0d-30df1ce8ea09",
       "name": "Lunar | Altair AM",
       "contents": []
     },
     {
-      "id": "e833d353-2531-47b3-b283-aca7c0ef319c",
+      "id": "c33161c2-0f35-4397-91e1-3c74d4f95235",
       "type": "Propulsive Vehicle",
-      "templateId": "936b4a00-de50-4ead-9627-b4a4a64ed17b",
+      "templateId": "458ec528-d4ab-4322-b412-371d1618eef8",
       "name": "Lunar | Altair DM",
       "contents": []
     },
     {
-      "id": "58607c96-1449-4d2e-95fa-533fa2a503ce",
+      "id": "2d893c6d-1a70-410c-a632-aec4ced2ea20",
       "type": "Propulsive Vehicle",
-      "templateId": "061bf724-2719-4d73-a41b-8d621a7ed444",
+      "templateId": "52858896-8d39-464e-bb63-2a0a8083e1f5",
       "name": "Lunar | Ares I First Stage",
       "contents": []
     },
     {
-      "id": "1db67f06-8fd3-4e10-b056-9c9de14eb07f",
+      "id": "63543a61-d6e1-4d94-970e-321f960f97e6",
       "type": "Propulsive Vehicle",
-      "templateId": "345ef45a-da3c-4722-b4fd-39806c751c58",
+      "templateId": "2d365fb4-628c-414e-aca2-58eeb72a85cc",
       "name": "Lunar | Ares I Upper Stage",
       "contents": []
     },
     {
-      "id": "2a6c15e6-8536-40fe-a8fd-b64a121137ff",
+      "id": "583d2d83-398e-4756-b966-5f36c1ee4d8e",
       "type": "Propulsive Vehicle",
-      "templateId": "84e3af58-c073-464a-ba2e-acf6c488efe9",
+      "templateId": "458beb02-4d37-4898-9f79-1bee5d1a006f",
       "name": "Lunar | Ares V Core",
       "contents": []
     },
     {
-      "id": "119a1443-c243-4be9-914c-c457bd058373",
+      "id": "d5ae4dd1-23a6-4e1a-8978-ef21af740774",
       "type": "Propulsive Vehicle",
-      "templateId": "bd59323a-45eb-4606-8a7c-d8f52f0f57b7",
+      "templateId": "91e24d45-027e-4c67-98b7-54dad5e4feda",
       "name": "Lunar | Ares V SRBs",
       "contents": []
     },
     {
-      "id": "eb445e7c-dee3-4aed-8449-a454d9f49c49",
+      "id": "8768d02d-05ec-47a2-bba0-66af26f22fe7",
       "type": "Human Agent",
-      "templateId": "ec81219c-5f1d-4363-9ae0-2ec4580e871d",
+      "templateId": "4cfab372-4bab-4499-bd9e-1c3a7cd40b3d",
       "name": "Lunar | Crew Member A"
     },
     {
-      "id": "3386aa6f-a4b7-4510-b5c4-8fff0c3b6459",
+      "id": "8a7934c1-b036-4b5f-b072-efb05a484b54",
       "type": "Human Agent",
-      "templateId": "ec81219c-5f1d-4363-9ae0-2ec4580e871d",
+      "templateId": "4cfab372-4bab-4499-bd9e-1c3a7cd40b3d",
       "name": "Lunar | Crew Member B"
     },
     {
-      "id": "0aab5be3-1b77-4c0f-869a-7bf4c2084f68",
+      "id": "d5e5eb3e-3e09-4b05-a276-cac1d1f62c2b",
       "type": "Human Agent",
-      "templateId": "ec81219c-5f1d-4363-9ae0-2ec4580e871d",
+      "templateId": "4cfab372-4bab-4499-bd9e-1c3a7cd40b3d",
       "name": "Lunar | Crew Member C"
     },
     {
-      "id": "fd10e777-487f-4a1d-898d-0f7921ea6212",
+      "id": "b7062d1c-c35d-4048-bca4-3602522e46e9",
       "type": "Human Agent",
-      "templateId": "ec81219c-5f1d-4363-9ae0-2ec4580e871d",
+      "templateId": "4cfab372-4bab-4499-bd9e-1c3a7cd40b3d",
       "name": "Lunar | Crew Member D"
     },
     {
-      "id": "8e19d911-aa0d-469b-9cc0-e9f7e823929d",
+      "id": "859b1eba-1b85-4c70-94e6-eef817bdd45c",
       "type": "Propulsive Vehicle",
-      "templateId": "e9a57510-56cc-466c-b3da-2869315fdd75",
+      "templateId": "a8a49057-9250-405e-afaf-dfd1b310d618",
       "name": "Lunar | EDS",
       "contents": []
     },
     {
-      "id": "72b14aaf-5739-4d1f-b0cb-e55a4c1ce4ee",
+      "id": "9ee313a1-69db-4f58-80b8-4e57b2db5edc",
       "type": "Element",
-      "templateId": "26bb622a-376b-477e-b59f-632c3f7f2b41",
+      "templateId": "13d844ad-dbe0-4daf-9131-6d36f951d9f1",
       "name": "Lunar | Lunar Surface Samples"
     },
     {
-      "id": "62a2d7bd-04c7-4c98-b820-1a6b8b4ef341",
+      "id": "048cd37b-6270-404e-b185-a2c918e3625e",
       "type": "Element",
-      "templateId": "4192bede-715e-45be-9f8d-341c751bbbd2",
+      "templateId": "1670e2c2-7d9d-4252-bb91-ec67ce76eca2",
       "name": "Lunar | Notional Cargo"
     },
     {
-      "id": "d804adb4-5375-48a6-b376-5f9c188ecaea",
+      "id": "b08b45e2-eafe-4aab-9e1a-2f283534b6ca",
       "type": "Propulsive Vehicle",
-      "templateId": "5c41f5bb-71eb-4d0b-8361-c713f2fbf36c",
+      "templateId": "3338cb33-1614-47ac-8e07-f1dd4af8c4c7",
       "name": "Lunar | Orion CM",
       "contents": []
     },
     {
-      "id": "fade49dd-33b6-4b7c-8d88-8e45176c68f4",
+      "id": "b6db8aea-73fa-46d1-8d70-909d7ebd4ad8",
       "type": "Element Carrier",
-      "templateId": "7ca06128-2c92-48a6-82f2-1dce0e72a522",
+      "templateId": "e4e08d3c-ceaa-4061-893c-9c7f50dda55d",
       "name": "Lunar | Orion LAS",
       "contents": []
     },
     {
-      "id": "f3ef6566-d982-4681-8a93-76251b895c9f",
+      "id": "48a09f77-125c-48e7-9890-f2f4d92b56d9",
       "type": "Propulsive Vehicle",
-      "templateId": "22c767dc-74b5-4615-9b92-dce29fa37fa3",
+      "templateId": "2a7c1bf4-5036-4f62-a201-0ccedc7dae94",
       "name": "Lunar | Orion SM",
       "contents": []
     }
@@ -990,7 +1089,7 @@
   "demandModels": [],
   "resourceList": [
     {
-      "id": "78242359-5c0d-4e42-b081-216b48c60409",
+      "id": "46228693-a66c-4f5f-9398-407da74cb995",
       "name": "PBAN Solid",
       "classOfSupply": 105,
       "environment": "Unpressurized",
@@ -1002,7 +1101,7 @@
       "type": "Continuous"
     },
     {
-      "id": "460498c1-2599-4ece-8526-82a63b618aaa",
+      "id": "452b9b1f-e8d0-4277-b6db-433c6952d04c",
       "name": "LH2/LOX",
       "classOfSupply": 101,
       "environment": "Unpressurized",
@@ -1014,7 +1113,7 @@
       "type": "Continuous"
     },
     {
-      "id": "00bd29c5-89cf-42b9-aa00-f4bf9ac1f7df",
+      "id": "a53f0f86-bbb8-4e6d-9585-71c8e60f5d1f",
       "name": "MMH/N2O4",
       "classOfSupply": 102,
       "environment": "Unpressurized",
@@ -1026,7 +1125,10 @@
       "type": "Continuous"
     }
   ],
-  "manifest": {},
+  "manifest": {
+    "containers": [],
+    "loads": []
+  },
   "configuration": {
     "timePrecision": 0.05,
     "demandPrecision": 0.01,
@@ -1046,12 +1148,12 @@
     "smallGasTankMass": 10.8,
     "smallGasTankVolume": 0.275,
     "smallGasTankMaxMass": 10.0,
-    "smallGasTTankMaxVolume": 0.275,
+    "smallGasTankMaxVolume": 0.275,
     "largeGasTankMass": 108.0,
     "largeGasTankVolume": 2.75,
     "largeGasTankMaxMass": 100.0,
     "largeGasTankMaxVolume": 2.75,
-    "smallLiquidTTankMass": 11.4567,
+    "smallLiquidTankMass": 11.4567,
     "smallLiquidTankVolume": 0.0249,
     "smallLiquidTankMaxMass": 24.9333,
     "smallLiquidTankMaxVolume": 0.0249,

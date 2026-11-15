@@ -62,8 +62,8 @@ leo_llpo = SpaceEdge(
     duration=timedelta(days=4),
     burns=[
         Burn(time=timedelta(0), delta_v=3150.0),
-        Burn(time=timedelta(hours=12), delta_v=2.0),
-        Burn(time=timedelta(days=2, hours=12), delta_v=2.0),
+        Burn(time=timedelta(hours=12), delta_v=2.0, type="RCS"),
+        Burn(time=timedelta(days=2, hours=12), delta_v=2.0, type="RCS"),
         Burn(time=timedelta(days=4), delta_v=950.0),
     ],
 )
@@ -75,7 +75,7 @@ llpo_lsp = SpaceEdge(
     duration=timedelta(hours=12),
     burns=[
         Burn(time=timedelta(0), delta_v=2030.0),
-        Burn(time=timedelta(hours=6), delta_v=11.0),
+        Burn(time=timedelta(hours=6), delta_v=11.0, type="RCS"),
     ],
 )
 lsp_llpo = SpaceEdge(
@@ -86,7 +86,7 @@ lsp_llpo = SpaceEdge(
     duration=timedelta(hours=12),
     burns=[
         Burn(time=timedelta(0), delta_v=1875.0),
-        Burn(time=timedelta(hours=6), delta_v=31.0),
+        Burn(time=timedelta(hours=6), delta_v=31.0, type="RCS"),
     ],
 )
 llpo_pac = SpaceEdge(
@@ -99,9 +99,9 @@ llpo_pac = SpaceEdge(
         Burn(time=timedelta(0), delta_v=612.3),
         Burn(time=timedelta(hours=12), delta_v=276.5),
         Burn(time=timedelta(days=1), delta_v=333.6),
-        Burn(time=timedelta(days=1, hours=12), delta_v=3.2),
-        Burn(time=timedelta(days=3), delta_v=3.2),
-        Burn(time=timedelta(days=4), delta_v=5.0),
+        Burn(time=timedelta(days=1, hours=12), delta_v=3.2, type="RCS"),
+        Burn(time=timedelta(days=3), delta_v=3.2, type="RCS"),
+        Burn(time=timedelta(days=4), delta_v=5.0, type="RCS"),
     ],
 )
 
@@ -159,9 +159,23 @@ altair_am = PropulsiveVehicle(
     max_cargo_mass=100.0,
     max_cargo_volume=0.0,
     max_crew=4,
-    max_fuel=3000.0,
-    fuel=ResourceAmount(resource=mmh_n2o4.id, amount=3000.0),
-    isp=320.0,
+    propulsion_systems=[
+        PropulsionSystem(
+            type=PropulsionType.OMS,
+            isp=320.0,
+            fuel_tank=ResourceTank(
+                max_amount=3000.0,
+                contents=ResourceAmount(
+                    resource=mmh_n2o4.id, amount=3000.0
+                ),
+            ),
+        ),
+        PropulsionSystem(
+            type=PropulsionType.RCS,
+            isp=300.0,
+            shared_fuel_tank=PropulsionType.OMS,
+        ),
+    ],
     states=[],
     parts=[],
 )
@@ -177,9 +191,28 @@ altair_dm = PropulsiveVehicle(
     max_cargo_mass=500.0,
     max_cargo_volume=0.0,
     max_crew=0,
-    max_fuel=24900.0,
-    fuel=ResourceAmount(resource=lh2_lox.id, amount=24900.0),
-    isp=448.0,
+    propulsion_systems=[
+        PropulsionSystem(
+            type=PropulsionType.OMS,
+            isp=448.0,
+            fuel_tank=ResourceTank(
+                max_amount=24900.0,
+                contents=ResourceAmount(
+                    resource=lh2_lox.id, amount=24900.0
+                ),
+            ),
+        ),
+        PropulsionSystem(
+            type=PropulsionType.RCS,
+            isp=300.0,
+            fuel_tank=ResourceTank(
+                max_amount=425.0,
+                contents=ResourceAmount(
+                    resource=lh2_lox.id, amount=425.0
+                ),
+            ),
+        ),
+    ],
     states=[],
     parts=[],
 )
@@ -195,9 +228,18 @@ ares_i_first_stage = PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=0,
-    max_fuel=620000.0,
-    fuel=ResourceAmount(resource=pban_solid.id, amount=620000.0),
-    isp=267.0,
+    propulsion_systems=[
+        PropulsionSystem(
+            type=PropulsionType.OMS,
+            isp=267.0,
+            fuel_tank=ResourceTank(
+                max_amount=620000.0,
+                contents=ResourceAmount(
+                    resource=pban_solid.id, amount=620000.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -213,9 +255,18 @@ ares_i_upper_stage = PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=0,
-    max_fuel=125000.0,
-    fuel=ResourceAmount(resource=pban_solid.id, amount=125000.0),
-    isp=448.0,
+    propulsion_systems=[
+        PropulsionSystem(
+            type=PropulsionType.OMS,
+            isp=448.0,
+            fuel_tank=ResourceTank(
+                max_amount=125000.0,
+                contents=ResourceAmount(
+                    resource=pban_solid.id, amount=125000.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -231,9 +282,18 @@ ares_v_core = PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=0,
-    max_fuel=1587000.0,
-    fuel=ResourceAmount(resource=lh2_lox.id, amount=1587000.0),
-    isp=414.0,
+    propulsion_systems=[
+        PropulsionSystem(
+            type=PropulsionType.OMS,
+            isp=414.0,
+            fuel_tank=ResourceTank(
+                max_amount=1587000.0,
+                contents=ResourceAmount(
+                    resource=lh2_lox.id, amount=1587000.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -249,9 +309,18 @@ ares_v_srbs = PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=0,
-    max_fuel=1375000.0,
-    fuel=ResourceAmount(resource=pban_solid.id, amount=1375000.0),
-    isp=270.0,
+    propulsion_systems=[
+        PropulsionSystem(
+            type=PropulsionType.OMS,
+            isp=270.0,
+            fuel_tank=ResourceTank(
+                max_amount=1375000.0,
+                contents=ResourceAmount(
+                    resource=pban_solid.id, amount=1375000.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -279,9 +348,18 @@ eds = PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=0,
-    max_fuel=253000.0,
-    fuel=ResourceAmount(resource=lh2_lox.id, amount=253000.0),
-    isp=448.0,
+    propulsion_systems=[
+        PropulsionSystem(
+            type=PropulsionType.OMS,
+            isp=448.0,
+            fuel_tank=ResourceTank(
+                max_amount=253000.0,
+                contents=ResourceAmount(
+                    resource=lh2_lox.id, amount=253000.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -319,9 +397,18 @@ orion_cm = PropulsiveVehicle(
     max_cargo_mass=100.0,
     max_cargo_volume=0.0,
     max_crew=4,
-    max_fuel=175.0,
-    fuel=ResourceAmount(resource=mmh_n2o4.id, amount=175.0),
-    isp=301.0,
+    propulsion_systems=[
+        PropulsionSystem(
+            type=PropulsionType.RCS,
+            isp=301.0,
+            fuel_tank=ResourceTank(
+                max_amount=175.0,
+                contents=ResourceAmount(
+                    resource=mmh_n2o4.id, amount=175.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -352,9 +439,23 @@ orion_sm = PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=4,
-    max_fuel=10000.0,
-    fuel=ResourceAmount(resource=mmh_n2o4.id, amount=10000.0),
-    isp=301.0,
+    propulsion_systems=[
+        PropulsionSystem(
+            type=PropulsionType.OMS,
+            isp=328.0,
+            fuel_tank=ResourceTank(
+                max_amount=10000.0,
+                contents=ResourceAmount(
+                    resource=mmh_n2o4.id, amount=10000.0
+                ),
+            ),
+        ),
+        PropulsionSystem(
+            type=PropulsionType.RCS,
+            isp=301.0,
+            shared_fuel_tank=PropulsionType.OMS,
+        ),
+    ],
     states=[],
     parts=[],
 )

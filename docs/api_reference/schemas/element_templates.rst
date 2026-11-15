@@ -32,6 +32,30 @@ Propulsive Vehicle
   :members:
   :inherited-members: CamelModel
 
+Propulsion System
+=================
+
+A propulsive vehicle nests one or more propulsion systems with distinct types
+(orbital maneuvering system or reaction control system). Each propulsion
+system has a specific impulse and burns fuel from its own fuel tank or from
+the fuel tank of another propulsion system of the vehicle. A burn fires the
+propulsion system which matches its type.
+
+.. autoclass:: spacenet.schemas.PropulsionType
+  :members:
+  :undoc-members:
+
+.. autopydantic_model:: spacenet.schemas.PropulsionSystem
+  :members:
+  :inherited-members: CamelModel
+
+Resource Tank
+=============
+
+.. autopydantic_model:: spacenet.schemas.ResourceTank
+  :members:
+  :inherited-members: CamelModel
+
 Surface Vehicle
 ===============
 

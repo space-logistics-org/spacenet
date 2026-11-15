@@ -252,6 +252,15 @@ function burnTable(burns) {
           h("td", {}, numberInput(burn.deltaV, (value) => (burn.deltaV = value), { min: 0 })),
           h(
             "td",
+            {},
+            select(
+              store.enums.propulsionTypes.map((type) => [type.id, type.id]),
+              (burn.type ??= "OMS"),
+              (value) => (burn.type = value)
+            )
+          ),
+          h(
+            "td",
             { class: "text-end" },
             button("×", () => {
               burns.splice(index, 1);
@@ -261,7 +270,7 @@ function burnTable(burns) {
         )
       )
     );
-    if (!burns.length) body.append(h("tr", {}, h("td", { colspan: 3, class: "text-secondary" }, "None")));
+    if (!burns.length) body.append(h("tr", {}, h("td", { colspan: 4, class: "text-secondary" }, "None")));
   }
   render();
   return h(
@@ -270,11 +279,11 @@ function burnTable(burns) {
     h(
       "table",
       { class: "table table-sm align-middle mb-1" },
-      h("thead", {}, h("tr", {}, ["Time (days)", "Delta-V (m/s)", ""].map((title) => h("th", {}, title)))),
+      h("thead", {}, h("tr", {}, ["Time (days)", "Delta-V (m/s)", "Propulsion", ""].map((title) => h("th", {}, title)))),
       body
     ),
     button("Add Burn", () => {
-      burns.push({ id: uuid(), time: burns.at(-1)?.time ?? daysToIso(0), deltaV: 0 });
+      burns.push({ id: uuid(), time: burns.at(-1)?.time ?? daysToIso(0), deltaV: 0, type: "OMS" });
       render();
     })
   );

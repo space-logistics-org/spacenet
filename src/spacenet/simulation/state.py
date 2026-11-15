@@ -24,8 +24,10 @@ from .elements import (
     SimCarrier,
     SimCrewMember,
     SimElement,
+    SimPropulsionSystem,
     SimPropulsiveVehicle,
     SimResourceContainer,
+    SimResourceTank,
     SimRoboticAgent,
     SimSurfaceVehicle,
 )
@@ -304,7 +306,12 @@ class State:
                     _days(getattr(edge, "duration", None))
                 ),
                 burns=[
-                    SimBurn(id=b.id, time=_days(b.time), delta_v=b.delta_v)
+                    SimBurn(
+                        id=b.id,
+                        time=_days(b.time),
+                        delta_v=b.delta_v,
+                        propulsion_type=b.type,
+                    )
                     for b in getattr(edge, "burns", [])
                 ],
                 distance=getattr(edge, "distance", 0.0),
@@ -419,20 +426,28 @@ class State:
             ElementType.SURFACE_VEHICLE,
         ):
             kwargs["max_crew_size"] = value("max_crew", 0)
-        if element_type in (
-            ElementType.PROPULSIVE_VEHICLE,
-            ElementType.SURFACE_VEHICLE,
-        ):
-            fuel = value("fuel")
-            if fuel is not None:
-                demand = self._demand(fuel, context)
-                kwargs["fuel"] = demand.resource
-                kwargs["fuel_amount"] = demand.raw_amount
-            kwargs["max_fuel"] = value("max_fuel", 0.0)
         if element_type == ElementType.PROPULSIVE_VEHICLE:
-            kwargs["isp"] = value("isp", 0.0)
+            systems = value("propulsion_systems", [])
+            tanks = {
+                system.type: self._build_tank(system.fuel_tank, context)
+                for system in systems
+                if system.fuel_tank is not None
+            }
+            kwargs["propulsion_systems"] = [
+                SimPropulsionSystem(
+                    system.type,
+                    isp=system.isp,
+                    fuel_tank=tanks.get(
+                        system.type
+                        if system.shared_fuel_tank is None
+                        else system.shared_fuel_tank
+                    ),
+                )
+                for system in systems
+            ]
         if element_type == ElementType.SURFACE_VEHICLE:
             kwargs["max_speed"] = value("max_speed", 0.0)
+            kwargs["fuel_tank"] = self._build_tank(value("fuel_tank"), context)
 
         element = _ELEMENT_CLASSES[element_type](self.settings, **kwargs)
         element.parts = [self._build_part(p, context) for p in value("parts", [])]
@@ -456,6 +471,20 @@ class State:
                 )
             element.set_current_state(element.states[state_index])
         return element
+
+    def _build_tank(
+        self, tank: Optional[s.ResourceTank], context: str
+    ) -> Optional[SimResourceTank]:
+        """Builds a resource tank (e.g., the fuel tank of a vehicle)."""
+        if tank is None:
+            return None
+        demand = self._demand(tank.contents, context)
+        return SimResourceTank(
+            self.settings,
+            resource=demand.resource,
+            amount=demand.raw_amount,
+            max_amount=tank.max_amount,
+        )
 
     def _build_part(self, part: s.Part, context: str) -> PartApplication:
         resource = self.get_resource(part.resource)

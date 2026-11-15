@@ -103,33 +103,76 @@ export function openElement(instance) {
       );
     }
     if (VEHICLES.includes(type)) {
-      const fuel = draft.fuel ?? null;
-      const templateFuel = template.fuel ?? null;
-      parts.push(
+      // the initial fuel of each fuel tank of the template can be replaced
+      const fuel = (label, templateTank, tank, change) =>
         h(
           "div",
-          { class: "row g-2 mb-3" },
-          type === "Propulsive Vehicle" ? number("Specific Impulse", "isp", "s") : number("Max Speed", "maxSpeed", "km/h"),
-          number("Max Fuel", "maxFuel", "units"),
+          { class: "col-md-4" },
+          h(
+            "label",
+            { class: "form-label small mb-0" },
+            `${label} (${store.resourceLabel(templateTank.contents)})`
+          ),
+          numberInput(
+            tank && tank.contents.amount !== templateTank.contents.amount ? tank.contents.amount : null,
+            (value) => change(value ?? templateTank.contents.amount),
+            { placeholder: templateTank.contents.amount, min: 0, max: tank?.maxAmount ?? templateTank.maxAmount }
+          )
+        );
+      const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+      if (type === "Propulsive Vehicle") {
+        const templateSystems = template.propulsionSystems ?? [];
+        const find = (systems, system) => (systems ?? []).find((other) => other.type === system.type);
+        parts.push(
           h(
             "div",
-            { class: "col-md-4" },
-            h(
-              "label",
-              { class: "form-label small mb-0" },
-              `Initial Fuel (${templateFuel ? store.resourceLabel(templateFuel) : "units"})`
-            ),
-            numberInput(
-              fuel?.amount,
-              (value) => {
-                if (value === null) delete draft.fuel;
-                else if (templateFuel) draft.fuel = { ...clone(templateFuel), amount: value };
-              },
-              { placeholder: templateFuel?.amount ?? "", min: 0, disabled: !templateFuel }
-            )
+            { class: "small text-secondary mb-1" },
+            templateSystems
+              .map(
+                (system) =>
+                  `${system.type}: ${system.isp} s` +
+                  (system.sharedFuelTank ? ` (${system.sharedFuelTank} fuel tank)` : "")
+              )
+              .join(" · ")
+          ),
+          h(
+            "div",
+            { class: "row g-2 mb-3" },
+            templateSystems
+              .filter((system) => system.fuelTank)
+              .map((system) =>
+                fuel(
+                  `Initial ${system.type} Fuel`,
+                  system.fuelTank,
+                  find(draft.propulsionSystems, system)?.fuelTank,
+                  (amount) => {
+                    const systems = draft.propulsionSystems ?? clone(templateSystems);
+                    const tank = find(systems, system)?.fuelTank;
+                    if (tank) tank.contents.amount = amount;
+                    if (same(systems, templateSystems)) delete draft.propulsionSystems;
+                    else draft.propulsionSystems = systems;
+                  }
+                )
+              )
           )
-        )
-      );
+        );
+      } else {
+        parts.push(
+          h(
+            "div",
+            { class: "row g-2 mb-3" },
+            number("Max Speed", "maxSpeed", "km/h"),
+            template.fuelTank
+              ? fuel("Initial Fuel", template.fuelTank, draft.fuelTank, (amount) => {
+                  const tank = draft.fuelTank ?? clone(template.fuelTank);
+                  tank.contents.amount = amount;
+                  if (same(tank, template.fuelTank)) delete draft.fuelTank;
+                  else draft.fuelTank = tank;
+                })
+              : null
+          )
+        );
+      }
     }
     if (type === "Resource Container") {
       const override = Array.isArray(draft.contents);

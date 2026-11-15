@@ -1,13 +1,18 @@
 """Defines object schemas for carrier element templates."""
 
-from typing import List, Union
+from typing import Any, List
 from uuid import UUID
 
-from pydantic import Field
+from pydantic import Field, field_validator, model_validator
 from typing_extensions import Literal
 
-from ...resources import GenericResourceAmount, ResourceAmount
 from ..element import ElementType
+from ..propulsion import (
+    PropulsionSystem,
+    ResourceTank,
+    check_propulsion_systems,
+    upgrade_vehicle,
+)
 from .element import CargoCarrier
 
 
@@ -34,21 +39,27 @@ class ElementCarrier(CargoCarrier):
 
 class PropulsiveVehicle(ElementCarrier):
     """
-    Space vehicle with impulsive propulsion that can traverse space edges.
+    Space vehicle with one or more impulsive propulsion systems that can
+    traverse space edges.
     """
 
     type: Literal[ElementType.PROPULSIVE_VEHICLE] = Field(
         ElementType.PROPULSIVE_VEHICLE, description="Element type"
     )
-    isp: float = Field(
-        ..., title="Specific Impulse", description="Specific impulse (s)", ge=0
+    propulsion_systems: List[PropulsionSystem] = Field(
+        ...,
+        title="Propulsion Systems",
+        description="List of propulsion systems (each with a specific impulse "
+        "and a fuel tank) with distinct types",
+        min_length=1,
     )
-    max_fuel: float = Field(
-        ..., title="Maximum Fuel", description="Maximum propellant amount (units)", ge=0
-    )
-    fuel: Union[ResourceAmount, GenericResourceAmount] = Field(
-        ..., title="Fuel", description="Type and amount of propellant"
-    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _upgrade(cls, data: Any) -> Any:
+        return upgrade_vehicle(data, propulsive=True)
+
+    _check_systems = field_validator("propulsion_systems")(check_propulsion_systems)
 
 
 class SurfaceVehicle(ElementCarrier):
@@ -62,9 +73,11 @@ class SurfaceVehicle(ElementCarrier):
     max_speed: float = Field(
         ..., title="Maximum Speed", description="Maximum speed (km/hr)", ge=0
     )
-    max_fuel: float = Field(
-        ..., title="Maximum Fuel", description="Maximum fuel amount (units)", ge=0
+    fuel_tank: ResourceTank = Field(
+        ..., title="Fuel Tank", description="Fuel tank (type and amount of fuel)"
     )
-    fuel: Union[ResourceAmount, GenericResourceAmount] = Field(
-        ..., title="Fuel", description="Type and amount of fuel"
-    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _upgrade(cls, data: Any) -> Any:
+        return upgrade_vehicle(data, propulsive=False)

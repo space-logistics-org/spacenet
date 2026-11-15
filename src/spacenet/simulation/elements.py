@@ -10,6 +10,7 @@ from uuid import UUID, uuid4
 
 from ..schemas import ClassOfSupply, Environment, StateType
 from ..schemas.elements.element import ElementType
+from ..schemas.elements.propulsion import PropulsionType
 from .records import SimScavenge
 from .resources import Demand, DemandSet, SimResource
 from .settings import Settings
@@ -655,9 +656,10 @@ class SimResourceTank(SimElement):
         resource: Optional[SimResource] = None,
         amount: float = 0.0,
         max_amount: float = 0.0,
+        name: str = "Fuel Tank",
         **kwargs,
     ):
-        super().__init__(settings, **kwargs)
+        super().__init__(settings, name=name, **kwargs)
         self.resource = resource
         self._amount = amount or 0.0
         self._max_amount = max_amount or 0.0
@@ -955,61 +957,139 @@ class SimCarrier(SimElement, ElementContainer):
             element.satisfy_demands(demands, simulator)
 
 
-class _FueledCarrier(SimCarrier):
+class SimPropulsionSystem:
     """
-    Base class for a carrier with an integral fuel tank.
+    An impulsive propulsion system of a propulsive vehicle which burns fuel
+    from a fuel tank (which may be shared with other propulsion systems of
+    the same vehicle).
     """
 
     def __init__(
         self,
-        settings: Settings,
+        propulsion_type: PropulsionType = PropulsionType.OMS,
         *,
-        fuel: Optional[SimResource] = None,
-        fuel_amount: float = 0.0,
-        max_fuel: float = 0.0,
-        **kwargs,
+        isp: float = 0.0,
+        fuel_tank: Optional[SimResourceTank] = None,
     ):
-        super().__init__(settings, **kwargs)
-        self.fuel_tank = SimResourceTank(
-            settings,
-            name=f"{self.name} Fuel Tank",
-            resource=fuel,
-            amount=fuel_amount,
-            max_amount=max_fuel,
-        )
-        self.fuel_tank.container = self
+        #: Propulsion type (fired by burns of the same type).
+        self.propulsion_type = PropulsionType(propulsion_type)
+        #: Specific impulse (s).
+        self.isp = isp or 0.0
+        #: Fuel tank.
+        self.fuel_tank = fuel_tank
+
+    def __repr__(self) -> str:
+        return f"{self.propulsion_type.value} ({self.isp} s)"
+
+
+class _FueledCarrier(SimCarrier):
+    """
+    Base class for a carrier with integral fuel tanks.
+    """
+
+    @property
+    def fuel_tanks(self) -> List[SimResourceTank]:
+        """The (distinct) integral fuel tanks of this carrier."""
+        raise NotImplementedError()
+
+    @property
+    def fuel_tank(self) -> Optional[SimResourceTank]:
+        """The primary integral fuel tank of this carrier."""
+        tanks = self.fuel_tanks
+        return tanks[0] if tanks else None
+
+    def _attach_tank(self, tank: SimResourceTank, label: str):
+        tank.name = f"{self.name} {label}"
+        tank.container = self
 
     def get_total_mass(self, class_of_supply: Optional[ClassOfSupply] = None) -> float:
         mass = super().get_total_mass(class_of_supply)
-        mass += self.fuel_tank.get_total_mass(class_of_supply)
+        for tank in self.fuel_tanks:
+            mass += tank.get_total_mass(class_of_supply)
         return self.settings.round_mass(mass)
 
     def satisfy_demands(self, demands: DemandSet, simulator: "Simulator"):
-        self.fuel_tank.satisfy_demands(demands, simulator)
+        for tank in self.fuel_tanks:
+            tank.satisfy_demands(demands, simulator)
         super().satisfy_demands(demands, simulator)
 
 
 class SimPropulsiveVehicle(_FueledCarrier):
     """
-    A carrier with impulsive propulsion which can traverse space edges.
+    A carrier with one or more impulsive propulsion systems which can
+    traverse space edges.
     """
 
     element_type = ElementType.PROPULSIVE_VEHICLE
 
-    def __init__(self, settings: Settings, *, isp: float = 0.0, **kwargs):
+    def __init__(
+        self,
+        settings: Settings,
+        *,
+        propulsion_systems: Optional[List[SimPropulsionSystem]] = None,
+        **kwargs,
+    ):
         super().__init__(settings, **kwargs)
-        #: Specific impulse (s).
-        self.isp = isp or 0.0
+        #: Propulsion systems (with distinct propulsion types).
+        self.propulsion_systems: List[SimPropulsionSystem] = list(
+            propulsion_systems or []
+        )
+        for system in self.propulsion_systems:
+            tank = system.fuel_tank
+            if tank is not None and tank.container is not self:
+                self._attach_tank(tank, f"{system.propulsion_type.value} Fuel Tank")
+
+    @property
+    def fuel_tanks(self) -> List[SimResourceTank]:
+        tanks: List[SimResourceTank] = []
+        for system in self.propulsion_systems:
+            tank = system.fuel_tank
+            if tank is not None and not any(tank is t for t in tanks):
+                tanks.append(tank)
+        return tanks
+
+    def get_propulsion_system(
+        self, propulsion_type: PropulsionType
+    ) -> Optional[SimPropulsionSystem]:
+        """
+        Gets the propulsion system of a type.
+
+        Args:
+            propulsion_type (:obj:`PropulsionType`): The propulsion type.
+
+        Returns:
+            :obj:`SimPropulsionSystem`: The propulsion system (None if this
+            vehicle has no propulsion system of the type).
+        """
+        for system in self.propulsion_systems:
+            if system.propulsion_type == propulsion_type:
+                return system
+        return None
 
 
 class SimSurfaceVehicle(_FueledCarrier):
     """
-    A carrier which can traverse surface edges.
+    A carrier with a fuel tank which can traverse surface edges.
     """
 
     element_type = ElementType.SURFACE_VEHICLE
 
-    def __init__(self, settings: Settings, *, max_speed: float = 0.0, **kwargs):
+    def __init__(
+        self,
+        settings: Settings,
+        *,
+        max_speed: float = 0.0,
+        fuel_tank: Optional[SimResourceTank] = None,
+        **kwargs,
+    ):
         super().__init__(settings, **kwargs)
+        self._fuel_tank = (
+            fuel_tank if fuel_tank is not None else SimResourceTank(settings)
+        )
+        self._attach_tank(self._fuel_tank, "Fuel Tank")
         #: Maximum speed (km/hr).
         self.max_speed = max_speed or 0.0
+
+    @property
+    def fuel_tanks(self) -> List[SimResourceTank]:
+        return [self._fuel_tank]

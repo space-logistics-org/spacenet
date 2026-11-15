@@ -10,6 +10,7 @@ import sys
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 
 from ..schemas import ClassOfSupply, StateType
+from ..schemas.elements.propulsion import PropulsionType
 from ..schemas.events.burn import BurnStage
 from ..schemas.events.event import EventType
 from .elements import (
@@ -470,7 +471,7 @@ class TransferEvent(SimEvent):
 def _get_resource_container(simulator: "Simulator", event: SimEvent, element):
     """
     Gets the resource container of an element. Vehicles are represented by
-    their integral fuel tank.
+    their (primary) integral fuel tank.
     """
     if element is None:
         raise SimSpatialError(simulator.time, event, "No resource container defined.")
@@ -665,7 +666,8 @@ class BurnEvent(SimEvent):
             self.steps.append(step)
             try:
                 if BurnStage(action) == BurnStage.BURN:
-                    tank = getattr(element, "fuel_tank", None)
+                    system = self._get_propulsion_system(element)
+                    tank = None if system is None else system.fuel_tank
                     fuel_before = 0.0 if tank is None else tank.amount
                     remaining = self._burn(simulator, element, delta_v_required)
                     step.delta_v_achieved = delta_v_required - remaining
@@ -696,6 +698,12 @@ class BurnEvent(SimEvent):
                 f"{delta_v_required:.1f} m/s.",
             )
 
+    def _get_propulsion_system(self, vehicle: SimElement):
+        """Gets the propulsion system of a vehicle which performs this burn."""
+        if not isinstance(vehicle, SimPropulsiveVehicle):
+            return None
+        return vehicle.get_propulsion_system(self.burn.propulsion_type)
+
     def _burn(
         self, simulator: "Simulator", vehicle: SimElement, delta_v: float
     ) -> float:
@@ -704,35 +712,46 @@ class BurnEvent(SimEvent):
             raise SimSpatialError(
                 simulator.time, self, f"{vehicle} is not a propulsive vehicle."
             )
-        tank = vehicle.fuel_tank
-        unit_mass = 1.0 if tank.resource is None else tank.resource.unit_mass
+        label = PropulsionType(self.burn.propulsion_type).value
+        system = self._get_propulsion_system(vehicle)
         stack_mass = sum(e.total_mass for e in _sorted_elements(self.elements))
-        self._log("Starting %s Burn for target %.2f m/s delta-V", vehicle, delta_v)
-        if vehicle.isp <= 0:
-            self._warn(simulator, f"{vehicle} has no specific impulse defined.")
+        self._log(
+            "Starting %s Burn (%s) for target %.2f m/s delta-V", vehicle, label, delta_v
+        )
+        # NOTE: the reference implementation fails with an unhandled error
+        # if the vehicle has no propulsion system of the type of the burn
+        if system is None or system.fuel_tank is None:
+            self._warn(simulator, f"{vehicle} has no {label} propulsion system.")
             return delta_v
+        if system.isp <= 0:
+            self._warn(simulator, f"{vehicle} has no {label} specific impulse defined.")
+            return delta_v
+        tank = system.fuel_tank
+        unit_mass = 1.0 if tank.resource is None else tank.resource.unit_mass
         # NOTE: the reference implementation compares fuel mass (kg) to the
         # tank amount (units) which is only valid for a unit mass of 1 kg
         required_fuel = (
-            get_required_fuel_mass(stack_mass, delta_v, vehicle.isp) / unit_mass
+            get_required_fuel_mass(stack_mass, delta_v, system.isp) / unit_mass
         )
         if required_fuel > tank.amount:
             achieved = get_achieved_delta_v(
-                stack_mass, vehicle.isp, tank.amount * unit_mass
+                stack_mass, system.isp, tank.amount * unit_mass
             )
             delta_v -= achieved
             tank.amount = 0.0
             self._log(
-                "%s Burn achieved %.2f m/s delta-V, %.2f m/s delta-V remaining",
+                "%s Burn (%s) achieved %.2f m/s delta-V, %.2f m/s delta-V remaining",
                 vehicle,
+                label,
                 achieved,
                 delta_v,
             )
             return delta_v
         tank.remove(tank.resource, required_fuel)
         self._log(
-            "%s Burn achieved %.2f m/s delta-V, %.2f kg fuel remaining",
+            "%s Burn (%s) achieved %.2f m/s delta-V, %.2f kg fuel remaining",
             vehicle,
+            label,
             delta_v,
             tank.cargo_mass,
         )

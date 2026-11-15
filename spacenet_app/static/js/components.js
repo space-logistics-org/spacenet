@@ -271,8 +271,10 @@ export function elementBars(element) {
   if (element.isCarrier && element.maxCrewSize > 0) {
     bars.push(bar("Crew", element.crewSize, element.maxCrewSize, ""));
   }
-  if (element.maxFuelAmount > 0) {
-    bars.push(bar(`Fuel (${element.fuelName ?? "none"})`, element.fuelAmount, element.maxFuelAmount, ""));
+  for (const tank of element.fuelTanks ?? []) {
+    if (tank.maxAmount > 0) {
+      bars.push(bar(`${tank.label} (${tank.fuelName ?? "none"})`, tank.amount, tank.maxAmount, ""));
+    }
   }
   return { capacityBars: bars };
 }

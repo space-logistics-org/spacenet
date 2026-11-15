@@ -40,6 +40,7 @@ class ScenarioBuilder:
         self.lsp = s.SurfaceNode(name="LSP", body_1="Moon", latitude=-89.9, longitude=0)
         self.lsp2 = s.SurfaceNode(name="LSP2", body_1="Moon", latitude=-89, longitude=0)
         self.burn = s.Burn(time=timedelta(0), delta_v=1000)
+        self.rcs_burn = s.Burn(time=timedelta(hours=3), delta_v=10, type="RCS")
         self.ksc_leo = s.SpaceEdge(
             name="KSC-LEO",
             origin=self.ksc.id,
@@ -144,18 +145,47 @@ class ScenarioBuilder:
         )
         return self.add(template, s.InstResourceContainer)
 
+    def tank(self, amount, max_amount=None):
+        """Creates a fuel tank."""
+        return s.ResourceTank(
+            max_amount=amount if max_amount is None else max_amount,
+            contents=s.ResourceAmount(resource=self.fuel.id, amount=amount),
+        )
+
     def vehicle(
         self, name="Stage", mass=1000, fuel=9000, isp=300, max_cargo_mass=0, **kwargs
     ):
-        """Adds a propulsive vehicle."""
+        """
+        Adds a propulsive vehicle with an orbital maneuvering system and,
+        if `rcs_isp` is defined, a reaction control system which has its own
+        fuel tank (`rcs_fuel`) or otherwise shares the fuel tank of the
+        orbital maneuvering system.
+        """
+        systems = [
+            s.PropulsionSystem(
+                type="OMS",
+                isp=isp,
+                fuel_tank=self.tank(fuel, kwargs.pop("max_fuel", None)),
+            )
+        ]
+        rcs_isp = kwargs.pop("rcs_isp", None)
+        rcs_fuel = kwargs.pop("rcs_fuel", None)
+        if rcs_isp is not None and rcs_fuel is not None:
+            systems.append(
+                s.PropulsionSystem(
+                    type="RCS", isp=rcs_isp, fuel_tank=self.tank(rcs_fuel)
+                )
+            )
+        elif rcs_isp is not None:
+            systems.append(
+                s.PropulsionSystem(type="RCS", isp=rcs_isp, shared_fuel_tank="OMS")
+            )
         template = s.PropulsiveVehicle(
             name=name,
             mass=mass,
             max_cargo_mass=max_cargo_mass,
             max_crew=kwargs.pop("max_crew", 0),
-            isp=isp,
-            max_fuel=kwargs.pop("max_fuel", fuel),
-            fuel=s.ResourceAmount(resource=self.fuel.id, amount=fuel),
+            propulsion_systems=systems,
             **kwargs,
         )
         return self.add(template, s.InstPropulsiveVehicle)
@@ -168,8 +198,7 @@ class ScenarioBuilder:
             max_cargo_mass=kwargs.pop("max_cargo_mass", 1000),
             max_crew=kwargs.pop("max_crew", 2),
             max_speed=10,
-            max_fuel=100,
-            fuel=s.ResourceAmount(resource=self.fuel.id, amount=100),
+            fuel_tank=self.tank(100),
             **kwargs,
         )
         return self.add(template, s.InstSurfaceVehicle)

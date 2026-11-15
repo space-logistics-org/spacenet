@@ -104,6 +104,167 @@ class TestEvents(unittest.TestCase):
         )
 
 
+class TestVehicles(unittest.TestCase):
+    def setUp(self):
+        self.fuel = {"classOfSupply": 101, "environment": "Unpressurized"}
+        self.tank = {"maxAmount": 100, "contents": dict(self.fuel, amount=80)}
+        self.vehicle = {
+            "name": "Stage",
+            "type": "Propulsive Vehicle",
+            "mass": 1000,
+            "volume": 0,
+            "maxCargoMass": 0,
+            "maxCargoVolume": 0,
+            "maxCrew": 0,
+        }
+
+    def _vehicle(self, systems):
+        return s.PropulsiveVehicle.model_validate(
+            dict(self.vehicle, propulsionSystems=systems)
+        )
+
+    def test_propulsion_systems(self):
+        vehicle = self._vehicle(
+            [
+                {"type": "OMS", "isp": 320, "fuelTank": self.tank},
+                {"type": "RCS", "isp": 300, "sharedFuelTank": "OMS"},
+            ]
+        )
+        oms, rcs = vehicle.propulsion_systems
+        self.assertEqual(oms.type, s.PropulsionType.OMS)
+        self.assertEqual(oms.fuel_tank.max_amount, 100)
+        self.assertEqual(oms.fuel_tank.contents.amount, 80)
+        self.assertIsNone(rcs.fuel_tank)
+        self.assertEqual(rcs.shared_fuel_tank, s.PropulsionType.OMS)
+        data = vehicle.model_dump(mode="json", by_alias=True, exclude_none=True)
+        self.assertEqual(
+            data["propulsionSystems"][1],
+            {"type": "RCS", "isp": 300.0, "sharedFuelTank": "OMS"},
+        )
+        self.assertNotIn("isp", data)
+        self.assertEqual(s.PropulsiveVehicle.model_validate(data), vehicle)
+
+    def test_invalid_propulsion_systems(self):
+        oms = {"type": "OMS", "isp": 320, "fuelTank": self.tank}
+        for systems in (
+            [],
+            # duplicate types
+            [oms, oms],
+            # neither or both of the fuel tank and the shared fuel tank
+            [oms, {"type": "RCS", "isp": 300}],
+            [
+                oms,
+                {
+                    "type": "RCS",
+                    "isp": 300,
+                    "fuelTank": self.tank,
+                    "sharedFuelTank": "OMS",
+                },
+            ],
+            # shared fuel tank which does not exist
+            [{"type": "RCS", "isp": 300, "sharedFuelTank": "OMS"}],
+            [{"type": "RCS", "isp": 300, "sharedFuelTank": "RCS"}],
+            [
+                {"type": "OMS", "isp": 300, "sharedFuelTank": "RCS"},
+                {"type": "RCS", "isp": 300, "sharedFuelTank": "OMS"},
+            ],
+        ):
+            with self.subTest(systems=systems), self.assertRaises(ValueError):
+                self._vehicle(systems)
+
+    def test_surface_vehicle_fuel_tank(self):
+        rover = s.SurfaceVehicle.model_validate(
+            dict(self.vehicle, type="Surface Vehicle", maxSpeed=10, fuelTank=self.tank)
+        )
+        self.assertEqual(rover.fuel_tank.contents.class_of_supply, 101)
+        data = rover.model_dump(mode="json", by_alias=True, exclude_none=True)
+        self.assertEqual(data["fuelTank"]["maxAmount"], 100)
+        self.assertNotIn("maxFuel", data)
+
+    def test_legacy_vehicle_templates_are_upgraded(self):
+        legacy = dict(
+            self.vehicle, isp=320, maxFuel=100, fuel=dict(self.fuel, amount=80)
+        )
+        vehicle = s.PropulsiveVehicle.model_validate(legacy)
+        (system,) = vehicle.propulsion_systems
+        self.assertEqual((system.type, system.isp), (s.PropulsionType.OMS, 320))
+        self.assertEqual(system.fuel_tank.max_amount, 100)
+        self.assertEqual(system.fuel_tank.contents.amount, 80)
+        rover = s.SurfaceVehicle.model_validate(
+            dict(legacy, type="Surface Vehicle", maxSpeed=10)
+        )
+        self.assertEqual(rover.fuel_tank.max_amount, 100)
+        self.assertEqual(rover.fuel_tank.contents.amount, 80)
+
+    def test_legacy_instantiated_vehicles_are_upgraded(self):
+        template_id, rover_id = str(uuid4()), str(uuid4())
+        fuel = dict(self.fuel, amount=80)
+        scenario = s.Scenario.model_validate(
+            {
+                "name": "Scenario",
+                "createdBy": "Test",
+                "startDate": "2030-01-01T00:00:00Z",
+                "scenarioType": "Lunar",
+                "elementTemplates": [
+                    dict(self.vehicle, id=template_id, isp=320, maxFuel=100, fuel=fuel),
+                    dict(
+                        self.vehicle,
+                        id=rover_id,
+                        type="Surface Vehicle",
+                        maxSpeed=10,
+                        maxFuel=100,
+                        fuel=fuel,
+                    ),
+                ],
+                "instantiatedElements": [
+                    {
+                        "type": "Propulsive Vehicle",
+                        "templateId": template_id,
+                        "name": "A",
+                    },
+                    {
+                        "type": "Propulsive Vehicle",
+                        "templateId": template_id,
+                        "name": "B",
+                        "fuel": dict(self.fuel, amount=50),
+                    },
+                    {
+                        "type": "Propulsive Vehicle",
+                        "templateId": template_id,
+                        "name": "C",
+                        "isp": 350,
+                        "maxFuel": 200,
+                    },
+                    {
+                        "type": "Surface Vehicle",
+                        "templateId": rover_id,
+                        "name": "D",
+                        "fuel": dict(self.fuel, amount=10),
+                    },
+                ],
+            }
+        )
+        a, b, c, d = scenario.instantiated_elements
+        self.assertIsNone(a.propulsion_systems)
+        (system,) = b.propulsion_systems
+        self.assertEqual((system.isp, system.fuel_tank.max_amount), (320, 100))
+        self.assertEqual(system.fuel_tank.contents.amount, 50)
+        (system,) = c.propulsion_systems
+        self.assertEqual((system.isp, system.fuel_tank.max_amount), (350, 200))
+        self.assertEqual(system.fuel_tank.contents.amount, 80)
+        self.assertIsInstance(d, s.InstSurfaceVehicle)
+        self.assertEqual(d.fuel_tank.max_amount, 100)
+        self.assertEqual(d.fuel_tank.contents.amount, 10)
+
+    def test_burn_type(self):
+        burn = s.Burn(time=timedelta(0), delta_v=10)
+        self.assertEqual(burn.type, s.PropulsionType.OMS)
+        burn = s.Burn.model_validate({"time": "PT0S", "deltaV": 10, "type": "RCS"})
+        self.assertEqual(burn.type, s.PropulsionType.RCS)
+        with self.assertRaises(ValueError):
+            s.Burn.model_validate({"time": "PT0S", "deltaV": 10, "type": "Ion"})
+
+
 class TestScenario(unittest.TestCase):
     def test_description_is_optional(self):
         scenario = s.Scenario(

@@ -2,13 +2,14 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from fastapi_camelcase import CamelModel
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, model_validator
 
 from ..demand_models import AllDemandModels
 from ..elements import AllElements, AllInstElements
+from ..elements.propulsion import upgrade_vehicles
 from ..locations import Network
 from ..resources import AllResources
 from .manifest import Manifest
@@ -307,3 +308,9 @@ class Scenario(CamelModel):
     )
     manifest: Optional[Manifest] = Field(Manifest(), title="Manifest")
     configuration: Configuration = Field(Configuration(), title="Configuration")
+
+    @model_validator(mode="before")
+    @classmethod
+    def _upgrade(cls, data: Any) -> Any:
+        # accepts vehicles in the legacy format of the reference implementation
+        return upgrade_vehicles(data)

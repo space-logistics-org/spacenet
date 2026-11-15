@@ -30,6 +30,22 @@ from .issues import SimIssue, collect_issues
 SECONDS_PER_DAY = 24 * 60 * 60
 
 
+class FuelTankState(CamelModel):
+    """
+    State of an integral fuel tank of a vehicle.
+    """
+
+    label: str = Field(..., description="Label, e.g., OMS/RCS Fuel")
+    fuel_name: Optional[str] = Field(None, description="Fuel resource name")
+    amount: float = Field(0.0, description="Fuel amount (units)")
+    max_amount: float = Field(0.0, description="Fuel capacity (units)")
+    propulsion: Dict[str, float] = Field(
+        {},
+        description="Specific impulse (s) of each propulsion system (by "
+        "propulsion type) which burns fuel from the tank",
+    )
+
+
 class ElementState(CamelModel):
     """
     State of an element (and its nested contents) at a point in time.
@@ -64,6 +80,7 @@ class ElementState(CamelModel):
     fuel_amount: float = 0.0
     max_fuel_amount: float = 0.0
     isp: float = 0.0
+    fuel_tanks: List[FuelTankState] = []
     template_id: Optional[UUID] = None
     icon: Optional[str] = None
     mass_by_class_of_supply: Dict[int, float] = {}
@@ -219,6 +236,9 @@ class BurnResult(CamelModel):
     stack_mass: Optional[float] = Field(
         None, description="Stack mass (kg) at the start of the burn"
     )
+    propulsion_type: str = Field(
+        "OMS", description="Type of the propulsion systems which perform the burn"
+    )
     delta_v_required: float = Field(0.0, description="Required delta-v (m/s)")
     delta_v_achieved: float = Field(0.0, description="Achieved delta-v (m/s)")
     delta_v_remaining: float = Field(0.0, description="Delta-v (m/s) not achieved")
@@ -232,6 +252,7 @@ class BurnResult(CamelModel):
         remaining = event.delta_v_remaining if executed else required
         return cls(
             burn_id=event.burn.id,
+            propulsion_type=event.burn.propulsion_type.value,
             time=event.time,
             executed=executed,
             stack_mass=event.initial_stack_mass,

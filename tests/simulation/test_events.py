@@ -415,6 +415,71 @@ class TestTransportEvents(unittest.TestCase):
         )
         self.assertEqual(sim.state.get_element(stage.id).fuel_tank.amount, 0)
 
+    def _rcs_transport(self, elements, vehicle):
+        # adds a reaction control system burn to the edge of the transport
+        b = self.builder
+        b.ksc_leo.burns.append(b.rcs_burn)
+        transport = self._space_transport(elements, [("Burn", vehicle)])
+        transport.burn_stage_sequence.append(
+            s.BurnStageSequence(
+                burn=b.rcs_burn.id,
+                actions=[s.BurnStageItem(type="Burn", element=vehicle.id)],
+            )
+        )
+        return transport
+
+    def test_rcs_burn_uses_separate_fuel_tank(self):
+        b = self.builder
+        stage = b.vehicle(mass=1000, fuel=9000, isp=300, rcs_isp=200, rcs_fuel=500)
+        b.mission([b.create([stage], b.ksc), self._rcs_transport([stage], stage)])
+        sim = simulate(b)
+        self.assertEqual(sim.spatial_errors, [])
+        element = sim.state.get_element(stage.id)
+        oms = element.get_propulsion_system(s.PropulsionType.OMS)
+        rcs = element.get_propulsion_system(s.PropulsionType.RCS)
+        self.assertIsNot(oms.fuel_tank, rcs.fuel_tank)
+        self.assertEqual(element.fuel_tanks, [oms.fuel_tank, rcs.fuel_tank])
+        oms_fuel = get_required_fuel_mass(10500, 1000, 300)
+        self.assertAlmostEqual(oms.fuel_tank.amount, 9000 - oms_fuel, places=2)
+        self.assertAlmostEqual(
+            rcs.fuel_tank.amount,
+            500 - get_required_fuel_mass(10500 - oms_fuel, 10, 200),
+            places=1,
+        )
+        self.assertEqual(rcs.fuel_tank.name, "Stage RCS Fuel Tank")
+
+    def test_rcs_burn_uses_shared_fuel_tank(self):
+        b = self.builder
+        stage = b.vehicle(mass=1000, fuel=9000, isp=300, rcs_isp=200)
+        b.mission([b.create([stage], b.ksc), self._rcs_transport([stage], stage)])
+        sim = simulate(b)
+        self.assertEqual(sim.spatial_errors, [])
+        element = sim.state.get_element(stage.id)
+        oms = element.get_propulsion_system(s.PropulsionType.OMS)
+        rcs = element.get_propulsion_system(s.PropulsionType.RCS)
+        self.assertIs(oms.fuel_tank, rcs.fuel_tank)
+        self.assertEqual(element.fuel_tanks, [oms.fuel_tank])
+        oms_fuel = get_required_fuel_mass(10000, 1000, 300)
+        rcs_fuel = get_required_fuel_mass(10000 - oms_fuel, 10, 200)
+        self.assertAlmostEqual(
+            oms.fuel_tank.amount, 9000 - oms_fuel - rcs_fuel, places=1
+        )
+        # the shared fuel is only counted once
+        self.assertAlmostEqual(
+            element.total_mass, 10000 - oms_fuel - rcs_fuel, places=1
+        )
+
+    def test_rcs_burn_requires_rcs_propulsion_system(self):
+        b = self.builder
+        stage = b.vehicle(mass=1000, fuel=9000, isp=300)
+        b.mission([b.create([stage], b.ksc), self._rcs_transport([stage], stage)])
+        sim = simulate(b)
+        self.assertEqual(len(sim.spatial_errors), 1)
+        self.assertIn("Insufficient delta-v", str(sim.spatial_errors[0]))
+        self.assertTrue(
+            any("has no RCS propulsion system" in str(w) for w in sim.warnings)
+        )
+
     def test_space_transport_without_burn_actions(self):
         b = self.builder
         stage = b.vehicle()
@@ -515,8 +580,7 @@ class TestTransportEvents(unittest.TestCase):
                 max_cargo_mass=100,
                 max_crew=2,
                 max_speed=10,
-                max_fuel=100,
-                fuel=s.ResourceAmount(resource=b.fuel.id, amount=100),
+                fuel_tank=b.tank(100),
                 states=[
                     s.State(name="Parked", type="Quiescent"),
                     s.State(name="Driving", type="Active"),

@@ -583,7 +583,7 @@ function propulsiveBurn(ctx, panel) {
   const burns = store.scenario.network.edges.flatMap((edge) =>
     (edge.burns ?? []).map((burn, index) => [
       burn.id,
-      `${edge.name}: burn ${index + 1} (${fmt(burn.deltaV)} m/s)`,
+      `${edge.name}: burn ${index + 1} (${fmt(burn.deltaV)} m/s, ${burn.type ?? "OMS"})`,
     ])
   );
   draft.burn ||= burns[0]?.[0];
@@ -680,7 +680,7 @@ function spaceTransport(ctx, panel) {
         { class: "col-lg-7" },
         burns.map((burn, index) =>
           section(
-            `Burn ${index + 1}: ${fmt(burn.deltaV)} m/s at ${fmt(isoToDays(burn.time), 3)} days`,
+            `Burn ${index + 1} (${burn.type ?? "OMS"}): ${fmt(burn.deltaV)} m/s at ${fmt(isoToDays(burn.time), 3)} days`,
             burnSequence(
               ctx,
               draft.burnStageSequence[index].actions,

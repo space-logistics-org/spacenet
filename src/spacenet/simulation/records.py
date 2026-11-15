@@ -125,6 +125,25 @@ class MoeMassCapacityUtilization:
 
 
 @dataclass
+class FuelTankSnapshot:
+    """
+    Snapshot of an integral fuel tank of a vehicle.
+    """
+
+    #: Label, e.g., "OMS/RCS Fuel" (propulsive vehicle) or "Fuel" (surface vehicle).
+    label: str
+    #: Fuel resource name.
+    fuel_name: Optional[str] = None
+    #: Fuel amount (units).
+    amount: float = 0.0
+    #: Fuel capacity (units).
+    max_amount: float = 0.0
+    #: Specific impulse (s) of each propulsion system (by propulsion type)
+    #: which burns fuel from the tank.
+    propulsion: Dict[str, float] = field(default_factory=dict)
+
+
+@dataclass
 class BurnStep:
     """
     One action (fire engine or discard element) of an executed burn.
@@ -191,14 +210,16 @@ class ElementSnapshot:
     is_crew: bool = False
     #: True, if the element can contain resources.
     is_container: bool = False
-    #: Fuel resource name (vehicles).
+    #: Fuel resource name of the primary fuel tank (vehicles).
     fuel_name: Optional[str] = None
-    #: Fuel amount (units) (vehicles).
+    #: Fuel amount (units) of the primary fuel tank (vehicles).
     fuel_amount: float = 0.0
-    #: Fuel capacity (units) (vehicles).
+    #: Fuel capacity (units) of the primary fuel tank (vehicles).
     max_fuel_amount: float = 0.0
-    #: Specific impulse (s) (propulsive vehicles).
+    #: Specific impulse (s) of the first propulsion system (propulsive vehicles).
     isp: float = 0.0
+    #: Integral fuel tanks (vehicles).
+    fuel_tanks: List["FuelTankSnapshot"] = field(default_factory=list)
     #: Unique identifier of the element template.
     template_id: Optional[UUID] = None
     icon: Optional[str] = None
@@ -265,14 +286,34 @@ class ElementSnapshot:
             snapshot.crew_size = element.crew_size
             snapshot.max_crew_size = element.max_crew_size
             snapshot.contents = [cls.create(e) for e in element.contents]
-            fuel_tank = getattr(element, "fuel_tank", None)
-            if fuel_tank is not None:
-                snapshot.fuel_amount = fuel_tank.amount
-                snapshot.max_fuel_amount = fuel_tank.max_amount
-                snapshot.isp = getattr(element, "isp", 0.0)
-            if fuel_tank is not None and fuel_tank.resource is not None:
-                snapshot.fuel_name = fuel_tank.resource.name
-                snapshot.resources = {fuel_tank.resource.name: fuel_tank.amount}
+            systems = getattr(element, "propulsion_systems", [])
+            for tank in getattr(element, "fuel_tanks", []):
+                propulsion = {
+                    s.propulsion_type.value: s.isp
+                    for s in systems
+                    if s.fuel_tank is tank
+                }
+                fuel_name = None if tank.resource is None else tank.resource.name
+                snapshot.fuel_tanks.append(
+                    FuelTankSnapshot(
+                        label=" ".join(filter(None, ["/".join(propulsion), "Fuel"])),
+                        fuel_name=fuel_name,
+                        amount=tank.amount,
+                        max_amount=tank.max_amount,
+                        propulsion=propulsion,
+                    )
+                )
+                if fuel_name is not None:
+                    snapshot.resources[fuel_name] = (
+                        snapshot.resources.get(fuel_name, 0.0) + tank.amount
+                    )
+            if snapshot.fuel_tanks:
+                primary = snapshot.fuel_tanks[0]
+                snapshot.fuel_name = primary.fuel_name
+                snapshot.fuel_amount = primary.amount
+                snapshot.max_fuel_amount = primary.max_amount
+            if systems:
+                snapshot.isp = systems[0].isp
         return snapshot
 
     @property

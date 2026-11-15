@@ -211,6 +211,31 @@ class TestStateAnalysis(unittest.TestCase):
         self.assertEqual(vehicle.isp, 300)
         self.assertEqual(vehicle.fuel_name, "Fuel")
         self.assertEqual(vehicle.mass_by_class_of_supply, {1: 9000.0})
+        (tank,) = vehicle.fuel_tanks
+        self.assertEqual(tank.label, "OMS Fuel")
+        self.assertEqual(tank.amount, 9000)
+        self.assertEqual(tank.propulsion, {"OMS": 300})
+
+    def test_vehicle_state_includes_each_fuel_tank(self):
+        builder = ScenarioBuilder()
+        shared = builder.vehicle("Shared", fuel=9000, isp=300, rcs_isp=200)
+        separate = builder.vehicle(
+            "Separate", fuel=9000, isp=300, rcs_isp=200, rcs_fuel=50
+        )
+        rover = builder.rover()
+        builder.mission([builder.create([shared, separate, rover], builder.ksc)])
+        state = StateAnalysis.create(builder.build(), 0, 0, 2)
+        elements = {e.id: e for e in state.locations[0].elements}
+        (tank,) = elements[shared.id].fuel_tanks
+        self.assertEqual(tank.label, "OMS/RCS Fuel")
+        self.assertEqual(tank.propulsion, {"OMS": 300, "RCS": 200})
+        oms, rcs = elements[separate.id].fuel_tanks
+        self.assertEqual((oms.label, oms.amount), ("OMS Fuel", 9000))
+        self.assertEqual((rcs.label, rcs.amount), ("RCS Fuel", 50))
+        self.assertEqual(elements[separate.id].resources, {"Fuel": 9050})
+        self.assertEqual(elements[separate.id].fuel_amount, 9000)
+        (tank,) = elements[rover.id].fuel_tanks
+        self.assertEqual((tank.label, tank.amount), ("Fuel", 100))
 
 
 class TestEventEvaluation(unittest.TestCase):

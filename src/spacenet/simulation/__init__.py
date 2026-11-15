@@ -34,6 +34,7 @@ from .elements import (
     SimCarrier,
     SimCrewMember,
     SimElement,
+    SimPropulsionSystem,
     SimPropulsiveVehicle,
     SimResourceContainer,
     SimResourceTank,

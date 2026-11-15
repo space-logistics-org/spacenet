@@ -131,6 +131,23 @@ class TestScenario(ApiTestCase):
             self.assertGreater(len(library["edges"]), 0)
             self.assertGreater(len(library["elements"]), 0)
             self.assertIn("classOfSupply", library["resources"][0])
+            if name != "quick_start_1.xlsx":
+                continue
+            # propulsion systems with separate, shared, and single fuel tanks
+            vehicles = {e["name"]: e for e in library["elements"]}
+            oms, rcs = vehicles["Altair DM"]["propulsionSystems"]
+            self.assertEqual((oms["type"], oms["isp"]), ("OMS", 448))
+            self.assertEqual(oms["fuelTank"]["maxAmount"], 24900)
+            self.assertEqual((rcs["type"], rcs["isp"]), ("RCS", 300))
+            self.assertEqual(rcs["fuelTank"]["contents"]["amount"], 425)
+            oms, rcs = vehicles["Orion SM"]["propulsionSystems"]
+            self.assertEqual(rcs["sharedFuelTank"], "OMS")
+            self.assertIsNone(rcs["fuelTank"])
+            (rcs,) = vehicles["Orion CM"]["propulsionSystems"]
+            self.assertEqual((rcs["type"], rcs["isp"]), ("RCS", 301))
+            burns = [b["type"] for e in library["edges"] for b in e.get("burns", [])]
+            self.assertEqual(burns.count("RCS"), 7)
+            self.assertEqual(burns.count("OMS"), 8)
 
     def test_invalid_database(self):
         response = self.client.post(

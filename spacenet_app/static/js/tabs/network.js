@@ -144,7 +144,9 @@ function details(item) {
     if (item.burns) {
       rows.push([
         "Burns",
-        item.burns.map((burn) => `${fmt(burn.deltaV)} m/s at ${fmt(isoToDays(burn.time), 3)} d`).join(", "),
+        item.burns
+          .map((burn) => `${fmt(burn.deltaV)} m/s (${burn.type ?? "OMS"}) at ${fmt(isoToDays(burn.time), 3)} d`)
+          .join(", "),
       ]);
     }
   }

@@ -1,12 +1,12 @@
 """Defines object schemas for instantiated carrier elements."""
 
-from typing import List, Optional, Union
+from typing import List, Optional
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from typing_extensions import Literal
 
-from ...resources import GenericResourceAmount, ResourceAmount
 from ..element import ElementType
+from ..propulsion import PropulsionSystem, ResourceTank, check_propulsion_systems
 from .element import InstCargoCarrier, InstElementUUID
 
 
@@ -33,21 +33,23 @@ class InstElementCarrier(InstCargoCarrier):
 
 class InstPropulsiveVehicle(InstElementCarrier):
     """
-    Instantiated space vehicle with impulsive propulsion that can traverse space edges.
+    Instantiated space vehicle with one or more impulsive propulsion systems
+    that can traverse space edges.
     """
 
     type: Literal[ElementType.PROPULSIVE_VEHICLE] = Field(
         ElementType.PROPULSIVE_VEHICLE, description="Element type"
     )
-    isp: Optional[float] = Field(
-        None, title="Specific Impulse", description="specific impulse (s)", ge=0
+    propulsion_systems: Optional[List[PropulsionSystem]] = Field(
+        None,
+        title="Propulsion Systems",
+        description="List of propulsion systems (each with a specific impulse "
+        "and a fuel tank) with distinct types which replaces the list of "
+        "the element template",
+        min_length=1,
     )
-    max_fuel: Optional[float] = Field(
-        None, title="Maximum Fuel", description="maximum propellant amount (units)", ge=0
-    )
-    fuel: Optional[Union[ResourceAmount, GenericResourceAmount]] = Field(
-        None, title="Propellant", description="type and amount of propellant"
-    )
+
+    _check_systems = field_validator("propulsion_systems")(check_propulsion_systems)
 
 
 class InstSurfaceVehicle(InstElementCarrier):
@@ -62,9 +64,6 @@ class InstSurfaceVehicle(InstElementCarrier):
     max_speed: Optional[float] = Field(
         None, title="Maximum Speed", description="Maximum speed (km/hr)", ge=0
     )
-    max_fuel: Optional[float] = Field(
-        None, title="Maximum Fuel", description="Maximum fuel amount (units)", ge=0
-    )
-    fuel: Optional[Union[ResourceAmount, GenericResourceAmount]] = Field(
-        None, title="Fuel", description="Type and amount of fuel"
+    fuel_tank: Optional[ResourceTank] = Field(
+        None, title="Fuel Tank", description="Fuel tank (type and amount of fuel)"
     )

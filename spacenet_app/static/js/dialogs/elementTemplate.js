@@ -27,7 +27,6 @@ import {
 
 const AGENTS = ["Human Agent", "Robotic Agent"];
 const CARRIERS = ["Element Carrier", "Propulsive Vehicle", "Surface Vehicle"];
-const VEHICLES = ["Propulsive Vehicle", "Surface Vehicle"];
 const STATE_DEMAND_MODELS = ["Timed Impulse", "Rated", "Sparing By Mass"];
 
 export function newElement(type) {
@@ -39,6 +38,109 @@ function section(title, ...children) {
 }
 
 // --------------------------------------------------------------------- fuel
+
+function newTank() {
+  return { maxAmount: 0, contents: { classOfSupply: 1, environment: "Unpressurized", amount: 0 } };
+}
+
+/**
+ * Creates a fuel tank from the properties of a vehicle in the legacy format
+ * (one fuel amount and capacity) which may remain in the browser database.
+ */
+function legacyTank(draft) {
+  if (!draft.fuel) return newTank();
+  const tank = { maxAmount: draft.maxFuel ?? draft.fuel.amount ?? 0, contents: draft.fuel };
+  delete draft.fuel;
+  delete draft.maxFuel;
+  return tank;
+}
+
+/** Lists the fuel tanks of a vehicle. */
+function fuelTanks(draft) {
+  if (draft.type === "Surface Vehicle") return draft.fuelTank ? [draft.fuelTank] : [];
+  if (draft.type !== "Propulsive Vehicle") return [];
+  return (draft.propulsionSystems ?? []).map((system) => system.fuelTank).filter(Boolean);
+}
+
+/** Creates controls to edit a fuel tank; controls are added before its capacity. */
+function tankInput(tank, ...controls) {
+  return [
+    h(
+      "div",
+      { class: "row g-2 mb-2" },
+      controls,
+      numberField("Max Fuel (units)", tank, "maxAmount", { col: "col-md-3", min: 0 })
+    ),
+    h("div", { class: "mb-3" }, amountInput(tank.contents, (amount) => (tank.contents = amount))),
+  ];
+}
+
+/**
+ * Creates controls to edit the propulsion systems of a propulsive vehicle:
+ * one of each type with its own fuel tank or the fuel tank of another system.
+ */
+function propulsionEditor(draft) {
+  const root = h("div");
+  const types = store.enums.propulsionTypes;
+  const order = (system) => types.findIndex((type) => type.id === system.type);
+  function render() {
+    const systems = draft.propulsionSystems;
+    root.replaceChildren(
+      ...types.map(({ id, name }) => {
+        const system = systems.find((candidate) => candidate.type === id);
+        const toggle = h("input", {
+          type: "checkbox",
+          class: "form-check-input me-2",
+          checked: Boolean(system),
+          onChange: () => {
+            if (system) {
+              draft.propulsionSystems = systems.filter((candidate) => candidate !== system);
+              // systems which shared the removed fuel tank take it over
+              for (const other of draft.propulsionSystems) {
+                if (other.sharedFuelTank !== id) continue;
+                other.fuelTank = system.fuelTank ?? newTank();
+                other.sharedFuelTank = null;
+              }
+            } else {
+              systems.push({ type: id, isp: 0, fuelTank: newTank(), sharedFuelTank: null });
+              systems.sort((a, b) => order(a) - order(b));
+            }
+            render();
+          },
+        });
+        const title = h("label", { class: "form-check-label fw-semibold small" }, toggle, `${name} (${id})`);
+        if (!system) return h("div", { class: "mb-2" }, title);
+        // the fuel tank of another system can be shared if nothing shares this one
+        const shared = systems.some((other) => other.sharedFuelTank === id);
+        const others = shared ? [] : systems.filter((other) => other !== system && other.fuelTank);
+        const controls = [
+          numberField("Specific Impulse (s)", system, "isp", { col: "col-md-3", min: 0 }),
+          field(
+            "Fuel Tank",
+            select(
+              [["", "Own fuel tank"], ...others.map((other) => [other.type, `Shared with ${other.type}`])],
+              system.sharedFuelTank ?? "",
+              (value) => {
+                system.sharedFuelTank = value || null;
+                system.fuelTank = value ? null : newTank();
+                render();
+              }
+            ),
+            { col: "col-md-3" }
+          ),
+        ];
+        return h(
+          "div",
+          { class: "mb-2" },
+          title,
+          system.fuelTank ? tankInput(system.fuelTank, ...controls) : h("div", { class: "row g-2 mb-3" }, controls)
+        );
+      })
+    );
+  }
+  render();
+  return root;
+}
 
 /** Creates controls to edit one resource amount (specific or generic). */
 function amountInput(amount, replace) {
@@ -446,21 +548,20 @@ function drawElement(draft) {
       )
     );
   }
-  if (VEHICLES.includes(type)) {
-    draft.maxFuel ??= 0;
-    draft.fuel ||= { classOfSupply: 1, environment: "Unpressurized", amount: 0 };
-    if (type === "Propulsive Vehicle") draft.isp ??= 0;
-    else draft.maxSpeed ??= 0;
+  if (type === "Propulsive Vehicle") {
+    draft.propulsionSystems ||= [
+      { type: "OMS", isp: draft.isp ?? 0, fuelTank: legacyTank(draft), sharedFuelTank: null },
+    ];
+    delete draft.isp;
+    parts.push(section("Propulsion Systems", propulsionEditor(draft)));
+  } else if (type === "Surface Vehicle") {
+    draft.maxSpeed ??= 0;
+    draft.fuelTank ||= legacyTank(draft);
     parts.push(
-      h(
-        "div",
-        { class: "row g-2 mb-2" },
-        type === "Propulsive Vehicle"
-          ? numberField("Specific Impulse (s)", draft, "isp", { col: "col-md-3", min: 0 })
-          : numberField("Max Speed (km/h)", draft, "maxSpeed", { col: "col-md-3", min: 0 }),
-        numberField("Max Fuel (units)", draft, "maxFuel", { col: "col-md-3", min: 0 })
-      ),
-      h("div", { class: "mb-3" }, amountInput(draft.fuel, (amount) => (draft.fuel = amount)))
+      section(
+        "Fuel Tank",
+        tankInput(draft.fuelTank, numberField("Max Speed (km/h)", draft, "maxSpeed", { col: "col-md-3", min: 0 }))
+      )
     );
   }
   if (type === "Resource Container") {
@@ -483,9 +584,13 @@ export function openElementTemplate(model, isNew) {
     draw: drawElement,
     // contents are elements for carriers and resources for containers
     changeType: (draft) => delete draft.contents,
-    check: (draft) =>
-      VEHICLES.includes(draft.type) && draft.fuel.amount > draft.maxFuel
+    check: (draft) => {
+      if (draft.type === "Propulsive Vehicle" && !draft.propulsionSystems.length) {
+        return "A propulsive vehicle requires a propulsion system.";
+      }
+      return fuelTanks(draft).some((tank) => tank.contents.amount > tank.maxAmount)
         ? "The initial fuel cannot exceed the maximum fuel."
-        : null,
+        : null;
+    },
   });
 }

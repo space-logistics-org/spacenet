@@ -59,6 +59,9 @@ def get_enumerations() -> dict:
         "nodeTypes": _values(s.NodeType),
         "edgeTypes": _values(s.EdgeType),
         "elementTypes": _values(ElementType),
+        "propulsionTypes": [
+            {"id": t.value, "name": t.get_name()} for t in s.PropulsionType
+        ],
         "eventTypes": _values(EventType),
         "stateTypes": _values(s.StateType),
         "resourceTypes": _values(s.ResourceType),

@@ -9,6 +9,8 @@ from uuid import UUID, uuid4
 from fastapi_camelcase import CamelModel
 from pydantic import Field
 
+from ..elements.propulsion import PropulsionType
+
 
 class BurnUUID(CamelModel):
     """
@@ -29,4 +31,8 @@ class Burn(BurnUUID):
     )
     delta_v: float = Field(
         ..., description="Change in velocity (m/s) to be achieved", ge=0
+    )
+    type: PropulsionType = Field(
+        PropulsionType.OMS,
+        description="Type of the propulsion systems which perform the burn",
     )

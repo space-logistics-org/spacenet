@@ -11,6 +11,7 @@ from fastapi_camelcase import CamelModel
 from pydantic import Field, ValidationError
 
 from .. import schemas as s
+from ..schemas.elements.element import ElementType
 
 
 def _parse_node(data: dict) -> s.AllNodes:
@@ -212,6 +213,7 @@ def load_db(db_file: BinaryIO) -> ModelDatabase:
     Returns:
         ModelDatabase: the model database
     """
+    # pylint: disable=too-many-statements
     # read the nodes sheet
     nodes = pd.read_excel(db_file, "nodes")
     # parse the nodes, dropping the `id` field to generate a new uuid
@@ -226,7 +228,17 @@ def load_db(db_file: BinaryIO) -> ModelDatabase:
     # parse the burns
     burns["model"] = (
         burns.apply(
-            lambda r: s.Burn(time=timedelta(days=r.time), delta_v=r.delta_v), axis=1
+            lambda r: s.Burn(
+                time=timedelta(days=r.time),
+                delta_v=r.delta_v,
+                # the propulsion type of a burn is optional (default: OMS)
+                type=(
+                    r.type
+                    if "type" in burns.columns and pd.notna(r.type)
+                    else s.PropulsionType.OMS
+                ),
+            ),
+            axis=1,
         )
         if not burns.empty
         else None
@@ -428,20 +440,87 @@ def load_db(db_file: BinaryIO) -> ModelDatabase:
     )
     # coerce `current_state_index` to an integer data type
     elements["current_state_index"] = elements.current_state_index.astype("Int64")
-    # add the `fuel` field
-    elements["fuel"] = (
-        elements.apply(
-            lambda r: s.ResourceAmount(
-                resource=resources[resources.id == r.fuel_id].iloc[0].model.id,
-                amount=r.max_fuel,
+
+    def get_value(row, column: str, default=None):
+        # gets the value of an optional column
+        value = row.get(column)
+        return default if value is None or pd.isna(value) else value
+
+    def parse_tank(row, max_column: str, id_column: str) -> s.ResourceTank:
+        # parses a (full) fuel tank; a positive resource id refers to the
+        # resources sheet and a negative id to a generic class of supply
+        amount = get_value(row, max_column, 0.0)
+        resource_id = get_value(row, id_column)
+        if resource_id is None:
+            return None
+        return s.ResourceTank(
+            max_amount=amount,
+            contents=s.ResourceAmount(
+                resource=resources[resources.id == resource_id].iloc[0].model.id,
+                amount=amount,
             )
-            if pd.notna(r.fuel_id) and r.fuel_id > 0
+            if resource_id > 0
             else s.GenericResourceAmount(
-                class_of_supply=-r.fuel_id,
+                class_of_supply=-resource_id,
                 environment=s.Environment.UNPRESSURIZED,
-                amount=r.max_fuel,
+                amount=amount,
+            ),
+        )
+
+    def parse_propulsion_systems(row) -> List[s.PropulsionSystem]:
+        # parses the orbital maneuvering system (`oms_isp`, `max_oms`, and
+        # `oms_id` columns) and the reaction control system (`rcs_isp`,
+        # `max_rcs`, and `rcs_id` columns) of a propulsive vehicle
+        if row.type != ElementType.PROPULSIVE_VEHICLE.value:
+            return None
+        systems = []
+        oms_tank = parse_tank(row, "max_oms", "oms_id")
+        if get_value(row, "oms_isp", 0) > 0 and oms_tank is not None:
+            systems.append(
+                s.PropulsionSystem(
+                    type=s.PropulsionType.OMS, isp=row.oms_isp, fuel_tank=oms_tank
+                )
             )
-            if pd.notna(r.fuel_id)
+        rcs_tank = parse_tank(row, "max_rcs", "rcs_id")
+        if get_value(row, "rcs_isp", 0) > 0:
+            if rcs_tank is not None and rcs_tank.max_amount > 0:
+                systems.append(
+                    s.PropulsionSystem(
+                        type=s.PropulsionType.RCS, isp=row.rcs_isp, fuel_tank=rcs_tank
+                    )
+                )
+            elif systems:
+                # without a fuel tank the RCS shares the fuel tank of the OMS
+                systems.append(
+                    s.PropulsionSystem(
+                        type=s.PropulsionType.RCS,
+                        isp=row.rcs_isp,
+                        shared_fuel_tank=s.PropulsionType.OMS,
+                    )
+                )
+        if not systems:
+            # a single propulsion system (`isp`, `max_fuel`, and `fuel_id` columns)
+            tank = parse_tank(row, "max_fuel", "fuel_id")
+            if tank is None:
+                raise ValueError(f"No propulsion system found for {row['name']}")
+            systems.append(
+                s.PropulsionSystem(
+                    type=s.PropulsionType.OMS,
+                    isp=get_value(row, "isp", 0.0),
+                    fuel_tank=tank,
+                )
+            )
+        return systems
+
+    # add the `propulsion_systems` field (propulsive vehicles)
+    elements["propulsion_systems"] = (
+        elements.apply(parse_propulsion_systems, axis=1) if not elements.empty else None
+    )
+    # add the `fuel_tank` field (surface vehicles)
+    elements["fuel_tank"] = (
+        elements.apply(
+            lambda r: parse_tank(r, "max_fuel", "fuel_id")
+            if r.type == ElementType.SURFACE_VEHICLE.value
             else None,
             axis=1,
         )

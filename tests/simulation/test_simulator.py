@@ -563,6 +563,34 @@ class TestQuickStartScenarios(unittest.TestCase):
             self.assertEqual(sim.total_crew_surface_days, 4 * 7)
             self.assertEqual(sim.total_exploration_mass_delivered, 500)
             self.assertEqual(sim.total_exploration_capability, 4 * 7 * 500)
+            # values of the reference implementation: orbital maneuvering
+            # system (OMS) and reaction control system (RCS) burns consume
+            # fuel from separate (Altair DM) or shared (Orion SM, Altair AM)
+            # fuel tanks
+            self.assertEqual(sim.total_launch_mass, 4559400)
+            self.assertAlmostEqual(
+                sim.total_relative_exploration_capability, 3.468310649296501
+            )
+            elements = {
+                e.name: e
+                for registrar in (
+                    sim.state.network.registrar,
+                    sim.state.network.removed_registrar,
+                )
+                for e in registrar.values()
+            }
+            self.assertEqual(
+                {
+                    name: [t.amount for t in elements[f"Lunar | {name}"].fuel_tanks]
+                    for name in ("Altair DM", "Altair AM", "Orion SM", "Orion CM")
+                },
+                {
+                    "Altair DM": [573.73, 262.27],
+                    "Altair AM": [39.49],
+                    "Orion SM": [3117.07],
+                    "Orion CM": [160.32],
+                },
+            )
 
     def test_quick_start_2(self):
         scenario = load_scenario("quick_start/completed_quick_start_2_w_db.json")

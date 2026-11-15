@@ -197,9 +197,18 @@ sls_srbs = schemas.PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=0,
-    max_fuel=1256000.0,
-    fuel=schemas.ResourceAmount(resource=pban_solid.id, amount=1256000.0),
-    isp=269.0,
+    propulsion_systems=[
+        schemas.PropulsionSystem(
+            type=schemas.PropulsionType.OMS,
+            isp=269.0,
+            fuel_tank=schemas.ResourceTank(
+                max_amount=1256000.0,
+                contents=schemas.ResourceAmount(
+                    resource=pban_solid.id, amount=1256000.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -215,9 +224,18 @@ sls_core = schemas.PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=0,
-    max_fuel=987000.0,
-    fuel=schemas.ResourceAmount(resource=lox_lh2.id, amount=987000.0),
-    isp=414.0,
+    propulsion_systems=[
+        schemas.PropulsionSystem(
+            type=schemas.PropulsionType.OMS,
+            isp=414.0,
+            fuel_tank=schemas.ResourceTank(
+                max_amount=987000.0,
+                contents=schemas.ResourceAmount(
+                    resource=lox_lh2.id, amount=987000.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -233,9 +251,18 @@ sls_icps = schemas.PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=0,
-    max_fuel=28576.0,
-    fuel=schemas.ResourceAmount(resource=lox_lh2.id, amount=28576.0),
-    isp=465.0,
+    propulsion_systems=[
+        schemas.PropulsionSystem(
+            type=schemas.PropulsionType.OMS,
+            isp=465.0,
+            fuel_tank=schemas.ResourceTank(
+                max_amount=28576.0,
+                contents=schemas.ResourceAmount(
+                    resource=lox_lh2.id, amount=28576.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -262,9 +289,18 @@ orion_sm = schemas.PropulsiveVehicle(
     max_cargo_mass=0.0,
     max_cargo_volume=0.0,
     max_crew=4,
-    max_fuel=9276.0,
-    fuel=schemas.ResourceAmount(resource=mmh_n2o4.id, amount=9276.0),
-    isp=316.0,
+    propulsion_systems=[
+        schemas.PropulsionSystem(
+            type=schemas.PropulsionType.OMS,
+            isp=316.0,
+            fuel_tank=schemas.ResourceTank(
+                max_amount=9276.0,
+                contents=schemas.ResourceAmount(
+                    resource=mmh_n2o4.id, amount=9276.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )
@@ -344,9 +380,18 @@ hls = schemas.PropulsiveVehicle(
     max_cargo_mass=900.0,
     max_cargo_volume=0.0,
     max_crew=2,
-    max_fuel=32285.0,
-    fuel=schemas.ResourceAmount(resource=lox_lch4.id, amount=32285.0),
-    isp=363.0,
+    propulsion_systems=[
+        schemas.PropulsionSystem(
+            type=schemas.PropulsionType.OMS,
+            isp=363.0,
+            fuel_tank=schemas.ResourceTank(
+                max_amount=32285.0,
+                contents=schemas.ResourceAmount(
+                    resource=lox_lch4.id, amount=32285.0
+                ),
+            ),
+        )
+    ],
     states=[],
     parts=[],
 )

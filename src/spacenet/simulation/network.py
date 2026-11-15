@@ -5,7 +5,7 @@ Network locations (nodes and edges) used during simulation.
 from typing import Dict, List, Optional
 from uuid import UUID, uuid4
 
-from ..schemas import Body, ClassOfSupply, EdgeType, NodeType
+from ..schemas import Body, ClassOfSupply, EdgeType, NodeType, PropulsionType
 from .elements import ElementContainer, SimElement
 
 
@@ -163,9 +163,12 @@ class SimBurn:
         *,
         time: float = 0.0,
         delta_v: float = 0.0,
+        propulsion_type: PropulsionType = PropulsionType.OMS,
         id: Optional[UUID] = None,  # pylint: disable=redefined-builtin
     ):
         self.id = id if id is not None else uuid4()
+        #: Type of the propulsion systems which perform the burn.
+        self.propulsion_type = PropulsionType(propulsion_type)
         #: Time (days) relative to the start of the transport.
         self.time = time
         #: Change in velocity (m/s) to be achieved.
