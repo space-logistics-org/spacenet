@@ -269,3 +269,73 @@ Demand Analysis
 .. autopydantic_model:: spacenet.simulation.EdgeDemand
   :members:
   :inherited-members: CamelModel
+
+.. autopydantic_model:: spacenet.simulation.DemandsAnalysis
+  :members:
+  :inherited-members: CamelModel
+
+Manifest
+========
+
+A manifest packs the demands aggregated by a demand simulator in logistics
+containers and loads the containers in the carriers of transports. The full
+simulator loads the containers of the scenario manifest at the departure of
+each transport.
+
+.. code-block:: python
+    :caption: Example automatic manifest of a scenario
+
+    from spacenet.simulation import FullSimulator, SimManifest
+
+    manifest = SimManifest.create(scenario)
+    manifest.auto_manifest()
+    scenario = scenario.model_copy(update={"manifest": manifest.to_schema()})
+    simulator = FullSimulator(scenario)
+    simulator.simulate()
+
+.. autoclass:: spacenet.simulation.SimManifest
+  :members:
+
+.. autoclass:: spacenet.simulation.SimManifestContainer
+  :members:
+
+.. autoclass:: spacenet.simulation.ManifestDemand
+  :members:
+
+.. autofunction:: spacenet.simulation.container_factory
+
+.. autoclass:: spacenet.simulation.ManifestEvent
+  :members:
+
+Analysis
+========
+
+Analyses report the results of simulations as object schemas, e.g., for the
+application programming interface of the web application.
+
+.. autopydantic_model:: spacenet.simulation.SimIssue
+  :members:
+  :inherited-members: CamelModel
+
+.. autopydantic_model:: spacenet.simulation.MissionsAnalysis
+  :members:
+  :inherited-members: CamelModel
+
+.. autopydantic_model:: spacenet.simulation.StateAnalysis
+  :members:
+  :inherited-members: CamelModel
+
+.. autopydantic_model:: spacenet.simulation.EventEvaluation
+  :members:
+  :inherited-members: CamelModel
+
+.. autopydantic_model:: spacenet.simulation.ManifestAnalysis
+  :members:
+  :inherited-members: CamelModel
+
+.. autopydantic_model:: spacenet.simulation.SimulationAnalysis
+  :members:
+  :inherited-members: CamelModel
+
+.. autoclass:: spacenet.simulation.ScenarioError
+  :members:

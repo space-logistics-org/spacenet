@@ -44,6 +44,23 @@ To run the SpaceNet web application (note: requires the :console:`pip install -e
 
 The application will be available in a browser at `<http://localhost:8000>`_.
 
+--------------
+User Interface
+--------------
+
+The web application serves a browser-based user interface to build a campaign scenario, create a manifest, and visualize simulation results. No login is required. The scenario is kept in the browser (and saved automatically between sessions): use *Open* and *Save* to load and store scenario files (JSON). All analysis and simulation is performed by the web application through its application programming interface (documented at `<http://localhost:8000/docs>`_ under the ``/api`` prefix).
+
+ * *Load Database* reads a model database (Excel) such as ``quick_start/quick_start_1.xlsx`` which provides a library of nodes, edges, resources, and element templates. The objects of an opened scenario are also available as a library.
+ * **Network**: select the nodes and edges of the scenario from the library.
+ * **Missions**: add missions and their events. The dialog of an event shows the elements which are at its location at its time and evaluates each change (errors, capacities, and the change in velocity achieved by a sequence of burns). Errors are reported for each mission and event as the scenario is edited.
+ * **Demands**: review the demands of the scenario by element, mission, and location and compare them to the capacity of the transports which could supply them. Demands can be exported as delimited text.
+ * **Manifest**: pack demands in logistics containers and load the containers in the carriers of transports, manually or automatically. The manifest is saved with the scenario and can be exported as delimited text.
+ * **Simulation**: run the full simulation to review its errors, the location of elements over time, and the measures of effectiveness.
+
+To try the user interface, open ``quick_start/completed_quick_start_2_w_db.json``, review the *Demands* tab, select *Auto-Manifest* in the *Manifest* tab, and select *Simulate* in the *Simulation* tab.
+
+The user interface loads the Bootstrap and Plotly libraries from a content delivery network and therefore requires an internet connection.
+
 -------------
 Configuration
 -------------

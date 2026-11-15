@@ -29,6 +29,7 @@ from .elements import (
     SimRoboticAgent,
     SimSurfaceVehicle,
 )
+from .errors import ScenarioError
 from .events import (
     AddEvent,
     BurnEvent,
@@ -37,6 +38,7 @@ from .events import (
     EvaEvent,
     ExplorationProcess,
     FlightTransportEvent,
+    ManifestEvent,
     MoveEvent,
     ReconfigureEvent,
     ReconfigureGroupEvent,
@@ -112,10 +114,21 @@ class State:
         }
         self._demand_model_templates = {t.id: t for t in scenario.demand_models}
 
-        self._build_resources()
-        self._build_network()
-        self._build_elements()
-        self._build_missions()
+        #: Events which load manifested containers in carriers.
+        self.manifest_events: List[ManifestEvent] = []
+        #: Descriptions of problems found while building the manifest.
+        self.manifest_warnings: List[str] = []
+
+        try:
+            self._build_resources()
+            self._build_network()
+            self._build_elements()
+            self._build_missions()
+            self._build_manifest()
+        except ScenarioError:
+            raise
+        except ValueError as error:
+            raise ScenarioError(str(error)) from error
 
     # ------------------------------------------------------------------ time
 
@@ -514,27 +527,118 @@ class State:
     def _build_missions(self):
         for index, mission in enumerate(self.scenario.mission_list):
             context = f"Mission {mission.name}"
-            sim_mission = SimMission(
-                self,
-                index=index,
-                name=mission.name,
-                start_date=mission.start_date,
-                start_time=self.get_time(mission.start_date),
-                origin=self._require_node(mission.origin, context),
-                destination=self._require_node(mission.destination, context),
-                return_origin=self._require_node(mission.return_origin, context),
-                return_destination=self._require_node(
-                    mission.return_destination, context
-                ),
-            )
-            sim_mission.events = [self._build_event(e, context) for e in mission.events]
-            sim_mission.demand_models = [
-                self._build_demand_model(m, sim_mission, context)
-                for m in mission.demand_models
-            ]
+            try:
+                sim_mission = SimMission(
+                    self,
+                    index=index,
+                    name=mission.name,
+                    start_date=mission.start_date,
+                    start_time=self.get_time(mission.start_date),
+                    origin=self._require_node(mission.origin, context),
+                    destination=self._require_node(mission.destination, context),
+                    return_origin=self._require_node(mission.return_origin, context),
+                    return_destination=self._require_node(
+                        mission.return_destination, context
+                    ),
+                )
+                for event_index, event in enumerate(mission.events):
+                    try:
+                        sim_event = self._build_event(event, context)
+                    except ValueError as error:
+                        raise ScenarioError(str(error), index, event_index) from error
+                    sim_event.mission_index = index
+                    sim_event.event_index = event_index
+                    sim_mission.events.append(sim_event)
+                sim_mission.demand_models = [
+                    self._build_demand_model(m, sim_mission, context)
+                    for m in mission.demand_models
+                ]
+            except ScenarioError:
+                raise
+            except ValueError as error:
+                raise ScenarioError(str(error), index) from error
             self.missions.append(sim_mission)
         for sim_mission in self.missions:
             sim_mission.crew_size  # pylint: disable=pointless-statement
+
+    # -------------------------------------------------------------- manifest
+
+    def _build_manifest(self):
+        """
+        Builds the resource containers of the scenario manifest and the
+        events which load them in carriers. Entries which do not match the
+        scenario are skipped with a warning.
+        """
+        manifest = self.scenario.manifest
+        if manifest is None:
+            return
+        containers: Dict[UUID, SimResourceContainer] = {}
+        for stored in manifest.containers:
+            if stored.id in self.elements:
+                self.manifest_warnings.append(
+                    f"Manifest container {stored.name} duplicates an element."
+                )
+                continue
+            container = SimResourceContainer(
+                self.settings,
+                id=stored.id,
+                name=stored.name,
+                class_of_supply=s.ClassOfSupply.COS_501,
+                environment=stored.environment,
+                mass=stored.mass,
+                volume=stored.volume,
+                max_cargo_mass=stored.max_cargo_mass,
+                max_cargo_volume=stored.max_cargo_volume,
+                cargo_environment=stored.cargo_environment,
+                index=len(self.elements),
+                template_index=len(self._template_indices),
+            )
+            for packed in stored.contents:
+                reference = packed.resource
+                if reference.resource is None:
+                    resource = self.get_resource(
+                        reference.class_of_supply, reference.environment
+                    )
+                else:
+                    resource = self.get_resource(reference.resource)
+                if resource is None:
+                    self.manifest_warnings.append(
+                        f"Manifest container {stored.name} references an "
+                        f"unknown resource {reference.resource}."
+                    )
+                elif not container.add(resource, packed.amount):
+                    self.manifest_warnings.append(
+                        f"{packed.amount:g} {resource.units} of {resource} could "
+                        f"not be added to manifest container {stored.name}."
+                    )
+            containers[stored.id] = container
+            self.elements[stored.id] = container
+        for load in manifest.loads:
+            reference = load.supply_edge
+            edge = self.get_location(reference.edge)
+            carrier = self.get_element(load.carrier)
+            if not isinstance(edge, SimEdge) or not isinstance(carrier, SimCarrier):
+                self.manifest_warnings.append(
+                    "Manifest references an unknown transport or carrier."
+                )
+                continue
+            loaded = [containers[i] for i in load.containers if i in containers]
+            if len(loaded) < len(load.containers):
+                self.manifest_warnings.append(
+                    f"Manifest references unknown containers for {carrier}."
+                )
+            if loaded:
+                self.manifest_events.append(
+                    ManifestEvent(
+                        time=self.settings.round_time(reference.start_time),
+                        priority=0,
+                        location=(
+                            edge.destination if reference.reversed else edge.origin
+                        ),
+                        carrier=carrier,
+                        containers=loaded,
+                    )
+                )
 
     def _get_state(
         self, element: SimElement, state_index: Optional[int], context: str

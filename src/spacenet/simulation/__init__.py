@@ -6,10 +6,19 @@ import logging
 
 from .analysis import (
     AggregatedDemandsAnalysis,
+    DemandsAnalysis,
     EdgeDemand,
+    EventEvaluation,
+    ManifestAnalysis,
+    ManifestResult,
+    ManifestSelection,
+    MissionsAnalysis,
     NodeDemand,
     RawDemand,
     RawDemandsAnalysis,
+    SimIssue,
+    SimulationAnalysis,
+    StateAnalysis,
 )
 from .demand_models import (
     SimCrewConsumablesDemandModel,
@@ -31,7 +40,7 @@ from .elements import (
     SimRoboticAgent,
     SimSurfaceVehicle,
 )
-from .errors import SimDemand, SimError, SimSpatialError, SimWarning
+from .errors import ScenarioError, SimDemand, SimError, SimSpatialError, SimWarning
 from .events import (
     AddEvent,
     BurnEvent,
@@ -40,6 +49,7 @@ from .events import (
     EvaEvent,
     ExplorationProcess,
     FlightTransportEvent,
+    ManifestEvent,
     MissionEvent,
     MoveEvent,
     ReconfigureEvent,
@@ -53,7 +63,15 @@ from .events import (
 )
 from .mission import SimMission
 from .network import SimBurn, SimEdge, SimLocation, SimNetwork, SimNode
+from .manifest import (
+    ManifestDemand,
+    ManifestItem,
+    SimManifest,
+    SimManifestContainer,
+    container_factory,
+)
 from .records import (
+    BurnStep,
     ElementSnapshot,
     LocationSnapshot,
     MoeCrewSurfaceDays,

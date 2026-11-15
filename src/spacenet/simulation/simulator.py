@@ -141,6 +141,24 @@ class Simulator:
     def _peek_event(self) -> Optional[SimEvent]:
         return self._events[0][4] if self._events else None
 
+    @property
+    def pending_events(self) -> List[SimEvent]:
+        """The scheduled events which have not been executed (in no particular order)."""
+        return [entry[4] for entry in self._events]
+
+    def execute_event(self, event: SimEvent):
+        """
+        Executes an event at the current simulation time, logging any
+        errors. The event is removed from the scheduled events.
+
+        Args:
+            event (:obj:`SimEvent`): The event.
+        """
+        self._events = [entry for entry in self._events if entry[4] is not event]
+        heapq.heapify(self._events)
+        self.event = event
+        self._execute_event()
+
     def simulate(self):
         """
         Executes the simulation.
@@ -220,6 +238,7 @@ class Simulator:
                 DemandEvent(
                     time=self.time + mission.transit_duration,
                     priority=LAST_PRIORITY,
+                    parent=self.event,
                     name=f"Demand Event for {mission}",
                     location=mission.destination,
                     demands=self._discretize_demands(
@@ -637,6 +656,12 @@ class FullSimulator(Simulator):
 
     def simulate(self):
         self.initialize_simulation()
+        # only the full simulator loads manifested containers so the demands
+        # logged by other simulators do not depend on the manifest
+        for message in self.state.manifest_warnings:
+            self.warnings.append(SimWarning(0.0, None, message))
+        for event in self.state.manifest_events:
+            self.schedule(event)
         self.network_history.clear()
         self.crew_surface_days_history.clear()
         self.crew_time_history.clear()

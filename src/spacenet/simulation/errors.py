@@ -11,6 +11,27 @@ if TYPE_CHECKING:  # pragma: no cover
     from .resources import DemandSet
 
 
+class ScenarioError(ValueError):
+    """
+    An error where a simulation state could not be built from a scenario
+    because, for example, an event references an unknown element.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        mission_index: Optional[int] = None,
+        event_index: Optional[int] = None,
+    ):
+        super().__init__(message)
+        #: Description of the error.
+        self.message = message
+        #: Position of the related mission in the scenario mission list, if any.
+        self.mission_index = mission_index
+        #: Position of the related event in the mission event list, if any.
+        self.event_index = event_index
+
+
 class SimError(Exception):
     """
     Base class for an error that occurs during simulation. Errors are raised

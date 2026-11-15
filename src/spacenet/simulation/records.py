@@ -6,6 +6,8 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Dict, List, Optional
 from uuid import UUID
 
+from ..schemas.resources.class_of_supply import ClassOfSupply
+
 if TYPE_CHECKING:  # pragma: no cover
     from .elements import ElementContainer, SimElement
     from .network import SimLocation, SimNetwork
@@ -123,6 +125,30 @@ class MoeMassCapacityUtilization:
 
 
 @dataclass
+class BurnStep:
+    """
+    One action (fire engine or discard element) of an executed burn.
+    """
+
+    #: Action type (Burn or Stage).
+    action: str
+    element_id: UUID
+    element_name: str
+    #: Stack mass (kg) before the action.
+    stack_mass: float
+    #: Change in velocity (m/s) achieved by the action.
+    delta_v_achieved: float = 0.0
+    #: Change in velocity (m/s) still required after the action.
+    delta_v_remaining: float = 0.0
+    #: Fuel amount (units) consumed by the action.
+    fuel_used: float = 0.0
+    #: Fuel amount (units) remaining in the vehicle after the action.
+    fuel_remaining: float = 0.0
+    #: Description of any error which prevented the action.
+    message: Optional[str] = None
+
+
+@dataclass
 class ElementSnapshot:
     """
     Snapshot of an element at a point in time.
@@ -146,6 +172,39 @@ class ElementSnapshot:
     resources: Dict[str, float] = field(default_factory=dict)
     #: Nested elements.
     contents: List["ElementSnapshot"] = field(default_factory=list)
+    #: Class of supply (numeric identifier).
+    class_of_supply: int = 0
+    #: Required stowage environment.
+    environment: Optional[str] = None
+    #: Stowage environment provided to contents (carriers and containers).
+    cargo_environment: Optional[str] = None
+    #: Names of the operational states in order of state index.
+    states: List[str] = field(default_factory=list)
+    #: Types of the operational states in order of state index.
+    state_types: List[str] = field(default_factory=list)
+    #: Index of the current operational state (-1 if undefined).
+    state_index: int = -1
+    #: Type of the current operational state.
+    state_type: Optional[str] = None
+    max_crew_size: int = 0
+    #: True, if the element is a crew member.
+    is_crew: bool = False
+    #: True, if the element can contain resources.
+    is_container: bool = False
+    #: Fuel resource name (vehicles).
+    fuel_name: Optional[str] = None
+    #: Fuel amount (units) (vehicles).
+    fuel_amount: float = 0.0
+    #: Fuel capacity (units) (vehicles).
+    max_fuel_amount: float = 0.0
+    #: Specific impulse (s) (propulsive vehicles).
+    isp: float = 0.0
+    #: Unique identifier of the element template.
+    template_id: Optional[UUID] = None
+    icon: Optional[str] = None
+    #: Total mass (kg), including nested contents, by top-level class of
+    #: supply (1 to 10); classes of supply without mass are omitted.
+    mass_by_class_of_supply: Dict[int, float] = field(default_factory=dict)
 
     @classmethod
     def create(cls, element: "SimElement") -> "ElementSnapshot":
@@ -159,17 +218,41 @@ class ElementSnapshot:
             :obj:`ElementSnapshot`: The snapshot.
         """
         # pylint: disable=import-outside-toplevel
-        from .elements import SimCarrier, SimResourceContainer, SimResourceTank
+        from .elements import (
+            SimCarrier,
+            SimCrewMember,
+            SimResourceContainer,
+            SimResourceTank,
+        )
 
+        state = element.current_state
         snapshot = cls(
             id=element.id,
             name=element.name,
             type=None if element.element_type is None else element.element_type.value,
-            state=None if element.current_state is None else element.current_state.name,
+            state=None if state is None else state.name,
             mass=element.mass,
             total_mass=element.total_mass,
             volume=element.volume,
+            class_of_supply=int(element.class_of_supply),
+            environment=element.environment.value,
+            states=[s.name for s in element.states],
+            state_types=[s.state_type.value for s in element.states],
+            state_index=next(
+                (i for i, s in enumerate(element.states) if s is state), -1
+            ),
+            state_type=None if state is None else state.state_type.value,
+            is_crew=isinstance(element, SimCrewMember),
+            is_container=isinstance(element, (SimResourceContainer, SimResourceTank)),
+            template_id=element.template_id,
+            icon=element.icon,
         )
+        for class_of_supply in range(1, 11):
+            class_mass = element.get_total_mass(ClassOfSupply(class_of_supply))
+            if class_mass != 0:
+                snapshot.mass_by_class_of_supply[class_of_supply] = class_mass
+        if isinstance(element, (SimCarrier, SimResourceContainer)):
+            snapshot.cargo_environment = element.cargo_environment.value
         if isinstance(element, (SimCarrier, SimResourceContainer, SimResourceTank)):
             snapshot.cargo_mass = element.cargo_mass
             snapshot.max_cargo_mass = element.max_cargo_mass
@@ -180,9 +263,15 @@ class ElementSnapshot:
         if isinstance(element, SimCarrier):
             snapshot.is_carrier = True
             snapshot.crew_size = element.crew_size
+            snapshot.max_crew_size = element.max_crew_size
             snapshot.contents = [cls.create(e) for e in element.contents]
             fuel_tank = getattr(element, "fuel_tank", None)
+            if fuel_tank is not None:
+                snapshot.fuel_amount = fuel_tank.amount
+                snapshot.max_fuel_amount = fuel_tank.max_amount
+                snapshot.isp = getattr(element, "isp", 0.0)
             if fuel_tank is not None and fuel_tank.resource is not None:
+                snapshot.fuel_name = fuel_tank.resource.name
                 snapshot.resources = {fuel_tank.resource.name: fuel_tank.amount}
         return snapshot
 

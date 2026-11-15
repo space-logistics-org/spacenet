@@ -5,12 +5,13 @@ from enum import Enum
 from typing import List, Optional
 
 from fastapi_camelcase import CamelModel
-from pydantic import Field
+from pydantic import AliasChoices, Field
 
 from ..demand_models import AllDemandModels
 from ..elements import AllElements, AllInstElements
 from ..locations import Network
 from ..resources import AllResources
+from .manifest import Manifest
 from .mission import Mission
 
 __all__ = ["ScenarioType", "Network", "Scenario", "Manifest", "Configuration"]
@@ -26,12 +27,6 @@ class ItemDiscretizationType(str, Enum):
     DISCRETIZE_PER_ELEMENT = "Element"
     DISCRETIZE_PER_LOCATION = "Location"
     DISCRETIZE_PER_SCENARIO = "Scenario"
-
-
-class Manifest(CamelModel):
-    """
-    Manifest of events that schedule resource packing and loading.
-    """
 
 
 class Configuration(CamelModel):
@@ -98,6 +93,7 @@ class Configuration(CamelModel):
     )
     detailed_exploration: bool = Field(
         True,
+        title="Detailed Exploration",
         description="True, if the simulator shall model all exploration events (e.g., EVAs).",
     )
 
@@ -144,8 +140,15 @@ class Configuration(CamelModel):
         description="Mass capacity (kg) of small gas tank resource containers",
         ge=0,
     )
-    small_gas_t_tank_max_volume: float = Field(
+    small_gas_tank_max_volume: float = Field(
         0.275,
+        # accepts a misspelled name used by earlier versions
+        validation_alias=AliasChoices(
+            "smallGasTankMaxVolume",
+            "small_gas_tank_max_volume",
+            "smallGasTTankMaxVolume",
+            "small_gas_t_tank_max_volume",
+        ),
         title="Small Gas Tank Max Volume",
         description="Volume capacity (m^3) of small gas tank resource containers",
         ge=0,
@@ -174,8 +177,15 @@ class Configuration(CamelModel):
         description="Volume capacity (m^3) of large gas tank resource containers",
         ge=0,
     )
-    small_liquid_t_tank_mass: float = Field(
+    small_liquid_tank_mass: float = Field(
         11.4567,
+        # accepts a misspelled name used by earlier versions
+        validation_alias=AliasChoices(
+            "smallLiquidTankMass",
+            "small_liquid_tank_mass",
+            "smallLiquidTTankMass",
+            "small_liquid_t_tank_mass",
+        ),
         title="Small Liquid Tank Mass",
         description="Mass (kg) of small liquid tank resource containers",
         ge=0,

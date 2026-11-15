@@ -25,6 +25,7 @@ from .elements import (
 )
 from .errors import SimDemand, SimSpatialError, SimWarning
 from .network import SimBurn, SimEdge, SimLocation, SimNode
+from .records import BurnStep
 from .resources import Demand, DemandSet, SimResource
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -129,11 +130,26 @@ class SimEvent:
         self.location = location
         #: Event which created this event, if any.
         self.parent = parent
+        #: Position of the mission which defines this event in the scenario
+        #: mission list (`None` for derived events).
+        self.mission_index: Optional[int] = None
+        #: Position of this event in the event list of its mission (`None`
+        #: for derived events).
+        self.event_index: Optional[int] = None
 
     @property
     def root(self) -> "SimEvent":
         """The top-level event which (recursively) created this event."""
         return self if self.parent is None else self.parent.root
+
+    @property
+    def source(self) -> Tuple[Optional[int], Optional[int]]:
+        """
+        The (mission index, event index) of the scenario event which
+        (recursively) created this event. Either value is `None` if unknown.
+        """
+        root = self.root
+        return (root.mission_index, root.event_index)
 
     def execute(self, simulator: "Simulator"):
         """
@@ -183,6 +199,7 @@ class MissionEvent(SimEvent):
         kwargs.setdefault("location", mission.origin)
         super().__init__(**kwargs)
         self.mission = mission
+        self.mission_index = mission.index
 
     def execute(self, simulator: "Simulator"):
         if not self.mission.events:
@@ -193,6 +210,56 @@ class MissionEvent(SimEvent):
                 simulator.settings.round_time(event.mission_time or 0.0) + self.time
             )
             simulator.schedule(event)
+
+
+class ManifestEvent(SimEvent):
+    """
+    Event which loads manifested resource containers in a carrier at the
+    departure of a transport.
+    """
+
+    default_name = "Manifest Event"
+
+    def __init__(
+        self,
+        *,
+        carrier: Optional[SimCarrier] = None,
+        containers: Optional[List[SimElement]] = None,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.carrier = carrier
+        self.containers: List[SimElement] = (
+            list(containers) if containers is not None else []
+        )
+
+    def execute(self, simulator: "Simulator"):
+        if self.carrier is None:
+            raise SimSpatialError(simulator.time, self, "No carrier defined.")
+        # NOTE: the reference implementation does not check the location of
+        # the carrier; a warning indicates a manifest which may be out of date
+        if (
+            self.carrier.location is not None
+            and self.location is not None
+            and self.carrier.location != self.location
+        ):
+            self._warn(
+                simulator,
+                f"{self.carrier} is located at {self.carrier.location} "
+                f"instead of {self.location}.",
+            )
+        for container in _sorted_elements(self.containers):
+            if self.carrier.contains(container):
+                continue
+            self._log("Manifesting %s into %s", container, self.carrier)
+            if not self.carrier.add(container):
+                raise SimSpatialError(
+                    simulator.time,
+                    self,
+                    f"{container} could not be manifested in {self.carrier}.",
+                )
+            if self.carrier.location is not None:
+                simulator.state.network.register(container)
 
 
 class CreateEvent(SimEvent):
@@ -569,24 +636,58 @@ class BurnEvent(SimEvent):
         self.burn_stage_sequence: List[Tuple[BurnStage, SimElement]] = (
             list(burn_stage_sequence) if burn_stage_sequence is not None else []
         )
+        #: Trace of the executed burn and stage actions.
+        self.steps: List[BurnStep] = []
+        #: Stack mass (kg) at the start of the burn (set during execution).
+        self.initial_stack_mass: Optional[float] = None
+        #: Change in velocity (m/s) not achieved (set during execution).
+        self.delta_v_remaining: Optional[float] = None
+
+    @property
+    def stack_mass(self) -> float:
+        """The total mass (kg) of the elements participating in this burn."""
+        return sum(e.total_mass for e in _sorted_elements(self.elements))
 
     def execute(self, simulator: "Simulator"):
         delta_v_required = self.burn.delta_v
         priority = -LAST_PRIORITY
+        self.steps = []
+        self.initial_stack_mass = self.stack_mass
+        self.delta_v_remaining = delta_v_required
         for action, element in self.burn_stage_sequence:
-            if BurnStage(action) == BurnStage.BURN:
-                delta_v_required = self._burn(simulator, element, delta_v_required)
-            else:
-                stage = RemoveEvent(
-                    time=self.time,
-                    priority=priority,
-                    parent=self,
-                    location=self.location,
-                    elements=[element],
-                )
-                priority += 1
-                stage.execute(simulator)
-                self.elements[:] = [e for e in self.elements if e is not element]
+            step = BurnStep(
+                action=BurnStage(action).value,
+                element_id=element.id,
+                element_name=element.name,
+                stack_mass=self.stack_mass,
+                delta_v_remaining=delta_v_required,
+            )
+            self.steps.append(step)
+            try:
+                if BurnStage(action) == BurnStage.BURN:
+                    tank = getattr(element, "fuel_tank", None)
+                    fuel_before = 0.0 if tank is None else tank.amount
+                    remaining = self._burn(simulator, element, delta_v_required)
+                    step.delta_v_achieved = delta_v_required - remaining
+                    step.delta_v_remaining = remaining
+                    step.fuel_remaining = 0.0 if tank is None else tank.amount
+                    step.fuel_used = fuel_before - step.fuel_remaining
+                    delta_v_required = remaining
+                    self.delta_v_remaining = remaining
+                else:
+                    stage = RemoveEvent(
+                        time=self.time,
+                        priority=priority,
+                        parent=self,
+                        location=self.location,
+                        elements=[element],
+                    )
+                    priority += 1
+                    stage.execute(simulator)
+                    self.elements[:] = [e for e in self.elements if e is not element]
+            except SimSpatialError as error:
+                step.message = error.message
+                raise
         if delta_v_required > DELTA_V_TOLERANCE:
             raise SimSpatialError(
                 simulator.time,
@@ -847,15 +948,16 @@ class FlightTransportEvent(TransportEvent):
     def elements(self) -> List[SimElement]:
         return self._elements
 
-    def execute(self, simulator: "Simulator"):
-        elements = _sorted_elements(self._elements)
-        if not elements:
-            self._warn(simulator, "No elements defined.")
-        self._check_edge(simulator, "flight")
+    def get_load(self) -> Tuple[float, int]:
+        """
+        Gets the load of the transported elements in the current state.
+
+        Returns:
+            :obj:`Tuple[float, int]`: The total mass (kg) and the crew size.
+        """
         mass = 0.0
         crew = 0
-        for element in elements:
-            self._check_location(simulator, element)
+        for element in _sorted_elements(self._elements):
             mass += element.total_mass
             # NOTE: the reference implementation only counts crew directly
             # inside the transported carriers
@@ -863,6 +965,16 @@ class FlightTransportEvent(TransportEvent):
                 crew += 1
             elif isinstance(element, SimCarrier):
                 crew += element.total_crew_size
+        return mass, crew
+
+    def execute(self, simulator: "Simulator"):
+        elements = _sorted_elements(self._elements)
+        if not elements:
+            self._warn(simulator, "No elements defined.")
+        self._check_edge(simulator, "flight")
+        for element in elements:
+            self._check_location(simulator, element)
+        mass, crew = self.get_load()
         if mass > self.edge.max_cargo_mass:
             raise SimSpatialError(
                 simulator.time,

@@ -1,6 +1,8 @@
 """Events define the state transitions that drive simulation behavior."""
 
-from typing import Union
+from typing import Annotated, Union
+
+from pydantic import Field
 
 from .create_elements import CreateElements
 from .move_elements import MoveElements
@@ -20,19 +22,22 @@ from .transport import (
     BurnStageSequence,
 )
 
-AllEvents = Union[
-    CreateElements,
-    MoveElements,
-    RemoveElements,
-    ReconfigureElement,
-    ReconfigureElements,
-    AddResources,
-    ConsumeResources,
-    TransferResources,
-    PropulsiveBurn,
-    CrewedEVA,
-    CrewedExploration,
-    SurfaceTransport,
-    FlightTransport,
-    SpaceTransport,
+AllEvents = Annotated[
+    Union[
+        CreateElements,
+        MoveElements,
+        RemoveElements,
+        ReconfigureElement,
+        ReconfigureElements,
+        AddResources,
+        ConsumeResources,
+        TransferResources,
+        PropulsiveBurn,
+        CrewedEVA,
+        CrewedExploration,
+        SurfaceTransport,
+        FlightTransport,
+        SpaceTransport,
+    ],
+    Field(discriminator="type"),
 ]

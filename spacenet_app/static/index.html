@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SpaceNet</title>
+    <link rel="icon" href="data:," />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="/static/css/app.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand navbar-dark sn-navbar px-3">
+      <span class="navbar-brand fw-semibold">SpaceNet</span>
+      <div class="navbar-nav me-auto">
+        <button class="btn btn-sm btn-outline-light me-2" id="action-new">New</button>
+        <button class="btn btn-sm btn-outline-light me-2" id="action-open">Open…</button>
+        <button class="btn btn-sm btn-outline-light me-2" id="action-save">Save</button>
+        <button class="btn btn-sm btn-outline-light me-2" id="action-database">
+          Load Database…
+        </button>
+        <button class="btn btn-sm btn-outline-light" id="action-options">Options…</button>
+      </div>
+      <span class="navbar-text small text-white" id="status"></span>
+      <input type="file" id="file-scenario" accept=".json,application/json" hidden />
+      <input type="file" id="file-database" accept=".xlsx,.xls" hidden />
+    </nav>
+
+    <div class="container-fluid py-2 sn-header border-bottom">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label small mb-0" for="scenario-name">Scenario</label>
+          <input class="form-control form-control-sm" id="scenario-name" />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small mb-0" for="scenario-start">Start Date (UTC)</label>
+          <input
+            class="form-control form-control-sm"
+            id="scenario-start"
+            type="datetime-local"
+          />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small mb-0" for="scenario-author">Created By</label>
+          <input class="form-control form-control-sm" id="scenario-author" />
+        </div>
+        <div class="col-md-5">
+          <label class="form-label small mb-0" for="scenario-description">Description</label>
+          <input class="form-control form-control-sm" id="scenario-description" />
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid pt-2">
+      <div id="problem" class="alert alert-warning py-2 small" hidden></div>
+      <ul class="nav nav-tabs" id="tabs">
+        <li class="nav-item"><a class="nav-link" data-tab="network" href="#network">Network</a></li>
+        <li class="nav-item"><a class="nav-link" data-tab="missions" href="#missions">Missions</a></li>
+        <li class="nav-item"><a class="nav-link" data-tab="demands" href="#demands">Demands</a></li>
+        <li class="nav-item"><a class="nav-link" data-tab="manifest" href="#manifest">Manifest</a></li>
+        <li class="nav-item"><a class="nav-link" data-tab="simulation" href="#simulation">Simulation</a></li>
+      </ul>
+      <div class="pt-3">
+        <div class="sn-tab" id="tab-network" hidden></div>
+        <div class="sn-tab" id="tab-missions" hidden></div>
+        <div class="sn-tab" id="tab-demands" hidden></div>
+        <div class="sn-tab" id="tab-manifest" hidden></div>
+        <div class="sn-tab" id="tab-simulation" hidden></div>
+      </div>
+    </div>
+
+    <div id="modal-root"></div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toasts"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-basic-dist-min@2.35.2/plotly-basic.min.js"></script>
+    <script type="module" src="/static/js/main.js"></script>
+  </body>
+</html>

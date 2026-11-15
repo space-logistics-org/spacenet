@@ -1,13 +1,12 @@
 import tempfile
 
-from fastapi import APIRouter, File, HTTPException, status, UploadFile
+from fastapi import APIRouter, status, UploadFile
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
 from spacenet.schemas import Scenario
 from spacenet.io import load_db, ModelDatabase
-
 
 router = APIRouter()
 
@@ -23,7 +22,7 @@ async def validate_scenario_file(upload: UploadFile) -> Scenario:
     """
     contents = await upload.read()
     try:
-        return Scenario.parse_raw(contents)
+        return Scenario.model_validate_json(contents)
     except ValidationError as error:
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

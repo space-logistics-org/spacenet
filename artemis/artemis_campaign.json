@@ -2,12 +2,12 @@
   "name": "Artemis Campaign",
   "createdBy": "SpaceNet User",
   "description": "A model of NASA's Artemis Campaign.",
-  "startDate": "2022-11-16T00:00:00+00:00",
+  "startDate": "2022-11-16T00:00:00Z",
   "scenarioType": "Lunar",
   "network": {
     "nodes": [
       {
-        "id": "48500dd5-166a-4228-982c-b7f071a521eb",
+        "id": "808f243f-1bbf-4966-9f37-3105ab0794d3",
         "name": "KSC",
         "description": "Kennedy Space Center",
         "contents": [],
@@ -17,7 +17,7 @@
         "longitude": -80.6
       },
       {
-        "id": "99ff7ffc-f26c-49e2-9fe8-310b7ad0cc43",
+        "id": "5823e7f2-7648-46d3-b4fb-7993ebb4d634",
         "name": "PAC",
         "description": "Pacific Ocean Splash-down",
         "contents": [],
@@ -27,7 +27,7 @@
         "longitude": -117.9
       },
       {
-        "id": "055cae8c-9109-42c2-999f-4e38c6cc21e6",
+        "id": "3e07a334-a386-4728-9b64-95a02db141a3",
         "name": "LEO",
         "description": "Low Earth Orbit",
         "contents": [],
@@ -38,7 +38,7 @@
         "inclination": 28.5
       },
       {
-        "id": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
+        "id": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
         "name": "NRO",
         "description": "Near Rectilinear Halo Orbit",
         "contents": [],
@@ -48,7 +48,7 @@
         "lpNumber": 2
       },
       {
-        "id": "5a6fcd02-8aa0-4ae3-84c6-36446039c6e0",
+        "id": "07434779-bcdb-4bc7-a34a-9f861ed7621e",
         "name": "LLO",
         "description": "Low Lunar Orbit",
         "contents": [],
@@ -59,7 +59,7 @@
         "inclination": 90.0
       },
       {
-        "id": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
+        "id": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
         "name": "LSP",
         "description": "Lunar South Pole",
         "contents": [],
@@ -71,170 +71,170 @@
     ],
     "edges": [
       {
-        "id": "4d928f01-0fb5-486c-95a9-9f75f82d1698",
+        "id": "984449d3-279e-4a55-9366-d375e137fdfe",
         "name": "KSC-LEO",
         "description": "Earth Ascent",
         "contents": [],
         "type": "Space Edge",
-        "origin": "48500dd5-166a-4228-982c-b7f071a521eb",
-        "destination": "055cae8c-9109-42c2-999f-4e38c6cc21e6",
-        "duration": 21600.0,
+        "origin": "808f243f-1bbf-4966-9f37-3105ab0794d3",
+        "destination": "3e07a334-a386-4728-9b64-95a02db141a3",
+        "duration": "PT6H",
         "burns": [
           {
-            "id": "98277532-23ee-4516-9b2f-4607f4c1f966",
-            "time": 0.0,
+            "id": "19bf705b-2f6a-47e5-86d7-cb04dfa0423e",
+            "time": "PT0S",
             "deltaV": 9500.0
           }
         ]
       },
       {
-        "id": "cf5452ed-aefa-4d28-83c6-309ef1415eac",
+        "id": "cae780a9-eb78-4b10-bc61-93698009293a",
         "name": "LEO-NRO",
         "description": "Trans-Lunar Injection",
         "contents": [],
         "type": "Space Edge",
-        "origin": "055cae8c-9109-42c2-999f-4e38c6cc21e6",
-        "destination": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
-        "duration": 604800.0,
+        "origin": "3e07a334-a386-4728-9b64-95a02db141a3",
+        "destination": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
+        "duration": "P7D",
         "burns": [
           {
-            "id": "a84ab0eb-36e9-4266-a9b3-6e1632985853",
-            "time": 0.0,
+            "id": "8d4bd4e3-800c-4c4f-9e2a-e5435cce3515",
+            "time": "PT0S",
             "deltaV": 3124.0
           },
           {
-            "id": "cc8499b4-c0a2-4667-9130-183721f4898b",
-            "time": 25920.0,
+            "id": "5331fd27-76e3-4f6f-a41a-21a640ea828b",
+            "time": "PT7H12M",
             "deltaV": 30.0
           },
           {
-            "id": "f2e5b0c4-e93e-4d2a-b681-f70016161c43",
-            "time": 267840.0,
+            "id": "82e93b6b-c7b4-4c66-80b3-17c11b256102",
+            "time": "P3DT2H24M",
             "deltaV": 242.0
           },
           {
-            "id": "0ce9c5cb-f612-4ab3-a7db-812a01be2554",
-            "time": 380160.0,
+            "id": "b6947535-09f5-4272-8866-5e67afe4498f",
+            "time": "P4DT9H36M",
             "deltaV": 1.0
           },
           {
-            "id": "bbf00a55-7b7c-41ed-909f-504495e52973",
-            "time": 552960.0,
+            "id": "fea4259a-75e8-4a18-aa8e-d3875a4f291b",
+            "time": "P6DT9H36M",
             "deltaV": 126.0
           }
         ]
       },
       {
-        "id": "1edcd262-eef4-4338-bc0f-eeab3411dcc3",
+        "id": "f342e74f-7aa9-4c93-9169-74ea427fab65",
         "name": "NRO-LLO",
         "description": "Transfer to Low Lunar Orbit",
         "contents": [],
         "type": "Space Edge",
-        "origin": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
-        "destination": "5a6fcd02-8aa0-4ae3-84c6-36446039c6e0",
-        "duration": 43200.0,
+        "origin": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
+        "destination": "07434779-bcdb-4bc7-a34a-9f861ed7621e",
+        "duration": "PT12H",
         "burns": [
           {
-            "id": "91623a82-264a-4421-ad0d-1fd7f6b8faf9",
-            "time": 0.0,
+            "id": "b1712b18-70c2-4de9-a0c5-462b61ce1502",
+            "time": "PT0S",
             "deltaV": 126.4
           },
           {
-            "id": "9df60e3e-984a-4f78-b895-7b5819e525ae",
-            "time": 43200.0,
+            "id": "a6bc4681-8d1a-4b19-997a-b63387922f32",
+            "time": "PT12H",
             "deltaV": 648.6
           }
         ]
       },
       {
-        "id": "d36b4460-6c42-4051-9293-2d086fab4625",
+        "id": "fdbde632-2fd7-4200-adcf-1ae3b2606e56",
         "name": "LLO-LSP",
         "description": "Lunar Descent",
         "contents": [],
         "type": "Space Edge",
-        "origin": "5a6fcd02-8aa0-4ae3-84c6-36446039c6e0",
-        "destination": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
-        "duration": 17280.0,
+        "origin": "07434779-bcdb-4bc7-a34a-9f861ed7621e",
+        "destination": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
+        "duration": "PT4H48M",
         "burns": [
           {
-            "id": "3f97243b-e2e8-432b-b787-e3c21bcbb35b",
-            "time": 0.0,
+            "id": "1a5a15c8-279c-4d6e-919a-c54e8ad43659",
+            "time": "PT0S",
             "deltaV": 19.4
           },
           {
-            "id": "6fea7601-ac86-44ba-a07f-00c63e925899",
-            "time": 17280.0,
+            "id": "667ca063-6d51-4694-8744-692bba9d7957",
+            "time": "PT4H48M",
             "deltaV": 1692.5
           }
         ]
       },
       {
-        "id": "6fc20538-bccd-4297-ac41-db91f3d240c5",
+        "id": "df408501-9781-4920-a3d1-9c69f82f317e",
         "name": "LSP-LLO",
         "description": "Lunar Ascent",
         "contents": [],
         "type": "Space Edge",
-        "origin": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
-        "destination": "5a6fcd02-8aa0-4ae3-84c6-36446039c6e0",
-        "duration": 17280.0,
+        "origin": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
+        "destination": "07434779-bcdb-4bc7-a34a-9f861ed7621e",
+        "duration": "PT4H48M",
         "burns": [
           {
-            "id": "8dd18b6b-8f06-46a8-ad02-dbb31d2010fc",
-            "time": 0.0,
+            "id": "9484032c-c6fe-4588-9193-b0778a59a847",
+            "time": "PT0S",
             "deltaV": 1692.4
           },
           {
-            "id": "19499990-786b-4a2d-a34a-f61eaa2379fe",
-            "time": 17280.0,
+            "id": "55824456-c89a-4a6c-98d1-e9fb74d87c10",
+            "time": "PT4H48M",
             "deltaV": 19.4
           }
         ]
       },
       {
-        "id": "9e7cedf6-1767-4ae6-bb79-12c9e1689fda",
+        "id": "ed21aa93-0bed-4755-96a8-ee6f93945701",
         "name": "LLO-NRO",
         "description": "Transfer to Near Rectilinear Halo Orbit",
         "contents": [],
         "type": "Space Edge",
-        "origin": "5a6fcd02-8aa0-4ae3-84c6-36446039c6e0",
-        "destination": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
-        "duration": 43200.0,
+        "origin": "07434779-bcdb-4bc7-a34a-9f861ed7621e",
+        "destination": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
+        "duration": "PT12H",
         "burns": [
           {
-            "id": "86ad7eec-4158-47b7-8f12-f9b80eec205a",
-            "time": 0.0,
+            "id": "e905ed7d-a1f9-45e4-964b-16f6ad0a424d",
+            "time": "PT0S",
             "deltaV": 649.2
           },
           {
-            "id": "dba06752-5ffd-42c5-901f-60f74e976302",
-            "time": 43200.0,
+            "id": "1a819ff4-4864-4e99-8b75-7bb1a1aa48ea",
+            "time": "PT12H",
             "deltaV": 125.1
           }
         ]
       },
       {
-        "id": "5f007053-5c95-4877-aedd-0756332d904d",
+        "id": "59deff46-3750-4cad-934a-075b53f96e4e",
         "name": "NRO-PAC",
         "description": "Trans-Earth Injection",
         "contents": [],
         "type": "Space Edge",
-        "origin": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
-        "destination": "99ff7ffc-f26c-49e2-9fe8-310b7ad0cc43",
-        "duration": 552960.0,
+        "origin": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
+        "destination": "5823e7f2-7648-46d3-b4fb-7993ebb4d634",
+        "duration": "P6DT9H36M",
         "burns": [
           {
-            "id": "9224e9a4-15a4-4524-aefc-42eeb685e5a3",
-            "time": 0.0,
+            "id": "9825329c-2887-400b-8e0a-348109ef53b7",
+            "time": "PT0S",
             "deltaV": 147.0
           },
           {
-            "id": "bf354b10-66dd-4ad6-bb48-8e23a8565b43",
-            "time": 138240.0,
+            "id": "29fb3422-f6b8-4dbc-98ba-19a2933a550b",
+            "time": "P1DT14H24M",
             "deltaV": 2.0
           },
           {
-            "id": "2c26ef40-fd8b-4213-b5f1-36f6b63b6e19",
-            "time": 241920.0,
+            "id": "78316093-f2c6-45e5-8e3e-e218565f5893",
+            "time": "P2DT19H12M",
             "deltaV": 263.0
           }
         ]
@@ -244,110 +244,110 @@
   "missionList": [
     {
       "name": "Artemis 1",
-      "startDate": "2022-11-16T00:00:00+00:00",
+      "startDate": "2022-11-16T00:00:00Z",
       "events": [],
       "demandModels": [],
-      "origin": "48500dd5-166a-4228-982c-b7f071a521eb",
-      "destination": "99ff7ffc-f26c-49e2-9fe8-310b7ad0cc43"
+      "origin": "808f243f-1bbf-4966-9f37-3105ab0794d3",
+      "destination": "5823e7f2-7648-46d3-b4fb-7993ebb4d634"
     },
     {
       "name": "Artemis 2",
-      "startDate": "2025-09-01T00:00:00+00:00",
+      "startDate": "2025-09-01T00:00:00Z",
       "events": [],
       "demandModels": [],
-      "origin": "48500dd5-166a-4228-982c-b7f071a521eb",
-      "destination": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
-      "returnOrigin": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
-      "returnDestination": "99ff7ffc-f26c-49e2-9fe8-310b7ad0cc43"
+      "origin": "808f243f-1bbf-4966-9f37-3105ab0794d3",
+      "destination": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
+      "returnOrigin": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
+      "returnDestination": "5823e7f2-7648-46d3-b4fb-7993ebb4d634"
     },
     {
       "name": "Artemis 3",
-      "startDate": "2026-09-01T00:00:00+00:00",
+      "startDate": "2026-09-01T00:00:00Z",
       "events": [
         {
           "name": "Artemis 3 | Pre-position Landing System",
           "type": "Create Elements",
           "priority": 1,
-          "missionTime": 0.0,
-          "location": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
+          "missionTime": "PT0S",
+          "location": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
           "elements": [
-            "db135084-e836-40b2-b322-449be02c77bb"
+            "a687f588-e049-41a7-9e98-d3807b513ac8"
           ],
-          "container": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa"
+          "container": "1916f2f1-62c3-4748-8819-ab4d23d350b4"
         },
         {
           "name": "Artemis 3 | Create Launch Stack",
           "type": "Create Elements",
           "priority": 2,
-          "missionTime": 0.0,
-          "location": "48500dd5-166a-4228-982c-b7f071a521eb",
+          "missionTime": "PT0S",
+          "location": "808f243f-1bbf-4966-9f37-3105ab0794d3",
           "elements": [
-            "9d0eb59b-11d6-4c74-90c4-d7b139251dbc",
-            "fcd8508a-9ba7-4c23-8bb4-c6989ec7e92f",
-            "ae356b63-97b9-452f-86dd-199f34b1245d",
-            "f1ffa7e8-92c0-4d5d-8f6d-0a404816b068",
-            "49309b31-0107-4ef7-94f8-2d9a0abd8a04",
-            "fff64212-18a5-41b7-b35d-355011d4b0fc",
-            "1aabd238-518e-46e7-87e7-838c5e1575a8"
+            "81c3a53b-f2a7-4f3b-855e-a6dce311e84a",
+            "dab89a5f-2e55-4f48-9c14-178fcdcb5d24",
+            "30ac0319-0fb8-4dbf-8004-269132aebe38",
+            "c1a16664-e957-4e36-9357-249cb98a9652",
+            "1475321a-d6e4-4714-adb5-cfec93937c82",
+            "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
+            "a88f3543-7e16-4b0c-b27f-50e4c972d4fd"
           ],
-          "container": "48500dd5-166a-4228-982c-b7f071a521eb"
+          "container": "808f243f-1bbf-4966-9f37-3105ab0794d3"
         },
         {
           "name": "Artemis 3 | Create Crew Members",
           "type": "Create Elements",
           "priority": 3,
-          "missionTime": 0.0,
-          "location": "48500dd5-166a-4228-982c-b7f071a521eb",
+          "missionTime": "PT0S",
+          "location": "808f243f-1bbf-4966-9f37-3105ab0794d3",
           "elements": [
-            "c84de1c0-aa27-4b0f-b375-401448d24f06",
-            "b36d5d90-a03a-477a-9d01-3f4f2d33177c",
-            "8a0555c6-9126-4fd5-a97c-5d930b666fb2",
-            "04748f08-2214-4973-a782-53a9fd659c2a"
+            "03967bc9-2ac4-467e-b8a3-e5791735ce0b",
+            "37070758-e38e-40a4-9df4-d6de7414dc3a",
+            "3781524f-ab14-4094-8997-a1e6dd1ac3fb",
+            "420dd309-be92-49a3-9dbe-9a6504775f17"
           ],
-          "container": "49309b31-0107-4ef7-94f8-2d9a0abd8a04"
+          "container": "1475321a-d6e4-4714-adb5-cfec93937c82"
         },
         {
           "name": "Artemis 3 | Earth Ascent Transport",
           "type": "Space Transport",
           "priority": 4,
-          "missionTime": 0.0,
-          "location": "48500dd5-166a-4228-982c-b7f071a521eb",
-          "edge": "4d928f01-0fb5-486c-95a9-9f75f82d1698",
+          "missionTime": "PT0S",
+          "location": "808f243f-1bbf-4966-9f37-3105ab0794d3",
+          "edge": "984449d3-279e-4a55-9366-d375e137fdfe",
           "elements": [
-            "9d0eb59b-11d6-4c74-90c4-d7b139251dbc",
-            "fcd8508a-9ba7-4c23-8bb4-c6989ec7e92f",
-            "ae356b63-97b9-452f-86dd-199f34b1245d",
-            "f1ffa7e8-92c0-4d5d-8f6d-0a404816b068",
-            "49309b31-0107-4ef7-94f8-2d9a0abd8a04",
-            "fff64212-18a5-41b7-b35d-355011d4b0fc",
-            "1aabd238-518e-46e7-87e7-838c5e1575a8"
+            "81c3a53b-f2a7-4f3b-855e-a6dce311e84a",
+            "dab89a5f-2e55-4f48-9c14-178fcdcb5d24",
+            "30ac0319-0fb8-4dbf-8004-269132aebe38",
+            "c1a16664-e957-4e36-9357-249cb98a9652",
+            "1475321a-d6e4-4714-adb5-cfec93937c82",
+            "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
+            "a88f3543-7e16-4b0c-b27f-50e4c972d4fd"
           ],
           "burnStageSequence": [
             {
-              "burn": "98277532-23ee-4516-9b2f-4607f4c1f966",
+              "burn": "19bf705b-2f6a-47e5-86d7-cb04dfa0423e",
               "actions": [
                 {
-                  "element": "9d0eb59b-11d6-4c74-90c4-d7b139251dbc",
+                  "element": "81c3a53b-f2a7-4f3b-855e-a6dce311e84a",
                   "type": "Burn"
                 },
                 {
-                  "element": "9d0eb59b-11d6-4c74-90c4-d7b139251dbc",
+                  "element": "81c3a53b-f2a7-4f3b-855e-a6dce311e84a",
                   "type": "Stage"
                 },
                 {
-                  "element": "1aabd238-518e-46e7-87e7-838c5e1575a8",
+                  "element": "a88f3543-7e16-4b0c-b27f-50e4c972d4fd",
                   "type": "Stage"
                 },
                 {
-                  "element": "fcd8508a-9ba7-4c23-8bb4-c6989ec7e92f",
+                  "element": "dab89a5f-2e55-4f48-9c14-178fcdcb5d24",
                   "type": "Burn"
                 },
                 {
-                  "element": "fcd8508a-9ba7-4c23-8bb4-c6989ec7e92f",
+                  "element": "dab89a5f-2e55-4f48-9c14-178fcdcb5d24",
                   "type": "Stage"
                 },
                 {
-                  "element": "ae356b63-97b9-452f-86dd-199f34b1245d",
+                  "element": "30ac0319-0fb8-4dbf-8004-269132aebe38",
                   "type": "Stage"
                 }
               ]
@@ -358,60 +358,60 @@
           "name": "Artemis 3 | Trans-Lunar Injection Transport",
           "type": "Space Transport",
           "priority": 1,
-          "missionTime": 86400.0,
-          "location": "055cae8c-9109-42c2-999f-4e38c6cc21e6",
-          "edge": "cf5452ed-aefa-4d28-83c6-309ef1415eac",
+          "missionTime": "P1D",
+          "location": "3e07a334-a386-4728-9b64-95a02db141a3",
+          "edge": "cae780a9-eb78-4b10-bc61-93698009293a",
           "elements": [
-            "f1ffa7e8-92c0-4d5d-8f6d-0a404816b068",
-            "49309b31-0107-4ef7-94f8-2d9a0abd8a04",
-            "fff64212-18a5-41b7-b35d-355011d4b0fc"
+            "c1a16664-e957-4e36-9357-249cb98a9652",
+            "1475321a-d6e4-4714-adb5-cfec93937c82",
+            "0cc471d8-7f27-4bb5-9e34-9b6271ae064b"
           ],
           "burnStageSequence": [
             {
-              "burn": "a84ab0eb-36e9-4266-a9b3-6e1632985853",
+              "burn": "8d4bd4e3-800c-4c4f-9e2a-e5435cce3515",
               "actions": [
                 {
-                  "element": "f1ffa7e8-92c0-4d5d-8f6d-0a404816b068",
+                  "element": "c1a16664-e957-4e36-9357-249cb98a9652",
                   "type": "Burn"
                 },
                 {
-                  "element": "f1ffa7e8-92c0-4d5d-8f6d-0a404816b068",
+                  "element": "c1a16664-e957-4e36-9357-249cb98a9652",
                   "type": "Stage"
                 }
               ]
             },
             {
-              "burn": "cc8499b4-c0a2-4667-9130-183721f4898b",
+              "burn": "5331fd27-76e3-4f6f-a41a-21a640ea828b",
               "actions": [
                 {
-                  "element": "fff64212-18a5-41b7-b35d-355011d4b0fc",
+                  "element": "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "f2e5b0c4-e93e-4d2a-b681-f70016161c43",
+              "burn": "82e93b6b-c7b4-4c66-80b3-17c11b256102",
               "actions": [
                 {
-                  "element": "fff64212-18a5-41b7-b35d-355011d4b0fc",
+                  "element": "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "0ce9c5cb-f612-4ab3-a7db-812a01be2554",
+              "burn": "b6947535-09f5-4272-8866-5e67afe4498f",
               "actions": [
                 {
-                  "element": "fff64212-18a5-41b7-b35d-355011d4b0fc",
+                  "element": "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "bbf00a55-7b7c-41ed-909f-504495e52973",
+              "burn": "fea4259a-75e8-4a18-aa8e-d3875a4f291b",
               "actions": [
                 {
-                  "element": "fff64212-18a5-41b7-b35d-355011d4b0fc",
+                  "element": "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
                   "type": "Burn"
                 }
               ]
@@ -422,39 +422,39 @@
           "name": "Artemis 3 | Rendezvous, Crew Transfer",
           "type": "Move Elements",
           "priority": 1,
-          "missionTime": 691200.0,
-          "location": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
+          "missionTime": "P8D",
+          "location": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
           "elements": [
-            "c84de1c0-aa27-4b0f-b375-401448d24f06",
-            "b36d5d90-a03a-477a-9d01-3f4f2d33177c"
+            "03967bc9-2ac4-467e-b8a3-e5791735ce0b",
+            "37070758-e38e-40a4-9df4-d6de7414dc3a"
           ],
-          "container": "db135084-e836-40b2-b322-449be02c77bb"
+          "container": "a687f588-e049-41a7-9e98-d3807b513ac8"
         },
         {
           "name": "Artemis 3 | Transfer to Low Lunar Orbit",
           "type": "Space Transport",
           "priority": 1,
-          "missionTime": 777600.0,
-          "location": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
-          "edge": "1edcd262-eef4-4338-bc0f-eeab3411dcc3",
+          "missionTime": "P9D",
+          "location": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
+          "edge": "f342e74f-7aa9-4c93-9169-74ea427fab65",
           "elements": [
-            "db135084-e836-40b2-b322-449be02c77bb"
+            "a687f588-e049-41a7-9e98-d3807b513ac8"
           ],
           "burnStageSequence": [
             {
-              "burn": "91623a82-264a-4421-ad0d-1fd7f6b8faf9",
+              "burn": "b1712b18-70c2-4de9-a0c5-462b61ce1502",
               "actions": [
                 {
-                  "element": "db135084-e836-40b2-b322-449be02c77bb",
+                  "element": "a687f588-e049-41a7-9e98-d3807b513ac8",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "9df60e3e-984a-4f78-b895-7b5819e525ae",
+              "burn": "a6bc4681-8d1a-4b19-997a-b63387922f32",
               "actions": [
                 {
-                  "element": "db135084-e836-40b2-b322-449be02c77bb",
+                  "element": "a687f588-e049-41a7-9e98-d3807b513ac8",
                   "type": "Burn"
                 }
               ]
@@ -465,27 +465,27 @@
           "name": "Artemis 3 | Lunar Descent",
           "type": "Space Transport",
           "priority": 1,
-          "missionTime": 864000.0,
-          "location": "5a6fcd02-8aa0-4ae3-84c6-36446039c6e0",
-          "edge": "d36b4460-6c42-4051-9293-2d086fab4625",
+          "missionTime": "P10D",
+          "location": "07434779-bcdb-4bc7-a34a-9f861ed7621e",
+          "edge": "fdbde632-2fd7-4200-adcf-1ae3b2606e56",
           "elements": [
-            "db135084-e836-40b2-b322-449be02c77bb"
+            "a687f588-e049-41a7-9e98-d3807b513ac8"
           ],
           "burnStageSequence": [
             {
-              "burn": "3f97243b-e2e8-432b-b787-e3c21bcbb35b",
+              "burn": "1a5a15c8-279c-4d6e-919a-c54e8ad43659",
               "actions": [
                 {
-                  "element": "db135084-e836-40b2-b322-449be02c77bb",
+                  "element": "a687f588-e049-41a7-9e98-d3807b513ac8",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "6fea7601-ac86-44ba-a07f-00c63e925899",
+              "burn": "667ca063-6d51-4694-8744-692bba9d7957",
               "actions": [
                 {
-                  "element": "db135084-e836-40b2-b322-449be02c77bb",
+                  "element": "a687f588-e049-41a7-9e98-d3807b513ac8",
                   "type": "Burn"
                 }
               ]
@@ -496,19 +496,19 @@
           "name": "Artemis 3 | Crewed Exploration",
           "type": "Crewed Exploration",
           "priority": 1,
-          "missionTime": 950400.0,
-          "location": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
-          "evaDuration": 28800.0,
-          "duration": 604800.0,
-          "vehicle": "db135084-e836-40b2-b322-449be02c77bb",
+          "missionTime": "P11D",
+          "location": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
+          "evaDuration": "PT8H",
+          "duration": "P7D",
+          "vehicle": "a687f588-e049-41a7-9e98-d3807b513ac8",
           "evaPerWeek": 5,
           "elementStates": [
             {
-              "element": "c84de1c0-aa27-4b0f-b375-401448d24f06",
+              "element": "03967bc9-2ac4-467e-b8a3-e5791735ce0b",
               "stateIndex": -1
             },
             {
-              "element": "b36d5d90-a03a-477a-9d01-3f4f2d33177c",
+              "element": "37070758-e38e-40a4-9df4-d6de7414dc3a",
               "stateIndex": -1
             }
           ],
@@ -518,38 +518,38 @@
           "name": "Artemis 3 | Create Samples",
           "type": "Create Elements",
           "priority": 1,
-          "missionTime": 1555200.0,
-          "location": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
+          "missionTime": "P18D",
+          "location": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
           "elements": [
-            "cd2d52ae-f4b0-476c-9858-6d91bac4abcc"
+            "1aea5adb-5970-4463-af80-ed318358bef7"
           ],
-          "container": "db135084-e836-40b2-b322-449be02c77bb"
+          "container": "a687f588-e049-41a7-9e98-d3807b513ac8"
         },
         {
           "name": "Artemis 3 | Lunar Ascent",
           "type": "Space Transport",
           "priority": 2,
-          "missionTime": 1555200.0,
-          "location": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
-          "edge": "6fc20538-bccd-4297-ac41-db91f3d240c5",
+          "missionTime": "P18D",
+          "location": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
+          "edge": "df408501-9781-4920-a3d1-9c69f82f317e",
           "elements": [
-            "db135084-e836-40b2-b322-449be02c77bb"
+            "a687f588-e049-41a7-9e98-d3807b513ac8"
           ],
           "burnStageSequence": [
             {
-              "burn": "8dd18b6b-8f06-46a8-ad02-dbb31d2010fc",
+              "burn": "9484032c-c6fe-4588-9193-b0778a59a847",
               "actions": [
                 {
-                  "element": "db135084-e836-40b2-b322-449be02c77bb",
+                  "element": "a687f588-e049-41a7-9e98-d3807b513ac8",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "19499990-786b-4a2d-a34a-f61eaa2379fe",
+              "burn": "55824456-c89a-4a6c-98d1-e9fb74d87c10",
               "actions": [
                 {
-                  "element": "db135084-e836-40b2-b322-449be02c77bb",
+                  "element": "a687f588-e049-41a7-9e98-d3807b513ac8",
                   "type": "Burn"
                 }
               ]
@@ -560,27 +560,27 @@
           "name": "Artemis 3 | Transfer to Halo Orbit",
           "type": "Space Transport",
           "priority": 2,
-          "missionTime": 1641600.0,
-          "location": "5a6fcd02-8aa0-4ae3-84c6-36446039c6e0",
-          "edge": "9e7cedf6-1767-4ae6-bb79-12c9e1689fda",
+          "missionTime": "P19D",
+          "location": "07434779-bcdb-4bc7-a34a-9f861ed7621e",
+          "edge": "ed21aa93-0bed-4755-96a8-ee6f93945701",
           "elements": [
-            "db135084-e836-40b2-b322-449be02c77bb"
+            "a687f588-e049-41a7-9e98-d3807b513ac8"
           ],
           "burnStageSequence": [
             {
-              "burn": "86ad7eec-4158-47b7-8f12-f9b80eec205a",
+              "burn": "e905ed7d-a1f9-45e4-964b-16f6ad0a424d",
               "actions": [
                 {
-                  "element": "db135084-e836-40b2-b322-449be02c77bb",
+                  "element": "a687f588-e049-41a7-9e98-d3807b513ac8",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "dba06752-5ffd-42c5-901f-60f74e976302",
+              "burn": "1a819ff4-4864-4e99-8b75-7bb1a1aa48ea",
               "actions": [
                 {
-                  "element": "db135084-e836-40b2-b322-449be02c77bb",
+                  "element": "a687f588-e049-41a7-9e98-d3807b513ac8",
                   "type": "Burn"
                 }
               ]
@@ -591,54 +591,54 @@
           "name": "Artemis 3 | Rendezvous, Transfer Crew and Samples",
           "type": "Move Elements",
           "priority": 1,
-          "missionTime": 1728000.0,
-          "location": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
+          "missionTime": "P20D",
+          "location": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
           "elements": [
-            "c84de1c0-aa27-4b0f-b375-401448d24f06",
-            "b36d5d90-a03a-477a-9d01-3f4f2d33177c",
-            "cd2d52ae-f4b0-476c-9858-6d91bac4abcc"
+            "03967bc9-2ac4-467e-b8a3-e5791735ce0b",
+            "37070758-e38e-40a4-9df4-d6de7414dc3a",
+            "1aea5adb-5970-4463-af80-ed318358bef7"
           ],
-          "container": "49309b31-0107-4ef7-94f8-2d9a0abd8a04"
+          "container": "1475321a-d6e4-4714-adb5-cfec93937c82"
         },
         {
           "name": "Artemis 3 | Trans-Earth Injection",
           "type": "Space Transport",
           "priority": 2,
-          "missionTime": 1814400.0,
-          "location": "8a81c7d9-f6d7-46a7-afbf-ae7c6dace1fa",
-          "edge": "5f007053-5c95-4877-aedd-0756332d904d",
+          "missionTime": "P21D",
+          "location": "1916f2f1-62c3-4748-8819-ab4d23d350b4",
+          "edge": "59deff46-3750-4cad-934a-075b53f96e4e",
           "elements": [
-            "49309b31-0107-4ef7-94f8-2d9a0abd8a04",
-            "fff64212-18a5-41b7-b35d-355011d4b0fc"
+            "1475321a-d6e4-4714-adb5-cfec93937c82",
+            "0cc471d8-7f27-4bb5-9e34-9b6271ae064b"
           ],
           "burnStageSequence": [
             {
-              "burn": "9224e9a4-15a4-4524-aefc-42eeb685e5a3",
+              "burn": "9825329c-2887-400b-8e0a-348109ef53b7",
               "actions": [
                 {
-                  "element": "fff64212-18a5-41b7-b35d-355011d4b0fc",
+                  "element": "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "bf354b10-66dd-4ad6-bb48-8e23a8565b43",
+              "burn": "29fb3422-f6b8-4dbc-98ba-19a2933a550b",
               "actions": [
                 {
-                  "element": "fff64212-18a5-41b7-b35d-355011d4b0fc",
+                  "element": "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
                   "type": "Burn"
                 }
               ]
             },
             {
-              "burn": "2c26ef40-fd8b-4213-b5f1-36f6b63b6e19",
+              "burn": "78316093-f2c6-45e5-8e3e-e218565f5893",
               "actions": [
                 {
-                  "element": "fff64212-18a5-41b7-b35d-355011d4b0fc",
+                  "element": "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
                   "type": "Burn"
                 },
                 {
-                  "element": "fff64212-18a5-41b7-b35d-355011d4b0fc",
+                  "element": "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
                   "type": "Stage"
                 }
               ]
@@ -647,15 +647,15 @@
         }
       ],
       "demandModels": [],
-      "origin": "48500dd5-166a-4228-982c-b7f071a521eb",
-      "destination": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
-      "returnOrigin": "c5a31ab4-11cb-41c0-ae80-165b0f27a8c2",
-      "returnDestination": "99ff7ffc-f26c-49e2-9fe8-310b7ad0cc43"
+      "origin": "808f243f-1bbf-4966-9f37-3105ab0794d3",
+      "destination": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
+      "returnOrigin": "9d8d67a7-2e45-4372-9edc-4d87678b4716",
+      "returnDestination": "5823e7f2-7648-46d3-b4fb-7993ebb4d634"
     }
   ],
   "elementTemplates": [
     {
-      "id": "415577ad-c614-4d10-bfe2-b03af8d282ed",
+      "id": "4edece8f-7cad-485d-af33-60db3833ec62",
       "name": "SLS Core",
       "type": "Propulsive Vehicle",
       "description": "SLS Core Stage",
@@ -674,12 +674,12 @@
       "isp": 414.0,
       "maxFuel": 987000.0,
       "fuel": {
-        "resource": "6c6875ff-393f-4e5a-8e75-85fd80f876ca",
+        "resource": "9a3aaf5d-8800-4c99-802d-6ef367a36f95",
         "amount": 987000.0
       }
     },
     {
-      "id": "ddf84a24-4344-4681-963b-0f4a246bfe0b",
+      "id": "a57925f8-3e6f-47cc-bc1a-d73d3a98686f",
       "name": "SLS SRBs",
       "type": "Propulsive Vehicle",
       "description": "SLS Solid Rocket Boosters (2)",
@@ -698,12 +698,12 @@
       "isp": 269.0,
       "maxFuel": 1256000.0,
       "fuel": {
-        "resource": "db81cd6c-372c-4396-8dd6-c3597e1107a6",
+        "resource": "1ec78f20-3221-4e97-82bd-b6755288536c",
         "amount": 1256000.0
       }
     },
     {
-      "id": "f97df13a-b35f-42d6-ba13-a678ea8f692d",
+      "id": "98934813-8307-40aa-861b-61f65418f2ac",
       "name": "iCPS",
       "type": "Propulsive Vehicle",
       "description": "SLS Interim Cryogenic Propulsion Stage",
@@ -722,12 +722,12 @@
       "isp": 465.0,
       "maxFuel": 28576.0,
       "fuel": {
-        "resource": "6c6875ff-393f-4e5a-8e75-85fd80f876ca",
+        "resource": "9a3aaf5d-8800-4c99-802d-6ef367a36f95",
         "amount": 28576.0
       }
     },
     {
-      "id": "8ba3e8e1-5eea-4a6c-82a0-16429306515c",
+      "id": "dd5c7fda-dfc7-45f8-9c72-e58d920ec2e9",
       "name": "SLS SA",
       "type": "Element",
       "description": "SLS Spacecraft Adapter",
@@ -740,7 +740,7 @@
       "parts": []
     },
     {
-      "id": "92dba9ee-043d-48d2-b739-ff02f657f29d",
+      "id": "4d84c746-91aa-4a2a-a758-d7651dd3a698",
       "name": "Orion SM",
       "type": "Propulsive Vehicle",
       "description": "Orion Service Module",
@@ -759,12 +759,12 @@
       "isp": 316.0,
       "maxFuel": 9276.0,
       "fuel": {
-        "resource": "cf11f3ff-2213-41d0-96a1-7c2c7df4189d",
+        "resource": "3b5fe73d-eb47-4b69-ae85-1ee9895f175e",
         "amount": 9276.0
       }
     },
     {
-      "id": "1bd85747-00dd-48c6-b6e5-d3bdaff18365",
+      "id": "b2d6aaed-7d86-47a9-9c01-1acb067b9b92",
       "name": "Orion CM",
       "type": "Element Carrier",
       "description": "Orion Crew Module",
@@ -782,7 +782,7 @@
       "maxCrew": 4
     },
     {
-      "id": "a6d2fbea-0e0f-417c-b772-13949d3de838",
+      "id": "cbd428d1-9fe2-4ffe-a6a3-558cbb92910a",
       "name": "SLS LAS",
       "type": "Element Carrier",
       "description": "SLS Launch Abort System",
@@ -800,7 +800,7 @@
       "maxCrew": 0
     },
     {
-      "id": "24310f8e-a1cb-4967-a3bb-ed8aff42471d",
+      "id": "fa720f2d-f6b5-470d-9351-d303d52458a4",
       "name": "Crew Member",
       "type": "Human Agent",
       "description": "Crew Member",
@@ -814,7 +814,7 @@
       "activeTimeFraction": 0.66
     },
     {
-      "id": "e6a40770-0a76-46b3-a614-157d30f1c995",
+      "id": "7f967238-0e57-4db8-a2c2-f419f7d90a82",
       "name": "Lunar Surface Samples",
       "type": "Element",
       "description": "Lunar Surface Samples",
@@ -827,7 +827,7 @@
       "parts": []
     },
     {
-      "id": "3e35aa0b-345b-4626-b78e-d990cc6b2070",
+      "id": "d012f623-891e-4d36-9e89-2208ca98fca9",
       "name": "Notional Cargo",
       "type": "Element",
       "description": "Notional Cargo",
@@ -840,7 +840,7 @@
       "parts": []
     },
     {
-      "id": "7ec6f40f-2fa1-4ec7-b0b7-dffe1862167d",
+      "id": "71923a39-4fed-4a1e-a515-b796ec4663a3",
       "name": "HLS",
       "type": "Propulsive Vehicle",
       "description": "Human Landing System",
@@ -859,100 +859,100 @@
       "isp": 363.0,
       "maxFuel": 32285.0,
       "fuel": {
-        "resource": "c461f7a3-b741-4fda-81bd-dd731407c8aa",
+        "resource": "b12bbb68-1f05-4185-9ef5-302dfde2cc5c",
         "amount": 32285.0
       }
     }
   ],
   "instantiatedElements": [
     {
-      "id": "fcd8508a-9ba7-4c23-8bb4-c6989ec7e92f",
+      "id": "dab89a5f-2e55-4f48-9c14-178fcdcb5d24",
       "type": "Propulsive Vehicle",
-      "templateId": "415577ad-c614-4d10-bfe2-b03af8d282ed",
+      "templateId": "4edece8f-7cad-485d-af33-60db3833ec62",
       "name": "Artemis 3 | SLS Core",
       "contents": []
     },
     {
-      "id": "9d0eb59b-11d6-4c74-90c4-d7b139251dbc",
+      "id": "81c3a53b-f2a7-4f3b-855e-a6dce311e84a",
       "type": "Propulsive Vehicle",
-      "templateId": "ddf84a24-4344-4681-963b-0f4a246bfe0b",
+      "templateId": "a57925f8-3e6f-47cc-bc1a-d73d3a98686f",
       "name": "Artemis 3 | SLS SRBs",
       "contents": []
     },
     {
-      "id": "f1ffa7e8-92c0-4d5d-8f6d-0a404816b068",
+      "id": "c1a16664-e957-4e36-9357-249cb98a9652",
       "type": "Propulsive Vehicle",
-      "templateId": "f97df13a-b35f-42d6-ba13-a678ea8f692d",
+      "templateId": "98934813-8307-40aa-861b-61f65418f2ac",
       "name": "Artemis 3 | iCPS",
       "contents": []
     },
     {
-      "id": "ae356b63-97b9-452f-86dd-199f34b1245d",
+      "id": "30ac0319-0fb8-4dbf-8004-269132aebe38",
       "type": "Element",
-      "templateId": "8ba3e8e1-5eea-4a6c-82a0-16429306515c",
+      "templateId": "dd5c7fda-dfc7-45f8-9c72-e58d920ec2e9",
       "name": "Artemis 3 | SLS SA"
     },
     {
-      "id": "fff64212-18a5-41b7-b35d-355011d4b0fc",
+      "id": "0cc471d8-7f27-4bb5-9e34-9b6271ae064b",
       "type": "Propulsive Vehicle",
-      "templateId": "92dba9ee-043d-48d2-b739-ff02f657f29d",
+      "templateId": "4d84c746-91aa-4a2a-a758-d7651dd3a698",
       "name": "Artemis 3 | Orion SM",
       "contents": []
     },
     {
-      "id": "49309b31-0107-4ef7-94f8-2d9a0abd8a04",
+      "id": "1475321a-d6e4-4714-adb5-cfec93937c82",
       "type": "Element Carrier",
-      "templateId": "1bd85747-00dd-48c6-b6e5-d3bdaff18365",
+      "templateId": "b2d6aaed-7d86-47a9-9c01-1acb067b9b92",
       "name": "Artemis 3 | Orion CM",
       "contents": []
     },
     {
-      "id": "1aabd238-518e-46e7-87e7-838c5e1575a8",
+      "id": "a88f3543-7e16-4b0c-b27f-50e4c972d4fd",
       "type": "Element Carrier",
-      "templateId": "a6d2fbea-0e0f-417c-b772-13949d3de838",
+      "templateId": "cbd428d1-9fe2-4ffe-a6a3-558cbb92910a",
       "name": "Artemis 3 | SLS LAS",
       "contents": []
     },
     {
-      "id": "c84de1c0-aa27-4b0f-b375-401448d24f06",
+      "id": "03967bc9-2ac4-467e-b8a3-e5791735ce0b",
       "type": "Human Agent",
-      "templateId": "24310f8e-a1cb-4967-a3bb-ed8aff42471d",
+      "templateId": "fa720f2d-f6b5-470d-9351-d303d52458a4",
       "name": "Artemis 3 | Crew Member A"
     },
     {
-      "id": "b36d5d90-a03a-477a-9d01-3f4f2d33177c",
+      "id": "37070758-e38e-40a4-9df4-d6de7414dc3a",
       "type": "Human Agent",
-      "templateId": "24310f8e-a1cb-4967-a3bb-ed8aff42471d",
+      "templateId": "fa720f2d-f6b5-470d-9351-d303d52458a4",
       "name": "Artemis 3 | Crew Member B"
     },
     {
-      "id": "8a0555c6-9126-4fd5-a97c-5d930b666fb2",
+      "id": "3781524f-ab14-4094-8997-a1e6dd1ac3fb",
       "type": "Human Agent",
-      "templateId": "24310f8e-a1cb-4967-a3bb-ed8aff42471d",
+      "templateId": "fa720f2d-f6b5-470d-9351-d303d52458a4",
       "name": "Artemis 3 | Crew Member C"
     },
     {
-      "id": "04748f08-2214-4973-a782-53a9fd659c2a",
+      "id": "420dd309-be92-49a3-9dbe-9a6504775f17",
       "type": "Human Agent",
-      "templateId": "24310f8e-a1cb-4967-a3bb-ed8aff42471d",
+      "templateId": "fa720f2d-f6b5-470d-9351-d303d52458a4",
       "name": "Artemis 3 | Crew Member D"
     },
     {
-      "id": "cd2d52ae-f4b0-476c-9858-6d91bac4abcc",
+      "id": "1aea5adb-5970-4463-af80-ed318358bef7",
       "type": "Element",
-      "templateId": "e6a40770-0a76-46b3-a614-157d30f1c995",
+      "templateId": "7f967238-0e57-4db8-a2c2-f419f7d90a82",
       "name": "Artemis 3 | Lunar Surface Samples"
     },
     {
-      "id": "0045ccea-8c08-49d7-a258-960aa1cf3c63",
+      "id": "dd469418-0199-451a-ae40-d6cec9fd03e9",
       "type": "Element",
-      "templateId": "3e35aa0b-345b-4626-b78e-d990cc6b2070",
+      "templateId": "d012f623-891e-4d36-9e89-2208ca98fca9",
       "name": "Artemis 3 | Notional Cargo"
     },
     {
-      "id": "db135084-e836-40b2-b322-449be02c77bb",
+      "id": "a687f588-e049-41a7-9e98-d3807b513ac8",
       "type": "Propulsive Vehicle",
-      "templateId": "7ec6f40f-2fa1-4ec7-b0b7-dffe1862167d",
+      "templateId": "71923a39-4fed-4a1e-a515-b796ec4663a3",
       "name": "Artemis 3 | HLS",
       "contents": []
     }
@@ -960,7 +960,7 @@
   "demandModels": [],
   "resourceList": [
     {
-      "id": "db81cd6c-372c-4396-8dd6-c3597e1107a6",
+      "id": "1ec78f20-3221-4e97-82bd-b6755288536c",
       "name": "PBAN Solid",
       "classOfSupply": 105,
       "environment": "Unpressurized",
@@ -972,7 +972,7 @@
       "type": "Continuous"
     },
     {
-      "id": "6c6875ff-393f-4e5a-8e75-85fd80f876ca",
+      "id": "9a3aaf5d-8800-4c99-802d-6ef367a36f95",
       "name": "LOX/LH2",
       "classOfSupply": 101,
       "environment": "Unpressurized",
@@ -980,11 +980,11 @@
       "units": "kg",
       "description": "Liquid oxygen/liquid hydrogen cryogenic fuel",
       "unitMass": 1.0,
-      "unitVolume": 1.6883051104995694e-05,
+      "unitVolume": 0.000016883051104995694,
       "type": "Continuous"
     },
     {
-      "id": "c461f7a3-b741-4fda-81bd-dd731407c8aa",
+      "id": "b12bbb68-1f05-4185-9ef5-302dfde2cc5c",
       "name": "LOX/LCH4",
       "classOfSupply": 101,
       "environment": "Unpressurized",
@@ -996,7 +996,7 @@
       "type": "Continuous"
     },
     {
-      "id": "cf11f3ff-2213-41d0-96a1-7c2c7df4189d",
+      "id": "3b5fe73d-eb47-4b69-ae85-1ee9895f175e",
       "name": "MMH/N2O4",
       "classOfSupply": 102,
       "environment": "Unpressurized",
@@ -1013,7 +1013,7 @@
     "timePrecision": 0.05,
     "demandPrecision": 0.01,
     "massPrecision": 0.01,
-    "volumePrecision": 1e-06,
+    "volumePrecision": 1e-6,
     "volumeConstrained": false,
     "itemDiscretization": "None",
     "itemAggregation": 0.0,
