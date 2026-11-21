@@ -19,6 +19,7 @@ from ..records import (
 from ..simulator import FullSimulator
 from .issues import SimIssue, collect_issues
 from .missions import LocationSummary
+from .power import PowerAnalysis
 from .propellant import PropellantAnalysis
 from .state import ElementState
 
@@ -55,6 +56,9 @@ class MeasureTotals(CamelModel):
     )
     propellant_transfer_loss_mass: float = Field(
         0.0, description="Propellant mass (kg) lost in transfers"
+    )
+    energy_deficit: float = Field(
+        0.0, description="Electrical energy (kWh) which could not be supplied"
     )
 
 
@@ -189,6 +193,7 @@ class ElementInfoState(CamelModel):
     state_types: List[str] = []
     isp: float = 0.0
     fuel_tanks: List[TankInfoState] = []
+    energy_capacity: float = Field(0.0, description="Energy storage capacity (kWh)")
 
 
 class ElementChange(CamelModel):
@@ -218,6 +223,7 @@ class ElementChange(CamelModel):
     )
     fuel_amounts: List[float] = Field([], description="Amount of each integral tank")
     mass_by_class_of_supply: Dict[int, float] = {}
+    energy: float = Field(0.0, description="Stored electrical energy (kWh)")
 
 
 class HistoryStep(CamelModel):
@@ -280,6 +286,7 @@ class SimulationHistory(CamelModel):
                 fuel_names=[name for name, _ in record.tanks],
                 fuel_amounts=[amount for _, amount in record.tanks],
                 mass_by_class_of_supply=dict(record.mass_by_class_of_supply),
+                energy=record.energy,
             )
 
         return cls(
@@ -302,6 +309,7 @@ class SimulationHistory(CamelModel):
                     states=list(info.states),
                     state_types=list(info.state_types),
                     isp=info.isp,
+                    energy_capacity=info.energy_capacity,
                     fuel_tanks=[
                         TankInfoState(
                             label=tank.label,
@@ -362,6 +370,7 @@ class SimulationHistory(CamelModel):
             resources=tuple(change.resources.items()),
             tanks=tuple(zip(change.fuel_names, change.fuel_amounts)),
             mass_by_class_of_supply=tuple(change.mass_by_class_of_supply.items()),
+            energy=change.energy,
         )
         snapshot = ElementSnapshot.compose(
             ElementInfo(
@@ -394,6 +403,7 @@ class SimulationHistory(CamelModel):
                     for t in info.fuel_tanks
                 ),
                 sort_key=(),
+                energy_capacity=info.energy_capacity,
             ),
             record,
         )
@@ -479,6 +489,9 @@ class SimulationAnalysis(CamelModel):
     )
     propellant: PropellantAnalysis = Field(
         PropellantAnalysis(), description="Vehicle tank contents and budgets"
+    )
+    power: PowerAnalysis = Field(
+        PowerAnalysis(), description="Energy balance of each power group"
     )
 
     def network_states(self) -> Iterator[NetworkState]:
@@ -566,6 +579,7 @@ class SimulationAnalysis(CamelModel):
             simulator.simulate()
         network = simulator.state.network
         propellant = PropellantAnalysis.create(simulator)
+        power = PowerAnalysis.create(simulator)
 
         return cls(
             issues=collect_issues(simulator),
@@ -584,8 +598,10 @@ class SimulationAnalysis(CamelModel):
                 propellant_burned_mass=propellant.totals.burned_mass,
                 propellant_boiloff_mass=propellant.totals.boiloff_mass,
                 propellant_transfer_loss_mass=propellant.totals.transfer_loss_mass,
+                energy_deficit=power.total_deficit,
             ),
             propellant=propellant,
+            power=power,
             measures=Measures(
                 crew_surface_days=_records(simulator.crew_surface_days_history),
                 # crew time is recorded for each crew member at each time step

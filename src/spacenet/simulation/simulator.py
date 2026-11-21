@@ -2,6 +2,8 @@
 Simulators which execute the events of a scenario as a discrete event simulation.
 """
 
+# pylint: disable=too-many-lines
+
 import heapq
 import logging
 import math
@@ -9,8 +11,15 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Tuple
 
 from ..schemas import Body, ClassOfSupply, Scenario
+from ..schemas.elements.power import PowerGenerationType
 from ..schemas.scenarios.scenario import ItemDiscretizationType
-from .elements import SimCarrier, SimCrewMember, SimElement, SimResourceTank
+from .elements import (
+    ElementContainer,
+    SimCarrier,
+    SimCrewMember,
+    SimElement,
+    SimResourceTank,
+)
 from .errors import SimDemand, SimError, SimSpatialError, SimWarning
 from .events import (
     LAST_PRIORITY,
@@ -38,6 +47,7 @@ from .records import (
     MoeMassCapacityUtilization,
     NetworkHistory,
     PropellantFlow,
+    PowerRecord,
     PropellantFlowKind,
     SimRepair,
     SimScavenge,
@@ -54,6 +64,9 @@ APOLLO_17_EXPLORATION_CAPABILITY = 2594.0
 
 #: Launch mass (kg) of the Apollo 17 mission.
 APOLLO_17_LAUNCH_MASS = 2930000.0
+
+#: Synodic day (days) of each body (the period of the day-night cycle).
+SYNODIC_DAYS = {Body.MOON: 29.53, Body.MARS: 1.03, Body.EARTH: 1.0}
 
 
 class Simulator:
@@ -108,6 +121,11 @@ class Simulator:
         self.repaired_parts: List[SimRepair] = []
         #: Changes to the contents of the integral tanks of vehicles.
         self.propellant_flows: List[PropellantFlow] = []
+        #: Energy balance of each power group over each interval of time.
+        self.power_records: List[PowerRecord] = []
+        self._power_warnings: set = set()
+        #: Time at which each power group arrived at its location.
+        self._power_arrivals: Dict[tuple, float] = {}
         self._events: List[Tuple[float, int, str, int, SimEvent]] = []
         self._sequence = 0
         self._repaired_items: Dict[int, List[RepairItem]] = {}
@@ -181,6 +199,9 @@ class Simulator:
         self.scavenged_parts.clear()
         self.repaired_parts.clear()
         self.propellant_flows.clear()
+        self.power_records.clear()
+        self._power_warnings.clear()
+        self._power_arrivals.clear()
         self._item_demands.clear()
         self.time = 0.0
         self.duration = 0.0
@@ -281,6 +302,122 @@ class Simulator:
                         tank, PropellantFlowKind.BOILOFF, loss, attributed=False
                     )
 
+    # ------------------------------------------------------------------ power
+
+    def _power_groups(self) -> List[Tuple[SimLocation, str, str, List[SimElement]]]:
+        """
+        Lists the groups of elements which share power: each top-level element
+        with its (nested) contents, except that the grid-connected top-level
+        elements at a surface node form one group. Groups on the surface of
+        Earth (with unconstrained power) are omitted.
+
+        Returns:
+            [(location, key, name, elements)]: The power groups.
+        """
+        groups: Dict[str, Tuple[SimLocation, str, str, List[SimElement]]] = {}
+        for location in self.state.network.locations:
+            surface = isinstance(location, SimNode) and location.is_surface
+            if surface and location.body == Body.EARTH:
+                continue
+            for element in location.contents:
+                members = [element]
+                if isinstance(element, ElementContainer):
+                    members.extend(element.complete_contents)
+                if not any(member.has_power for member in members):
+                    continue
+                if surface and element.grid_connected:
+                    key, name = f"grid:{location.id}", f"{location.name} Grid"
+                else:
+                    key, name = f"element:{element.id}", element.name
+                group = groups.setdefault(key, (location, key, name, []))
+                group[3].extend(members)
+        return list(groups.values())
+
+    def _handle_power(self):
+        """
+        Balances the power generated and consumed by each power group over
+        the elapsed duration, charging or discharging its energy storage, and
+        warns (once per group) of energy deficits and of storage which cannot
+        survive the longest night at a surface node.
+        """
+        hours = 24 * self.duration
+        for location, key, name, members in self._power_groups():
+            illumination = getattr(location, "illumination", 1.0)
+            constant = solar = consumption = 0.0
+            for member in members:
+                state = member.current_state
+                if state is None:
+                    continue
+                consumption += state.power_consumption
+                if state.generation_type == PowerGenerationType.SOLAR:
+                    solar += state.power_generation
+                else:
+                    constant += state.power_generation
+            generation = constant + illumination * solar
+            capacity = sum(member.energy_capacity for member in members)
+            stored = sum(member.energy for member in members)
+            energy = stored + (generation - consumption) * hours
+            deficit = max(0.0, -energy)
+            energy = min(capacity, max(0.0, energy))
+            for member in members:
+                if capacity > 0:
+                    member.energy = energy * member.energy_capacity / capacity
+            # a stay shorter than a synodic day can be scheduled in sunlight
+            arrival = self._power_arrivals.setdefault(
+                (key, location.id), self.time - self.duration
+            )
+            synodic = SYNODIC_DAYS.get(getattr(location, "body", None), 1.0)
+            night = getattr(location, "max_night_duration", 0.0)
+            night_energy = (
+                max(0.0, consumption - constant) * night if solar > 0 else 0.0
+            )
+            stays_overnight = self.time - arrival >= synodic
+            self.power_records.append(
+                PowerRecord(
+                    time=self.time,
+                    duration=self.duration,
+                    location_id=location.id,
+                    location_name=location.name,
+                    key=key,
+                    name=name,
+                    elements=[m.name for m in members if m.has_power],
+                    illumination=illumination,
+                    generation=generation,
+                    consumption=consumption,
+                    energy=energy,
+                    capacity=capacity,
+                    deficit=deficit,
+                    night_energy=night_energy,
+                    stays_overnight=stays_overnight,
+                )
+            )
+            if deficit > 0 and ("deficit", key) not in self._power_warnings:
+                self._power_warnings.add(("deficit", key))
+                self.warnings.append(
+                    SimWarning(
+                        self.time,
+                        None,
+                        f"{name} at {location.name} has a power deficit of "
+                        f"{deficit:,.1f} kWh (generation {generation:,.1f} kW, "
+                        f"consumption {consumption:,.1f} kW).",
+                    )
+                )
+            if (
+                stays_overnight
+                and night_energy > capacity
+                and ("night", key) not in self._power_warnings
+            ):
+                self._power_warnings.add(("night", key))
+                self.warnings.append(
+                    SimWarning(
+                        self.time,
+                        None,
+                        f"{name} at {location.name} requires {night_energy:,.1f} kWh "
+                        f"to survive the longest night ({night:,.0f} h) but stores "
+                        f"{capacity:,.1f} kWh.",
+                    )
+                )
+
     # ---------------------------------------------------------------- demands
 
     def _handle_demands(self):
@@ -291,6 +428,7 @@ class Simulator:
         """
         if self.duration > 0:
             self._handle_boiloff()
+            self._handle_power()
             for element in self.state.network.elements:
                 demands = element.generate_demands(self.duration, self)
                 demands = self._discretize_demands(demands, element, element.location)

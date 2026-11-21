@@ -196,7 +196,15 @@ function drawNode(draft) {
       { class: "row g-2" },
       selectField("Body", draft, "body1", bodies),
       numberField("Latitude (°)", draft, "latitude", { min: -90, max: 90 }),
-      numberField("Longitude (°)", draft, "longitude", { min: -180, max: 180 })
+      numberField("Longitude (°)", draft, "longitude", { min: -180, max: 180 }),
+      numberField("Illumination (%)", draft, "illumination", { min: 0, max: 100, scale: 0.01 }),
+      numberField("Longest Night (h)", draft, "maxNightDuration", { min: 0 }),
+      h(
+        "div",
+        { class: "col-12 form-text" },
+        "Illumination is the average fraction of time in sunlight (default 100%); " +
+          "solar-powered elements must store enough energy to survive the longest night."
+      )
     );
   }
   draft.apoapsis ??= 0;

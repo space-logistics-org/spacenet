@@ -1470,6 +1470,60 @@ class SurfaceTransportEvent(TransportEvent):
         return self.edge is not None and self.location == self.edge.destination
 
     @property
+    def distance(self) -> float:
+        """The distance (km) traversed."""
+        return 0.0 if self.edge is None else self.edge.distance / 1000
+
+    @property
+    def fuel_required(self) -> float:
+        """The fuel (units) which the vehicle consumes to traverse the edge."""
+        rate = getattr(self.vehicle, "fuel_consumption", 0.0) or 0.0
+        return rate * self.distance
+
+    @property
+    def energy_required(self) -> float:
+        """The stored energy (kWh) which the vehicle consumes to traverse the edge."""
+        rate = getattr(self.vehicle, "energy_consumption", 0.0) or 0.0
+        return rate * self.distance
+
+    def _consume_traverse_resources(self, simulator: "Simulator"):
+        """
+        Checks the speed of the vehicle and consumes the fuel and stored
+        energy which it requires to traverse the edge (at departure).
+        """
+        speed = self.speed * 3.6  # km/h
+        if self.vehicle.max_speed > 0 and speed > self.vehicle.max_speed + 1e-9:
+            self._warn(
+                simulator,
+                f"{self.vehicle} travels at {speed:.1f} km/h, above its maximum "
+                f"speed of {self.vehicle.max_speed:.1f} km/h.",
+            )
+        fuel = self.fuel_required
+        tank = self.vehicle.fuel_tank
+        available = 0.0 if tank is None else tank.get_amount(tank.resource)
+        if fuel > available + simulator.settings.demand_precision / 2:
+            raise SimSpatialError(
+                simulator.time,
+                self,
+                f"{self.vehicle} requires {fuel:,.2f} units of fuel to traverse "
+                f"{self.distance:,.1f} km but has {available:,.2f}.",
+            )
+        energy = self.energy_required
+        if energy > self.vehicle.energy + 1e-9:
+            raise SimSpatialError(
+                simulator.time,
+                self,
+                f"{self.vehicle} requires {energy:,.2f} kWh to traverse "
+                f"{self.distance:,.1f} km but stores {self.vehicle.energy:,.2f} kWh.",
+            )
+        if fuel > 0:
+            tank.amount = max(0.0, available - fuel)
+            simulator.record_propellant(
+                tank, PropellantFlowKind.BURNED, available - tank.amount, self
+            )
+        self.vehicle.energy = max(0.0, self.vehicle.energy - energy)
+
+    @property
     def origin(self) -> Optional[SimNode]:
         if self.edge is None:
             return None
@@ -1498,6 +1552,7 @@ class SurfaceTransportEvent(TransportEvent):
         self._check_location(simulator, self.vehicle)
         if self.speed <= 0 or self.duty_cycle <= 0:
             raise SimSpatialError(simulator.time, self, "Infinite travel duration.")
+        self._consume_traverse_resources(simulator)
         self._log("Commencing surface transport")
         duration = simulator.settings.round_time(self.duration)
         previous_state = self.vehicle.current_state

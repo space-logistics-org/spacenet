@@ -67,3 +67,15 @@ class InstSurfaceVehicle(InstElementCarrier):
     fuel_tank: Optional[ResourceTank] = Field(
         None, title="Fuel Tank", description="Fuel tank (type and amount of fuel)"
     )
+    fuel_consumption: Optional[float] = Field(
+        None,
+        title="Fuel Consumption",
+        description="Fuel (units) consumed per kilometer traversed",
+        ge=0,
+    )
+    energy_consumption: Optional[float] = Field(
+        None,
+        title="Energy Consumption",
+        description="Stored energy (kWh) consumed per kilometer traversed",
+        ge=0,
+    )

@@ -7,5 +7,6 @@
 
    getting_started.rst
    propellant_logistics.rst
+   surface_operations.rst
    api_reference/index.rst
    contributors.rst

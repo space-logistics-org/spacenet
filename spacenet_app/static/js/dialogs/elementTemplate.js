@@ -280,6 +280,75 @@ function amountInput(amount, replace, role = "Fuel") {
   return root;
 }
 
+// -------------------------------------------------------------------- power
+
+/** Creates controls to edit the energy storage and grid connection of an element. */
+function powerEditor(draft) {
+  const root = h("div");
+  function render() {
+    const stored = Boolean(draft.energyStorage);
+    root.replaceChildren(
+      h(
+        "div",
+        { class: "row g-2 align-items-end" },
+        h(
+          "div",
+          { class: "col-md-3" },
+          h(
+            "label",
+            { class: "form-check-label small" },
+            h("input", {
+              type: "checkbox",
+              class: "form-check-input me-2",
+              checked: stored,
+              onChange: () => {
+                draft.energyStorage = stored ? null : { capacity: 0, charge: null };
+                render();
+              },
+            }),
+            "Energy storage"
+          )
+        ),
+        stored
+          ? [
+              numberField("Capacity (kWh)", draft.energyStorage, "capacity", { col: "col-md-3", min: 0 }),
+              h(
+                "div",
+                { class: "col-md-3", title: "Leave empty to start fully charged." },
+                numberField("Initial Charge (kWh)", draft.energyStorage, "charge", { col: "", min: 0 })
+              ),
+            ]
+          : null,
+        h(
+          "div",
+          { class: "col-md-3" },
+          h(
+            "label",
+            {
+              class: "form-check-label small",
+              title: "Shares power with the other grid-connected elements at a surface node.",
+            },
+            h("input", {
+              type: "checkbox",
+              class: "form-check-input me-2",
+              checked: Boolean(draft.gridConnected),
+              onChange: (event) => (draft.gridConnected = event.target.checked || null),
+            }),
+            "Grid connected"
+          )
+        )
+      ),
+      h(
+        "div",
+        { class: "form-text" },
+        "Power generation and consumption are defined by the operational states below."
+      )
+    );
+  }
+  render();
+  return root;
+}
+
 // ------------------------------------------------------------------- states
 
 /** Opens the dialog of a state; resolves to the edited state or undefined. */
@@ -356,7 +425,35 @@ function openState(state, isNew) {
           { col: "col-12" }
         )
       ),
-      section("Demand Models", models)
+      section("Demand Models", models),
+      section(
+        "Power",
+        h(
+          "div",
+          { class: "row g-2" },
+          numberField("Consumption (kW)", draft, "powerConsumption", { col: "col-md-4", min: 0 }),
+          numberField("Generation (kW)", draft, "powerGeneration", { col: "col-md-4", min: 0 }),
+          field(
+            "Generation Type",
+            select(
+              [
+                ["", "Constant (e.g., fission)"],
+                ["Solar", "Solar (scaled by illumination)"],
+              ],
+              draft.generationType ?? "",
+              (value) => (draft.generationType = value || null)
+            ),
+            { col: "col-md-4" }
+          )
+        ),
+        h(
+          "div",
+          { class: "form-text" },
+          "Solar generation is the power when fully illuminated; it is scaled by the " +
+            "illumination of the location. Elements share power with their contents " +
+            "and, if grid connected, with other grid-connected elements at a surface node."
+        )
+      )
     ),
     footer: (control) => [
       button("Cancel", () => control.close()),
@@ -407,7 +504,7 @@ function stateTable(draft) {
         h(
           "thead",
           {},
-          h("tr", {}, ["Initial", "Name", "Type", "Demand Models", ""].map((title) => h("th", {}, title)))
+          h("tr", {}, ["Initial", "Name", "Type", "Demand Models", "Power", ""].map((title) => h("th", {}, title)))
         ),
         h(
           "tbody",
@@ -436,6 +533,18 @@ function stateTable(draft) {
               ),
               h(
                 "td",
+                { class: "text-secondary text-nowrap" },
+                [
+                  state.powerConsumption ? `−${state.powerConsumption} kW` : null,
+                  state.powerGeneration
+                    ? `+${state.powerGeneration} kW${state.generationType === "Solar" ? " solar" : ""}`
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(" ") || "None"
+              ),
+              h(
+                "td",
                 { class: "text-end text-nowrap" },
                 button("Edit", () => edit(index)),
                 " ",
@@ -445,7 +554,7 @@ function stateTable(draft) {
           ),
           draft.states.length
             ? null
-            : h("tr", {}, h("td", { colspan: 5, class: "text-secondary" }, "None"))
+            : h("tr", {}, h("td", { colspan: 6, class: "text-secondary" }, "None"))
         )
       ),
       button("Add State", () => edit(null), "outline-secondary", { "data-model": "add-state" })
@@ -646,11 +755,19 @@ function drawElement(draft) {
     draft.fuelTank ||= legacyTank(draft);
     parts.push(
       section(
-        "Fuel Tank",
-        tankInput(draft.fuelTank, numberField("Max Speed (km/h)", draft, "maxSpeed", { col: "col-md-3", min: 0 }))
+        "Mobility",
+        h(
+          "div",
+          { class: "row g-2 mb-2" },
+          numberField("Max Speed (km/h)", draft, "maxSpeed", { col: "col-md-3", min: 0 }),
+          numberField("Fuel per km (units)", draft, "fuelConsumption", { col: "col-md-3", min: 0 }),
+          numberField("Energy per km (kWh)", draft, "energyConsumption", { col: "col-md-3", min: 0 })
+        ),
+        tankInput(draft.fuelTank)
       )
     );
   }
+  parts.push(section("Power", powerEditor(draft)));
   if (type === "Resource Container") {
     parts.push(section("Contents", resourceTable(draft.contents, () => {})));
   } else if (CARRIERS.includes(type)) {

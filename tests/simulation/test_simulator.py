@@ -702,6 +702,16 @@ class TestQuickStartScenarios(unittest.TestCase):
         self.assertTrue(any("HLS" in f.vehicle_name for f in boiloff))
         # the crew consumables of the crewed missions are left to the manifest
         self.assertEqual(len(sim.unsatisfied_demands), 4)
+        # surface power and mobility
+        self.assertEqual(locations["Surface Cargo | LTV"], "LSP")
+        self.assertEqual(locations["Surface Cargo | FSP"], "LSP")
+        groups = {r.name for r in sim.power_records}
+        self.assertIn("LSP Grid", groups)
+        self.assertIn("Artemis III | HLS", groups)
+        self.assertEqual(sum(r.deficit for r in sim.power_records), 0)
+        grid = [r for r in sim.power_records if r.name == "LSP Grid"]
+        # fission power and the solar arrays of the terrain vehicle
+        self.assertAlmostEqual(max(r.generation for r in grid), 40 + 0.85 * 1.5)
 
 
 if __name__ == "__main__":

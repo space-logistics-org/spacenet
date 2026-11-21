@@ -11,7 +11,7 @@ from fastapi_camelcase import CamelModel
 from pydantic import Field
 
 from ...schemas import AllEvents, Scenario
-from ..elements import SimElement
+from ..elements import SimElement, SimSurfaceVehicle
 from ..events import (
     LAST_PRIORITY,
     BurnEvent,
@@ -20,6 +20,7 @@ from ..events import (
     FlightTransportEvent,
     SimEvent,
     SpaceTransportEvent,
+    SurfaceTransportEvent,
     TransportEvent,
 )
 from ..network import SimEdge, SimLocation
@@ -89,6 +90,8 @@ class ElementState(CamelModel):
     template_id: Optional[UUID] = None
     icon: Optional[str] = None
     mass_by_class_of_supply: Dict[int, float] = {}
+    energy: float = 0.0
+    energy_capacity: float = 0.0
 
     @classmethod
     def from_snapshot(cls, snapshot: ElementSnapshot) -> "ElementState":
@@ -331,6 +334,27 @@ class TransportResult(CamelModel):
     max_crew_size: Optional[int] = Field(
         None, description="Crew capacity (flight transports)"
     )
+    distance: Optional[float] = Field(
+        None, description="Distance (km) (surface transports)"
+    )
+    speed: Optional[float] = Field(
+        None, description="Speed (km/h) (surface transports)"
+    )
+    max_speed: Optional[float] = Field(
+        None, description="Vehicle maximum speed (km/h) (surface transports)"
+    )
+    fuel_required: Optional[float] = Field(
+        None, description="Fuel (units) consumed (surface transports)"
+    )
+    fuel_available: Optional[float] = Field(
+        None, description="Fuel (units) in the vehicle before the transport"
+    )
+    energy_required: Optional[float] = Field(
+        None, description="Stored energy (kWh) consumed (surface transports)"
+    )
+    energy_available: Optional[float] = Field(
+        None, description="Stored energy (kWh) in the vehicle before the transport"
+    )
 
 
 class NextEvent(CamelModel):
@@ -429,6 +453,18 @@ class EventEvaluation(CamelModel):
                 transport.max_cargo_mass = sim_event.edge.max_cargo_mass
                 transport.crew_size = crew
                 transport.max_crew_size = sim_event.edge.max_crew_size
+            if isinstance(sim_event, SurfaceTransportEvent) and isinstance(
+                sim_event.vehicle, SimSurfaceVehicle
+            ):
+                vehicle = sim_event.vehicle
+                tank = vehicle.fuel_tank
+                transport.distance = sim_event.distance
+                transport.speed = sim_event.speed * 3.6
+                transport.max_speed = vehicle.max_speed
+                transport.fuel_required = sim_event.fuel_required
+                transport.fuel_available = tank.get_amount(tank.resource)
+                transport.energy_required = sim_event.energy_required
+                transport.energy_available = vehicle.energy
 
         sim_event.time = time
         simulator.execute_event(sim_event)

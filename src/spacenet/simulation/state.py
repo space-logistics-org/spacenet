@@ -290,6 +290,8 @@ class State:
                     index=index,
                     node_type=node.type,
                     body=node.body_1,
+                    illumination=getattr(node, "illumination", None),
+                    max_night_duration=getattr(node, "max_night_duration", None),
                 )
             )
         for index, edge in enumerate(network.edges):
@@ -393,6 +395,7 @@ class State:
             "mass": value("mass", 0.0),
             "volume": value("volume", 0.0),
             "icon": value("icon"),
+            "grid_connected": value("grid_connected", False),
             "index": index,
             "template_index": (
                 len(self._template_indices)
@@ -402,6 +405,10 @@ class State:
                 )
             ),
         }
+        storage = value("energy_storage")
+        if storage is not None:
+            kwargs["energy_capacity"] = storage.capacity
+            kwargs["energy"] = storage.charge
         element_type = ElementType(instance.type)
         if element_type in (ElementType.HUMAN_AGENT, ElementType.ROBOTIC_AGENT):
             kwargs["active_time_fraction"] = value("active_time_fraction")
@@ -458,6 +465,8 @@ class State:
             ]
         if element_type == ElementType.SURFACE_VEHICLE:
             kwargs["max_speed"] = value("max_speed", 0.0)
+            kwargs["fuel_consumption"] = value("fuel_consumption", 0.0)
+            kwargs["energy_consumption"] = value("energy_consumption", 0.0)
             kwargs["fuel_tank"] = self._build_tank(value("fuel_tank"), context)
 
         element = _ELEMENT_CLASSES[element_type](self.settings, **kwargs)
@@ -472,6 +481,9 @@ class State:
                     self._build_demand_model(m, element, context)
                     for m in state.demand_models
                 ],
+                power_consumption=state.power_consumption,
+                power_generation=state.power_generation,
+                generation_type=state.generation_type,
             )
             element.states.append(sim_state)
         state_index = value("current_state_index")

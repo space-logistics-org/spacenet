@@ -35,6 +35,8 @@ function compose(info, change, contents) {
     maxCrewSize: info.isCarrier ? info.maxCrewSize : 0,
     resources: { ...change.resources },
     massByClassOfSupply: change.massByClassOfSupply,
+    energy: change.energy ?? 0,
+    energyCapacity: info.energyCapacity ?? 0,
     contents: info.isCarrier ? contents : [],
     fuelTanks: [],
     fuelName: null,

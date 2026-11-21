@@ -11,6 +11,7 @@ from typing_extensions import Literal
 from ...resources import ClassOfSupply, Environment
 from ..element import ElementType
 from ..part import Part
+from ..power import EnergyStorage
 from ..state import State
 
 
@@ -63,6 +64,15 @@ class Element(ElementUUID):
         [], title="Parts", description="List of constituent parts"
     )
     icon: Optional[str] = Field(None, title="Icon")
+    energy_storage: Optional[EnergyStorage] = Field(
+        None, title="Energy Storage", description="Electrical energy storage"
+    )
+    grid_connected: Optional[bool] = Field(
+        None,
+        title="Grid Connected",
+        description="True, if the element shares power with the other "
+        "grid-connected elements at a surface node",
+    )
 
 
 class CargoCarrier(Element, ABC):

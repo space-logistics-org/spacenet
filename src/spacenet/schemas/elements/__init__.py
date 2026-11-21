@@ -12,6 +12,7 @@ from .instances import (
     InstSurfaceVehicle,
 )
 from .part import Part
+from .power import EnergyStorage, PowerGenerationType
 from .propulsion import PropulsionSystem, PropulsionType, ResourceTank, TankSelector
 from .state import State, StateType
 from .templates import (

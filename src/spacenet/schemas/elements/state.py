@@ -10,6 +10,7 @@ from fastapi_camelcase import CamelModel
 from pydantic import Field
 
 from ..demand_models import AllInstElementDemandModels
+from .power import PowerGenerationType
 
 
 class StateType(str, Enum):
@@ -43,4 +44,22 @@ class State(StateUUID):
     type: StateType = Field(..., description="State type")
     demand_models: List[AllInstElementDemandModels] = Field(
         [], title="Demand Models", description="List of instantiated demand models"
+    )
+    power_consumption: Optional[float] = Field(
+        None,
+        title="Power Consumption",
+        description="Electrical power (kW) consumed in this state",
+        ge=0,
+    )
+    power_generation: Optional[float] = Field(
+        None,
+        title="Power Generation",
+        description="Electrical power (kW) generated in this state (when fully "
+        "illuminated, for solar generation)",
+        ge=0,
+    )
+    generation_type: Optional[PowerGenerationType] = Field(
+        None,
+        title="Generation Type",
+        description="Type of power generation (default: constant)",
     )

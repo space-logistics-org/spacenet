@@ -1,6 +1,6 @@
 """Defines object schemas for carrier element templates."""
 
-from typing import Any, List
+from typing import Any, List, Optional
 from uuid import UUID
 
 from pydantic import Field, field_validator, model_validator
@@ -75,6 +75,18 @@ class SurfaceVehicle(ElementCarrier):
     )
     fuel_tank: ResourceTank = Field(
         ..., title="Fuel Tank", description="Fuel tank (type and amount of fuel)"
+    )
+    fuel_consumption: Optional[float] = Field(
+        None,
+        title="Fuel Consumption",
+        description="Fuel (units) consumed per kilometer traversed",
+        ge=0,
+    )
+    energy_consumption: Optional[float] = Field(
+        None,
+        title="Energy Consumption",
+        description="Stored energy (kWh) consumed per kilometer traversed",
+        ge=0,
     )
 
     @model_validator(mode="before")

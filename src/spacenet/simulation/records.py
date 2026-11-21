@@ -80,6 +80,45 @@ class PropellantFlow:
 
 
 @dataclass
+class PowerRecord:
+    """
+    Energy balance of a power group (an element with its contents, or the
+    grid-connected elements at a surface node) over an interval of time.
+    """
+
+    # pylint: disable=too-many-instance-attributes
+
+    #: Time (days) at the end of the interval.
+    time: float
+    #: Duration (days) of the interval.
+    duration: float
+    location_id: UUID
+    location_name: str
+    #: Identifier of the group (the grid of a node or a top-level element).
+    key: str
+    name: str
+    #: Names of the elements which generate, consume, or store power.
+    elements: List[str]
+    #: Fraction of time illuminated.
+    illumination: float
+    #: Average power (kW) generated.
+    generation: float
+    #: Power (kW) consumed.
+    consumption: float
+    #: Stored energy (kWh) at the end of the interval.
+    energy: float
+    #: Energy storage capacity (kWh).
+    capacity: float
+    #: Energy (kWh) which could not be supplied during the interval.
+    deficit: float = 0.0
+    #: Energy (kWh) required to survive the longest night (0 if not applicable).
+    night_energy: float = 0.0
+    #: True, if the group stayed at the location for at least a synodic day
+    #: (so it must survive the longest night).
+    stays_overnight: bool = False
+
+
+@dataclass
 class TransferStep:
     """
     One resource transfer between two containers (or tanks) of an executed
@@ -321,6 +360,10 @@ class ElementSnapshot:
     #: Total mass (kg), including nested contents, by top-level class of
     #: supply (1 to 10); classes of supply without mass are omitted.
     mass_by_class_of_supply: Dict[int, float] = field(default_factory=dict)
+    #: Stored electrical energy (kWh).
+    energy: float = 0.0
+    #: Electrical energy storage capacity (kWh).
+    energy_capacity: float = 0.0
 
     @classmethod
     def create(cls, element: "SimElement") -> "ElementSnapshot":
@@ -385,6 +428,8 @@ class ElementSnapshot:
             cargo_volume=record.cargo_volume,
             max_cargo_volume=info.max_cargo_volume,
             resources=dict(record.resources),
+            energy=record.energy,
+            energy_capacity=info.energy_capacity,
         )
         if info.is_carrier:
             snapshot.is_carrier = True
@@ -526,6 +571,8 @@ class ElementInfo:
     tanks: Tuple[TankInfo, ...]
     #: Key which orders elements within a container.
     sort_key: tuple
+    #: Electrical energy storage capacity (kWh).
+    energy_capacity: float = 0.0
 
     @classmethod
     def create(cls, element: "SimElement") -> "ElementInfo":
@@ -587,6 +634,7 @@ class ElementInfo:
             icon=element.icon,
             tanks=tuple(tanks),
             sort_key=element.sort_key,
+            energy_capacity=element.energy_capacity,
         )
 
 
@@ -614,6 +662,8 @@ class ElementRecord:
     tanks: Tuple[Tuple[Optional[str], float], ...]
     #: (top-level class of supply, total mass (kg)) for classes with mass.
     mass_by_class_of_supply: Tuple[Tuple[int, float], ...]
+    #: Stored electrical energy (kWh).
+    energy: float = 0.0
 
     @classmethod
     def create(cls, element: "SimElement") -> "ElementRecord":
@@ -653,6 +703,7 @@ class ElementRecord:
                 for t in (getattr(element, "fuel_tanks", []) if is_carrier else [])
             ),
             mass_by_class_of_supply=tuple(masses),
+            energy=element.energy,
         )
 
 

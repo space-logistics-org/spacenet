@@ -4,7 +4,7 @@ Nodes define stable locations in the exploration network.
 
 from abc import ABC
 from enum import Enum
-from typing import Union
+from typing import Optional, Union
 
 from pydantic import Field
 from typing_extensions import Literal
@@ -69,6 +69,21 @@ class SurfaceNode(Node):
         description="Longitude (decimal degrees, -180 to 180 inclusive)",
         ge=-180,
         le=180,
+    )
+    illumination: Optional[float] = Field(
+        None,
+        title="Illumination",
+        description="Average fraction of time illuminated by the sun "
+        "(between 0 and 1; default: 1)",
+        ge=0,
+        le=1,
+    )
+    max_night_duration: Optional[float] = Field(
+        None,
+        title="Longest Night",
+        description="Duration (hours) of the longest continuous darkness, "
+        "which solar-powered elements must survive with stored energy",
+        ge=0,
     )
 
 

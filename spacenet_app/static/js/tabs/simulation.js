@@ -24,6 +24,7 @@ const VIEWS = [
   ["locations", "Location History"],
   ["elements", "Element History"],
   ["propellant", "Propellant"],
+  ["power", "Power"],
 ];
 
 // categorical series colors in fixed order (validated for color vision
@@ -59,6 +60,7 @@ const state = {
   historyElement: null,
   showDemands: false,
   propellantVehicle: null,
+  powerGroup: null,
   tankers: {
     required: 1_200_000,
     tankerDelivery: 150_000,
@@ -96,6 +98,7 @@ export function init(container, options) {
       historyLocation: null,
       historyElement: null,
       propellantVehicle: null,
+      powerGroup: null,
     });
   });
 }
@@ -252,6 +255,7 @@ function draw() {
   else if (state.view === "measures") drawMeasures(content, result);
   else if (state.view === "locations") drawMassHistory(content, state.history.masses().locations, "historyLocation", "Location");
   else if (state.view === "propellant") drawPropellant(content, result);
+  else if (state.view === "power") drawPower(content, result);
   else drawMassHistory(content, state.history.masses().elements, "historyElement", "Element");
 }
 
@@ -268,6 +272,7 @@ function totals(values) {
     ["Propellant burned", fmt(values.propellantBurnedMass ?? 0, 0), "kg"],
     ["Propellant boiloff", fmt(values.propellantBoiloffMass ?? 0, 0), "kg"],
     ["Propellant transfer losses", fmt(values.propellantTransferLossMass ?? 0, 0), "kg"],
+    ["Energy deficit", fmt(values.energyDeficit ?? 0, 0), "kWh"],
   ];
   return h(
     "table",
@@ -875,4 +880,214 @@ function tankerCard() {
   // charts are drawn once the card is in the document (to size them)
   requestAnimationFrame(show);
   return card;
+}
+
+// -------------------------------------------------------------------- power
+
+/** Describes where a power group was located (one location or a count). */
+function placeOf(group) {
+  const places = [...new Set(group.locationNames)];
+  return places.length === 1 ? places[0] : `${places.length} locations`;
+}
+
+/** Step points (x, y) of values which are constant over each interval. */
+function intervalSteps(group, key) {
+  const x = [];
+  const customdata = [];
+  const y = [];
+  group.starts.forEach((start, i) => {
+    x.push(dateOf(start), dateOf(group.ends[i]));
+    y.push(group[key][i], group[key][i]);
+    customdata.push(group.locationNames[i], group.locationNames[i]);
+  });
+  return { x, y, customdata };
+}
+
+function drawPower(content, result) {
+  frameParts = null;
+  const groups = result.power?.groups ?? [];
+  if (!groups.length) {
+    content.append(
+      h(
+        "div",
+        { class: "sn-muted-box" },
+        "No elements generate, consume, or store power (define power in the operational states of element templates)."
+      )
+    );
+    return;
+  }
+  const id = (group) => group.key;
+  if (!groups.some((group) => id(group) === state.powerGroup)) {
+    // default to the group with the largest deficit or consumption
+    const ranked = [...groups].sort(
+      (a, b) => b.totalDeficit - a.totalDeficit || b.totalConsumed - a.totalConsumed
+    );
+    state.powerGroup = id(ranked[0]);
+  }
+  const group = groups.find((item) => id(item) === state.powerGroup);
+  const powerChart = h("div", { class: "sn-chart", style: { height: "260px" } });
+  const energyChart = h("div", { class: "sn-chart", style: { height: "240px" } });
+  content.append(
+    h(
+      "div",
+      { class: "row g-2 mb-1" },
+      h(
+        "div",
+        { class: "col-md-6" },
+        h("label", { class: "form-label small mb-0" }, "Power group"),
+        select(
+          groups.map((item) => [id(item), `${item.name} (${placeOf(item)})`]),
+          state.powerGroup,
+          (value) => {
+            state.powerGroup = value;
+            draw();
+          }
+        )
+      ),
+      h(
+        "div",
+        { class: "col-md-6 small text-secondary d-flex align-items-end" },
+        group.elements.join(", ")
+      )
+    ),
+    h("h6", { class: "mt-2 mb-0" }, "Power (kW)"),
+    powerChart,
+    h("h6", { class: "mt-2 mb-0" }, "Stored energy (kWh)"),
+    energyChart,
+    h("h6", { class: "mt-3" }, "Power groups"),
+    powerTable(groups, id),
+    h(
+      "div",
+      { class: "form-text" },
+      "Night need is the energy to supply the load (less constant generation) through the longest " +
+        "night at a solar-powered site. It is flagged only for groups which stay at a site for a full " +
+        "day-night cycle (29.5 days on the Moon); shorter stays can be scheduled in sunlight."
+    )
+  );
+  const generation = intervalSteps(group, "generation");
+  const consumption = intervalSteps(group, "consumption");
+  plot(
+    powerChart,
+    [
+      {
+        ...generation,
+        name: "Generation",
+        mode: "lines",
+        line: { color: SERIES[0], width: 2 },
+        hovertemplate: "Generation: %{y:,.1f} kW at %{customdata}<extra></extra>",
+      },
+      {
+        ...consumption,
+        name: "Consumption",
+        mode: "lines",
+        line: { color: SERIES[1], width: 2 },
+        hovertemplate: "Consumption: %{y:,.1f} kW<extra></extra>",
+      },
+    ],
+    {
+      xaxis: { type: "date" },
+      yaxis: { title: { text: "Power (kW)" }, rangemode: "tozero" },
+      hovermode: "x unified",
+      showlegend: true,
+    }
+  );
+  const ends = group.ends.map(dateOf);
+  const energyTraces = [
+    {
+      x: ends,
+      y: group.energy,
+      name: "Stored energy",
+      mode: "lines+markers",
+      marker: { size: 8, color: SERIES[0], line: { color: "#ffffff", width: 2 } },
+      line: { color: SERIES[0], width: 2 },
+      hovertemplate: "Stored: %{y:,.1f} kWh<extra></extra>",
+    },
+    {
+      x: ends,
+      y: group.capacity,
+      name: "Capacity",
+      mode: "lines",
+      line: { color: SERIES[0], width: 1, dash: "dash" },
+      hovertemplate: "Capacity: %{y:,.1f} kWh<extra></extra>",
+    },
+  ];
+  if (group.nightEnergy > 0) {
+    energyTraces.push({
+      x: [ends[0], ends.at(-1)],
+      y: [group.nightEnergy, group.nightEnergy],
+      name: "Required for the longest night",
+      mode: "lines",
+      line: { color: "#52514e", width: 1, dash: "dot" },
+      hovertemplate: "Longest night: %{y:,.1f} kWh<extra></extra>",
+    });
+  }
+  if (group.deficit.some((value) => value > 0)) {
+    energyTraces.push({
+      type: "bar",
+      x: ends,
+      y: group.deficit,
+      name: "Deficit",
+      marker: { color: SERIES[1] },
+      hovertemplate: "Deficit: %{y:,.1f} kWh<extra></extra>",
+    });
+  }
+  plot(energyChart, energyTraces, {
+    xaxis: { type: "date" },
+    yaxis: { title: { text: "Energy (kWh)" }, rangemode: "tozero" },
+    hovermode: "x unified",
+    showlegend: true,
+  });
+}
+
+/** Table of the energy totals of each power group. */
+function powerTable(groups, id) {
+  const cell = (value, warn = false) =>
+    h("td", { class: `text-end ${warn ? "text-danger fw-semibold" : ""}` }, value);
+  return h(
+    "div",
+    { class: "table-responsive" },
+    h(
+      "table",
+      { class: "table table-sm sn-table small mb-0" },
+      h(
+        "thead",
+        {},
+        h(
+          "tr",
+          {},
+          ["Group", "Location", "Generated (kWh)", "Consumed (kWh)", "Deficit (kWh)", "Night need / storage (kWh)"].map(
+            (label, i) => h("th", { class: i > 1 ? "text-end" : "" }, label)
+          )
+        )
+      ),
+      h(
+        "tbody",
+        {},
+        groups.map((group) =>
+          h(
+            "tr",
+            {
+              class: id(group) === state.powerGroup ? "table-active" : "",
+              style: { cursor: "pointer" },
+              onClick: () => {
+                state.powerGroup = id(group);
+                draw();
+              },
+            },
+            h("td", {}, group.name),
+            h("td", {}, placeOf(group)),
+            cell(fmt(group.totalGenerated, 0)),
+            cell(fmt(group.totalConsumed, 0)),
+            cell(fmt(group.totalDeficit, 0), group.totalDeficit > 0),
+            group.nightEnergy > 0
+              ? cell(
+                  `${fmt(group.nightEnergy, 0)} / ${fmt(Math.max(...group.capacity), 0)}`,
+                  group.nightShortfall
+                )
+              : cell("—")
+          )
+        )
+      )
+    )
+  );
 }

@@ -2,6 +2,7 @@
 
 import { addModel, editModel } from "../dialogs/models.js";
 import { drawNetwork } from "../networkMap.js";
+import { drawSurfaceMap, surfaceBodies } from "../surfaceMap.js";
 import { store } from "../store.js";
 import { alertDialog, button, clear, clone, fmt, h, isoToDays, select, textInput } from "../util.js";
 
@@ -247,6 +248,10 @@ export function render() {
     .map((id) => store.library("nodes").find((n) => n.id === id) || store.library("edges").find((e) => e.id === id))
     .filter(Boolean);
   const map = h("div");
+  const surfaceMaps = surfaceBodies(network).map((body) => ({
+    body,
+    chart: h("div", { class: "sn-chart", style: { height: "340px" } }),
+  }));
   const left = h(
     "div",
     { class: "col-lg-5" },
@@ -342,18 +347,22 @@ export function render() {
           legend("#4cd964", "Surface"),
           legend("#ffd43b", "Flight"),
           " edges"
+        ),
+        surfaceMaps.map(({ body, chart }) =>
+          h("div", { class: "mt-3" }, h("h6", { class: "mb-0" }, `Surface sites (${body})`), chart)
         )
       )
     )
   );
-  drawNetwork(map, network, {
-    selected: state.selected,
-    onSelect: (id) => {
-      state.selected = new Set([id]);
-      state.view = store.node(id) ? "nodes" : "edges";
-      render();
-    },
-  });
+  const onSelect = (id) => {
+    state.selected = new Set([id]);
+    state.view = store.node(id) ? "nodes" : "edges";
+    render();
+  };
+  drawNetwork(map, network, { selected: state.selected, onSelect });
+  for (const { body, chart } of surfaceMaps) {
+    drawSurfaceMap(chart, network, body, { selected: state.selected, onSelect });
+  }
 }
 
 function legend(color, label) {

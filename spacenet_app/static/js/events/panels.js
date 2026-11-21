@@ -907,10 +907,56 @@ function surfaceTransport(ctx, panel) {
               "col-md-6"
             )
           )
-        )
+        ),
+        section("Traverse", traverseSummary(ctx))
       )
     )
   );
+}
+
+/** Summary of the distance, speed, fuel, and energy of an evaluated traverse. */
+function traverseSummary(ctx) {
+  const element = h("div", { class: "small" });
+  ctx.onEvaluation(({ transport }) => {
+    if (transport?.distance === null || transport?.distance === undefined) {
+      element.replaceChildren(h("span", { class: "text-secondary" }, "Select an edge and a vehicle."));
+      return;
+    }
+    const row = (label, value, warn = false) =>
+      h("tr", {}, h("td", {}, label), h("td", { class: `text-end ${warn ? "text-danger fw-semibold" : ""}` }, value));
+    const fast = transport.maxSpeed > 0 && transport.speed > transport.maxSpeed;
+    element.replaceChildren(
+      h(
+        "table",
+        { class: "table table-sm mb-0" },
+        h(
+          "tbody",
+          {},
+          row("Distance", `${fmt(transport.distance, 1)} km`),
+          row(
+            "Speed",
+            `${fmt(transport.speed, 1)} km/h` + (transport.maxSpeed ? ` (max ${fmt(transport.maxSpeed, 1)})` : ""),
+            fast
+          ),
+          transport.fuelRequired
+            ? row(
+                "Fuel",
+                `${fmt(transport.fuelRequired, 1)} of ${fmt(transport.fuelAvailable, 1)} units`,
+                transport.fuelRequired > transport.fuelAvailable
+              )
+            : null,
+          transport.energyRequired
+            ? row(
+                "Energy",
+                `${fmt(transport.energyRequired, 1)} of ${fmt(transport.energyAvailable, 1)} kWh`,
+                transport.energyRequired > transport.energyAvailable
+              )
+            : null
+        )
+      )
+    );
+  });
+  return element;
 }
 
 // ------------------------------------------------------------ crew events

@@ -126,11 +126,17 @@ class SimNode(SimLocation):
         *,
         node_type: NodeType = NodeType.SURFACE,
         body: Body = Body.EARTH,
+        illumination: Optional[float] = None,
+        max_night_duration: Optional[float] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.node_type = NodeType(node_type)
         self.body = Body(body)
+        #: Average fraction of time illuminated by the sun.
+        self.illumination = 1.0 if illumination is None else illumination
+        #: Duration (hours) of the longest continuous darkness.
+        self.max_night_duration = max_night_duration or 0.0
 
     @property
     def is_surface(self) -> bool:

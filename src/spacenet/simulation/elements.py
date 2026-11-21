@@ -11,6 +11,7 @@ from uuid import UUID, uuid4
 
 from ..schemas import ClassOfSupply, Environment, StateType
 from ..schemas.elements.element import ElementType
+from ..schemas.elements.power import PowerGenerationType
 from ..schemas.elements.propulsion import PropulsionType, TankSelector
 from .records import PropellantFlowKind, SimScavenge
 from .resources import Demand, DemandSet, SimResource
@@ -69,12 +70,28 @@ class OperationalState:
         id: Optional[UUID] = None,  # pylint: disable=redefined-builtin
         description: Optional[str] = None,
         demand_models: Optional[List["SimDemandModel"]] = None,
+        power_consumption: float = 0.0,
+        power_generation: float = 0.0,
+        generation_type: PowerGenerationType = PowerGenerationType.CONSTANT,
     ):
         self.id = id if id is not None else uuid4()
         self.name = name
         self.description = description
         self.state_type = StateType(state_type)
         self.demand_models = list(demand_models) if demand_models is not None else []
+        #: Electrical power (kW) consumed in this state.
+        self.power_consumption = power_consumption or 0.0
+        #: Electrical power (kW) generated in this state (when fully illuminated).
+        self.power_generation = power_generation or 0.0
+        #: Type of power generation.
+        self.generation_type = PowerGenerationType(
+            generation_type or PowerGenerationType.CONSTANT
+        )
+
+    @property
+    def has_power(self) -> bool:
+        """True, if this state consumes or generates power."""
+        return self.power_consumption > 0 or self.power_generation > 0
 
     def generate_demands(self, duration: float, simulator: "Simulator") -> DemandSet:
         """
@@ -212,7 +229,20 @@ class SimElement:
         icon: Optional[str] = None,
         index: int = 0,
         template_index: int = 0,
+        energy_capacity: float = 0.0,
+        energy: Optional[float] = None,
+        grid_connected: bool = False,
     ):
+        #: Electrical energy storage capacity (kWh).
+        self.energy_capacity = energy_capacity or 0.0
+        #: Stored electrical energy (kWh).
+        self.energy = (
+            self.energy_capacity
+            if energy is None
+            else min(energy, self.energy_capacity)
+        )
+        #: True, if the element shares power with grid-connected elements at a node.
+        self.grid_connected = bool(grid_connected)
         self.settings = settings
         self.id = id if id is not None else uuid4()
         self.template_id = template_id
@@ -237,6 +267,13 @@ class SimElement:
     def sort_key(self) -> tuple:
         """The key which establishes element ordering (by name)."""
         return (self.name, self.template_index, self.index, str(self.id))
+
+    @property
+    def has_power(self) -> bool:
+        """True, if this element stores energy or its state uses power."""
+        return self.energy_capacity > 0 or (
+            self.current_state is not None and self.current_state.has_power
+        )
 
     @property
     def environment(self) -> Environment:
@@ -1236,6 +1273,8 @@ class SimSurfaceVehicle(_FueledCarrier):
         *,
         max_speed: float = 0.0,
         fuel_tank: Optional[SimResourceTank] = None,
+        fuel_consumption: float = 0.0,
+        energy_consumption: float = 0.0,
         **kwargs,
     ):
         super().__init__(settings, **kwargs)
@@ -1245,6 +1284,10 @@ class SimSurfaceVehicle(_FueledCarrier):
         self._attach_tank(self._fuel_tank, "Fuel")
         #: Maximum speed (km/hr).
         self.max_speed = max_speed or 0.0
+        #: Fuel (units) consumed per kilometer traversed.
+        self.fuel_consumption = fuel_consumption or 0.0
+        #: Stored energy (kWh) consumed per kilometer traversed.
+        self.energy_consumption = energy_consumption or 0.0
 
     @property
     def fuel_tanks(self) -> List[SimResourceTank]:

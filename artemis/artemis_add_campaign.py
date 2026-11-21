@@ -35,12 +35,17 @@ Tanker flight interval                 6 days          notional launch cadence
 SLS / Orion masses and delta-v         see artemis_campaign.py (SciTech 2024)
 EUS dry / propellant mass              15,000 / 129,000 kg  approx. public values
 PPE / HALO / I-Hab / ESPRIT mass       6,000 / 8,000 / 10,000 / 6,000 kg  notional
+Site illumination / longest night      85 % / 100 h    notional (connecting ridge)
+HLS load / solar / storage             10 / 30 kW      400 kWh, notional
+Fission Surface Power                  40 kWe          6,000 kg, FSP project goal
+LTV mass / traverse energy / storage   1,600 kg        0.6 kWh/km, 60 kWh, notional
 =====================================  ==============  ==========================
 
 Usage: ``python artemis/artemis_add_campaign.py`` writes
 ``artemis/artemis_add_campaign.json``.
 """
 
+import math
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -54,8 +59,26 @@ UNPRESSURIZED = "Unpressurized"
 PRESSURIZED = "Pressurized"
 
 
+#: Mean radius (km) of the Moon.
+MOON_RADIUS = 1737.4
+
+
 def _utc(year: int, month: int, day: int) -> datetime:
     return datetime(year, month, day, tzinfo=timezone.utc)
+
+
+def surface_distance(a: s.SurfaceNode, b: s.SurfaceNode) -> float:
+    """Gets the great-circle distance (m) between two lunar surface nodes."""
+    lat_a, lat_b = math.radians(a.latitude), math.radians(b.latitude)
+    delta_lon = math.radians(b.longitude - a.longitude)
+    angle = math.acos(
+        min(
+            1.0,
+            math.sin(lat_a) * math.sin(lat_b)
+            + math.cos(lat_a) * math.cos(lat_b) * math.cos(delta_lon),
+        )
+    )
+    return MOON_RADIUS * 1000 * angle
 
 
 @dataclass
@@ -88,6 +111,10 @@ class CampaignParameters:
     mixture_ratio: float = 3.6
     #: Surface stay (days) of each landing.
     surface_days: float = 6.5
+    #: Average fraction of time the south pole sites are illuminated.
+    site_illumination: float = 0.85
+    #: Longest continuous darkness (hours) at the south pole sites.
+    site_longest_night: float = 100.0
     #: Start dates of the missions.
     dates: Dict[str, datetime] = field(
         default_factory=lambda: {
@@ -96,6 +123,7 @@ class CampaignParameters:
             "Gateway": _utc(2027, 3, 1),
             "Artemis III": _utc(2027, 4, 1),
             "Artemis IV": _utc(2028, 7, 1),
+            "Surface Cargo": _utc(2029, 11, 1),
             "Artemis V": _utc(2030, 3, 1),
         }
     )
@@ -141,6 +169,9 @@ class CampaignBuilder:
         self.instances: List = []
         self.missions: List[s.Mission] = []
         self.ppe = None
+        self.fsp = None
+        self.science = None
+        self.ltv = None
         self.halo = None
         self._build_network()
         self._build_resources()
@@ -192,6 +223,17 @@ class CampaignBuilder:
             body1="Moon",
             latitude=-89.4,
             longitude=-137.3,
+            illumination=self.p.site_illumination,
+            max_night_duration=self.p.site_longest_night,
+        )
+        self.lsp_2 = s.SurfaceNode(
+            name="LSP-2",
+            description="Lunar South Pole (Shackleton rim)",
+            body1="Moon",
+            latitude=-89.8,
+            longitude=-150.0,
+            illumination=self.p.site_illumination,
+            max_night_duration=self.p.site_longest_night,
         )
 
         def burns(*values):
@@ -295,7 +337,31 @@ class CampaignBuilder:
             max_crew=0,
             max_cargo=16_000.0,
         )
-        self.nodes = [self.ksc, self.pac, self.leo, self.nro, self.llo, self.lsp]
+        self.lsp_lsp_2 = s.SurfaceEdge(
+            name="LSP-LSP-2",
+            description="Traverse between south pole sites",
+            origin=self.lsp.id,
+            destination=self.lsp_2.id,
+            distance=round(surface_distance(self.lsp, self.lsp_2)),
+        )
+        self.ksc_lsp_cargo = s.FlightEdge(
+            name="KSC-LSP (Cargo Lander)",
+            description="Commercial delivery of surface cargo to the south pole",
+            origin=self.ksc.id,
+            destination=self.lsp.id,
+            duration=timedelta(days=6),
+            max_crew=0,
+            max_cargo=15_000.0,
+        )
+        self.nodes = [
+            self.ksc,
+            self.pac,
+            self.leo,
+            self.nro,
+            self.llo,
+            self.lsp,
+            self.lsp_2,
+        ]
         self.edges = [
             self.ksc_leo,
             self.leo_nro,
@@ -308,6 +374,8 @@ class CampaignBuilder:
             self.ksc_leo_ship,
             self.leo_ksc_ship,
             self.ksc_nro_fh,
+            self.lsp_lsp_2,
+            self.ksc_lsp_cargo,
         ]
 
     # ---------------------------------------------------------- resources
@@ -526,6 +594,17 @@ class CampaignBuilder:
             cargo_environment=PRESSURIZED,
             max_cargo_mass=15_000.0,
             max_crew=4,
+            states=[
+                s.State(
+                    name="Operations",
+                    type="Active",
+                    power_consumption=10.0,
+                    power_generation=30.0,
+                    generation_type="Solar",
+                )
+            ],
+            current_state_index=0,
+            energy_storage=s.EnergyStorage(capacity=400.0),
         )
         self.t_tanker = self._ship(
             "Tanker",
@@ -567,6 +646,70 @@ class CampaignBuilder:
                 environment=UNPRESSURIZED,
             )
         )
+        self.t_fsp = self._template(
+            s.Element(
+                name="FSP",
+                description="Fission Surface Power (40 kWe)",
+                mass=6_000.0,
+                class_of_supply=803,
+                environment=UNPRESSURIZED,
+                states=[
+                    s.State(name="Stowed", type="Dormant"),
+                    s.State(name="Operating", type="Active", power_generation=40.0),
+                ],
+                current_state_index=0,
+                grid_connected=True,
+            )
+        )
+        self.t_science = self._template(
+            s.Element(
+                name="Science Station",
+                description="Surface science instruments and communications",
+                mass=800.0,
+                class_of_supply=601,
+                environment=UNPRESSURIZED,
+                states=[
+                    s.State(name="Stowed", type="Dormant"),
+                    s.State(name="Operating", type="Active", power_consumption=3.0),
+                ],
+                current_state_index=0,
+                grid_connected=True,
+            )
+        )
+        self.t_ltv = self._template(
+            s.SurfaceVehicle(
+                name="LTV",
+                description="Lunar Terrain Vehicle (unpressurized, teleoperable)",
+                mass=1_600.0,
+                class_of_supply=802,
+                environment=UNPRESSURIZED,
+                cargo_environment=UNPRESSURIZED,
+                max_cargo_mass=800.0,
+                max_crew=2,
+                max_speed=15.0,
+                fuel_tank=self._tank(self.lch4, 0.0),
+                energy_consumption=0.6,
+                states=[
+                    s.State(
+                        name="Parked",
+                        type="Quiescent",
+                        power_consumption=0.3,
+                        power_generation=1.5,
+                        generation_type="Solar",
+                    ),
+                    s.State(
+                        name="Driving",
+                        type="Active",
+                        power_consumption=1.0,
+                        power_generation=1.5,
+                        generation_type="Solar",
+                    ),
+                ],
+                current_state_index=0,
+                energy_storage=s.EnergyStorage(capacity=60.0),
+                grid_connected=True,
+            )
+        )
 
     # ---------------------------------------------------------- instances
 
@@ -576,6 +719,7 @@ class CampaignBuilder:
             s.ElementCarrier: s.InstElementCarrier,
             s.HumanAgent: s.InstHumanAgent,
             s.Element: s.InstElement,
+            s.SurfaceVehicle: s.InstSurfaceVehicle,
         }[type(template)]
         instance = cls(
             template_id=template.id,
@@ -797,6 +941,52 @@ class CampaignBuilder:
             prefix, self.p.dates[prefix], self.ksc, self.pac, events, crewed=True
         )
 
+    def _traverse(self, prefix: str, day: float) -> List[s.SurfaceTransport]:
+        """A terrain vehicle traverse to the second site and back."""
+
+        def drive(name: str, start: float, origin: s.SurfaceNode):
+            return s.SurfaceTransport(
+                name=f"{prefix} | {name}",
+                mission_time=timedelta(days=start),
+                priority=1,
+                location=origin.id,
+                edge=self.lsp_lsp_2.id,
+                vehicle=self.ltv.id,
+                transport_state=1,
+                speed=2.0,
+                duty_cycle=0.5,
+            )
+
+        return [
+            drive("LTV Traverse to LSP-2", day, self.lsp),
+            drive("LTV Return to LSP", day + 1, self.lsp_2),
+        ]
+
+    def surface_cargo(self):
+        """
+        Commercial delivery of surface infrastructure to the south pole: a
+        fission power unit and a science station on a power grid, and a
+        lunar terrain vehicle which charges from the grid.
+        """
+        prefix = "Surface Cargo"
+        self.fsp = self._instance(self.t_fsp, prefix)
+        self.science = self._instance(self.t_science, prefix)
+        self.ltv = self._instance(self.t_ltv, prefix)
+        cargo = [self.fsp, self.science, self.ltv]
+        events = [
+            self._create(f"{prefix} | Create Cargo", 0, 1, self.ksc, self.ksc, cargo),
+            self._flight(f"{prefix} | Delivery", 0, 2, self.ksc_lsp_cargo, cargo),
+            s.ReconfigureElements(
+                name=f"{prefix} | Deploy Power and Science",
+                mission_time=timedelta(days=6),
+                priority=1,
+                location=self.lsp.id,
+                elements=[self.fsp.id, self.science.id],
+                state_type="Active",
+            ),
+        ]
+        self._mission(prefix, self.p.dates[prefix], self.ksc, self.lsp, events)
+
     def gateway(self):
         """PPE and HALO co-launched to NRHO."""
         prefix = "Gateway"
@@ -988,6 +1178,12 @@ class CampaignBuilder:
             ),
             self._tei(prefix, day + 5 + surface, cm, sm),
         ]
+        if self.ltv is not None:
+            # the crew teleoperates the terrain vehicle to another site and back
+            index = next(
+                i for i, e in enumerate(events) if e.name.endswith("Collect Samples")
+            )
+            events[index:index] = self._traverse(prefix, day + 3)
         self._mission(
             prefix,
             start + timedelta(days=launch),
@@ -1006,6 +1202,7 @@ class CampaignBuilder:
         self.gateway()
         self.landing("Artemis III", block_1b=False)
         self.landing("Artemis IV", block_1b=True, payload_template=self.t_ihab)
+        self.surface_cargo()
         self.landing("Artemis V", block_1b=True, payload_template=self.t_esprit)
         return s.Scenario(
             name="Artemis Campaign (ADD Baseline)",

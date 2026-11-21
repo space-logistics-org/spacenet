@@ -276,6 +276,9 @@ export function elementBars(element) {
       bars.push(bar(`${tank.label} (${tank.fuelName ?? "none"})`, tank.amount, tank.maxAmount, ""));
     }
   }
+  if (element.energyCapacity > 0) {
+    bars.push(bar("Stored energy", element.energy, element.energyCapacity, "kWh"));
+  }
   return { capacityBars: bars };
 }
 
