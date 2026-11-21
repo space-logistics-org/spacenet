@@ -13,6 +13,7 @@ import {
   issueList,
   plot,
 } from "../components.js";
+import { createHistory } from "../history.js";
 import { drawNetwork } from "../networkMap.js";
 import { store } from "../store.js";
 import { button, checkbox, clear, download, fmt, formatDate, h, numberInput, select, toast } from "../util.js";
@@ -41,6 +42,7 @@ const MEASURES = [
 
 const state = {
   result: null,
+  history: null, // view of the history of the result (see history.js)
   error: null,
   outdated: false,
   running: false,
@@ -84,6 +86,7 @@ export function init(container, options) {
     stop();
     Object.assign(state, {
       result: null,
+      history: null,
       error: null,
       outdated: false,
       frame: 0,
@@ -113,12 +116,14 @@ async function simulate() {
     state.result = result;
     state.error = null;
     state.outdated = false;
-    state.frame = Math.min(state.frame, result.networkHistory.length - 1);
+    state.history = createHistory(result);
+    state.frame = Math.min(state.frame, state.history.length - 1);
     state.locationFilter = null;
   } catch (error) {
     if (!(error instanceof ApiError)) throw error;
     state.error = error;
     state.result = null;
+    state.history = null;
   } finally {
     state.running = false;
   }
@@ -131,7 +136,7 @@ function stop() {
 }
 
 function play() {
-  const frames = state.result.networkHistory.length;
+  const frames = state.history.length;
   if (state.frame >= frames - 1) state.frame = 0;
   state.playing = setInterval(() => {
     if (state.frame >= frames - 1) {
@@ -245,9 +250,9 @@ function draw() {
   }
   if (state.view === "network") drawHistory(content, result);
   else if (state.view === "measures") drawMeasures(content, result);
-  else if (state.view === "locations") drawMassHistory(content, result.locationHistory, "historyLocation", "Location");
+  else if (state.view === "locations") drawMassHistory(content, state.history.masses().locations, "historyLocation", "Location");
   else if (state.view === "propellant") drawPropellant(content, result);
-  else drawMassHistory(content, result.elementHistory, "historyElement", "Element");
+  else drawMassHistory(content, state.history.masses().elements, "historyElement", "Element");
 }
 
 function totals(values) {
@@ -282,7 +287,7 @@ function totals(values) {
 let frameParts = null;
 
 function drawHistory(content, result) {
-  const frames = result.networkHistory.length;
+  const frames = state.history.length;
   const map = h("div");
   const label = h("div", { class: "small text-secondary" });
   const details = h("div");
@@ -349,12 +354,12 @@ function drawHistory(content, result) {
 function drawFrame() {
   if (!frameParts) return;
   const { map, label, details, slider, result } = frameParts;
-  const snapshot = result.networkHistory[state.frame];
+  const snapshot = state.history.frame(state.frame);
   if (!snapshot) return;
   slider.value = state.frame;
   label.textContent =
     `${formatDate(dateOf(snapshot.time))} · day ${fmt(snapshot.time, 2)} · ` +
-    `step ${state.frame + 1} of ${result.networkHistory.length}`;
+    `step ${state.frame + 1} of ${state.history.length}`;
   const counts = {};
   for (const [id, elements] of Object.entries(snapshot.locations)) {
     if (elements.length) counts[id] = flatten(elements).length;

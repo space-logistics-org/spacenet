@@ -36,7 +36,7 @@ from .records import (
     MoeExplorationMassDelivered,
     MoeLaunchMass,
     MoeMassCapacityUtilization,
-    NetworkSnapshot,
+    NetworkHistory,
     PropellantFlow,
     PropellantFlowKind,
     SimRepair,
@@ -718,7 +718,8 @@ class FullSimulator(Simulator):
         kwargs.setdefault("packing_demands_added", False)
         kwargs.setdefault("items_repaired", True)
         super().__init__(scenario, **kwargs)
-        self.network_history: List[NetworkSnapshot] = []
+        #: History of the elements of the network at each time step.
+        self.network_history = NetworkHistory()
         self.crew_surface_days_history: List[MoeCrewSurfaceDays] = []
         self.crew_time_history: List[MoeCrewTime] = []
         self.exploration_mass_delivered_history: List[MoeExplorationMassDelivered] = []
@@ -737,7 +738,7 @@ class FullSimulator(Simulator):
             self.warnings.append(SimWarning(0.0, None, message))
         for event in self.state.manifest_events:
             self.schedule(event)
-        self.network_history.clear()
+        self.network_history = NetworkHistory()
         self.crew_surface_days_history.clear()
         self.crew_time_history.clear()
         self.exploration_mass_delivered_history.clear()
@@ -745,9 +746,7 @@ class FullSimulator(Simulator):
         self.up_mass_capacity_utilization_history.clear()
         self.down_mass_capacity_utilization_history.clear()
         self.exploration_capability_history.clear()
-        self.network_history.append(
-            NetworkSnapshot.create(self.time, self.state.network)
-        )
+        self._record_network()
         while self._peek_event() is not None:
             self._next_event()
             if self.duration > 0:
@@ -758,9 +757,11 @@ class FullSimulator(Simulator):
             self._execute_event()
             next_event = self._peek_event()
             if next_event is None or next_event.time > self.time:
-                self.network_history.append(
-                    NetworkSnapshot.create(self.time, self.state.network)
-                )
+                self._record_network()
+
+    def _record_network(self):
+        """Records the state of the network at the current time."""
+        self.network_history.record(self.time, self.state.network)
 
     def _record_crew_measures(self):
         """Records measures accumulated by crew members over the elapsed duration."""

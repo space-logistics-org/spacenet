@@ -20,9 +20,53 @@ from spacenet.simulation.records import (
     CREW_TIME_CORRECTIVE_MAINTENANCE,
     CREW_TIME_EXPLORATION,
     CREW_TIME_UNAVAILABLE,
+    NetworkSnapshot,
 )
 
 from .util import ScenarioBuilder, load_scenario
+
+
+class SnapshotSimulator(FullSimulator):
+    """Full simulator which also records complete network snapshots."""
+
+    def simulate(self):
+        self.snapshots = []
+        super().simulate()
+
+    def _record_network(self):
+        super()._record_network()
+        self.snapshots.append(NetworkSnapshot.create(self.time, self.state.network))
+
+
+class TestNetworkHistory(unittest.TestCase):
+    SCENARIOS = (
+        "quick_start/completed_quick_start_1_w_db.json",
+        "quick_start/completed_quick_start_2_w_db.json",
+        "quick_start/completed_quick_start_3_wo_db.json",
+        "artemis/artemis_add_campaign.json",
+    )
+
+    def test_reconstructs_snapshots(self):
+        for path in self.SCENARIOS:
+            with self.subTest(path=path):
+                simulator = SnapshotSimulator(load_scenario(path))
+                simulator.simulate()
+                history = simulator.network_history
+                self.assertEqual(len(history), len(simulator.snapshots))
+                self.assertEqual(list(history), simulator.snapshots)
+                self.assertEqual(history[-1], simulator.snapshots[-1])
+                self.assertEqual(history[1:3], simulator.snapshots[1:3])
+
+    def test_records_only_changes(self):
+        simulator = FullSimulator(load_scenario("artemis/artemis_add_campaign.json"))
+        simulator.simulate()
+        history = simulator.network_history
+        changes = sum(len(frame.changed) for frame in history.frames)
+        states = sum(len(state) for _, state in history.states())
+        # most elements do not change at most time steps
+        self.assertLess(changes, states / 3)
+        with self.assertRaises(IndexError):
+            history[len(history)]
 
 
 def final_locations(simulator):

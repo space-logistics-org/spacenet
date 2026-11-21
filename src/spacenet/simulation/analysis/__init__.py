@@ -56,6 +56,11 @@ from .propellant import (
     size_tankers,
 )
 from .simulation import (
+    ElementChange,
+    ElementInfoState,
+    HistoryStep,
+    SimulationHistory,
+    TankInfoState,
     MassHistory,
     MassSeries,
     MeasureRecord,

@@ -19,6 +19,7 @@ from spacenet.simulation import (
     StateAnalysis,
 )
 from spacenet.simulation.analysis import (
+    ElementState,
     export_aggregated_demands,
     export_raw_demands,
 )
@@ -399,19 +400,42 @@ class TestSimulationAnalysis(unittest.TestCase):
                 simulator.total_exploration_capability,
             )
             self.assertEqual(
-                len(analysis.network_history), len(simulator.network_history)
+                len(analysis.history.frames), len(simulator.network_history)
             )
-            times = len(analysis.network_history)
-            for history in analysis.location_history + analysis.element_history:
+            times = len(analysis.history.frames)
+            for history in analysis.location_masses() + analysis.element_masses():
                 for series in history.series:
                     self.assertEqual(len(series.points), times, path)
             json.loads(analysis.model_dump_json(by_alias=True))
 
+    def test_history_reconstructs_network_states(self):
+        for path in ("quick_start/completed_quick_start_2_w_db.json", SCENARIOS[-1]):
+            with self.subTest(path=path):
+                simulator = FullSimulator(load_scenario(path))
+                simulator.simulate()
+                analysis = SimulationAnalysis.create(None, simulator)
+                # the history survives serialization
+                analysis = SimulationAnalysis.model_validate_json(
+                    analysis.model_dump_json(by_alias=True)
+                )
+                states = list(analysis.network_states())
+                self.assertEqual(len(states), len(simulator.network_history))
+                for state, snapshot in zip(states, simulator.network_history):
+                    self.assertEqual(state.time, snapshot.time)
+                    self.assertEqual(
+                        state.locations,
+                        {
+                            location: [ElementState.from_snapshot(e) for e in elements]
+                            for location, elements in snapshot.locations.items()
+                        },
+                    )
+                self.assertEqual(analysis.network_state(-1), states[-1])
+
     def test_mass_histories(self):
         builder, stage, payload, _ = build_transport()
         analysis = SimulationAnalysis.create(builder.build())
-        self.assertEqual([s.time for s in analysis.network_history], [0, 0, 0.25])
-        locations = {h.name: h for h in analysis.location_history}
+        self.assertEqual([s.time for s in analysis.history.frames], [0, 0, 0.25])
+        locations = {h.name: h for h in analysis.location_masses()}
         self.assertEqual(locations["KSC"].series, [])
         (in_transit,) = locations["KSC-LEO"].series
         self.assertEqual(in_transit.class_of_supply, 6)
@@ -419,9 +443,9 @@ class TestSimulationAnalysis(unittest.TestCase):
         (delivered,) = locations["LEO"].series
         self.assertEqual([p[1] for p in delivered.points], [0, 0, 500])
         # the stage is discarded at departure
-        elements = {h.id: h for h in analysis.element_history}
+        elements = {h.id: h for h in analysis.element_masses()}
         self.assertNotIn(stage.id, elements)
         (series,) = elements[payload.id].series
         self.assertEqual([p[1] for p in series.points], [0, 500, 500])
-        leo = analysis.network_history[-1].locations[builder.leo.id]
+        leo = analysis.network_state(-1).locations[builder.leo.id]
         self.assertEqual([e.id for e in leo], [payload.id])

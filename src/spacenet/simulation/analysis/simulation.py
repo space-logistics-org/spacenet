@@ -2,14 +2,20 @@
 Object schemas for the results of a full simulation.
 """
 
-from typing import Dict, List, Optional
+from typing import Dict, Iterator, List, Optional, Tuple
 from uuid import UUID
 
 from fastapi_camelcase import CamelModel
 from pydantic import Field
 
 from ...schemas import Scenario
-from ..records import ElementSnapshot
+from ..records import (
+    ElementInfo,
+    ElementRecord,
+    ElementSnapshot,
+    NetworkHistory,
+    TankInfo,
+)
 from ..simulator import FullSimulator
 from .issues import SimIssue, collect_issues
 from .missions import LocationSummary
@@ -143,6 +149,312 @@ def _to_series(times: List[float], history: Dict[int, List[float]]) -> List[Mass
     ]
 
 
+class TankInfoState(CamelModel):
+    """
+    Static information about an integral tank of a vehicle.
+    """
+
+    label: str = Field(..., description="Label, e.g., OMS/RCS Fuel")
+    key: Optional[str] = Field(None, description="Tank key, e.g., OMS Fuel")
+    role: str = Field("Fuel", description="Tank role (Fuel or Oxidizer)")
+    max_amount: float = Field(0.0, description="Capacity (units)")
+    propulsion: Dict[str, float] = Field(
+        {}, description="Specific impulse (s) of each system which burns from the tank"
+    )
+    boiloff_rate: float = Field(
+        0.0, description="Fraction of the capacity lost per day"
+    )
+
+
+class ElementInfoState(CamelModel):
+    """
+    Static information about an element (recorded once per simulation).
+    """
+
+    id: UUID
+    name: str
+    type: Optional[str] = None
+    template_id: Optional[UUID] = None
+    icon: Optional[str] = None
+    class_of_supply: int = 0
+    environment: Optional[str] = None
+    cargo_environment: Optional[str] = None
+    is_carrier: bool = False
+    is_crew: bool = False
+    is_container: bool = False
+    max_cargo_mass: float = 0.0
+    max_cargo_volume: float = 0.0
+    max_crew_size: int = 0
+    states: List[str] = []
+    state_types: List[str] = []
+    isp: float = 0.0
+    fuel_tanks: List[TankInfoState] = []
+
+
+class ElementChange(CamelModel):
+    """
+    Dynamic state of an element which was created or changed at a time step.
+    """
+
+    element: int = Field(..., description="Index of the element (history elements)")
+    location: Optional[int] = Field(
+        None, description="Index of the location (top-level elements)"
+    )
+    container: Optional[int] = Field(
+        None, description="Index of the carrier element (nested elements)"
+    )
+    state_index: int = -1
+    mass: float = 0.0
+    total_mass: float = 0.0
+    volume: float = 0.0
+    cargo_mass: float = 0.0
+    cargo_volume: float = 0.0
+    crew_size: int = 0
+    resources: Dict[str, float] = Field(
+        {}, description="Resource amounts of a resource container"
+    )
+    fuel_names: List[Optional[str]] = Field(
+        [], description="Resource name of each integral tank"
+    )
+    fuel_amounts: List[float] = Field([], description="Amount of each integral tank")
+    mass_by_class_of_supply: Dict[int, float] = {}
+
+
+class HistoryStep(CamelModel):
+    """
+    Changes to the elements of the network at one time step.
+    """
+
+    time: float = Field(..., description="Time (days) relative to the scenario start")
+    changes: List[ElementChange] = Field(
+        [], description="Elements created or changed since the previous time step"
+    )
+    removed: List[int] = Field(
+        [], description="Indices of the elements removed since the previous time step"
+    )
+
+
+class SimulationHistory(CamelModel):
+    """
+    History of the elements of the network: static information about each
+    element (ordered as within containers) and the changes at each time step.
+    """
+
+    elements: List[ElementInfoState] = Field([], description="Element information")
+    frames: List[HistoryStep] = Field([], description="Changes at each time step")
+
+    @classmethod
+    def create(
+        cls, history: NetworkHistory, location_ids: List[UUID]
+    ) -> "SimulationHistory":
+        """
+        Creates the history from the recorded history of a simulator.
+
+        Args:
+            history (:obj:`NetworkHistory`): The recorded history.
+            location_ids ([UUID]): The unique identifiers of the locations
+                (indexed by element changes).
+
+        Returns:
+            :obj:`SimulationHistory`: The history.
+        """
+        infos = sorted(history.elements.values(), key=lambda i: i.sort_key)
+        elements = {info.id: index for index, info in enumerate(infos)}
+        locations = {
+            location_id: index for index, location_id in enumerate(location_ids)
+        }
+
+        def change(element_id: UUID, record: ElementRecord) -> ElementChange:
+            return ElementChange(
+                element=elements[element_id],
+                location=locations.get(record.container_id),
+                container=elements.get(record.container_id),
+                state_index=record.state_index,
+                mass=record.mass,
+                total_mass=record.total_mass,
+                volume=record.volume,
+                cargo_mass=record.cargo_mass,
+                cargo_volume=record.cargo_volume,
+                crew_size=record.crew_size,
+                resources=dict(record.resources),
+                fuel_names=[name for name, _ in record.tanks],
+                fuel_amounts=[amount for _, amount in record.tanks],
+                mass_by_class_of_supply=dict(record.mass_by_class_of_supply),
+            )
+
+        return cls(
+            elements=[
+                ElementInfoState(
+                    id=info.id,
+                    name=info.name,
+                    type=info.type,
+                    template_id=info.template_id,
+                    icon=info.icon,
+                    class_of_supply=info.class_of_supply,
+                    environment=info.environment,
+                    cargo_environment=info.cargo_environment,
+                    is_carrier=info.is_carrier,
+                    is_crew=info.is_crew,
+                    is_container=info.is_container,
+                    max_cargo_mass=info.max_cargo_mass,
+                    max_cargo_volume=info.max_cargo_volume,
+                    max_crew_size=info.max_crew_size,
+                    states=list(info.states),
+                    state_types=list(info.state_types),
+                    isp=info.isp,
+                    fuel_tanks=[
+                        TankInfoState(
+                            label=tank.label,
+                            key=tank.key,
+                            role=tank.role,
+                            max_amount=tank.max_amount,
+                            propulsion=dict(tank.propulsion),
+                            boiloff_rate=tank.boiloff_rate,
+                        )
+                        for tank in info.tanks
+                    ],
+                )
+                for info in infos
+            ],
+            frames=[
+                HistoryStep(
+                    time=frame.time,
+                    changes=sorted(
+                        (change(i, r) for i, r in frame.changed.items()),
+                        key=lambda c: c.element,
+                    ),
+                    removed=sorted(elements[i] for i in frame.removed),
+                )
+                for frame in history.frames
+            ],
+        )
+
+    def states(self) -> Iterator[Dict[int, ElementChange]]:
+        """
+        Iterates over the time steps.
+
+        Yields:
+            {int: :obj:`ElementChange`}: The state of each existing element
+            by element index (the dictionary is reused).
+        """
+        state: Dict[int, ElementChange] = {}
+        for frame in self.frames:
+            for element in frame.removed:
+                state.pop(element, None)
+            for change in frame.changes:
+                state[change.element] = change
+            yield state
+
+    def element_state(
+        self, change: ElementChange, contents: List[ElementState]
+    ) -> ElementState:
+        """Composes the state of an element from its information and change."""
+        info = self.elements[change.element]
+        record = ElementRecord(
+            container_id=None,
+            state_index=change.state_index,
+            mass=change.mass,
+            total_mass=change.total_mass,
+            volume=change.volume,
+            cargo_mass=change.cargo_mass,
+            cargo_volume=change.cargo_volume,
+            crew_size=change.crew_size,
+            resources=tuple(change.resources.items()),
+            tanks=tuple(zip(change.fuel_names, change.fuel_amounts)),
+            mass_by_class_of_supply=tuple(change.mass_by_class_of_supply.items()),
+        )
+        snapshot = ElementSnapshot.compose(
+            ElementInfo(
+                id=info.id,
+                name=info.name,
+                type=info.type,
+                class_of_supply=info.class_of_supply,
+                environment=info.environment,
+                cargo_environment=info.cargo_environment,
+                is_carrier=info.is_carrier,
+                is_crew=info.is_crew,
+                is_container=info.is_container,
+                max_cargo_mass=info.max_cargo_mass,
+                max_cargo_volume=info.max_cargo_volume,
+                max_crew_size=info.max_crew_size,
+                states=tuple(info.states),
+                state_types=tuple(info.state_types),
+                isp=info.isp,
+                template_id=info.template_id,
+                icon=info.icon,
+                tanks=tuple(
+                    TankInfo(
+                        label=t.label,
+                        key=t.key,
+                        role=t.role,
+                        max_amount=t.max_amount,
+                        propulsion=tuple(t.propulsion.items()),
+                        boiloff_rate=t.boiloff_rate,
+                    )
+                    for t in info.fuel_tanks
+                ),
+                sort_key=(),
+            ),
+            record,
+        )
+        state = ElementState.from_snapshot(snapshot)
+        state.contents = contents
+        return state
+
+    def network_states(self, location_ids: List[UUID]) -> Iterator[NetworkState]:
+        """
+        Iterates over the elements at each location at each time step.
+
+        Args:
+            location_ids ([UUID]): The unique identifiers of the locations
+                (indexed by element changes).
+
+        Yields:
+            :obj:`NetworkState`: The elements at each location.
+        """
+        for frame, state in zip(self.frames, self.states()):
+            yield NetworkState(
+                time=frame.time, locations=self._compose(state, location_ids)
+            )
+
+    def _compose(
+        self, state: Dict[int, ElementChange], location_ids: List[UUID]
+    ) -> Dict[UUID, List[ElementState]]:
+        """Composes the top-level element states at each location."""
+        children: Dict[Tuple[str, int], List[int]] = {}
+        for element in sorted(state):
+            change = state[element]
+            parent = (
+                ("location", change.location)
+                if change.location is not None
+                else ("element", change.container)
+            )
+            children.setdefault(parent, []).append(element)
+
+        def create(element: int) -> ElementState:
+            return self.element_state(
+                state[element],
+                [create(c) for c in children.get(("element", element), [])],
+            )
+
+        return {
+            location_id: [create(e) for e in children.get(("location", index), [])]
+            for index, location_id in enumerate(location_ids)
+        }
+
+
+def _aggregate(records: List[MeasureRecord]) -> List[MeasureRecord]:
+    """Sums the records with the same time, location, and type."""
+    totals: Dict[tuple, MeasureRecord] = {}
+    for record in records:
+        key = (record.time, record.location, record.type)
+        if key in totals:
+            totals[key].amount += record.amount
+        else:
+            totals[key] = record.model_copy()
+    return list(totals.values())
+
+
 class SimulationAnalysis(CamelModel):
     """
     Results of a full simulation of a scenario.
@@ -161,18 +473,78 @@ class SimulationAnalysis(CamelModel):
         Measures(), description="Histories of the measures of effectiveness"
     )
     locations: List[LocationSummary] = Field([], description="Network locations")
-    network_history: List[NetworkState] = Field(
-        [], description="Elements at each location at each time step"
-    )
-    location_history: List[MassHistory] = Field(
-        [], description="Mass by class of supply at each location over time"
-    )
-    element_history: List[MassHistory] = Field(
-        [], description="Mass by class of supply of each element over time"
+    history: SimulationHistory = Field(
+        SimulationHistory(),
+        description="Elements at each location at each time step (as changes)",
     )
     propellant: PropellantAnalysis = Field(
         PropellantAnalysis(), description="Vehicle tank contents and budgets"
     )
+
+    def network_states(self) -> Iterator[NetworkState]:
+        """Iterates over the elements at each location at each time step."""
+        location_ids = [location.id for location in self.locations]
+        return self.history.network_states(location_ids)
+
+    def network_state(self, index: int) -> NetworkState:
+        """Gets the elements at each location at a time step."""
+        if index < 0:
+            index += len(self.history.frames)
+        for position, state in enumerate(self.network_states()):
+            if position == index:
+                return state
+        raise IndexError("time step index out of range")
+
+    def location_masses(self) -> List[MassHistory]:
+        """Gets the mass by class of supply at each location over time."""
+        times = [frame.time for frame in self.history.frames]
+        masses: Dict[int, Dict[int, List[float]]] = {
+            i: {} for i in range(len(self.locations))
+        }
+        for index, state in enumerate(self.history.states()):
+            totals: Dict[int, Dict[int, float]] = {}
+            for change in state.values():
+                if change.location is None:
+                    continue
+                total = totals.setdefault(change.location, {})
+                for key, mass in change.mass_by_class_of_supply.items():
+                    total[key] = total.get(key, 0.0) + mass
+            for location, history in masses.items():
+                _add_point(history, index, totals.get(location, {}))
+        return [
+            MassHistory(
+                id=location.id,
+                name=location.name,
+                series=_to_series(times, masses[i]),
+            )
+            for i, location in enumerate(self.locations)
+        ]
+
+    def element_masses(self) -> List[MassHistory]:
+        """Gets the mass by class of supply of each element over time."""
+        times = [frame.time for frame in self.history.frames]
+        masses: Dict[int, Dict[int, List[float]]] = {}
+        for index, state in enumerate(self.history.states()):
+            for element, change in state.items():
+                history = masses.setdefault(element, {})
+                # pad the time steps before the element existed
+                for points in history.values():
+                    points.extend([0.0] * (index - len(points)))
+                _add_point(history, index, change.mass_by_class_of_supply)
+        # pad the time steps after an element was removed
+        for history in masses.values():
+            for points in history.values():
+                points.extend([0.0] * (len(times) - len(points)))
+        elements = self.history.elements
+        return [
+            MassHistory(
+                id=elements[i].id,
+                name=elements[i].name,
+                type=elements[i].type,
+                series=_to_series(times, history),
+            )
+            for i, history in sorted(masses.items(), key=lambda m: elements[m[0]].name)
+        ]
 
     @classmethod
     def create(
@@ -189,52 +561,10 @@ class SimulationAnalysis(CamelModel):
         Returns:
             :obj:`SimulationAnalysis`: The analysis results.
         """
-        # pylint: disable=too-many-locals
         if simulator is None:
             simulator = FullSimulator(scenario)
             simulator.simulate()
         network = simulator.state.network
-        times = [s.time for s in simulator.network_history]
-        location_masses: Dict[UUID, Dict[int, List[float]]] = {
-            l.id: {} for l in network.locations
-        }
-        element_masses: Dict[UUID, Dict[int, List[float]]] = {}
-        element_info: Dict[UUID, ElementSnapshot] = {}
-
-        def visit(snapshot: ElementSnapshot, index: int, seen: set):
-            seen.add(snapshot.id)
-            element_info[snapshot.id] = snapshot
-            history = element_masses.setdefault(snapshot.id, {})
-            # pad the time steps before the element existed
-            for points in history.values():
-                points.extend([0.0] * (index - len(points)))
-            _add_point(history, index, snapshot.mass_by_class_of_supply)
-            for child in snapshot.contents:
-                visit(child, index, seen)
-
-        network_history = []
-        for index, snapshot in enumerate(simulator.network_history):
-            seen: set = set()
-            for location_id, elements in snapshot.locations.items():
-                masses: Dict[int, float] = {}
-                for element in elements:
-                    visit(element, index, seen)
-                    for key, mass in element.mass_by_class_of_supply.items():
-                        masses[key] = masses.get(key, 0.0) + mass
-                _add_point(location_masses.setdefault(location_id, {}), index, masses)
-            network_history.append(
-                NetworkState(
-                    time=snapshot.time,
-                    locations={
-                        location_id: [ElementState.from_snapshot(e) for e in elements]
-                        for location_id, elements in snapshot.locations.items()
-                    },
-                )
-            )
-        # pad the time steps after an element was removed
-        for history in element_masses.values():
-            for points in history.values():
-                points.extend([0.0] * (len(times) - len(points)))
         propellant = PropellantAnalysis.create(simulator)
 
         return cls(
@@ -258,7 +588,8 @@ class SimulationAnalysis(CamelModel):
             propellant=propellant,
             measures=Measures(
                 crew_surface_days=_records(simulator.crew_surface_days_history),
-                crew_time=_records(simulator.crew_time_history),
+                # crew time is recorded for each crew member at each time step
+                crew_time=_aggregate(_records(simulator.crew_time_history)),
                 exploration_capability=_records(
                     simulator.exploration_capability_history,
                     lambda m: m.mass * m.duration,
@@ -279,24 +610,7 @@ class SimulationAnalysis(CamelModel):
                 LocationSummary(id=e.id, name=e.name, is_edge=True)
                 for e in network.edges
             ],
-            network_history=network_history,
-            location_history=[
-                MassHistory(
-                    id=l.id,
-                    name=l.name,
-                    series=_to_series(times, location_masses.get(l.id, {})),
-                )
-                for l in network.locations
-            ],
-            element_history=[
-                MassHistory(
-                    id=element_id,
-                    name=element_info[element_id].name,
-                    type=element_info[element_id].type,
-                    series=_to_series(times, history),
-                )
-                for element_id, history in sorted(
-                    element_masses.items(), key=lambda i: element_info[i[0]].name
-                )
-            ],
+            history=SimulationHistory.create(
+                simulator.network_history, [l.id for l in network.locations]
+            ),
         )

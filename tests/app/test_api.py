@@ -336,10 +336,7 @@ class TestAnalysis(ApiTestCase):
                 "/api/simulate", json={"scenario": load_json(path)}
             )
             self.assertEqual(response.status_code, 200)
-            # the network history of the multi-year campaign (235 time steps
-            # with dozens of elements) dominates its response size
-            budget = 10_000_000 if path == ADD_CAMPAIGN else 600_000
-            self.assertLess(len(response.content), budget)
+            self.assertLess(len(response.content), 600_000)
             analysis = response.json()
             self.assertEqual(analysis["errorCount"], 0)
             totals = analysis["totals"]
@@ -350,7 +347,7 @@ class TestAnalysis(ApiTestCase):
                 simulator.total_relative_exploration_capability,
             )
             self.assertEqual(
-                len(analysis["networkHistory"]), len(simulator.network_history)
+                len(analysis["history"]["frames"]), len(simulator.network_history)
             )
             propellant = analysis["propellant"]
             self.assertEqual(len(propellant["tanks"]), len(propellant["budgets"]))
