@@ -467,6 +467,8 @@ class State:
             kwargs["max_speed"] = value("max_speed", 0.0)
             kwargs["fuel_consumption"] = value("fuel_consumption", 0.0)
             kwargs["energy_consumption"] = value("energy_consumption", 0.0)
+            kwargs["max_crewed_duration"] = value("max_crewed_duration")
+            kwargs["walk_back_distance"] = value("walk_back_distance")
             kwargs["fuel_tank"] = self._build_tank(value("fuel_tank"), context)
 
         element = _ELEMENT_CLASSES[element_type](self.settings, **kwargs)

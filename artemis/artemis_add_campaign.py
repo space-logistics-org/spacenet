@@ -39,6 +39,7 @@ Site illumination / longest night      85 % / 100 h    notional (connecting ridg
 HLS load / solar / storage             10 / 30 kW      400 kWh, notional
 Fission Surface Power                  40 kWe          6,000 kg, FSP project goal
 LTV mass / traverse energy / storage   1,600 kg        0.6 kWh/km, 60 kWh, notional
+LTV crewed endurance / walk-back      8 h / 10 km     approx. EVA suit limits
 =====================================  ==============  ==========================
 
 Usage: ``python artemis/artemis_add_campaign.py`` writes
@@ -228,10 +229,10 @@ class CampaignBuilder:
         )
         self.lsp_2 = s.SurfaceNode(
             name="LSP-2",
-            description="Lunar South Pole (Shackleton rim)",
+            description="Lunar South Pole (Shackleton rim, within walk-back distance)",
             body1="Moon",
-            latitude=-89.8,
-            longitude=-150.0,
+            latitude=-89.7,
+            longitude=-137.3,
             illumination=self.p.site_illumination,
             max_night_duration=self.p.site_longest_night,
         )
@@ -689,6 +690,8 @@ class CampaignBuilder:
                 max_speed=15.0,
                 fuel_tank=self._tank(self.lch4, 0.0),
                 energy_consumption=0.6,
+                max_crewed_duration=8.0,
+                walk_back_distance=10.0,
                 states=[
                     s.State(
                         name="Parked",
@@ -941,25 +944,59 @@ class CampaignBuilder:
             prefix, self.p.dates[prefix], self.ksc, self.pac, events, crewed=True
         )
 
-    def _traverse(self, prefix: str, day: float) -> List[s.SurfaceTransport]:
-        """A terrain vehicle traverse to the second site and back."""
+    def _exploration(self, prefix, name, day, duration, hls, crew):
+        """Crewed surface exploration from the landing system."""
+        return s.CrewedExploration(
+            name=f"{prefix} | {name}",
+            mission_time=timedelta(days=day),
+            priority=1,
+            location=self.lsp.id,
+            vehicle=hls.id,
+            duration=timedelta(days=duration),
+            eva_per_week=4.0,
+            eva_duration=timedelta(hours=8),
+            element_states=[s.ElementState(element=c.id, state_index=-1) for c in crew],
+            additional_demands=[],
+        )
 
-        def drive(name: str, start: float, origin: s.SurfaceNode):
+    def _ltv_sortie(self, prefix, day, hls, crew) -> list:
+        """
+        A crewed terrain vehicle sortie from the landing system to the second
+        site (within the walk-back distance) with an EVA there.
+        """
+
+        def drive(name, start, origin):
             return s.SurfaceTransport(
                 name=f"{prefix} | {name}",
                 mission_time=timedelta(days=start),
-                priority=1,
+                priority=2,
                 location=origin.id,
                 edge=self.lsp_lsp_2.id,
                 vehicle=self.ltv.id,
                 transport_state=1,
-                speed=2.0,
-                duty_cycle=0.5,
+                speed=3.0,
+                duty_cycle=1.0,
             )
 
         return [
-            drive("LTV Traverse to LSP-2", day, self.lsp),
-            drive("LTV Return to LSP", day + 1, self.lsp_2),
+            self._move(f"{prefix} | Crew Boards LTV", day, 1, self.lsp, self.ltv, crew),
+            drive("LTV Sortie to LSP-2", day, self.lsp),
+            s.CrewedEVA(
+                name=f"{prefix} | EVA at LSP-2",
+                mission_time=timedelta(days=day + 0.05),
+                priority=1,
+                location=self.lsp_2.id,
+                vehicle=self.ltv.id,
+                eva_duration=timedelta(hours=4),
+                element_states=[
+                    s.ElementState(element=c.id, state_index=-1) for c in crew
+                ],
+                additional_demands=[],
+            ),
+            drive("LTV Return to LSP", day + 0.25, self.lsp_2),
+            self._move(
+                f"{prefix} | Crew Returns to HLS", day + 0.3, 1, self.lsp, hls, crew
+            ),
         ]
 
     def surface_cargo(self):
@@ -1179,11 +1216,26 @@ class CampaignBuilder:
             self._tei(prefix, day + 5 + surface, cm, sm),
         ]
         if self.ltv is not None:
-            # the crew teleoperates the terrain vehicle to another site and back
+            # surface exploration is interrupted by a crewed terrain vehicle sortie
             index = next(
-                i for i, e in enumerate(events) if e.name.endswith("Collect Samples")
+                i
+                for i, e in enumerate(events)
+                if e.name.endswith("Surface Exploration")
             )
-            events[index:index] = self._traverse(prefix, day + 3)
+            events[index : index + 1] = [
+                self._exploration(
+                    prefix, "Surface Exploration", day + 2, 1.5, hls, crew[:2]
+                ),
+                *self._ltv_sortie(prefix, day + 3.5, hls, crew[:2]),
+                self._exploration(
+                    prefix,
+                    "Surface Exploration (continued)",
+                    day + 4,
+                    surface - 2,
+                    hls,
+                    crew[:2],
+                ),
+            ]
         self._mission(
             prefix,
             start + timedelta(days=launch),

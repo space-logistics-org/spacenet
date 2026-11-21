@@ -951,6 +951,32 @@ function traverseSummary(ctx) {
                 `${fmt(transport.energyRequired, 1)} of ${fmt(transport.energyAvailable, 1)} kWh`,
                 transport.energyRequired > transport.energyAvailable
               )
+            : null,
+          transport.crewSize
+            ? [
+                row("Crew", `${transport.crewSize} (${transport.pressurized ? "pressurized" : "unpressurized"})`),
+                row(
+                  "Crewed duration",
+                  `${fmt(24 * (transport.duration ?? 0), 1)} h` +
+                    (transport.maxCrewedDuration !== null && transport.maxCrewedDuration !== undefined
+                      ? ` (max ${fmt(transport.maxCrewedDuration, 1)})`
+                      : ""),
+                  transport.maxCrewedDuration !== null &&
+                    transport.maxCrewedDuration !== undefined &&
+                    24 * (transport.duration ?? 0) > transport.maxCrewedDuration
+                ),
+                !transport.pressurized && transport.walkBackDistance !== null && transport.walkBackDistance !== undefined
+                  ? row(
+                      "From safe haven",
+                      transport.safeHavenDistance === null || transport.safeHavenDistance === undefined
+                        ? "no safe haven"
+                        : `${fmt(transport.safeHavenDistance, 1)} km (walk-back ${fmt(transport.walkBackDistance, 1)})`,
+                      transport.safeHavenDistance === null ||
+                        transport.safeHavenDistance === undefined ||
+                        transport.safeHavenDistance > transport.walkBackDistance
+                    )
+                  : null,
+              ]
             : null
         )
       )

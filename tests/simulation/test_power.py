@@ -284,6 +284,123 @@ class TestSurfaceMobility(unittest.TestCase):
         self.assertEqual(transport.fuel_required, 0)
 
 
+class TestCrewedTraverses(unittest.TestCase):
+    """Crewed endurance and walk-back constraints of surface vehicles."""
+
+    def setUp(self):
+        self.builder = ScenarioBuilder()
+
+    def scenario(
+        self,
+        speed=5.0,
+        pressurized=False,
+        havens=(),
+        crewed=True,
+        max_crewed_duration=8.0,
+        walk_back_distance=50.0,
+    ):
+        """Drives a rover (with two crew) along the 86.4 km edge from LSP to LSP2."""
+        b = self.builder
+        rover = b.add(
+            s.SurfaceVehicle(
+                name="Rover",
+                mass=500,
+                max_cargo_mass=100,
+                max_crew=2,
+                max_speed=30,
+                cargo_environment="Pressurized" if pressurized else "Unpressurized",
+                fuel_tank=b.tank(0),
+                max_crewed_duration=max_crewed_duration,
+                walk_back_distance=walk_back_distance,
+            ),
+            s.InstSurfaceVehicle,
+        )
+        events = [b.create([rover], b.lsp)]
+        if crewed:
+            crew = [b.crew("A"), b.crew("B")]
+            events.append(b.create(crew, rover, location=b.lsp, priority=2))
+        for index, node in enumerate(havens):
+            habitat = b.carrier(
+                f"Habitat {index}", max_crew=4, cargo_environment="Pressurized"
+            )
+            events.append(b.create([habitat], node, priority=2))
+        events.append(
+            s.SurfaceTransport(
+                name="Drive",
+                priority=3,
+                mission_time=timedelta(days=1),
+                location=b.lsp.id,
+                edge=b.lsp_lsp2.id,
+                vehicle=rover.id,
+                speed=speed,
+                duty_cycle=1,
+            )
+        )
+        b.mission(events)
+        return rover
+
+    def warnings(self, sim):
+        return [w.message for w in sim.warnings]
+
+    def test_walk_back_beyond_limit_warns(self):
+        self.scenario(havens=[self.builder.lsp])
+        sim = simulate(self.builder)
+        self.assertEqual(sim.spatial_errors, [])
+        (warning,) = self.warnings(sim)
+        self.assertIn(
+            "travels up to 86.4 km from a pressurized safe haven, beyond its "
+            "walk-back distance of 50.0 km",
+            warning,
+        )
+
+    def test_safe_havens_at_both_ends_halve_the_exposure(self):
+        b = self.builder
+        self.scenario(havens=[b.lsp, b.lsp2])
+        sim = simulate(b)
+        self.assertEqual(self.warnings(sim), [])
+
+    def test_no_safe_haven_warns(self):
+        self.scenario()
+        sim = simulate(self.builder)
+        (warning,) = self.warnings(sim)
+        self.assertIn("has no pressurized safe haven at LSP or LSP2", warning)
+
+    def test_crewed_duration_limit(self):
+        rover = self.scenario(speed=2.0, havens=[self.builder.lsp])
+        sim = simulate(self.builder)
+        self.assertIn(
+            "requires 12.0 h to traverse 86.4 km with crew aboard but supports 8.0 h",
+            str(sim.spatial_errors[0]),
+        )
+        self.assertEqual(sim.state.get_element(rover.id).location.name, "LSP")
+
+    def test_pressurized_rover_is_its_own_safe_haven(self):
+        rover = self.scenario(speed=2.0, pressurized=True, max_crewed_duration=72.0)
+        sim = simulate(self.builder)
+        self.assertEqual(sim.errors, [])
+        self.assertEqual(self.warnings(sim), [])
+        self.assertEqual(sim.state.get_element(rover.id).location.name, "LSP2")
+
+    def test_uncrewed_traverses_are_unconstrained(self):
+        self.scenario(speed=2.0, crewed=False)
+        sim = simulate(self.builder)
+        self.assertEqual(sim.errors, [])
+        self.assertEqual(self.warnings(sim), [])
+
+    def test_evaluate_crewed_traverse(self):
+        self.scenario(havens=[self.builder.lsp])
+        scenario = self.builder.build()
+        events = scenario.mission_list[0].events
+        evaluation = EventEvaluation.create(scenario, 0, events[-1], len(events) - 1)
+        transport = evaluation.transport
+        self.assertEqual(transport.crew_size, 2)
+        self.assertFalse(transport.pressurized)
+        self.assertEqual(transport.max_crewed_duration, 8)
+        self.assertEqual(transport.walk_back_distance, 50)
+        self.assertAlmostEqual(transport.safe_haven_distance, 86.4)
+        self.assertAlmostEqual(transport.duration * 24, 4.8)
+
+
 class TestSchemas(unittest.TestCase):
     def test_defaults_are_omitted(self):
         element = s.Element(name="Element")

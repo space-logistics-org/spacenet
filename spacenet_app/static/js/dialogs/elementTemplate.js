@@ -761,7 +761,22 @@ function drawElement(draft) {
           { class: "row g-2 mb-2" },
           numberField("Max Speed (km/h)", draft, "maxSpeed", { col: "col-md-3", min: 0 }),
           numberField("Fuel per km (units)", draft, "fuelConsumption", { col: "col-md-3", min: 0 }),
-          numberField("Energy per km (kWh)", draft, "energyConsumption", { col: "col-md-3", min: 0 })
+          numberField("Energy per km (kWh)", draft, "energyConsumption", { col: "col-md-3", min: 0 }),
+          h(
+            "div",
+            { class: "col-md-3", title: "Longest traverse with crew aboard (e.g., EVA suit endurance). Empty if unlimited." },
+            numberField("Max Crewed Traverse (h)", draft, "maxCrewedDuration", { col: "", min: 0 })
+          ),
+          h(
+            "div",
+            {
+              class: "col-md-3",
+              title:
+                "Greatest distance the crew of an unpressurized rover may travel from a pressurized " +
+                "safe haven at either end of a traverse. Empty if unlimited.",
+            },
+            numberField("Walk-Back Distance (km)", draft, "walkBackDistance", { col: "", min: 0 })
+          )
         ),
         tankInput(draft.fuelTank)
       )

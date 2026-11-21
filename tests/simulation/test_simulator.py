@@ -712,6 +712,15 @@ class TestQuickStartScenarios(unittest.TestCase):
         grid = [r for r in sim.power_records if r.name == "LSP Grid"]
         # fission power and the solar arrays of the terrain vehicle
         self.assertAlmostEqual(max(r.generation for r in grid), 40 + 0.85 * 1.5)
+        # the Artemis V crew drive the terrain vehicle to the second site
+        site = next(n.id for n in sim.state.network.nodes if n.name == "LSP-2")
+        visitors = {
+            e.name
+            for snapshot in sim.network_history
+            for e in snapshot.get_elements(site)
+        }
+        self.assertIn("Artemis V | Crew Member A", visitors)
+        self.assertIn("Surface Cargo | LTV", visitors)
 
 
 if __name__ == "__main__":

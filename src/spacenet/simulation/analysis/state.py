@@ -355,6 +355,20 @@ class TransportResult(CamelModel):
     energy_available: Optional[float] = Field(
         None, description="Stored energy (kWh) in the vehicle before the transport"
     )
+    pressurized: Optional[bool] = Field(
+        None, description="True, if the vehicle has a pressurized cabin"
+    )
+    max_crewed_duration: Optional[float] = Field(
+        None, description="Longest traverse (hours) of the vehicle with crew aboard"
+    )
+    walk_back_distance: Optional[float] = Field(
+        None, description="Walk-back distance (km) of an unpressurized vehicle"
+    )
+    safe_haven_distance: Optional[float] = Field(
+        None,
+        description="Greatest distance (km) from a pressurized safe haven during "
+        "the traverse (undefined if there is none at either end)",
+    )
 
 
 class NextEvent(CamelModel):
@@ -465,6 +479,11 @@ class EventEvaluation(CamelModel):
                 transport.fuel_available = tank.get_amount(tank.resource)
                 transport.energy_required = sim_event.energy_required
                 transport.energy_available = vehicle.energy
+                transport.crew_size = sim_event.crew_size
+                transport.pressurized = vehicle.is_pressurized
+                transport.max_crewed_duration = vehicle.max_crewed_duration
+                transport.walk_back_distance = vehicle.walk_back_distance
+                transport.safe_haven_distance = sim_event.safe_haven_distance()
 
         sim_event.time = time
         simulator.execute_event(sim_event)

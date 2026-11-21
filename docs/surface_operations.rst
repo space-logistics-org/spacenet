@@ -46,6 +46,20 @@ energy storage when it departs on a surface transport. A transport fails if
 the vehicle lacks the fuel or energy for the distance of the surface edge,
 and warns if its speed exceeds the ``maxSpeed`` of the vehicle.
 
+**Crewed traverses.** Crew members inside a surface vehicle travel with it.
+A surface vehicle can define its ``maxCrewedDuration`` (hours), the longest
+traverse with crew aboard (e.g., the EVA suit endurance of an unpressurized
+rover or the life support of a pressurized rover); a longer crewed traverse
+fails. Crew of an unpressurized rover (whose cargo environment is
+unpressurized) must also stay within its ``walkBackDistance`` (km) of a
+pressurized safe haven: a pressurized carrier with room for the crew (e.g., a
+lander, habitat, or pressurized rover) at the origin or destination. With a
+safe haven at one end, the crew travels up to the distance of the edge from
+it; with safe havens at both ends, up to half of it. The simulator warns if
+this exceeds the walk-back distance or if there is no safe haven. A
+pressurized rover is its own safe haven and is limited only by its crew
+capacity and crewed duration.
+
 --------
 Analysis
 --------
@@ -69,4 +83,5 @@ In the web application:
 
 The reference Artemis campaign (``artemis/artemis_add_campaign.py``) delivers
 fission surface power, a science station, and a terrain vehicle to a grid at
-the south pole and includes a terrain vehicle traverse between two sites.
+the south pole. During Artemis V, the crew drives the terrain vehicle to a
+second site within its walk-back distance for an EVA and returns.

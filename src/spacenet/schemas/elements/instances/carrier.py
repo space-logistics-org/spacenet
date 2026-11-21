@@ -79,3 +79,17 @@ class InstSurfaceVehicle(InstElementCarrier):
         description="Stored energy (kWh) consumed per kilometer traversed",
         ge=0,
     )
+    max_crewed_duration: Optional[float] = Field(
+        None,
+        title="Max Crewed Traverse",
+        description="Longest traverse (hours) with crew aboard, e.g., the EVA suit "
+        "endurance of an unpressurized rover (omitted if unlimited)",
+        ge=0,
+    )
+    walk_back_distance: Optional[float] = Field(
+        None,
+        title="Walk-Back Distance",
+        description="Greatest distance (km) which crew of an unpressurized rover "
+        "may travel from a pressurized safe haven (omitted if unlimited)",
+        ge=0,
+    )

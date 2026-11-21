@@ -1275,6 +1275,8 @@ class SimSurfaceVehicle(_FueledCarrier):
         fuel_tank: Optional[SimResourceTank] = None,
         fuel_consumption: float = 0.0,
         energy_consumption: float = 0.0,
+        max_crewed_duration: Optional[float] = None,
+        walk_back_distance: Optional[float] = None,
         **kwargs,
     ):
         super().__init__(settings, **kwargs)
@@ -1288,6 +1290,20 @@ class SimSurfaceVehicle(_FueledCarrier):
         self.fuel_consumption = fuel_consumption or 0.0
         #: Stored energy (kWh) consumed per kilometer traversed.
         self.energy_consumption = energy_consumption or 0.0
+        #: Longest traverse (hours) with crew aboard (None if unlimited).
+        self.max_crewed_duration = max_crewed_duration
+        #: Greatest distance (km) of crew of an unpressurized rover from a
+        #: pressurized safe haven (None if unlimited).
+        self.walk_back_distance = walk_back_distance
+
+    @property
+    def is_pressurized(self) -> bool:
+        """True, if crew aboard this vehicle are in a pressurized cabin."""
+        return self.cargo_environment == Environment.PRESSURIZED
+
+    def is_safe_haven_for(self, crew: int) -> bool:
+        """True, if this vehicle is a pressurized refuge for a number of crew."""
+        return self.is_pressurized and self.max_crew_size >= crew
 
     @property
     def fuel_tanks(self) -> List[SimResourceTank]:

@@ -9,7 +9,7 @@ import math
 import sys
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 
-from ..schemas import ClassOfSupply, StateType
+from ..schemas import ClassOfSupply, Environment, StateType
 from ..schemas.elements.propulsion import PropulsionType, TankSelector
 from ..schemas.events.burn import BurnStage
 from ..schemas.events.event import EventType
@@ -1486,6 +1486,77 @@ class SurfaceTransportEvent(TransportEvent):
         rate = getattr(self.vehicle, "energy_consumption", 0.0) or 0.0
         return rate * self.distance
 
+    @property
+    def crew_size(self) -> int:
+        """The number of crew members aboard the vehicle."""
+        return 0 if self.vehicle is None else self.vehicle.total_crew_size
+
+    def _has_safe_haven(self, node: Optional[SimNode], crew: int) -> bool:
+        """True, if a pressurized carrier at a node can shelter a crew."""
+        if node is None:
+            return False
+        return any(
+            element is not self.vehicle
+            and isinstance(element, SimCarrier)
+            and element.cargo_environment == Environment.PRESSURIZED
+            and element.max_crew_size >= crew
+            for element in node.complete_contents
+        )
+
+    def safe_haven_distance(self) -> Optional[float]:
+        """
+        The greatest distance (km) of the crew from a pressurized safe haven
+        during the traverse: the distance of the edge if a safe haven is at
+        one end, or half of it if safe havens are at both ends.
+
+        Returns:
+            float: The distance (km), or None if there is no safe haven at
+            either end.
+        """
+        crew = max(1, self.crew_size)
+        at_origin = self._has_safe_haven(self.origin, crew)
+        at_destination = self._has_safe_haven(self.destination, crew)
+        if at_origin and at_destination:
+            return self.distance / 2
+        if at_origin or at_destination:
+            return self.distance
+        return None
+
+    def _check_crew(self, simulator: "Simulator"):
+        """
+        Checks the crewed endurance of the vehicle and, for an unpressurized
+        vehicle, the walk-back distance of its crew to a safe haven.
+        """
+        crew = self.crew_size
+        if crew == 0:
+            return
+        vehicle = self.vehicle
+        hours = 24 * self.duration
+        limit = vehicle.max_crewed_duration
+        if limit is not None and hours > limit + 1e-9:
+            raise SimSpatialError(
+                simulator.time,
+                self,
+                f"{vehicle} requires {hours:,.1f} h to traverse {self.distance:,.1f} km "
+                f"with crew aboard but supports {limit:,.1f} h.",
+            )
+        if vehicle.is_pressurized or vehicle.walk_back_distance is None:
+            return
+        exposure = self.safe_haven_distance()
+        if exposure is None:
+            self._warn(
+                simulator,
+                f"The crew of {vehicle} has no pressurized safe haven at "
+                f"{self.origin} or {self.destination}.",
+            )
+        elif exposure > vehicle.walk_back_distance + 1e-9:
+            self._warn(
+                simulator,
+                f"The crew of {vehicle} travels up to {exposure:,.1f} km from a "
+                "pressurized safe haven, beyond its walk-back distance of "
+                f"{vehicle.walk_back_distance:,.1f} km.",
+            )
+
     def _consume_traverse_resources(self, simulator: "Simulator"):
         """
         Checks the speed of the vehicle and consumes the fuel and stored
@@ -1552,6 +1623,7 @@ class SurfaceTransportEvent(TransportEvent):
         self._check_location(simulator, self.vehicle)
         if self.speed <= 0 or self.duty_cycle <= 0:
             raise SimSpatialError(simulator.time, self, "Infinite travel duration.")
+        self._check_crew(simulator)
         self._consume_traverse_resources(simulator)
         self._log("Commencing surface transport")
         duration = simulator.settings.round_time(self.duration)
