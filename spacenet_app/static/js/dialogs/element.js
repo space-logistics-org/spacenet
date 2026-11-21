@@ -131,29 +131,36 @@ export function openElement(instance) {
               .map(
                 (system) =>
                   `${system.type}: ${system.isp} s` +
-                  (system.sharedFuelTank ? ` (${system.sharedFuelTank} fuel tank)` : "")
+                  (system.mixtureRatio ? `, O:F ${system.mixtureRatio}` : "") +
+                  (system.sharedFuelTank ? ` (${system.sharedFuelTank} fuel tank)` : "") +
+                  (system.sharedOxidizerTank ? ` (${system.sharedOxidizerTank} oxidizer tank)` : "")
               )
               .join(" · ")
           ),
           h(
             "div",
             { class: "row g-2 mb-3" },
-            templateSystems
-              .filter((system) => system.fuelTank)
-              .map((system) =>
-                fuel(
-                  `Initial ${system.type} Fuel`,
-                  system.fuelTank,
-                  find(draft.propulsionSystems, system)?.fuelTank,
-                  (amount) => {
-                    const systems = draft.propulsionSystems ?? clone(templateSystems);
-                    const tank = find(systems, system)?.fuelTank;
-                    if (tank) tank.contents.amount = amount;
-                    if (same(systems, templateSystems)) delete draft.propulsionSystems;
-                    else draft.propulsionSystems = systems;
-                  }
+            templateSystems.flatMap((system) =>
+              [
+                ["fuelTank", "Fuel"],
+                ["oxidizerTank", "Oxidizer"],
+              ]
+                .filter(([key]) => system[key])
+                .map(([key, role]) =>
+                  fuel(
+                    `Initial ${system.type} ${role}`,
+                    system[key],
+                    find(draft.propulsionSystems, system)?.[key],
+                    (amount) => {
+                      const systems = draft.propulsionSystems ?? clone(templateSystems);
+                      const tank = find(systems, system)?.[key];
+                      if (tank) tank.contents.amount = amount;
+                      if (same(systems, templateSystems)) delete draft.propulsionSystems;
+                      else draft.propulsionSystems = systems;
+                    }
+                  )
                 )
-              )
+            )
           )
         );
       } else {

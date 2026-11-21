@@ -8,6 +8,7 @@ from typing import Iterable, List
 
 from ..manifest import SimManifest
 from ..simulator import DemandSimulator
+from .propellant import PropellantAnalysis
 
 #: Manifest export with one row for each packed demand.
 LEVEL_DEMANDS = "demands"
@@ -248,3 +249,44 @@ def export_manifest(
             ]
         )
     return _write(header, rows, delimiter)
+
+
+def export_propellant(analysis: PropellantAnalysis, delimiter: str = ",") -> str:
+    """
+    Exports the propellant budget of each integral tank of each vehicle.
+
+    Args:
+        analysis (:obj:`PropellantAnalysis`): The propellant analysis.
+        delimiter (str): The column delimiter.
+
+    Returns:
+        str: The delimited text.
+    """
+    fields = [
+        ("Loaded", "loaded"),
+        ("Added", "added"),
+        ("Transferred In", "transferred_in"),
+        ("Transferred Out", "transferred_out"),
+        ("Transfer Loss", "transfer_loss"),
+        ("Burned", "burned"),
+        ("Boiloff", "boiloff"),
+        ("Consumed", "consumed"),
+        ("Residual", "residual"),
+    ]
+    rows = [
+        [
+            budget.vehicle_name,
+            budget.tank,
+            budget.resource or "",
+            budget.unit_mass,
+            budget.max_amount,
+            *(getattr(budget, name) for _, name in fields),
+        ]
+        for budget in analysis.budgets
+    ]
+    return _write(
+        ["Vehicle", "Tank", "Resource", "Unit Mass (kg)", "Capacity (units)"]
+        + [f"{label} (units)" for label, _ in fields],
+        rows,
+        delimiter,
+    )

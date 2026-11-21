@@ -12,7 +12,7 @@ from .reconfigure_elements import ReconfigureElements
 
 from .add_resources import AddResources
 from .consume_resources import ConsumeResources
-from .transfer_resources import TransferResources
+from .transfer_resources import TransferMode, TransferResources
 from .burn import PropulsiveBurn, BurnStageItem
 from .exploration import CrewedEVA, CrewedExploration, ElementState
 from .transport import (

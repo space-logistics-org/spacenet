@@ -9,12 +9,13 @@ from fastapi.responses import JSONResponse
 
 from spacenet.simulation import ScenarioError
 
-from . import analysis, exports, manifest, meta, scenario
+from . import analysis, exports, manifest, meta, propellant, scenario
 
 router = APIRouter()
 router.include_router(meta.router, prefix="/meta", tags=["meta"])
 router.include_router(scenario.router, tags=["scenario"])
 router.include_router(analysis.router, tags=["analysis"])
+router.include_router(propellant.router, prefix="/propellant", tags=["propellant"])
 router.include_router(manifest.router, prefix="/manifest", tags=["manifest"])
 router.include_router(exports.router, prefix="/export", tags=["export"])
 

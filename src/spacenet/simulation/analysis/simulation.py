@@ -13,6 +13,7 @@ from ..records import ElementSnapshot
 from ..simulator import FullSimulator
 from .issues import SimIssue, collect_issues
 from .missions import LocationSummary
+from .propellant import PropellantAnalysis
 from .state import ElementState
 
 
@@ -39,6 +40,15 @@ class MeasureTotals(CamelModel):
     relative_exploration_capability: float = Field(
         0.0,
         description="Exploration capability per launch mass relative to Apollo 17",
+    )
+    propellant_burned_mass: float = Field(
+        0.0, description="Propellant mass (kg) burned by vehicles"
+    )
+    propellant_boiloff_mass: float = Field(
+        0.0, description="Propellant mass (kg) lost to boiloff"
+    )
+    propellant_transfer_loss_mass: float = Field(
+        0.0, description="Propellant mass (kg) lost in transfers"
     )
 
 
@@ -160,6 +170,9 @@ class SimulationAnalysis(CamelModel):
     element_history: List[MassHistory] = Field(
         [], description="Mass by class of supply of each element over time"
     )
+    propellant: PropellantAnalysis = Field(
+        PropellantAnalysis(), description="Vehicle tank contents and budgets"
+    )
 
     @classmethod
     def create(
@@ -222,6 +235,7 @@ class SimulationAnalysis(CamelModel):
         for history in element_masses.values():
             for points in history.values():
                 points.extend([0.0] * (len(times) - len(points)))
+        propellant = PropellantAnalysis.create(simulator)
 
         return cls(
             issues=collect_issues(simulator),
@@ -237,7 +251,11 @@ class SimulationAnalysis(CamelModel):
                 up_mass_capacity_utilization=simulator.total_up_mass_capacity_utilization,
                 down_mass_capacity_utilization=simulator.total_down_mass_capacity_utilization,
                 relative_exploration_capability=simulator.total_relative_exploration_capability,
+                propellant_burned_mass=propellant.totals.burned_mass,
+                propellant_boiloff_mass=propellant.totals.boiloff_mass,
+                propellant_transfer_loss_mass=propellant.totals.transfer_loss_mass,
             ),
+            propellant=propellant,
             measures=Measures(
                 crew_surface_days=_records(simulator.crew_surface_days_history),
                 crew_time=_records(simulator.crew_time_history),

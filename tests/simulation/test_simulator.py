@@ -640,6 +640,25 @@ class TestQuickStartScenarios(unittest.TestCase):
         )
         self.assertEqual(final_locations(sim)["Artemis 3 | Orion CM"], "PAC")
 
+    def test_artemis_add_campaign(self):
+        sim = FullSimulator(load_scenario("artemis/artemis_add_campaign.json"))
+        sim.simulate()
+        self.assertEqual(sim.spatial_errors, [])
+        self.assertEqual(sim.warnings, [])
+        locations = final_locations(sim)
+        for mission in ("Artemis II", "Artemis III", "Artemis IV", "Artemis V"):
+            self.assertEqual(locations[f"{mission} | Orion CM"], "PAC")
+            self.assertEqual(locations[f"{mission} | Crew Member A"], "PAC")
+        self.assertEqual(locations["Gateway | HALO"], "NRHO")
+        self.assertEqual(locations["Artemis IV | I-Hab"], "NRHO")
+        # the samples collected at the lunar south pole return to Earth
+        self.assertEqual(locations["Artemis III | Lunar Samples"], "PAC")
+        boiloff = [f for f in sim.propellant_flows if f.kind.value == "Boiloff"]
+        self.assertTrue(any("Depot" in f.vehicle_name for f in boiloff))
+        self.assertTrue(any("HLS" in f.vehicle_name for f in boiloff))
+        # the crew consumables of the crewed missions are left to the manifest
+        self.assertEqual(len(sim.unsatisfied_demands), 4)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -86,6 +86,14 @@ class ScenarioBuilder:
             unit_mass=1,
             unit_volume=0,
         )
+        self.oxidizer = s.ContinuousResource(
+            name="Oxidizer",
+            class_of_supply=101,
+            environment="Unpressurized",
+            packing_factor=0,
+            unit_mass=1,
+            unit_volume=0,
+        )
         self.spare = s.DiscreteResource(
             name="Spare",
             class_of_supply=4011,
@@ -145,11 +153,79 @@ class ScenarioBuilder:
         )
         return self.add(template, s.InstResourceContainer)
 
-    def tank(self, amount, max_amount=None):
-        """Creates a fuel tank."""
+    def tank(self, amount, max_amount=None, resource=None, boiloff_rate=None):
+        """Creates a fuel (or other resource) tank."""
         return s.ResourceTank(
             max_amount=amount if max_amount is None else max_amount,
-            contents=s.ResourceAmount(resource=self.fuel.id, amount=amount),
+            contents=s.ResourceAmount(
+                resource=(resource or self.fuel).id, amount=amount
+            ),
+            boiloff_rate=boiloff_rate,
+        )
+
+    def biprop_vehicle(
+        self,
+        name="Lander",
+        mass=1000,
+        fuel=2000,
+        oxidizer=6000,
+        mixture_ratio=3.0,
+        isp=350,
+        boiloff_rate=None,
+        **kwargs,
+    ):
+        """
+        Adds a propulsive vehicle with a bipropellant orbital maneuvering
+        system with separate fuel and oxidizer tanks.
+        """
+        system = s.PropulsionSystem(
+            type="OMS",
+            isp=isp,
+            mixture_ratio=mixture_ratio,
+            fuel_tank=self.tank(
+                fuel, kwargs.pop("max_fuel", None), boiloff_rate=boiloff_rate
+            ),
+            oxidizer_tank=self.tank(
+                oxidizer,
+                kwargs.pop("max_oxidizer", None),
+                resource=self.oxidizer,
+                boiloff_rate=boiloff_rate,
+            ),
+        )
+        template = s.PropulsiveVehicle(
+            name=name,
+            mass=mass,
+            max_cargo_mass=kwargs.pop("max_cargo_mass", 0),
+            max_crew=kwargs.pop("max_crew", 0),
+            propulsion_systems=[system, *kwargs.pop("extra_systems", [])],
+            **kwargs,
+        )
+        return self.add(template, s.InstPropulsiveVehicle)
+
+    def transfer(self, origin, destination, location, days=0, priority=1, **kwargs):
+        """Makes an event to transfer resources between containers."""
+        return s.TransferResources(
+            name="Transfer",
+            priority=priority,
+            mission_time=timedelta(days=days),
+            location=location.id,
+            origin_container=origin.id,
+            destination_container=destination.id,
+            **kwargs,
+        )
+
+    def burn_event(self, elements, burn=None, location=None, days=0, priority=1):
+        """Makes a propulsive burn event in which each element burns in turn."""
+        return s.PropulsiveBurn(
+            name="Burn",
+            priority=priority,
+            mission_time=timedelta(days=days),
+            location=(location or self.leo).id,
+            elements=[e.id for e in elements],
+            burn=(burn or self.burn).id,
+            burn_stage_sequence=[
+                s.BurnStageItem(type="Burn", element=e.id) for e in elements
+            ],
         )
 
     def vehicle(
@@ -266,6 +342,6 @@ class ScenarioBuilder:
             element_templates=self.templates,
             instantiated_elements=self.instances,
             demand_models=self.demand_models,
-            resource_list=[self.water, self.fuel, self.spare],
+            resource_list=[self.water, self.fuel, self.oxidizer, self.spare],
             configuration=self.configuration,
         )

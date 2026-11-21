@@ -3,6 +3,7 @@ Records of simulation history including measures of effectiveness.
 """
 
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import TYPE_CHECKING, Dict, List, Optional
 from uuid import UUID
 
@@ -21,6 +22,84 @@ CREW_TIME_CORRECTIVE_MAINTENANCE = "Corrective Maintenance"
 CREW_TIME_PREVENTATIVE_MAINTENANCE = "Preventative Maintenance"
 #: Crew time category for exploration.
 CREW_TIME_EXPLORATION = "Exploration"
+
+
+class PropellantFlowKind(str, Enum):
+    """
+    Enumeration of the kinds of changes to the contents of a vehicle tank.
+    """
+
+    #: Initial contents of a tank when its vehicle is created.
+    LOADED = "Loaded"
+    #: Resources added by an add resources event.
+    ADDED = "Added"
+    #: Resources received from a transfer.
+    TRANSFER_IN = "Transfer In"
+    #: Resources sent by a transfer and received (excluding transfer losses).
+    TRANSFER_OUT = "Transfer Out"
+    #: Resources lost during a transfer (attributed to the origin tank).
+    TRANSFER_LOSS = "Transfer Loss"
+    #: Propellant burned by a propulsive burn.
+    BURNED = "Burned"
+    #: Resources lost to boiloff.
+    BOILOFF = "Boiloff"
+    #: Resources consumed (or produced, if negative) to satisfy demands.
+    CONSUMED = "Consumed"
+
+
+@dataclass
+class PropellantFlow:
+    """
+    A change to the contents of an integral tank of a vehicle.
+    """
+
+    #: Time (days) relative to the scenario start.
+    time: float
+    vehicle_id: UUID
+    vehicle_name: str
+    #: Key of the tank within its vehicle, e.g., "OMS Fuel".
+    tank_key: str
+    #: Role of the tank ("Fuel" or "Oxidizer").
+    tank_role: str
+    #: Name of the contained resource.
+    resource_name: Optional[str]
+    #: Unit mass (kg) of the contained resource.
+    unit_mass: float
+    #: Kind of change.
+    kind: PropellantFlowKind
+    #: Amount (units), positive with the sign given by the kind (except for
+    #: negative consumption, i.e., production).
+    amount: float
+    #: Tank contents (units) after the change.
+    amount_after: float
+    #: Tank capacity (units).
+    max_amount: float
+    #: Name of the causing event, if any.
+    event_name: Optional[str] = None
+
+
+@dataclass
+class TransferStep:
+    """
+    One resource transfer between two containers (or tanks) of an executed
+    transfer event.
+    """
+
+    resource_name: str
+    origin_name: str
+    destination_name: str
+    #: Amount (units) removed from the origin.
+    removed: float = 0.0
+    #: Amount (units) added to the destination.
+    delivered: float = 0.0
+    #: Amount (units) lost during transfer.
+    lost: float = 0.0
+    #: Amount (units) remaining in the origin after the transfer.
+    origin_remaining: float = 0.0
+    #: Amount (units) in the destination after the transfer.
+    destination_amount: float = 0.0
+    #: Remaining capacity (units) of the destination after the transfer.
+    destination_space: float = 0.0
 
 
 @dataclass
@@ -141,6 +220,12 @@ class FuelTankSnapshot:
     #: Specific impulse (s) of each propulsion system (by propulsion type)
     #: which burns fuel from the tank.
     propulsion: Dict[str, float] = field(default_factory=dict)
+    #: Key of the tank within its vehicle, e.g., "OMS Fuel".
+    key: Optional[str] = None
+    #: Role of the tank ("Fuel" or "Oxidizer").
+    role: str = "Fuel"
+    #: Fraction of the capacity lost per day.
+    boiloff_rate: float = 0.0
 
 
 @dataclass
@@ -163,6 +248,15 @@ class BurnStep:
     fuel_used: float = 0.0
     #: Fuel amount (units) remaining in the vehicle after the action.
     fuel_remaining: float = 0.0
+    #: Oxidizer amount (units) consumed by the action (bipropellant systems).
+    oxidizer_used: Optional[float] = None
+    #: Oxidizer amount (units) remaining after the action (bipropellant systems).
+    oxidizer_remaining: Optional[float] = None
+    #: Total propellant mass (kg) consumed by the action.
+    propellant_mass_used: float = 0.0
+    #: Additional propellant mass (kg) which the vehicle would have required
+    #: to achieve the remaining delta-v (accounting for the added mass).
+    propellant_shortfall: float = 0.0
     #: Description of any error which prevented the action.
     message: Optional[str] = None
 
@@ -288,19 +382,23 @@ class ElementSnapshot:
             snapshot.contents = [cls.create(e) for e in element.contents]
             systems = getattr(element, "propulsion_systems", [])
             for tank in getattr(element, "fuel_tanks", []):
+                role = getattr(tank, "role", "Fuel")
                 propulsion = {
                     s.propulsion_type.value: s.isp
                     for s in systems
-                    if s.fuel_tank is tank
+                    if tank is (s.oxidizer_tank if role == "Oxidizer" else s.fuel_tank)
                 }
                 fuel_name = None if tank.resource is None else tank.resource.name
                 snapshot.fuel_tanks.append(
                     FuelTankSnapshot(
-                        label=" ".join(filter(None, ["/".join(propulsion), "Fuel"])),
+                        label=" ".join(filter(None, ["/".join(propulsion), role])),
                         fuel_name=fuel_name,
                         amount=tank.amount,
                         max_amount=tank.max_amount,
                         propulsion=propulsion,
+                        key=getattr(tank, "key", None),
+                        role=role,
+                        boiloff_rate=getattr(tank, "boiloff_rate", 0.0),
                     )
                 )
                 if fuel_name is not None:

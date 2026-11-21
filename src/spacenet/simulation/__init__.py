@@ -14,11 +14,15 @@ from .analysis import (
     ManifestSelection,
     MissionsAnalysis,
     NodeDemand,
+    PropellantAnalysis,
     RawDemand,
     RawDemandsAnalysis,
     SimIssue,
     SimulationAnalysis,
     StateAnalysis,
+    TankerSizing,
+    TankerSizingRequest,
+    size_tankers,
 )
 from .demand_models import (
     SimCrewConsumablesDemandModel,
@@ -82,8 +86,11 @@ from .records import (
     MoeLaunchMass,
     MoeMassCapacityUtilization,
     NetworkSnapshot,
+    PropellantFlow,
+    PropellantFlowKind,
     SimRepair,
     SimScavenge,
+    TransferStep,
 )
 from .resources import Demand, DemandSet, SimResource
 from .settings import Settings

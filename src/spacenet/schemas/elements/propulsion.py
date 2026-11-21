@@ -40,13 +40,44 @@ class ResourceTank(CamelModel):
     contents: Union[ResourceAmount, GenericResourceAmount] = Field(
         ..., title="Contents", description="Type and amount of the contained resource"
     )
+    boiloff_rate: Optional[float] = Field(
+        None,
+        title="Boiloff Rate",
+        description="Fraction of the tank capacity lost per day, e.g., to "
+        "cryogenic boiloff (omitted if no losses)",
+        ge=0,
+        le=1,
+    )
+
+
+class TankSelector(str, Enum):
+    """
+    Enumeration of the integral tanks of a vehicle which can be selected as
+    the origin or destination of a resource transfer.
+    """
+
+    OMS_FUEL = "OMS Fuel"
+    OMS_OXIDIZER = "OMS Oxidizer"
+    RCS_FUEL = "RCS Fuel"
+    RCS_OXIDIZER = "RCS Oxidizer"
+
+    @property
+    def propulsion_type(self) -> PropulsionType:
+        """The propulsion type of the selected tank."""
+        return PropulsionType(self.value.split(" ")[0])
+
+    @property
+    def is_oxidizer(self) -> bool:
+        """True, if the selected tank holds oxidizer."""
+        return self.value.endswith("Oxidizer")
 
 
 class PropulsionSystem(CamelModel):
     """
     Impulsive propulsion system with a specific impulse which burns fuel from
     its own fuel tank or from the fuel tank of another propulsion system of
-    the same vehicle.
+    the same vehicle. Bipropellant systems also burn oxidizer from an
+    oxidizer tank in a fixed mixture ratio.
     """
 
     type: PropulsionType = Field(
@@ -70,6 +101,30 @@ class PropulsionSystem(CamelModel):
         "fuel tank is shared (omitted if this system has its own fuel tank)",
     )
 
+    mixture_ratio: Optional[float] = Field(
+        None,
+        title="Mixture Ratio",
+        description="Oxidizer-to-fuel mass ratio (bipropellant systems only)",
+        gt=0,
+    )
+    oxidizer_tank: Optional[ResourceTank] = Field(
+        None,
+        title="Oxidizer Tank",
+        description="Oxidizer tank (bipropellant systems only; omitted if "
+        "the oxidizer tank of another propulsion system is shared)",
+    )
+    shared_oxidizer_tank: Optional[PropulsionType] = Field(
+        None,
+        title="Shared Oxidizer Tank",
+        description="Type of the propulsion system of the same vehicle whose "
+        "oxidizer tank is shared (bipropellant systems only)",
+    )
+
+    @property
+    def is_bipropellant(self) -> bool:
+        """True, if this system burns oxidizer from a separate tank."""
+        return self.oxidizer_tank is not None or self.shared_oxidizer_tank is not None
+
     @model_validator(mode="after")
     def _check_fuel_tank(self) -> "PropulsionSystem":
         if (self.fuel_tank is None) == (self.shared_fuel_tank is None):
@@ -79,6 +134,18 @@ class PropulsionSystem(CamelModel):
             )
         if self.shared_fuel_tank == self.type:
             raise ValueError("A propulsion system cannot share its own fuel tank.")
+        if self.oxidizer_tank is not None and self.shared_oxidizer_tank is not None:
+            raise ValueError(
+                "A propulsion system requires either its own oxidizer tank "
+                "or a shared oxidizer tank, not both."
+            )
+        if self.shared_oxidizer_tank == self.type:
+            raise ValueError("A propulsion system cannot share its own oxidizer tank.")
+        if self.is_bipropellant != (self.mixture_ratio is not None):
+            raise ValueError(
+                "A bipropellant propulsion system requires both an oxidizer "
+                "tank and a mixture ratio."
+            )
         return self
 
 
@@ -109,6 +176,17 @@ def check_propulsion_systems(
                 f"The {system.type.value} propulsion system shares the fuel tank "
                 f"of the {system.shared_fuel_tank.value} propulsion system "
                 "which has no fuel tank."
+            )
+    oxidizer_tanks = {system.type: system.oxidizer_tank for system in systems}
+    for system in systems:
+        if (
+            system.shared_oxidizer_tank is not None
+            and oxidizer_tanks.get(system.shared_oxidizer_tank) is None
+        ):
+            raise ValueError(
+                f"The {system.type.value} propulsion system shares the oxidizer "
+                f"tank of the {system.shared_oxidizer_tank.value} propulsion "
+                "system which has no oxidizer tank."
             )
     return systems
 

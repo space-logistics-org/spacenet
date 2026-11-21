@@ -20,7 +20,12 @@ from .demands import (
     SupplyEdgeSummary,
     SupplyPointSummary,
 )
-from .export import export_aggregated_demands, export_manifest, export_raw_demands
+from .export import (
+    export_aggregated_demands,
+    export_manifest,
+    export_propellant,
+    export_raw_demands,
+)
 from .issues import IssueReference, SimIssue, collect_issues
 from .manifest import (
     ManifestAnalysis,
@@ -40,6 +45,16 @@ from .missions import (
     MissionsAnalysis,
     MissionSummary,
 )
+from .propellant import (
+    BurnRecord,
+    PropellantAnalysis,
+    PropellantBudget,
+    PropellantTotals,
+    TankerSizing,
+    TankerSizingRequest,
+    TankHistory,
+    size_tankers,
+)
 from .simulation import (
     MassHistory,
     MassSeries,
@@ -57,5 +72,6 @@ from .state import (
     LocationState,
     NextEvent,
     StateAnalysis,
+    TransferStepResult,
     TransportResult,
 )

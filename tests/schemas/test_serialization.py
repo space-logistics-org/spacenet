@@ -144,6 +144,116 @@ class TestVehicles(unittest.TestCase):
         self.assertNotIn("isp", data)
         self.assertEqual(s.PropulsiveVehicle.model_validate(data), vehicle)
 
+    def test_bipropellant_systems(self):
+        oxidizer = {"maxAmount": 300, "contents": dict(self.fuel, amount=240)}
+        vehicle = self._vehicle(
+            [
+                {
+                    "type": "OMS",
+                    "isp": 350,
+                    "mixtureRatio": 3,
+                    "fuelTank": dict(self.tank, boiloffRate=0.001),
+                    "oxidizerTank": oxidizer,
+                },
+                {
+                    "type": "RCS",
+                    "isp": 300,
+                    "mixtureRatio": 1.6,
+                    "sharedFuelTank": "OMS",
+                    "sharedOxidizerTank": "OMS",
+                },
+            ]
+        )
+        oms, rcs = vehicle.propulsion_systems
+        self.assertTrue(oms.is_bipropellant)
+        self.assertEqual(oms.fuel_tank.boiloff_rate, 0.001)
+        self.assertEqual(oms.oxidizer_tank.max_amount, 300)
+        self.assertEqual(rcs.shared_oxidizer_tank, s.PropulsionType.OMS)
+        data = vehicle.model_dump(mode="json", by_alias=True, exclude_none=True)
+        self.assertEqual(data["propulsionSystems"][0]["fuelTank"]["boiloffRate"], 0.001)
+        self.assertEqual(s.PropulsiveVehicle.model_validate(data), vehicle)
+
+    def test_invalid_bipropellant_systems(self):
+        oxidizer = {"maxAmount": 300, "contents": dict(self.fuel, amount=240)}
+        oms = {"type": "OMS", "isp": 320, "fuelTank": self.tank}
+        for systems in (
+            # oxidizer tank without mixture ratio and vice versa
+            [dict(oms, oxidizerTank=oxidizer)],
+            [dict(oms, mixtureRatio=3)],
+            # both an oxidizer tank and a shared oxidizer tank
+            [
+                dict(
+                    oms, mixtureRatio=3, oxidizerTank=oxidizer, sharedOxidizerTank="RCS"
+                )
+            ],
+            # shared oxidizer tank which does not exist
+            [
+                oms,
+                {
+                    "type": "RCS",
+                    "isp": 300,
+                    "mixtureRatio": 2,
+                    "sharedFuelTank": "OMS",
+                    "sharedOxidizerTank": "OMS",
+                },
+            ],
+            [dict(oms, mixtureRatio=3, sharedOxidizerTank="OMS")],
+            # invalid boiloff rate
+            [dict(oms, fuelTank=dict(self.tank, boiloffRate=2))],
+        ):
+            with self.subTest(systems=systems), self.assertRaises(ValueError):
+                self._vehicle(systems)
+
+    def test_monopropellant_dump_is_unchanged(self):
+        vehicle = self._vehicle([{"type": "OMS", "isp": 320, "fuelTank": self.tank}])
+        data = vehicle.model_dump(mode="json", by_alias=True, exclude_none=True)
+        self.assertEqual(
+            data["propulsionSystems"],
+            [
+                {
+                    "type": "OMS",
+                    "isp": 320.0,
+                    "fuelTank": {
+                        "maxAmount": 100.0,
+                        "contents": dict(self.fuel, amount=80.0),
+                    },
+                }
+            ],
+        )
+
+    def test_transfer_resources_options(self):
+        event = {
+            "name": "Refuel",
+            "type": "Transfer Resources",
+            "priority": 1,
+            "missionTime": 0,
+            "location": str(uuid4()),
+            "originContainer": str(uuid4()),
+            "destinationContainer": str(uuid4()),
+        }
+        transfer = s.TransferResources.model_validate(
+            dict(
+                event,
+                transferMode="Fill Destination",
+                destinationTank="OMS Oxidizer",
+                lossFraction=0.02,
+            )
+        )
+        self.assertEqual(transfer.resources, [])
+        self.assertEqual(transfer.transfer_mode, s.TransferMode.FILL_DESTINATION)
+        self.assertEqual(transfer.destination_tank, s.TankSelector.OMS_OXIDIZER)
+        self.assertTrue(transfer.destination_tank.is_oxidizer)
+        self.assertEqual(
+            transfer.destination_tank.propulsion_type, s.PropulsionType.OMS
+        )
+        with self.assertRaises(ValueError):
+            s.TransferResources.model_validate(dict(event, lossFraction=1))
+        data = s.TransferResources.model_validate(event).model_dump(
+            mode="json", by_alias=True, exclude_none=True
+        )
+        for key in ("originTank", "destinationTank", "transferMode", "lossFraction"):
+            self.assertNotIn(key, data)
+
     def test_invalid_propulsion_systems(self):
         oms = {"type": "OMS", "isp": 320, "fuelTank": self.tank}
         for systems in (

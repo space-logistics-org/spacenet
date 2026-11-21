@@ -1,0 +1,4727 @@
+{
+  "name": "Artemis Campaign (ADD Baseline)",
+  "createdBy": "SpaceNet",
+  "description": "Reference Artemis campaign following the program of record in NASA's Moon-to-Mars Architecture Definition Document, with propellant aggregation for a Starship-class HLS. Values are notional (see artemis/artemis_add_campaign.py).",
+  "startDate": "2022-11-16T00:00:00Z",
+  "scenarioType": "Lunar",
+  "network": {
+    "nodes": [
+      {
+        "id": "4b9dd074-9921-40d6-85d1-144da440c679",
+        "name": "KSC",
+        "description": "Kennedy Space Center",
+        "contents": [],
+        "type": "Surface Node",
+        "body1": "Earth",
+        "latitude": 28.6,
+        "longitude": -80.6
+      },
+      {
+        "id": "cd80096f-ba78-4b0b-80ec-c883525a98eb",
+        "name": "PAC",
+        "description": "Pacific Ocean Splash-down",
+        "contents": [],
+        "type": "Surface Node",
+        "body1": "Earth",
+        "latitude": 32.7,
+        "longitude": -117.2
+      },
+      {
+        "id": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+        "name": "LEO",
+        "description": "Low Earth Orbit",
+        "contents": [],
+        "type": "Orbital Node",
+        "body1": "Earth",
+        "apoapsis": 296.0,
+        "periapsis": 296.0,
+        "inclination": 28.5
+      },
+      {
+        "id": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+        "name": "NRHO",
+        "description": "Near Rectilinear Halo Orbit (approximated as Earth-Moon L2)",
+        "contents": [],
+        "type": "Lagrange Node",
+        "body1": "Earth",
+        "body2": "Moon",
+        "lpNumber": 2
+      },
+      {
+        "id": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+        "name": "LLO",
+        "description": "Low Lunar Orbit",
+        "contents": [],
+        "type": "Orbital Node",
+        "body1": "Moon",
+        "apoapsis": 100.0,
+        "periapsis": 100.0,
+        "inclination": 90.0
+      },
+      {
+        "id": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+        "name": "LSP",
+        "description": "Lunar South Pole (Shackleton connecting ridge)",
+        "contents": [],
+        "type": "Surface Node",
+        "body1": "Moon",
+        "latitude": -89.4,
+        "longitude": -137.3
+      }
+    ],
+    "edges": [
+      {
+        "id": "9c0b22d1-5381-4104-9fbd-1f5783f63e6f",
+        "name": "KSC-LEO (SLS)",
+        "description": "SLS Earth ascent",
+        "contents": [],
+        "type": "Space Edge",
+        "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+        "destination": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+        "duration": "PT6H",
+        "burns": [
+          {
+            "id": "04c9695c-7550-4eaf-a018-d718ff120107",
+            "time": "PT0S",
+            "deltaV": 9500.0,
+            "type": "OMS"
+          }
+        ]
+      },
+      {
+        "id": "3d7901e7-dc6d-4481-9f0b-a18bf3f9b7d8",
+        "name": "LEO-NRHO",
+        "description": "Trans-lunar injection and NRHO insertion",
+        "contents": [],
+        "type": "Space Edge",
+        "origin": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+        "destination": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+        "duration": "P7D",
+        "burns": [
+          {
+            "id": "91f1ad08-e6e1-4653-8818-bed076202576",
+            "time": "PT0S",
+            "deltaV": 3124.0,
+            "type": "OMS"
+          },
+          {
+            "id": "7055946f-57f8-498f-b12f-a036d9f688c1",
+            "time": "PT7H12M",
+            "deltaV": 30.0,
+            "type": "OMS"
+          },
+          {
+            "id": "32d75e25-f434-4ff2-a944-e4e704d5d873",
+            "time": "P3DT2H24M",
+            "deltaV": 242.0,
+            "type": "OMS"
+          },
+          {
+            "id": "c5ff24a3-d606-4584-8f78-04d36a9b35e2",
+            "time": "P4DT9H36M",
+            "deltaV": 1.0,
+            "type": "OMS"
+          },
+          {
+            "id": "530e20c7-7b82-4b4d-9998-172fb5c8be6a",
+            "time": "P6DT9H36M",
+            "deltaV": 126.0,
+            "type": "OMS"
+          }
+        ]
+      },
+      {
+        "id": "3fd814e9-e43c-494e-869d-365ae311b5a4",
+        "name": "LEO-PAC (Free Return)",
+        "description": "Lunar free-return flyby",
+        "contents": [],
+        "type": "Space Edge",
+        "origin": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+        "destination": "cd80096f-ba78-4b0b-80ec-c883525a98eb",
+        "duration": "P9D",
+        "burns": [
+          {
+            "id": "a1d2a98c-d831-45b0-b013-a5d252c6d5d2",
+            "time": "PT0S",
+            "deltaV": 3124.0,
+            "type": "OMS"
+          },
+          {
+            "id": "1e2e6e1c-aed7-45f7-9c8d-da98d475a97d",
+            "time": "P1D",
+            "deltaV": 20.0,
+            "type": "OMS"
+          },
+          {
+            "id": "5ae39d89-1a4e-4f00-9db6-6fa0ae2f66b6",
+            "time": "P5D",
+            "deltaV": 15.0,
+            "type": "OMS"
+          },
+          {
+            "id": "122af4c0-b121-4d8f-9b2d-17fa254406ea",
+            "time": "P8DT12H",
+            "deltaV": 10.0,
+            "type": "OMS"
+          }
+        ]
+      },
+      {
+        "id": "2fdee1ca-6437-45df-a0db-69cdddd74dac",
+        "name": "NRHO-LLO",
+        "description": "Transfer to low lunar orbit",
+        "contents": [],
+        "type": "Space Edge",
+        "origin": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+        "destination": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+        "duration": "PT12H",
+        "burns": [
+          {
+            "id": "45416b19-285f-46ef-9bc0-465234d38b93",
+            "time": "PT0S",
+            "deltaV": 126.4,
+            "type": "OMS"
+          },
+          {
+            "id": "61d50732-2658-46f6-b7f8-06df671ad17c",
+            "time": "PT12H",
+            "deltaV": 648.6,
+            "type": "OMS"
+          }
+        ]
+      },
+      {
+        "id": "1d311e20-7e23-4122-a205-00213dd6ad35",
+        "name": "LLO-LSP",
+        "description": "Lunar descent",
+        "contents": [],
+        "type": "Space Edge",
+        "origin": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+        "destination": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+        "duration": "PT4H48M",
+        "burns": [
+          {
+            "id": "3da77d37-79f5-4c64-a750-862c2aeff5a9",
+            "time": "PT0S",
+            "deltaV": 19.4,
+            "type": "OMS"
+          },
+          {
+            "id": "f9214752-8f98-4055-9c8e-160e2175ea09",
+            "time": "PT4H48M",
+            "deltaV": 1692.5,
+            "type": "OMS"
+          }
+        ]
+      },
+      {
+        "id": "9ce5dd3c-20a4-4be3-a973-04713bad5e67",
+        "name": "LSP-LLO",
+        "description": "Lunar ascent",
+        "contents": [],
+        "type": "Space Edge",
+        "origin": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+        "destination": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+        "duration": "PT4H48M",
+        "burns": [
+          {
+            "id": "639f196d-248c-4bba-bb1f-a0e475bcda35",
+            "time": "PT0S",
+            "deltaV": 1692.4,
+            "type": "OMS"
+          },
+          {
+            "id": "ff06ceac-6676-4e59-91a4-e774a8ab1160",
+            "time": "PT4H48M",
+            "deltaV": 19.4,
+            "type": "OMS"
+          }
+        ]
+      },
+      {
+        "id": "7980949c-162c-473e-987f-ebbb39e8e38b",
+        "name": "LLO-NRHO",
+        "description": "Transfer to near rectilinear halo orbit",
+        "contents": [],
+        "type": "Space Edge",
+        "origin": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+        "destination": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+        "duration": "PT12H",
+        "burns": [
+          {
+            "id": "3b24a0a6-5f37-4c96-9c2f-2281990bf1cd",
+            "time": "PT0S",
+            "deltaV": 649.2,
+            "type": "OMS"
+          },
+          {
+            "id": "cb4e0662-72bb-42c7-9185-d2ae9d5cba10",
+            "time": "PT12H",
+            "deltaV": 125.1,
+            "type": "OMS"
+          }
+        ]
+      },
+      {
+        "id": "bfed490a-05af-49d0-bbcf-0f2e2cd4247b",
+        "name": "NRHO-PAC",
+        "description": "Trans-Earth injection",
+        "contents": [],
+        "type": "Space Edge",
+        "origin": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+        "destination": "cd80096f-ba78-4b0b-80ec-c883525a98eb",
+        "duration": "P6DT9H36M",
+        "burns": [
+          {
+            "id": "ae52dca0-473c-4990-ac2d-55a15950a173",
+            "time": "PT0S",
+            "deltaV": 147.0,
+            "type": "OMS"
+          },
+          {
+            "id": "d22a50bd-638d-4b44-bf3b-2febb370fe6d",
+            "time": "P1DT14H24M",
+            "deltaV": 2.0,
+            "type": "OMS"
+          },
+          {
+            "id": "c8457678-d594-480d-9a79-6b031a447920",
+            "time": "P2DT19H12M",
+            "deltaV": 263.0,
+            "type": "OMS"
+          }
+        ]
+      },
+      {
+        "id": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+        "name": "KSC-LEO (Super Heavy)",
+        "description": "Launch of a Starship-class ship (dry mass, residual propellant, and payload) to LEO",
+        "contents": [],
+        "type": "Flight Edge",
+        "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+        "destination": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+        "duration": "PT12H",
+        "maxCrew": 0,
+        "maxCargo": 300000.0
+      },
+      {
+        "id": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+        "name": "LEO-KSC (Ship Return)",
+        "description": "Entry and landing of a Starship-class ship for reuse",
+        "contents": [],
+        "type": "Flight Edge",
+        "origin": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+        "destination": "4b9dd074-9921-40d6-85d1-144da440c679",
+        "duration": "PT6H",
+        "maxCrew": 0,
+        "maxCargo": 300000.0
+      },
+      {
+        "id": "5e4552a9-58da-44b1-bc33-b344119ca87a",
+        "name": "KSC-NRHO (Falcon Heavy + SEP)",
+        "description": "Commercial launch and solar electric propulsion transfer of Gateway elements to NRHO",
+        "contents": [],
+        "type": "Flight Edge",
+        "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+        "destination": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+        "duration": "P1Y",
+        "maxCrew": 0,
+        "maxCargo": 16000.0
+      }
+    ]
+  },
+  "missionList": [
+    {
+      "name": "Artemis I",
+      "startDate": "2022-11-16T00:00:00Z",
+      "events": [
+        {
+          "name": "Artemis I | Create Launch Stack",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "2dcfd15a-7faa-42af-91c4-bd7cb99aad2e",
+            "4a952d9c-1616-4b5d-be95-a9496c574fb8",
+            "53845e41-8c50-4b85-8e94-7fc1b64790cd",
+            "1fa22600-08ee-4bbc-ac6d-2613d2ccfd32",
+            "96a5f4ad-2628-4b12-b69b-5b55b10e954f",
+            "eebac749-6059-410c-ac47-9522493144a0",
+            "e2b1f060-1b1c-4092-aa07-57ea899b0099"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis I | Earth Ascent",
+          "type": "Space Transport",
+          "priority": 4,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "9c0b22d1-5381-4104-9fbd-1f5783f63e6f",
+          "elements": [
+            "2dcfd15a-7faa-42af-91c4-bd7cb99aad2e",
+            "4a952d9c-1616-4b5d-be95-a9496c574fb8",
+            "53845e41-8c50-4b85-8e94-7fc1b64790cd",
+            "1fa22600-08ee-4bbc-ac6d-2613d2ccfd32",
+            "96a5f4ad-2628-4b12-b69b-5b55b10e954f",
+            "eebac749-6059-410c-ac47-9522493144a0",
+            "e2b1f060-1b1c-4092-aa07-57ea899b0099"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "04c9695c-7550-4eaf-a018-d718ff120107",
+              "actions": [
+                {
+                  "element": "2dcfd15a-7faa-42af-91c4-bd7cb99aad2e",
+                  "type": "Burn"
+                },
+                {
+                  "element": "2dcfd15a-7faa-42af-91c4-bd7cb99aad2e",
+                  "type": "Stage"
+                },
+                {
+                  "element": "e2b1f060-1b1c-4092-aa07-57ea899b0099",
+                  "type": "Stage"
+                },
+                {
+                  "element": "4a952d9c-1616-4b5d-be95-a9496c574fb8",
+                  "type": "Burn"
+                },
+                {
+                  "element": "4a952d9c-1616-4b5d-be95-a9496c574fb8",
+                  "type": "Stage"
+                },
+                {
+                  "element": "53845e41-8c50-4b85-8e94-7fc1b64790cd",
+                  "type": "Stage"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis I | Trans-Lunar Injection",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P1D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "3d7901e7-dc6d-4481-9f0b-a18bf3f9b7d8",
+          "elements": [
+            "1fa22600-08ee-4bbc-ac6d-2613d2ccfd32",
+            "96a5f4ad-2628-4b12-b69b-5b55b10e954f",
+            "eebac749-6059-410c-ac47-9522493144a0"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "91f1ad08-e6e1-4653-8818-bed076202576",
+              "actions": [
+                {
+                  "element": "1fa22600-08ee-4bbc-ac6d-2613d2ccfd32",
+                  "type": "Burn"
+                },
+                {
+                  "element": "1fa22600-08ee-4bbc-ac6d-2613d2ccfd32",
+                  "type": "Stage"
+                }
+              ]
+            },
+            {
+              "burn": "7055946f-57f8-498f-b12f-a036d9f688c1",
+              "actions": [
+                {
+                  "element": "eebac749-6059-410c-ac47-9522493144a0",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "32d75e25-f434-4ff2-a944-e4e704d5d873",
+              "actions": [
+                {
+                  "element": "eebac749-6059-410c-ac47-9522493144a0",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c5ff24a3-d606-4584-8f78-04d36a9b35e2",
+              "actions": [
+                {
+                  "element": "eebac749-6059-410c-ac47-9522493144a0",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "530e20c7-7b82-4b4d-9998-172fb5c8be6a",
+              "actions": [
+                {
+                  "element": "eebac749-6059-410c-ac47-9522493144a0",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis I | Trans-Earth Injection",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P14D",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "edge": "bfed490a-05af-49d0-bbcf-0f2e2cd4247b",
+          "elements": [
+            "96a5f4ad-2628-4b12-b69b-5b55b10e954f",
+            "eebac749-6059-410c-ac47-9522493144a0"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "ae52dca0-473c-4990-ac2d-55a15950a173",
+              "actions": [
+                {
+                  "element": "eebac749-6059-410c-ac47-9522493144a0",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "d22a50bd-638d-4b44-bf3b-2febb370fe6d",
+              "actions": [
+                {
+                  "element": "eebac749-6059-410c-ac47-9522493144a0",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c8457678-d594-480d-9a79-6b031a447920",
+              "actions": [
+                {
+                  "element": "eebac749-6059-410c-ac47-9522493144a0",
+                  "type": "Burn"
+                },
+                {
+                  "element": "eebac749-6059-410c-ac47-9522493144a0",
+                  "type": "Stage"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "demandModels": [],
+      "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+      "destination": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+      "returnOrigin": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+      "returnDestination": "cd80096f-ba78-4b0b-80ec-c883525a98eb"
+    },
+    {
+      "name": "Artemis II",
+      "startDate": "2026-04-01T00:00:00Z",
+      "events": [
+        {
+          "name": "Artemis II | Create Launch Stack",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "cc4279d6-9780-4383-9ec0-dda69d128847",
+            "b00a8d01-7f8c-4ca4-a791-501e08201b86",
+            "cc44d7ed-609f-4868-a538-455691118ea2",
+            "09914223-cf81-40a5-a772-0c4d7e297d88",
+            "eb500d2a-7abe-4cc7-b8b9-701eec780af7",
+            "e29ce50e-242b-4fbe-9f89-ddce910acbb9",
+            "647d4a55-80de-43bd-96c7-ddcd4a31ddef"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis II | Create Crew",
+          "type": "Create Elements",
+          "priority": 3,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "52f7fd2c-138e-46c8-b099-c29061d51a2c",
+            "95a177af-924a-409b-9bdb-57abb1fdb883",
+            "2677b9c8-4f6d-4e0e-ac47-04a939daa013",
+            "f054eeeb-8b36-4bfd-b916-6cbfd6777bb3"
+          ],
+          "container": "eb500d2a-7abe-4cc7-b8b9-701eec780af7"
+        },
+        {
+          "name": "Artemis II | Earth Ascent",
+          "type": "Space Transport",
+          "priority": 4,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "9c0b22d1-5381-4104-9fbd-1f5783f63e6f",
+          "elements": [
+            "cc4279d6-9780-4383-9ec0-dda69d128847",
+            "b00a8d01-7f8c-4ca4-a791-501e08201b86",
+            "cc44d7ed-609f-4868-a538-455691118ea2",
+            "09914223-cf81-40a5-a772-0c4d7e297d88",
+            "eb500d2a-7abe-4cc7-b8b9-701eec780af7",
+            "e29ce50e-242b-4fbe-9f89-ddce910acbb9",
+            "647d4a55-80de-43bd-96c7-ddcd4a31ddef"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "04c9695c-7550-4eaf-a018-d718ff120107",
+              "actions": [
+                {
+                  "element": "cc4279d6-9780-4383-9ec0-dda69d128847",
+                  "type": "Burn"
+                },
+                {
+                  "element": "cc4279d6-9780-4383-9ec0-dda69d128847",
+                  "type": "Stage"
+                },
+                {
+                  "element": "647d4a55-80de-43bd-96c7-ddcd4a31ddef",
+                  "type": "Stage"
+                },
+                {
+                  "element": "b00a8d01-7f8c-4ca4-a791-501e08201b86",
+                  "type": "Burn"
+                },
+                {
+                  "element": "b00a8d01-7f8c-4ca4-a791-501e08201b86",
+                  "type": "Stage"
+                },
+                {
+                  "element": "cc44d7ed-609f-4868-a538-455691118ea2",
+                  "type": "Stage"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis II | Trans-Lunar Injection (Free Return)",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P1D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "3fd814e9-e43c-494e-869d-365ae311b5a4",
+          "elements": [
+            "09914223-cf81-40a5-a772-0c4d7e297d88",
+            "eb500d2a-7abe-4cc7-b8b9-701eec780af7",
+            "e29ce50e-242b-4fbe-9f89-ddce910acbb9"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "a1d2a98c-d831-45b0-b013-a5d252c6d5d2",
+              "actions": [
+                {
+                  "element": "09914223-cf81-40a5-a772-0c4d7e297d88",
+                  "type": "Burn"
+                },
+                {
+                  "element": "09914223-cf81-40a5-a772-0c4d7e297d88",
+                  "type": "Stage"
+                }
+              ]
+            },
+            {
+              "burn": "1e2e6e1c-aed7-45f7-9c8d-da98d475a97d",
+              "actions": [
+                {
+                  "element": "e29ce50e-242b-4fbe-9f89-ddce910acbb9",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "5ae39d89-1a4e-4f00-9db6-6fa0ae2f66b6",
+              "actions": [
+                {
+                  "element": "e29ce50e-242b-4fbe-9f89-ddce910acbb9",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "122af4c0-b121-4d8f-9b2d-17fa254406ea",
+              "actions": [
+                {
+                  "element": "e29ce50e-242b-4fbe-9f89-ddce910acbb9",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis II | Service Module Separation",
+          "type": "Remove Elements",
+          "priority": 1,
+          "missionTime": "P10D",
+          "location": "cd80096f-ba78-4b0b-80ec-c883525a98eb",
+          "elements": [
+            "e29ce50e-242b-4fbe-9f89-ddce910acbb9"
+          ]
+        }
+      ],
+      "demandModels": [
+        {
+          "name": "Crew Consumables",
+          "type": "Crew Consumables",
+          "templateId": "2bf334c1-ee72-4a8c-94f0-7cbb04169d23"
+        }
+      ],
+      "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+      "destination": "cd80096f-ba78-4b0b-80ec-c883525a98eb"
+    },
+    {
+      "name": "Gateway",
+      "startDate": "2027-03-01T00:00:00Z",
+      "events": [
+        {
+          "name": "Gateway | Create PPE and HALO",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "1dcb3e7b-86a4-401c-ac99-b8fee153439c",
+            "0eb8888c-8da8-478b-89d5-357c0b05a97b"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Gateway | Launch and Transfer",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "5e4552a9-58da-44b1-bc33-b344119ca87a",
+          "elements": [
+            "1dcb3e7b-86a4-401c-ac99-b8fee153439c",
+            "0eb8888c-8da8-478b-89d5-357c0b05a97b"
+          ]
+        }
+      ],
+      "demandModels": [],
+      "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+      "destination": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce"
+    },
+    {
+      "name": "Artemis III Propellant Aggregation",
+      "startDate": "2027-04-01T00:00:00Z",
+      "events": [
+        {
+          "name": "Artemis III Propellant Aggregation | Create Depot",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "1258e9a0-7316-4dc5-bb63-483829087f87"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Launch Depot",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "1258e9a0-7316-4dc5-bb63-483829087f87"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 01 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P1D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "ca0c99a1-c5de-46ba-89b1-dd9d79ebc26d"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 01 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P1D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "ca0c99a1-c5de-46ba-89b1-dd9d79ebc26d"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 01 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P2D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "ca0c99a1-c5de-46ba-89b1-dd9d79ebc26d",
+          "destinationContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 01 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P2D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "ca0c99a1-c5de-46ba-89b1-dd9d79ebc26d"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 02 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P7D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "f9a03e21-0702-4be6-a01a-c5a505f51e88"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 02 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P7D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "f9a03e21-0702-4be6-a01a-c5a505f51e88"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 02 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P8D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "f9a03e21-0702-4be6-a01a-c5a505f51e88",
+          "destinationContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 02 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P8D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "f9a03e21-0702-4be6-a01a-c5a505f51e88"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 03 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P13D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "bfd00014-6172-498c-96b0-f70922fa1195"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 03 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P13D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "bfd00014-6172-498c-96b0-f70922fa1195"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 03 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P14D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "bfd00014-6172-498c-96b0-f70922fa1195",
+          "destinationContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 03 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P14D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "bfd00014-6172-498c-96b0-f70922fa1195"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 04 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P19D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "0d4ddb49-ebd3-44fe-a08e-82771906c0df"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 04 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P19D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "0d4ddb49-ebd3-44fe-a08e-82771906c0df"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 04 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P20D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "0d4ddb49-ebd3-44fe-a08e-82771906c0df",
+          "destinationContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 04 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P20D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "0d4ddb49-ebd3-44fe-a08e-82771906c0df"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 05 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P25D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "204c5187-ce74-4d11-8936-f84375f9113e"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 05 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P25D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "204c5187-ce74-4d11-8936-f84375f9113e"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 05 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P26D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "204c5187-ce74-4d11-8936-f84375f9113e",
+          "destinationContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 05 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P26D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "204c5187-ce74-4d11-8936-f84375f9113e"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 06 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P31D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "bf235f66-b8e9-43bd-9aab-c4e93da4e2a6"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 06 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P31D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "bf235f66-b8e9-43bd-9aab-c4e93da4e2a6"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 06 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P32D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "bf235f66-b8e9-43bd-9aab-c4e93da4e2a6",
+          "destinationContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 06 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P32D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "bf235f66-b8e9-43bd-9aab-c4e93da4e2a6"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 07 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P37D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "ed70942c-b324-4e81-bb20-061e1f36d37d"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 07 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P37D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "ed70942c-b324-4e81-bb20-061e1f36d37d"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 07 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P38D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "ed70942c-b324-4e81-bb20-061e1f36d37d",
+          "destinationContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 07 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P38D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "ed70942c-b324-4e81-bb20-061e1f36d37d"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 08 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P43D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "083bebb0-db02-4d3d-841e-5cf671d2d6bf"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 08 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P43D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "083bebb0-db02-4d3d-841e-5cf671d2d6bf"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 08 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P44D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "083bebb0-db02-4d3d-841e-5cf671d2d6bf",
+          "destinationContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 08 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P44D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "083bebb0-db02-4d3d-841e-5cf671d2d6bf"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 09 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P49D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "bb0105ad-28e1-4c15-8de0-9ef36c066dfa"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 09 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P49D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "bb0105ad-28e1-4c15-8de0-9ef36c066dfa"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 09 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P50D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "bb0105ad-28e1-4c15-8de0-9ef36c066dfa",
+          "destinationContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Tanker 09 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P50D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "bb0105ad-28e1-4c15-8de0-9ef36c066dfa"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Create HLS",
+          "type": "Create Elements",
+          "priority": 3,
+          "missionTime": "P50D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "31e3422a-f921-41da-9704-2ad8e6c674eb"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Launch HLS",
+          "type": "Flight Transport",
+          "priority": 4,
+          "missionTime": "P50D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "31e3422a-f921-41da-9704-2ad8e6c674eb"
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Refuel HLS",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P51D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "1258e9a0-7316-4dc5-bb63-483829087f87",
+          "destinationContainer": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+          "transferMode": "Fill Destination",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | HLS Transfer to NRHO",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P51D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "3d7901e7-dc6d-4481-9f0b-a18bf3f9b7d8",
+          "elements": [
+            "31e3422a-f921-41da-9704-2ad8e6c674eb"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "91f1ad08-e6e1-4653-8818-bed076202576",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "7055946f-57f8-498f-b12f-a036d9f688c1",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "32d75e25-f434-4ff2-a944-e4e704d5d873",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c5ff24a3-d606-4584-8f78-04d36a9b35e2",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "530e20c7-7b82-4b4d-9998-172fb5c8be6a",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis III Propellant Aggregation | Depot Disposal",
+          "type": "Remove Elements",
+          "priority": 3,
+          "missionTime": "P51D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "elements": [
+            "1258e9a0-7316-4dc5-bb63-483829087f87"
+          ]
+        }
+      ],
+      "demandModels": [],
+      "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+      "destination": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce"
+    },
+    {
+      "name": "Artemis III",
+      "startDate": "2027-05-23T00:00:00Z",
+      "events": [
+        {
+          "name": "Artemis III | Create Launch Stack",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "9c0a9c1f-0fe7-4059-8fd6-f3a1dcc8d36d",
+            "a3ce4423-f5e4-47a9-a6a1-90e0e660d5b1",
+            "a3423e2e-659d-4b77-8e22-2ed2537bf08a",
+            "fe2cc310-621f-4421-bfe7-f9ce62462977",
+            "fecc9663-a1d0-46ea-827f-75ceefb7b138",
+            "347801d6-7cc0-4476-960d-ac810b6f4de7",
+            "9e2fbb39-05f0-4f79-af8b-e7ff90535ee2"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis III | Create Crew",
+          "type": "Create Elements",
+          "priority": 3,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "9fbad902-78a5-48f4-b45f-ff3929faa1d5",
+            "3f0ac14d-d1e5-459e-aad3-ff61db174ecb",
+            "311296cf-1e07-48b6-a23a-b4737bdd2d3f",
+            "9580b86e-ffa9-41ef-9d28-853d991dacd0"
+          ],
+          "container": "fecc9663-a1d0-46ea-827f-75ceefb7b138"
+        },
+        {
+          "name": "Artemis III | Earth Ascent",
+          "type": "Space Transport",
+          "priority": 4,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "9c0b22d1-5381-4104-9fbd-1f5783f63e6f",
+          "elements": [
+            "9c0a9c1f-0fe7-4059-8fd6-f3a1dcc8d36d",
+            "a3ce4423-f5e4-47a9-a6a1-90e0e660d5b1",
+            "a3423e2e-659d-4b77-8e22-2ed2537bf08a",
+            "fe2cc310-621f-4421-bfe7-f9ce62462977",
+            "fecc9663-a1d0-46ea-827f-75ceefb7b138",
+            "347801d6-7cc0-4476-960d-ac810b6f4de7",
+            "9e2fbb39-05f0-4f79-af8b-e7ff90535ee2"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "04c9695c-7550-4eaf-a018-d718ff120107",
+              "actions": [
+                {
+                  "element": "9c0a9c1f-0fe7-4059-8fd6-f3a1dcc8d36d",
+                  "type": "Burn"
+                },
+                {
+                  "element": "9c0a9c1f-0fe7-4059-8fd6-f3a1dcc8d36d",
+                  "type": "Stage"
+                },
+                {
+                  "element": "9e2fbb39-05f0-4f79-af8b-e7ff90535ee2",
+                  "type": "Stage"
+                },
+                {
+                  "element": "a3ce4423-f5e4-47a9-a6a1-90e0e660d5b1",
+                  "type": "Burn"
+                },
+                {
+                  "element": "a3ce4423-f5e4-47a9-a6a1-90e0e660d5b1",
+                  "type": "Stage"
+                },
+                {
+                  "element": "a3423e2e-659d-4b77-8e22-2ed2537bf08a",
+                  "type": "Stage"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis III | Trans-Lunar Injection",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P1D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "3d7901e7-dc6d-4481-9f0b-a18bf3f9b7d8",
+          "elements": [
+            "fe2cc310-621f-4421-bfe7-f9ce62462977",
+            "fecc9663-a1d0-46ea-827f-75ceefb7b138",
+            "347801d6-7cc0-4476-960d-ac810b6f4de7"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "91f1ad08-e6e1-4653-8818-bed076202576",
+              "actions": [
+                {
+                  "element": "fe2cc310-621f-4421-bfe7-f9ce62462977",
+                  "type": "Burn"
+                },
+                {
+                  "element": "fe2cc310-621f-4421-bfe7-f9ce62462977",
+                  "type": "Stage"
+                }
+              ]
+            },
+            {
+              "burn": "7055946f-57f8-498f-b12f-a036d9f688c1",
+              "actions": [
+                {
+                  "element": "347801d6-7cc0-4476-960d-ac810b6f4de7",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "32d75e25-f434-4ff2-a944-e4e704d5d873",
+              "actions": [
+                {
+                  "element": "347801d6-7cc0-4476-960d-ac810b6f4de7",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c5ff24a3-d606-4584-8f78-04d36a9b35e2",
+              "actions": [
+                {
+                  "element": "347801d6-7cc0-4476-960d-ac810b6f4de7",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "530e20c7-7b82-4b4d-9998-172fb5c8be6a",
+              "actions": [
+                {
+                  "element": "347801d6-7cc0-4476-960d-ac810b6f4de7",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis III | Crew Transfer to HLS",
+          "type": "Move Elements",
+          "priority": 3,
+          "missionTime": "P8D",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "9fbad902-78a5-48f4-b45f-ff3929faa1d5",
+            "3f0ac14d-d1e5-459e-aad3-ff61db174ecb"
+          ],
+          "container": "31e3422a-f921-41da-9704-2ad8e6c674eb"
+        },
+        {
+          "name": "Artemis III | HLS Transfer to LLO",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P9D",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "edge": "2fdee1ca-6437-45df-a0db-69cdddd74dac",
+          "elements": [
+            "31e3422a-f921-41da-9704-2ad8e6c674eb"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "45416b19-285f-46ef-9bc0-465234d38b93",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "61d50732-2658-46f6-b7f8-06df671ad17c",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis III | Lunar Descent",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P9DT12H",
+          "location": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+          "edge": "1d311e20-7e23-4122-a205-00213dd6ad35",
+          "elements": [
+            "31e3422a-f921-41da-9704-2ad8e6c674eb"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "3da77d37-79f5-4c64-a750-862c2aeff5a9",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "f9214752-8f98-4055-9c8e-160e2175ea09",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis III | Surface Exploration",
+          "type": "Crewed Exploration",
+          "priority": 1,
+          "missionTime": "P10D",
+          "location": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+          "evaDuration": "PT8H",
+          "duration": "P6DT12H",
+          "vehicle": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+          "evaPerWeek": 4,
+          "elementStates": [
+            {
+              "element": "9fbad902-78a5-48f4-b45f-ff3929faa1d5",
+              "stateIndex": -1
+            },
+            {
+              "element": "3f0ac14d-d1e5-459e-aad3-ff61db174ecb",
+              "stateIndex": -1
+            }
+          ],
+          "additionalDemands": []
+        },
+        {
+          "name": "Artemis III | Collect Samples",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P16DT12H",
+          "location": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+          "elements": [
+            "1536ed41-86f2-4d4b-8178-07355c39b526"
+          ],
+          "container": "31e3422a-f921-41da-9704-2ad8e6c674eb"
+        },
+        {
+          "name": "Artemis III | Lunar Ascent",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P16DT12H",
+          "location": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+          "edge": "9ce5dd3c-20a4-4be3-a973-04713bad5e67",
+          "elements": [
+            "31e3422a-f921-41da-9704-2ad8e6c674eb"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "639f196d-248c-4bba-bb1f-a0e475bcda35",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "ff06ceac-6676-4e59-91a4-e774a8ab1160",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis III | HLS Transfer to NRHO",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P17DT12H",
+          "location": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+          "edge": "7980949c-162c-473e-987f-ebbb39e8e38b",
+          "elements": [
+            "31e3422a-f921-41da-9704-2ad8e6c674eb"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "3b24a0a6-5f37-4c96-9c2f-2281990bf1cd",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "cb4e0662-72bb-42c7-9185-d2ae9d5cba10",
+              "actions": [
+                {
+                  "element": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis III | Crew and Samples to Orion",
+          "type": "Move Elements",
+          "priority": 1,
+          "missionTime": "P18DT12H",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "9fbad902-78a5-48f4-b45f-ff3929faa1d5",
+            "3f0ac14d-d1e5-459e-aad3-ff61db174ecb",
+            "1536ed41-86f2-4d4b-8178-07355c39b526"
+          ],
+          "container": "fecc9663-a1d0-46ea-827f-75ceefb7b138"
+        },
+        {
+          "name": "Artemis III | HLS Disposal",
+          "type": "Remove Elements",
+          "priority": 2,
+          "missionTime": "P18DT12H",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "31e3422a-f921-41da-9704-2ad8e6c674eb"
+          ]
+        },
+        {
+          "name": "Artemis III | Trans-Earth Injection",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P19DT12H",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "edge": "bfed490a-05af-49d0-bbcf-0f2e2cd4247b",
+          "elements": [
+            "fecc9663-a1d0-46ea-827f-75ceefb7b138",
+            "347801d6-7cc0-4476-960d-ac810b6f4de7"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "ae52dca0-473c-4990-ac2d-55a15950a173",
+              "actions": [
+                {
+                  "element": "347801d6-7cc0-4476-960d-ac810b6f4de7",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "d22a50bd-638d-4b44-bf3b-2febb370fe6d",
+              "actions": [
+                {
+                  "element": "347801d6-7cc0-4476-960d-ac810b6f4de7",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c8457678-d594-480d-9a79-6b031a447920",
+              "actions": [
+                {
+                  "element": "347801d6-7cc0-4476-960d-ac810b6f4de7",
+                  "type": "Burn"
+                },
+                {
+                  "element": "347801d6-7cc0-4476-960d-ac810b6f4de7",
+                  "type": "Stage"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "demandModels": [
+        {
+          "name": "Crew Consumables",
+          "type": "Crew Consumables",
+          "templateId": "2bf334c1-ee72-4a8c-94f0-7cbb04169d23"
+        }
+      ],
+      "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+      "destination": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+      "returnOrigin": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+      "returnDestination": "cd80096f-ba78-4b0b-80ec-c883525a98eb"
+    },
+    {
+      "name": "Artemis IV Propellant Aggregation",
+      "startDate": "2028-07-01T00:00:00Z",
+      "events": [
+        {
+          "name": "Artemis IV Propellant Aggregation | Create Depot",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "8e7e49a7-b22a-4732-aeab-8d328bf02119"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Launch Depot",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "8e7e49a7-b22a-4732-aeab-8d328bf02119"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 01 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P1D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "f60a9218-a67d-4fb4-8e38-ebbd21edb01a"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 01 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P1D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "f60a9218-a67d-4fb4-8e38-ebbd21edb01a"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 01 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P2D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "f60a9218-a67d-4fb4-8e38-ebbd21edb01a",
+          "destinationContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 01 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P2D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "f60a9218-a67d-4fb4-8e38-ebbd21edb01a"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 02 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P7D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "47c5d368-1e01-4725-9d02-c93c851f5cc8"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 02 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P7D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "47c5d368-1e01-4725-9d02-c93c851f5cc8"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 02 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P8D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "47c5d368-1e01-4725-9d02-c93c851f5cc8",
+          "destinationContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 02 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P8D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "47c5d368-1e01-4725-9d02-c93c851f5cc8"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 03 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P13D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "e4e8bc23-d84f-4360-afd7-95e3a3317147"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 03 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P13D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "e4e8bc23-d84f-4360-afd7-95e3a3317147"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 03 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P14D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "e4e8bc23-d84f-4360-afd7-95e3a3317147",
+          "destinationContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 03 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P14D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "e4e8bc23-d84f-4360-afd7-95e3a3317147"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 04 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P19D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "427fcebd-e23a-4524-84e2-99d67a9bd5be"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 04 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P19D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "427fcebd-e23a-4524-84e2-99d67a9bd5be"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 04 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P20D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "427fcebd-e23a-4524-84e2-99d67a9bd5be",
+          "destinationContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 04 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P20D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "427fcebd-e23a-4524-84e2-99d67a9bd5be"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 05 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P25D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "6fcbb517-0a08-4ca0-b927-75b70d70809e"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 05 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P25D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "6fcbb517-0a08-4ca0-b927-75b70d70809e"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 05 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P26D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "6fcbb517-0a08-4ca0-b927-75b70d70809e",
+          "destinationContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 05 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P26D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "6fcbb517-0a08-4ca0-b927-75b70d70809e"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 06 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P31D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "dd35c604-60bd-4f87-aeff-fa0cdf4c45af"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 06 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P31D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "dd35c604-60bd-4f87-aeff-fa0cdf4c45af"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 06 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P32D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "dd35c604-60bd-4f87-aeff-fa0cdf4c45af",
+          "destinationContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 06 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P32D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "dd35c604-60bd-4f87-aeff-fa0cdf4c45af"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 07 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P37D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "d7ba057a-d2a5-4c0b-98e9-5787fcd4fef2"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 07 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P37D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "d7ba057a-d2a5-4c0b-98e9-5787fcd4fef2"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 07 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P38D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "d7ba057a-d2a5-4c0b-98e9-5787fcd4fef2",
+          "destinationContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 07 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P38D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "d7ba057a-d2a5-4c0b-98e9-5787fcd4fef2"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 08 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P43D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "f89159c4-ccb1-4d4a-b92d-8a5c2b6f863e"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 08 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P43D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "f89159c4-ccb1-4d4a-b92d-8a5c2b6f863e"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 08 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P44D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "f89159c4-ccb1-4d4a-b92d-8a5c2b6f863e",
+          "destinationContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 08 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P44D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "f89159c4-ccb1-4d4a-b92d-8a5c2b6f863e"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 09 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P49D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "929ad8c7-245e-4679-80ea-c7784a5d1e05"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 09 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P49D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "929ad8c7-245e-4679-80ea-c7784a5d1e05"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 09 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P50D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "929ad8c7-245e-4679-80ea-c7784a5d1e05",
+          "destinationContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Tanker 09 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P50D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "929ad8c7-245e-4679-80ea-c7784a5d1e05"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Create HLS",
+          "type": "Create Elements",
+          "priority": 3,
+          "missionTime": "P50D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Launch HLS",
+          "type": "Flight Transport",
+          "priority": 4,
+          "missionTime": "P50D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Refuel HLS",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P51D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+          "destinationContainer": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+          "transferMode": "Fill Destination",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | HLS Transfer to NRHO",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P51D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "3d7901e7-dc6d-4481-9f0b-a18bf3f9b7d8",
+          "elements": [
+            "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "91f1ad08-e6e1-4653-8818-bed076202576",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "7055946f-57f8-498f-b12f-a036d9f688c1",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "32d75e25-f434-4ff2-a944-e4e704d5d873",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c5ff24a3-d606-4584-8f78-04d36a9b35e2",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "530e20c7-7b82-4b4d-9998-172fb5c8be6a",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis IV Propellant Aggregation | Depot Disposal",
+          "type": "Remove Elements",
+          "priority": 3,
+          "missionTime": "P51D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "elements": [
+            "8e7e49a7-b22a-4732-aeab-8d328bf02119"
+          ]
+        }
+      ],
+      "demandModels": [],
+      "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+      "destination": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce"
+    },
+    {
+      "name": "Artemis IV",
+      "startDate": "2028-08-22T00:00:00Z",
+      "events": [
+        {
+          "name": "Artemis IV | Create Launch Stack",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "c0d39391-279e-42c1-a500-a93c6c7791e4",
+            "aacdfca4-4da3-4a39-bcee-30917a567271",
+            "bcc54f2a-0bdc-4b6c-8e70-de5c5b502477",
+            "43ba9cef-44e5-46a5-b0f0-50935ff44f98",
+            "cf11f02a-db31-4e2f-9f91-5ade41ae14b4",
+            "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+            "ec91e07e-a6ec-43e0-986e-30628da7fdd9",
+            "92ef4e05-f22d-4616-88c0-92face02a92e"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis IV | Create Crew",
+          "type": "Create Elements",
+          "priority": 3,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "e6fa9b2c-6a38-49c4-b72a-bf34449d24ce",
+            "0bdaabfd-b1aa-4b99-9451-73e029c32725",
+            "00e89565-9607-4bf5-bd3d-8c524ace08ab",
+            "ee4fdd38-e093-4a5a-b338-ba6f2e3deb3c"
+          ],
+          "container": "cf11f02a-db31-4e2f-9f91-5ade41ae14b4"
+        },
+        {
+          "name": "Artemis IV | Earth Ascent",
+          "type": "Space Transport",
+          "priority": 4,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "9c0b22d1-5381-4104-9fbd-1f5783f63e6f",
+          "elements": [
+            "c0d39391-279e-42c1-a500-a93c6c7791e4",
+            "aacdfca4-4da3-4a39-bcee-30917a567271",
+            "bcc54f2a-0bdc-4b6c-8e70-de5c5b502477",
+            "43ba9cef-44e5-46a5-b0f0-50935ff44f98",
+            "cf11f02a-db31-4e2f-9f91-5ade41ae14b4",
+            "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+            "ec91e07e-a6ec-43e0-986e-30628da7fdd9",
+            "92ef4e05-f22d-4616-88c0-92face02a92e"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "04c9695c-7550-4eaf-a018-d718ff120107",
+              "actions": [
+                {
+                  "element": "c0d39391-279e-42c1-a500-a93c6c7791e4",
+                  "type": "Burn"
+                },
+                {
+                  "element": "c0d39391-279e-42c1-a500-a93c6c7791e4",
+                  "type": "Stage"
+                },
+                {
+                  "element": "ec91e07e-a6ec-43e0-986e-30628da7fdd9",
+                  "type": "Stage"
+                },
+                {
+                  "element": "aacdfca4-4da3-4a39-bcee-30917a567271",
+                  "type": "Burn"
+                },
+                {
+                  "element": "aacdfca4-4da3-4a39-bcee-30917a567271",
+                  "type": "Stage"
+                },
+                {
+                  "element": "bcc54f2a-0bdc-4b6c-8e70-de5c5b502477",
+                  "type": "Stage"
+                },
+                {
+                  "element": "43ba9cef-44e5-46a5-b0f0-50935ff44f98",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis IV | Trans-Lunar Injection",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P1D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "3d7901e7-dc6d-4481-9f0b-a18bf3f9b7d8",
+          "elements": [
+            "43ba9cef-44e5-46a5-b0f0-50935ff44f98",
+            "cf11f02a-db31-4e2f-9f91-5ade41ae14b4",
+            "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+            "92ef4e05-f22d-4616-88c0-92face02a92e"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "91f1ad08-e6e1-4653-8818-bed076202576",
+              "actions": [
+                {
+                  "element": "43ba9cef-44e5-46a5-b0f0-50935ff44f98",
+                  "type": "Burn"
+                },
+                {
+                  "element": "43ba9cef-44e5-46a5-b0f0-50935ff44f98",
+                  "type": "Stage"
+                }
+              ]
+            },
+            {
+              "burn": "7055946f-57f8-498f-b12f-a036d9f688c1",
+              "actions": [
+                {
+                  "element": "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "32d75e25-f434-4ff2-a944-e4e704d5d873",
+              "actions": [
+                {
+                  "element": "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c5ff24a3-d606-4584-8f78-04d36a9b35e2",
+              "actions": [
+                {
+                  "element": "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "530e20c7-7b82-4b4d-9998-172fb5c8be6a",
+              "actions": [
+                {
+                  "element": "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis IV | Dock at Gateway, Crew to HALO",
+          "type": "Move Elements",
+          "priority": 1,
+          "missionTime": "P8D",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "00e89565-9607-4bf5-bd3d-8c524ace08ab",
+            "ee4fdd38-e093-4a5a-b338-ba6f2e3deb3c"
+          ],
+          "container": "0eb8888c-8da8-478b-89d5-357c0b05a97b"
+        },
+        {
+          "name": "Artemis IV | Crew Transfer to HLS",
+          "type": "Move Elements",
+          "priority": 3,
+          "missionTime": "P8D",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "e6fa9b2c-6a38-49c4-b72a-bf34449d24ce",
+            "0bdaabfd-b1aa-4b99-9451-73e029c32725"
+          ],
+          "container": "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+        },
+        {
+          "name": "Artemis IV | HLS Transfer to LLO",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P9D",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "edge": "2fdee1ca-6437-45df-a0db-69cdddd74dac",
+          "elements": [
+            "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "45416b19-285f-46ef-9bc0-465234d38b93",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "61d50732-2658-46f6-b7f8-06df671ad17c",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis IV | Lunar Descent",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P9DT12H",
+          "location": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+          "edge": "1d311e20-7e23-4122-a205-00213dd6ad35",
+          "elements": [
+            "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "3da77d37-79f5-4c64-a750-862c2aeff5a9",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "f9214752-8f98-4055-9c8e-160e2175ea09",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis IV | Surface Exploration",
+          "type": "Crewed Exploration",
+          "priority": 1,
+          "missionTime": "P10D",
+          "location": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+          "evaDuration": "PT8H",
+          "duration": "P6DT12H",
+          "vehicle": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+          "evaPerWeek": 4,
+          "elementStates": [
+            {
+              "element": "e6fa9b2c-6a38-49c4-b72a-bf34449d24ce",
+              "stateIndex": -1
+            },
+            {
+              "element": "0bdaabfd-b1aa-4b99-9451-73e029c32725",
+              "stateIndex": -1
+            }
+          ],
+          "additionalDemands": []
+        },
+        {
+          "name": "Artemis IV | Collect Samples",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P16DT12H",
+          "location": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+          "elements": [
+            "3e6679f8-7043-45c8-a031-1fb8b426d4dd"
+          ],
+          "container": "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+        },
+        {
+          "name": "Artemis IV | Lunar Ascent",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P16DT12H",
+          "location": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+          "edge": "9ce5dd3c-20a4-4be3-a973-04713bad5e67",
+          "elements": [
+            "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "639f196d-248c-4bba-bb1f-a0e475bcda35",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "ff06ceac-6676-4e59-91a4-e774a8ab1160",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis IV | HLS Transfer to NRHO",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P17DT12H",
+          "location": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+          "edge": "7980949c-162c-473e-987f-ebbb39e8e38b",
+          "elements": [
+            "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "3b24a0a6-5f37-4c96-9c2f-2281990bf1cd",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "cb4e0662-72bb-42c7-9185-d2ae9d5cba10",
+              "actions": [
+                {
+                  "element": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis IV | Crew and Samples to Orion",
+          "type": "Move Elements",
+          "priority": 1,
+          "missionTime": "P18DT12H",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "e6fa9b2c-6a38-49c4-b72a-bf34449d24ce",
+            "0bdaabfd-b1aa-4b99-9451-73e029c32725",
+            "3e6679f8-7043-45c8-a031-1fb8b426d4dd",
+            "00e89565-9607-4bf5-bd3d-8c524ace08ab",
+            "ee4fdd38-e093-4a5a-b338-ba6f2e3deb3c"
+          ],
+          "container": "cf11f02a-db31-4e2f-9f91-5ade41ae14b4"
+        },
+        {
+          "name": "Artemis IV | HLS Disposal",
+          "type": "Remove Elements",
+          "priority": 2,
+          "missionTime": "P18DT12H",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "fc5cd761-ccf0-471a-90d6-602300d1da3b"
+          ]
+        },
+        {
+          "name": "Artemis IV | Trans-Earth Injection",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P19DT12H",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "edge": "bfed490a-05af-49d0-bbcf-0f2e2cd4247b",
+          "elements": [
+            "cf11f02a-db31-4e2f-9f91-5ade41ae14b4",
+            "be1d2c51-a0cc-4f52-81ae-b41f7e050f74"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "ae52dca0-473c-4990-ac2d-55a15950a173",
+              "actions": [
+                {
+                  "element": "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "d22a50bd-638d-4b44-bf3b-2febb370fe6d",
+              "actions": [
+                {
+                  "element": "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c8457678-d594-480d-9a79-6b031a447920",
+              "actions": [
+                {
+                  "element": "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+                  "type": "Burn"
+                },
+                {
+                  "element": "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+                  "type": "Stage"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "demandModels": [
+        {
+          "name": "Crew Consumables",
+          "type": "Crew Consumables",
+          "templateId": "2bf334c1-ee72-4a8c-94f0-7cbb04169d23"
+        }
+      ],
+      "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+      "destination": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+      "returnOrigin": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+      "returnDestination": "cd80096f-ba78-4b0b-80ec-c883525a98eb"
+    },
+    {
+      "name": "Artemis V Propellant Aggregation",
+      "startDate": "2030-03-01T00:00:00Z",
+      "events": [
+        {
+          "name": "Artemis V Propellant Aggregation | Create Depot",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "1fbec0e3-8c75-4988-b242-f072a5ef962b"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Launch Depot",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "1fbec0e3-8c75-4988-b242-f072a5ef962b"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 01 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P1D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "858aefc9-3ab3-471e-89ca-6b2c96b15976"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 01 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P1D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "858aefc9-3ab3-471e-89ca-6b2c96b15976"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 01 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P2D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "858aefc9-3ab3-471e-89ca-6b2c96b15976",
+          "destinationContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 01 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P2D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "858aefc9-3ab3-471e-89ca-6b2c96b15976"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 02 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P7D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "4517b6bd-4437-4d7d-90a5-e144ae6f270f"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 02 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P7D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "4517b6bd-4437-4d7d-90a5-e144ae6f270f"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 02 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P8D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "4517b6bd-4437-4d7d-90a5-e144ae6f270f",
+          "destinationContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 02 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P8D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "4517b6bd-4437-4d7d-90a5-e144ae6f270f"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 03 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P13D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "3cb4a8ad-a5fb-4bea-bd4f-ba473fc45936"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 03 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P13D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "3cb4a8ad-a5fb-4bea-bd4f-ba473fc45936"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 03 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P14D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "3cb4a8ad-a5fb-4bea-bd4f-ba473fc45936",
+          "destinationContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 03 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P14D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "3cb4a8ad-a5fb-4bea-bd4f-ba473fc45936"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 04 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P19D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "60a06d65-972b-4505-87e2-8c00faaf97d2"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 04 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P19D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "60a06d65-972b-4505-87e2-8c00faaf97d2"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 04 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P20D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "60a06d65-972b-4505-87e2-8c00faaf97d2",
+          "destinationContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 04 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P20D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "60a06d65-972b-4505-87e2-8c00faaf97d2"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 05 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P25D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "fc212247-fcd6-4b00-859d-675eba10d1b0"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 05 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P25D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "fc212247-fcd6-4b00-859d-675eba10d1b0"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 05 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P26D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "fc212247-fcd6-4b00-859d-675eba10d1b0",
+          "destinationContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 05 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P26D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "fc212247-fcd6-4b00-859d-675eba10d1b0"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 06 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P31D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "f2e0018c-2e86-400a-ab06-09abb56b3b8c"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 06 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P31D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "f2e0018c-2e86-400a-ab06-09abb56b3b8c"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 06 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P32D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "f2e0018c-2e86-400a-ab06-09abb56b3b8c",
+          "destinationContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 06 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P32D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "f2e0018c-2e86-400a-ab06-09abb56b3b8c"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 07 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P37D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "1a468c2f-b9dd-465e-895e-1eed4251c8dd"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 07 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P37D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "1a468c2f-b9dd-465e-895e-1eed4251c8dd"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 07 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P38D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "1a468c2f-b9dd-465e-895e-1eed4251c8dd",
+          "destinationContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 07 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P38D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "1a468c2f-b9dd-465e-895e-1eed4251c8dd"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 08 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P43D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "47c709cf-7b08-4091-9b44-41501fcdfd1e"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 08 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P43D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "47c709cf-7b08-4091-9b44-41501fcdfd1e"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 08 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P44D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "47c709cf-7b08-4091-9b44-41501fcdfd1e",
+          "destinationContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 08 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P44D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "47c709cf-7b08-4091-9b44-41501fcdfd1e"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 09 Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P49D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "5b4f4b31-8422-477f-9adb-3a0767c47882"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 09 Launch",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P49D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "5b4f4b31-8422-477f-9adb-3a0767c47882"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 09 Offload",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P50D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "5b4f4b31-8422-477f-9adb-3a0767c47882",
+          "destinationContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "transferMode": "Empty Origin",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Tanker 09 Return",
+          "type": "Flight Transport",
+          "priority": 2,
+          "missionTime": "P50D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "a2b93d00-ff61-4985-846c-dfdffa75de89",
+          "elements": [
+            "5b4f4b31-8422-477f-9adb-3a0767c47882"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Create HLS",
+          "type": "Create Elements",
+          "priority": 3,
+          "missionTime": "P50D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "0a1752bc-a82c-49ed-bd5e-694efed18514"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Launch HLS",
+          "type": "Flight Transport",
+          "priority": 4,
+          "missionTime": "P50D",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "7df74fc9-6bb1-4465-bfdd-efe4218d8f0a",
+          "elements": [
+            "0a1752bc-a82c-49ed-bd5e-694efed18514"
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Refuel HLS",
+          "type": "Transfer Resources",
+          "priority": 1,
+          "missionTime": "P51D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "resources": [],
+          "originContainer": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+          "destinationContainer": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+          "transferMode": "Fill Destination",
+          "lossFraction": 0.01
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | HLS Transfer to NRHO",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P51D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "3d7901e7-dc6d-4481-9f0b-a18bf3f9b7d8",
+          "elements": [
+            "0a1752bc-a82c-49ed-bd5e-694efed18514"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "91f1ad08-e6e1-4653-8818-bed076202576",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "7055946f-57f8-498f-b12f-a036d9f688c1",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "32d75e25-f434-4ff2-a944-e4e704d5d873",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c5ff24a3-d606-4584-8f78-04d36a9b35e2",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "530e20c7-7b82-4b4d-9998-172fb5c8be6a",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis V Propellant Aggregation | Depot Disposal",
+          "type": "Remove Elements",
+          "priority": 3,
+          "missionTime": "P51D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "elements": [
+            "1fbec0e3-8c75-4988-b242-f072a5ef962b"
+          ]
+        }
+      ],
+      "demandModels": [],
+      "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+      "destination": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce"
+    },
+    {
+      "name": "Artemis V",
+      "startDate": "2030-04-22T00:00:00Z",
+      "events": [
+        {
+          "name": "Artemis V | Create Launch Stack",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "01852ee6-06dc-442e-b3f3-c69c3301a4e9",
+            "298d1328-261c-4bf4-8317-8d45b24259b3",
+            "561c41d4-f2e0-483d-8765-10fa20fb47e1",
+            "93722500-0e61-43d9-98bb-f4948d071061",
+            "0cb899f8-c9ca-47dc-a8f9-ecc8f0f5dd49",
+            "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+            "e37a9f45-8e23-49f0-b1c3-f5ad28aa4e14",
+            "b7a4f2b3-83a1-42d9-8f39-b7b722e8dd39"
+          ],
+          "container": "4b9dd074-9921-40d6-85d1-144da440c679"
+        },
+        {
+          "name": "Artemis V | Create Crew",
+          "type": "Create Elements",
+          "priority": 3,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "elements": [
+            "3844d3bc-40c9-4de7-987c-5fc96aa9e76c",
+            "44bea736-028c-4fd4-acd0-abadc97fe07d",
+            "1a0f8245-4eb9-47e4-a1db-f9c6a6d5a353",
+            "acc50254-7443-4841-9636-b226416a7681"
+          ],
+          "container": "0cb899f8-c9ca-47dc-a8f9-ecc8f0f5dd49"
+        },
+        {
+          "name": "Artemis V | Earth Ascent",
+          "type": "Space Transport",
+          "priority": 4,
+          "missionTime": "PT0S",
+          "location": "4b9dd074-9921-40d6-85d1-144da440c679",
+          "edge": "9c0b22d1-5381-4104-9fbd-1f5783f63e6f",
+          "elements": [
+            "01852ee6-06dc-442e-b3f3-c69c3301a4e9",
+            "298d1328-261c-4bf4-8317-8d45b24259b3",
+            "561c41d4-f2e0-483d-8765-10fa20fb47e1",
+            "93722500-0e61-43d9-98bb-f4948d071061",
+            "0cb899f8-c9ca-47dc-a8f9-ecc8f0f5dd49",
+            "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+            "e37a9f45-8e23-49f0-b1c3-f5ad28aa4e14",
+            "b7a4f2b3-83a1-42d9-8f39-b7b722e8dd39"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "04c9695c-7550-4eaf-a018-d718ff120107",
+              "actions": [
+                {
+                  "element": "01852ee6-06dc-442e-b3f3-c69c3301a4e9",
+                  "type": "Burn"
+                },
+                {
+                  "element": "01852ee6-06dc-442e-b3f3-c69c3301a4e9",
+                  "type": "Stage"
+                },
+                {
+                  "element": "e37a9f45-8e23-49f0-b1c3-f5ad28aa4e14",
+                  "type": "Stage"
+                },
+                {
+                  "element": "298d1328-261c-4bf4-8317-8d45b24259b3",
+                  "type": "Burn"
+                },
+                {
+                  "element": "298d1328-261c-4bf4-8317-8d45b24259b3",
+                  "type": "Stage"
+                },
+                {
+                  "element": "561c41d4-f2e0-483d-8765-10fa20fb47e1",
+                  "type": "Stage"
+                },
+                {
+                  "element": "93722500-0e61-43d9-98bb-f4948d071061",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis V | Trans-Lunar Injection",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P1D",
+          "location": "8f2f2436-5d09-44eb-ac6c-8523536a9034",
+          "edge": "3d7901e7-dc6d-4481-9f0b-a18bf3f9b7d8",
+          "elements": [
+            "93722500-0e61-43d9-98bb-f4948d071061",
+            "0cb899f8-c9ca-47dc-a8f9-ecc8f0f5dd49",
+            "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+            "b7a4f2b3-83a1-42d9-8f39-b7b722e8dd39"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "91f1ad08-e6e1-4653-8818-bed076202576",
+              "actions": [
+                {
+                  "element": "93722500-0e61-43d9-98bb-f4948d071061",
+                  "type": "Burn"
+                },
+                {
+                  "element": "93722500-0e61-43d9-98bb-f4948d071061",
+                  "type": "Stage"
+                }
+              ]
+            },
+            {
+              "burn": "7055946f-57f8-498f-b12f-a036d9f688c1",
+              "actions": [
+                {
+                  "element": "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "32d75e25-f434-4ff2-a944-e4e704d5d873",
+              "actions": [
+                {
+                  "element": "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c5ff24a3-d606-4584-8f78-04d36a9b35e2",
+              "actions": [
+                {
+                  "element": "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "530e20c7-7b82-4b4d-9998-172fb5c8be6a",
+              "actions": [
+                {
+                  "element": "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis V | Dock at Gateway, Crew to HALO",
+          "type": "Move Elements",
+          "priority": 1,
+          "missionTime": "P8D",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "1a0f8245-4eb9-47e4-a1db-f9c6a6d5a353",
+            "acc50254-7443-4841-9636-b226416a7681"
+          ],
+          "container": "0eb8888c-8da8-478b-89d5-357c0b05a97b"
+        },
+        {
+          "name": "Artemis V | Crew Transfer to HLS",
+          "type": "Move Elements",
+          "priority": 3,
+          "missionTime": "P8D",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "3844d3bc-40c9-4de7-987c-5fc96aa9e76c",
+            "44bea736-028c-4fd4-acd0-abadc97fe07d"
+          ],
+          "container": "0a1752bc-a82c-49ed-bd5e-694efed18514"
+        },
+        {
+          "name": "Artemis V | HLS Transfer to LLO",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P9D",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "edge": "2fdee1ca-6437-45df-a0db-69cdddd74dac",
+          "elements": [
+            "0a1752bc-a82c-49ed-bd5e-694efed18514"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "45416b19-285f-46ef-9bc0-465234d38b93",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "61d50732-2658-46f6-b7f8-06df671ad17c",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis V | Lunar Descent",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P9DT12H",
+          "location": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+          "edge": "1d311e20-7e23-4122-a205-00213dd6ad35",
+          "elements": [
+            "0a1752bc-a82c-49ed-bd5e-694efed18514"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "3da77d37-79f5-4c64-a750-862c2aeff5a9",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "f9214752-8f98-4055-9c8e-160e2175ea09",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis V | Surface Exploration",
+          "type": "Crewed Exploration",
+          "priority": 1,
+          "missionTime": "P10D",
+          "location": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+          "evaDuration": "PT8H",
+          "duration": "P6DT12H",
+          "vehicle": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+          "evaPerWeek": 4,
+          "elementStates": [
+            {
+              "element": "3844d3bc-40c9-4de7-987c-5fc96aa9e76c",
+              "stateIndex": -1
+            },
+            {
+              "element": "44bea736-028c-4fd4-acd0-abadc97fe07d",
+              "stateIndex": -1
+            }
+          ],
+          "additionalDemands": []
+        },
+        {
+          "name": "Artemis V | Collect Samples",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "P16DT12H",
+          "location": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+          "elements": [
+            "5aebf128-df5c-42fb-9081-f2a3dda68da0"
+          ],
+          "container": "0a1752bc-a82c-49ed-bd5e-694efed18514"
+        },
+        {
+          "name": "Artemis V | Lunar Ascent",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P16DT12H",
+          "location": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+          "edge": "9ce5dd3c-20a4-4be3-a973-04713bad5e67",
+          "elements": [
+            "0a1752bc-a82c-49ed-bd5e-694efed18514"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "639f196d-248c-4bba-bb1f-a0e475bcda35",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "ff06ceac-6676-4e59-91a4-e774a8ab1160",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis V | HLS Transfer to NRHO",
+          "type": "Space Transport",
+          "priority": 1,
+          "missionTime": "P17DT12H",
+          "location": "6c0a2ab3-918e-439d-983f-8587e6b5a6b9",
+          "edge": "7980949c-162c-473e-987f-ebbb39e8e38b",
+          "elements": [
+            "0a1752bc-a82c-49ed-bd5e-694efed18514"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "3b24a0a6-5f37-4c96-9c2f-2281990bf1cd",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "cb4e0662-72bb-42c7-9185-d2ae9d5cba10",
+              "actions": [
+                {
+                  "element": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+                  "type": "Burn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Artemis V | Crew and Samples to Orion",
+          "type": "Move Elements",
+          "priority": 1,
+          "missionTime": "P18DT12H",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "3844d3bc-40c9-4de7-987c-5fc96aa9e76c",
+            "44bea736-028c-4fd4-acd0-abadc97fe07d",
+            "5aebf128-df5c-42fb-9081-f2a3dda68da0",
+            "1a0f8245-4eb9-47e4-a1db-f9c6a6d5a353",
+            "acc50254-7443-4841-9636-b226416a7681"
+          ],
+          "container": "0cb899f8-c9ca-47dc-a8f9-ecc8f0f5dd49"
+        },
+        {
+          "name": "Artemis V | HLS Disposal",
+          "type": "Remove Elements",
+          "priority": 2,
+          "missionTime": "P18DT12H",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "elements": [
+            "0a1752bc-a82c-49ed-bd5e-694efed18514"
+          ]
+        },
+        {
+          "name": "Artemis V | Trans-Earth Injection",
+          "type": "Space Transport",
+          "priority": 2,
+          "missionTime": "P19DT12H",
+          "location": "4a8d5aa6-fd79-4562-bed7-ae14676bdcce",
+          "edge": "bfed490a-05af-49d0-bbcf-0f2e2cd4247b",
+          "elements": [
+            "0cb899f8-c9ca-47dc-a8f9-ecc8f0f5dd49",
+            "dca26d20-d1b7-44da-bb56-0d0a472d8e04"
+          ],
+          "burnStageSequence": [
+            {
+              "burn": "ae52dca0-473c-4990-ac2d-55a15950a173",
+              "actions": [
+                {
+                  "element": "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "d22a50bd-638d-4b44-bf3b-2febb370fe6d",
+              "actions": [
+                {
+                  "element": "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+                  "type": "Burn"
+                }
+              ]
+            },
+            {
+              "burn": "c8457678-d594-480d-9a79-6b031a447920",
+              "actions": [
+                {
+                  "element": "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+                  "type": "Burn"
+                },
+                {
+                  "element": "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+                  "type": "Stage"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "demandModels": [
+        {
+          "name": "Crew Consumables",
+          "type": "Crew Consumables",
+          "templateId": "2bf334c1-ee72-4a8c-94f0-7cbb04169d23"
+        }
+      ],
+      "origin": "4b9dd074-9921-40d6-85d1-144da440c679",
+      "destination": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+      "returnOrigin": "d10d5b95-29de-4011-aa5b-c84da6b5b86d",
+      "returnDestination": "cd80096f-ba78-4b0b-80ec-c883525a98eb"
+    }
+  ],
+  "elementTemplates": [
+    {
+      "id": "bfc056f3-1bd6-48f8-a05b-6ff2c2731826",
+      "name": "SLS SRBs",
+      "type": "Propulsive Vehicle",
+      "description": "SLS Solid Rocket Boosters (2)",
+      "classOfSupply": 9021,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 195000.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 0.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0,
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 269.0,
+          "fuelTank": {
+            "maxAmount": 1256000.0,
+            "contents": {
+              "resource": "1cf50100-d7d6-451e-b304-d9f96d0ca200",
+              "amount": 1256000.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "5b191d18-bbb7-4bdd-b5cf-003679a14a9f",
+      "name": "SLS Core",
+      "type": "Propulsive Vehicle",
+      "description": "SLS Core Stage",
+      "classOfSupply": 9021,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 88275.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 0.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0,
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 414.0,
+          "fuelTank": {
+            "maxAmount": 987000.0,
+            "contents": {
+              "resource": "164a0026-f77f-448f-8d0f-c72d6c2e36bc",
+              "amount": 987000.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "3ae60624-863b-43ea-951a-a20ce0b41bac",
+      "name": "iCPS",
+      "type": "Propulsive Vehicle",
+      "description": "SLS Interim Cryogenic Propulsion Stage (Block 1)",
+      "classOfSupply": 9022,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 3490.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 0.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0,
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 465.0,
+          "fuelTank": {
+            "maxAmount": 28576.0,
+            "contents": {
+              "resource": "164a0026-f77f-448f-8d0f-c72d6c2e36bc",
+              "amount": 28576.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "f65e69b5-6810-4309-833a-4ee25b7a3c00",
+      "name": "EUS",
+      "type": "Propulsive Vehicle",
+      "description": "SLS Exploration Upper Stage (Block 1B)",
+      "classOfSupply": 9022,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 15000.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 0.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0,
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 462.0,
+          "fuelTank": {
+            "maxAmount": 129000.0,
+            "contents": {
+              "resource": "164a0026-f77f-448f-8d0f-c72d6c2e36bc",
+              "amount": 129000.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "3c3d43c1-7861-4f08-b542-0b85e89498c4",
+      "name": "SLS SA",
+      "type": "Element",
+      "description": "SLS Spacecraft Adapter",
+      "classOfSupply": 5,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 1900.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": []
+    },
+    {
+      "id": "3cc57c4d-d514-48d7-a0e8-e470736008bc",
+      "name": "SLS LAS",
+      "type": "Element Carrier",
+      "description": "SLS Launch Abort System",
+      "classOfSupply": 9021,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 7250.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 0.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0
+    },
+    {
+      "id": "c17b6429-d4fd-4b2d-85ff-0529bccffcf4",
+      "name": "Orion SM",
+      "type": "Propulsive Vehicle",
+      "description": "Orion European Service Module",
+      "classOfSupply": 9022,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 6185.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 0.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0,
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 316.0,
+          "fuelTank": {
+            "maxAmount": 9276.0,
+            "contents": {
+              "resource": "83cee946-7cb9-47e5-b54d-7a3b29b43495",
+              "amount": 9276.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "e91dfb74-7b23-4114-a510-29216a19da18",
+      "name": "Orion CM",
+      "type": "Element Carrier",
+      "description": "Orion Crew Module",
+      "classOfSupply": 9,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 9300.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 1100.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Pressurized",
+      "contents": [],
+      "maxCrew": 4
+    },
+    {
+      "id": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Crew Member",
+      "type": "Human Agent",
+      "description": "Crew Member",
+      "classOfSupply": 0,
+      "environment": "Pressurized",
+      "accommodationMass": 0.0,
+      "mass": 100.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "activeTimeFraction": 0.66
+    },
+    {
+      "id": "d5c32c06-6d77-4a15-a136-d8d0a828550e",
+      "name": "Lunar Samples",
+      "type": "Element",
+      "description": "Lunar surface samples",
+      "classOfSupply": 6,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 100.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": []
+    },
+    {
+      "id": "f921f4b0-7123-4682-9a02-c676681e46ed",
+      "name": "HLS",
+      "type": "Propulsive Vehicle",
+      "description": "Starship-class Human Landing System",
+      "classOfSupply": 902,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 100000.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 15000.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Pressurized",
+      "contents": [],
+      "maxCrew": 4,
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 375.0,
+          "fuelTank": {
+            "maxAmount": 260870.0,
+            "contents": {
+              "resource": "ae6ba3f6-bf75-4b43-a0ec-ecd09ae4b0a7",
+              "amount": 10870.0
+            },
+            "boiloffRate": 0.001
+          },
+          "mixtureRatio": 3.6,
+          "oxidizerTank": {
+            "maxAmount": 939130.0,
+            "contents": {
+              "resource": "34789982-3931-430f-bf82-e63ebd2d612c",
+              "amount": 39130.0
+            },
+            "boiloffRate": 0.001
+          }
+        }
+      ]
+    },
+    {
+      "id": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Tanker",
+      "type": "Propulsive Vehicle",
+      "description": "Starship-class propellant tanker",
+      "classOfSupply": 9,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 100000.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 0.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0,
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 375.0,
+          "fuelTank": {
+            "maxAmount": 32609.0,
+            "contents": {
+              "resource": "ae6ba3f6-bf75-4b43-a0ec-ecd09ae4b0a7",
+              "amount": 32609.0
+            },
+            "boiloffRate": 0.0005
+          },
+          "mixtureRatio": 3.6,
+          "oxidizerTank": {
+            "maxAmount": 117391.0,
+            "contents": {
+              "resource": "34789982-3931-430f-bf82-e63ebd2d612c",
+              "amount": 117391.0
+            },
+            "boiloffRate": 0.0005
+          }
+        }
+      ]
+    },
+    {
+      "id": "90f703a1-819f-4774-98ab-ac047b46ea4d",
+      "name": "Depot",
+      "type": "Propulsive Vehicle",
+      "description": "Starship-class propellant depot in LEO",
+      "classOfSupply": 9,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 120000.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 0.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0,
+      "propulsionSystems": [
+        {
+          "type": "OMS",
+          "isp": 375.0,
+          "fuelTank": {
+            "maxAmount": 326087.0,
+            "contents": {
+              "resource": "ae6ba3f6-bf75-4b43-a0ec-ecd09ae4b0a7",
+              "amount": 0.0
+            },
+            "boiloffRate": 0.0005
+          },
+          "mixtureRatio": 3.6,
+          "oxidizerTank": {
+            "maxAmount": 1173913.0,
+            "contents": {
+              "resource": "34789982-3931-430f-bf82-e63ebd2d612c",
+              "amount": 0.0
+            },
+            "boiloffRate": 0.0005
+          }
+        }
+      ]
+    },
+    {
+      "id": "2bd69460-f29f-4517-9e22-ca9bbe78b463",
+      "name": "PPE",
+      "type": "Element",
+      "description": "Gateway Power and Propulsion Element",
+      "classOfSupply": 9,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 6000.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": []
+    },
+    {
+      "id": "f2b4a512-95e4-4571-83a8-0998ec4178fc",
+      "name": "HALO",
+      "type": "Element Carrier",
+      "description": "Gateway Habitation and Logistics Outpost",
+      "classOfSupply": 9,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 8000.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 1000.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Pressurized",
+      "contents": [],
+      "maxCrew": 4
+    },
+    {
+      "id": "175ff64d-3408-4bbc-910a-76e711ad70c9",
+      "name": "I-Hab",
+      "type": "Element Carrier",
+      "description": "Gateway International Habitation Module",
+      "classOfSupply": 9,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 10000.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 1000.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Pressurized",
+      "contents": [],
+      "maxCrew": 4
+    },
+    {
+      "id": "3f9abbfb-96a2-4288-9dfa-6a00d0785379",
+      "name": "ESPRIT",
+      "type": "Element",
+      "description": "Gateway refueling and communications module",
+      "classOfSupply": 9,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 6000.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": []
+    }
+  ],
+  "instantiatedElements": [
+    {
+      "id": "2dcfd15a-7faa-42af-91c4-bd7cb99aad2e",
+      "type": "Propulsive Vehicle",
+      "templateId": "bfc056f3-1bd6-48f8-a05b-6ff2c2731826",
+      "name": "Artemis I | SLS SRBs",
+      "contents": []
+    },
+    {
+      "id": "4a952d9c-1616-4b5d-be95-a9496c574fb8",
+      "type": "Propulsive Vehicle",
+      "templateId": "5b191d18-bbb7-4bdd-b5cf-003679a14a9f",
+      "name": "Artemis I | SLS Core",
+      "contents": []
+    },
+    {
+      "id": "1fa22600-08ee-4bbc-ac6d-2613d2ccfd32",
+      "type": "Propulsive Vehicle",
+      "templateId": "3ae60624-863b-43ea-951a-a20ce0b41bac",
+      "name": "Artemis I | iCPS",
+      "contents": []
+    },
+    {
+      "id": "53845e41-8c50-4b85-8e94-7fc1b64790cd",
+      "type": "Element",
+      "templateId": "3c3d43c1-7861-4f08-b542-0b85e89498c4",
+      "name": "Artemis I | SLS SA"
+    },
+    {
+      "id": "e2b1f060-1b1c-4092-aa07-57ea899b0099",
+      "type": "Element Carrier",
+      "templateId": "3cc57c4d-d514-48d7-a0e8-e470736008bc",
+      "name": "Artemis I | SLS LAS",
+      "contents": []
+    },
+    {
+      "id": "eebac749-6059-410c-ac47-9522493144a0",
+      "type": "Propulsive Vehicle",
+      "templateId": "c17b6429-d4fd-4b2d-85ff-0529bccffcf4",
+      "name": "Artemis I | Orion SM",
+      "contents": []
+    },
+    {
+      "id": "96a5f4ad-2628-4b12-b69b-5b55b10e954f",
+      "type": "Element Carrier",
+      "templateId": "e91dfb74-7b23-4114-a510-29216a19da18",
+      "name": "Artemis I | Orion CM",
+      "contents": []
+    },
+    {
+      "id": "cc4279d6-9780-4383-9ec0-dda69d128847",
+      "type": "Propulsive Vehicle",
+      "templateId": "bfc056f3-1bd6-48f8-a05b-6ff2c2731826",
+      "name": "Artemis II | SLS SRBs",
+      "contents": []
+    },
+    {
+      "id": "b00a8d01-7f8c-4ca4-a791-501e08201b86",
+      "type": "Propulsive Vehicle",
+      "templateId": "5b191d18-bbb7-4bdd-b5cf-003679a14a9f",
+      "name": "Artemis II | SLS Core",
+      "contents": []
+    },
+    {
+      "id": "09914223-cf81-40a5-a772-0c4d7e297d88",
+      "type": "Propulsive Vehicle",
+      "templateId": "3ae60624-863b-43ea-951a-a20ce0b41bac",
+      "name": "Artemis II | iCPS",
+      "contents": []
+    },
+    {
+      "id": "cc44d7ed-609f-4868-a538-455691118ea2",
+      "type": "Element",
+      "templateId": "3c3d43c1-7861-4f08-b542-0b85e89498c4",
+      "name": "Artemis II | SLS SA"
+    },
+    {
+      "id": "647d4a55-80de-43bd-96c7-ddcd4a31ddef",
+      "type": "Element Carrier",
+      "templateId": "3cc57c4d-d514-48d7-a0e8-e470736008bc",
+      "name": "Artemis II | SLS LAS",
+      "contents": []
+    },
+    {
+      "id": "e29ce50e-242b-4fbe-9f89-ddce910acbb9",
+      "type": "Propulsive Vehicle",
+      "templateId": "c17b6429-d4fd-4b2d-85ff-0529bccffcf4",
+      "name": "Artemis II | Orion SM",
+      "contents": []
+    },
+    {
+      "id": "eb500d2a-7abe-4cc7-b8b9-701eec780af7",
+      "type": "Element Carrier",
+      "templateId": "e91dfb74-7b23-4114-a510-29216a19da18",
+      "name": "Artemis II | Orion CM",
+      "contents": []
+    },
+    {
+      "id": "52f7fd2c-138e-46c8-b099-c29061d51a2c",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis II | Crew Member A"
+    },
+    {
+      "id": "95a177af-924a-409b-9bdb-57abb1fdb883",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis II | Crew Member B"
+    },
+    {
+      "id": "2677b9c8-4f6d-4e0e-ac47-04a939daa013",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis II | Crew Member C"
+    },
+    {
+      "id": "f054eeeb-8b36-4bfd-b916-6cbfd6777bb3",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis II | Crew Member D"
+    },
+    {
+      "id": "1dcb3e7b-86a4-401c-ac99-b8fee153439c",
+      "type": "Element",
+      "templateId": "2bd69460-f29f-4517-9e22-ca9bbe78b463",
+      "name": "Gateway | PPE"
+    },
+    {
+      "id": "0eb8888c-8da8-478b-89d5-357c0b05a97b",
+      "type": "Element Carrier",
+      "templateId": "f2b4a512-95e4-4571-83a8-0998ec4178fc",
+      "name": "Gateway | HALO",
+      "contents": []
+    },
+    {
+      "id": "1258e9a0-7316-4dc5-bb63-483829087f87",
+      "type": "Propulsive Vehicle",
+      "templateId": "90f703a1-819f-4774-98ab-ac047b46ea4d",
+      "name": "Artemis III | Depot",
+      "contents": []
+    },
+    {
+      "id": "31e3422a-f921-41da-9704-2ad8e6c674eb",
+      "type": "Propulsive Vehicle",
+      "templateId": "f921f4b0-7123-4682-9a02-c676681e46ed",
+      "name": "Artemis III | HLS",
+      "contents": []
+    },
+    {
+      "id": "ca0c99a1-c5de-46ba-89b1-dd9d79ebc26d",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis III | Tanker 01",
+      "contents": []
+    },
+    {
+      "id": "f9a03e21-0702-4be6-a01a-c5a505f51e88",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis III | Tanker 02",
+      "contents": []
+    },
+    {
+      "id": "bfd00014-6172-498c-96b0-f70922fa1195",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis III | Tanker 03",
+      "contents": []
+    },
+    {
+      "id": "0d4ddb49-ebd3-44fe-a08e-82771906c0df",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis III | Tanker 04",
+      "contents": []
+    },
+    {
+      "id": "204c5187-ce74-4d11-8936-f84375f9113e",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis III | Tanker 05",
+      "contents": []
+    },
+    {
+      "id": "bf235f66-b8e9-43bd-9aab-c4e93da4e2a6",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis III | Tanker 06",
+      "contents": []
+    },
+    {
+      "id": "ed70942c-b324-4e81-bb20-061e1f36d37d",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis III | Tanker 07",
+      "contents": []
+    },
+    {
+      "id": "083bebb0-db02-4d3d-841e-5cf671d2d6bf",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis III | Tanker 08",
+      "contents": []
+    },
+    {
+      "id": "bb0105ad-28e1-4c15-8de0-9ef36c066dfa",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis III | Tanker 09",
+      "contents": []
+    },
+    {
+      "id": "9c0a9c1f-0fe7-4059-8fd6-f3a1dcc8d36d",
+      "type": "Propulsive Vehicle",
+      "templateId": "bfc056f3-1bd6-48f8-a05b-6ff2c2731826",
+      "name": "Artemis III | SLS SRBs",
+      "contents": []
+    },
+    {
+      "id": "a3ce4423-f5e4-47a9-a6a1-90e0e660d5b1",
+      "type": "Propulsive Vehicle",
+      "templateId": "5b191d18-bbb7-4bdd-b5cf-003679a14a9f",
+      "name": "Artemis III | SLS Core",
+      "contents": []
+    },
+    {
+      "id": "fe2cc310-621f-4421-bfe7-f9ce62462977",
+      "type": "Propulsive Vehicle",
+      "templateId": "3ae60624-863b-43ea-951a-a20ce0b41bac",
+      "name": "Artemis III | iCPS",
+      "contents": []
+    },
+    {
+      "id": "a3423e2e-659d-4b77-8e22-2ed2537bf08a",
+      "type": "Element",
+      "templateId": "3c3d43c1-7861-4f08-b542-0b85e89498c4",
+      "name": "Artemis III | SLS SA"
+    },
+    {
+      "id": "9e2fbb39-05f0-4f79-af8b-e7ff90535ee2",
+      "type": "Element Carrier",
+      "templateId": "3cc57c4d-d514-48d7-a0e8-e470736008bc",
+      "name": "Artemis III | SLS LAS",
+      "contents": []
+    },
+    {
+      "id": "347801d6-7cc0-4476-960d-ac810b6f4de7",
+      "type": "Propulsive Vehicle",
+      "templateId": "c17b6429-d4fd-4b2d-85ff-0529bccffcf4",
+      "name": "Artemis III | Orion SM",
+      "contents": []
+    },
+    {
+      "id": "fecc9663-a1d0-46ea-827f-75ceefb7b138",
+      "type": "Element Carrier",
+      "templateId": "e91dfb74-7b23-4114-a510-29216a19da18",
+      "name": "Artemis III | Orion CM",
+      "contents": []
+    },
+    {
+      "id": "9fbad902-78a5-48f4-b45f-ff3929faa1d5",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis III | Crew Member A"
+    },
+    {
+      "id": "3f0ac14d-d1e5-459e-aad3-ff61db174ecb",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis III | Crew Member B"
+    },
+    {
+      "id": "311296cf-1e07-48b6-a23a-b4737bdd2d3f",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis III | Crew Member C"
+    },
+    {
+      "id": "9580b86e-ffa9-41ef-9d28-853d991dacd0",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis III | Crew Member D"
+    },
+    {
+      "id": "1536ed41-86f2-4d4b-8178-07355c39b526",
+      "type": "Element",
+      "templateId": "d5c32c06-6d77-4a15-a136-d8d0a828550e",
+      "name": "Artemis III | Lunar Samples"
+    },
+    {
+      "id": "8e7e49a7-b22a-4732-aeab-8d328bf02119",
+      "type": "Propulsive Vehicle",
+      "templateId": "90f703a1-819f-4774-98ab-ac047b46ea4d",
+      "name": "Artemis IV | Depot",
+      "contents": []
+    },
+    {
+      "id": "fc5cd761-ccf0-471a-90d6-602300d1da3b",
+      "type": "Propulsive Vehicle",
+      "templateId": "f921f4b0-7123-4682-9a02-c676681e46ed",
+      "name": "Artemis IV | HLS",
+      "contents": []
+    },
+    {
+      "id": "f60a9218-a67d-4fb4-8e38-ebbd21edb01a",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis IV | Tanker 01",
+      "contents": []
+    },
+    {
+      "id": "47c5d368-1e01-4725-9d02-c93c851f5cc8",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis IV | Tanker 02",
+      "contents": []
+    },
+    {
+      "id": "e4e8bc23-d84f-4360-afd7-95e3a3317147",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis IV | Tanker 03",
+      "contents": []
+    },
+    {
+      "id": "427fcebd-e23a-4524-84e2-99d67a9bd5be",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis IV | Tanker 04",
+      "contents": []
+    },
+    {
+      "id": "6fcbb517-0a08-4ca0-b927-75b70d70809e",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis IV | Tanker 05",
+      "contents": []
+    },
+    {
+      "id": "dd35c604-60bd-4f87-aeff-fa0cdf4c45af",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis IV | Tanker 06",
+      "contents": []
+    },
+    {
+      "id": "d7ba057a-d2a5-4c0b-98e9-5787fcd4fef2",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis IV | Tanker 07",
+      "contents": []
+    },
+    {
+      "id": "f89159c4-ccb1-4d4a-b92d-8a5c2b6f863e",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis IV | Tanker 08",
+      "contents": []
+    },
+    {
+      "id": "929ad8c7-245e-4679-80ea-c7784a5d1e05",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis IV | Tanker 09",
+      "contents": []
+    },
+    {
+      "id": "92ef4e05-f22d-4616-88c0-92face02a92e",
+      "type": "Element Carrier",
+      "templateId": "175ff64d-3408-4bbc-910a-76e711ad70c9",
+      "name": "Artemis IV | I-Hab",
+      "contents": []
+    },
+    {
+      "id": "c0d39391-279e-42c1-a500-a93c6c7791e4",
+      "type": "Propulsive Vehicle",
+      "templateId": "bfc056f3-1bd6-48f8-a05b-6ff2c2731826",
+      "name": "Artemis IV | SLS SRBs",
+      "contents": []
+    },
+    {
+      "id": "aacdfca4-4da3-4a39-bcee-30917a567271",
+      "type": "Propulsive Vehicle",
+      "templateId": "5b191d18-bbb7-4bdd-b5cf-003679a14a9f",
+      "name": "Artemis IV | SLS Core",
+      "contents": []
+    },
+    {
+      "id": "43ba9cef-44e5-46a5-b0f0-50935ff44f98",
+      "type": "Propulsive Vehicle",
+      "templateId": "f65e69b5-6810-4309-833a-4ee25b7a3c00",
+      "name": "Artemis IV | EUS",
+      "contents": []
+    },
+    {
+      "id": "bcc54f2a-0bdc-4b6c-8e70-de5c5b502477",
+      "type": "Element",
+      "templateId": "3c3d43c1-7861-4f08-b542-0b85e89498c4",
+      "name": "Artemis IV | SLS SA"
+    },
+    {
+      "id": "ec91e07e-a6ec-43e0-986e-30628da7fdd9",
+      "type": "Element Carrier",
+      "templateId": "3cc57c4d-d514-48d7-a0e8-e470736008bc",
+      "name": "Artemis IV | SLS LAS",
+      "contents": []
+    },
+    {
+      "id": "be1d2c51-a0cc-4f52-81ae-b41f7e050f74",
+      "type": "Propulsive Vehicle",
+      "templateId": "c17b6429-d4fd-4b2d-85ff-0529bccffcf4",
+      "name": "Artemis IV | Orion SM",
+      "contents": []
+    },
+    {
+      "id": "cf11f02a-db31-4e2f-9f91-5ade41ae14b4",
+      "type": "Element Carrier",
+      "templateId": "e91dfb74-7b23-4114-a510-29216a19da18",
+      "name": "Artemis IV | Orion CM",
+      "contents": []
+    },
+    {
+      "id": "e6fa9b2c-6a38-49c4-b72a-bf34449d24ce",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis IV | Crew Member A"
+    },
+    {
+      "id": "0bdaabfd-b1aa-4b99-9451-73e029c32725",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis IV | Crew Member B"
+    },
+    {
+      "id": "00e89565-9607-4bf5-bd3d-8c524ace08ab",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis IV | Crew Member C"
+    },
+    {
+      "id": "ee4fdd38-e093-4a5a-b338-ba6f2e3deb3c",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis IV | Crew Member D"
+    },
+    {
+      "id": "3e6679f8-7043-45c8-a031-1fb8b426d4dd",
+      "type": "Element",
+      "templateId": "d5c32c06-6d77-4a15-a136-d8d0a828550e",
+      "name": "Artemis IV | Lunar Samples"
+    },
+    {
+      "id": "1fbec0e3-8c75-4988-b242-f072a5ef962b",
+      "type": "Propulsive Vehicle",
+      "templateId": "90f703a1-819f-4774-98ab-ac047b46ea4d",
+      "name": "Artemis V | Depot",
+      "contents": []
+    },
+    {
+      "id": "0a1752bc-a82c-49ed-bd5e-694efed18514",
+      "type": "Propulsive Vehicle",
+      "templateId": "f921f4b0-7123-4682-9a02-c676681e46ed",
+      "name": "Artemis V | HLS",
+      "contents": []
+    },
+    {
+      "id": "858aefc9-3ab3-471e-89ca-6b2c96b15976",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis V | Tanker 01",
+      "contents": []
+    },
+    {
+      "id": "4517b6bd-4437-4d7d-90a5-e144ae6f270f",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis V | Tanker 02",
+      "contents": []
+    },
+    {
+      "id": "3cb4a8ad-a5fb-4bea-bd4f-ba473fc45936",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis V | Tanker 03",
+      "contents": []
+    },
+    {
+      "id": "60a06d65-972b-4505-87e2-8c00faaf97d2",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis V | Tanker 04",
+      "contents": []
+    },
+    {
+      "id": "fc212247-fcd6-4b00-859d-675eba10d1b0",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis V | Tanker 05",
+      "contents": []
+    },
+    {
+      "id": "f2e0018c-2e86-400a-ab06-09abb56b3b8c",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis V | Tanker 06",
+      "contents": []
+    },
+    {
+      "id": "1a468c2f-b9dd-465e-895e-1eed4251c8dd",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis V | Tanker 07",
+      "contents": []
+    },
+    {
+      "id": "47c709cf-7b08-4091-9b44-41501fcdfd1e",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis V | Tanker 08",
+      "contents": []
+    },
+    {
+      "id": "5b4f4b31-8422-477f-9adb-3a0767c47882",
+      "type": "Propulsive Vehicle",
+      "templateId": "9ae49d91-4970-47be-b2eb-754c6fddcc93",
+      "name": "Artemis V | Tanker 09",
+      "contents": []
+    },
+    {
+      "id": "b7a4f2b3-83a1-42d9-8f39-b7b722e8dd39",
+      "type": "Element",
+      "templateId": "3f9abbfb-96a2-4288-9dfa-6a00d0785379",
+      "name": "Artemis V | ESPRIT"
+    },
+    {
+      "id": "01852ee6-06dc-442e-b3f3-c69c3301a4e9",
+      "type": "Propulsive Vehicle",
+      "templateId": "bfc056f3-1bd6-48f8-a05b-6ff2c2731826",
+      "name": "Artemis V | SLS SRBs",
+      "contents": []
+    },
+    {
+      "id": "298d1328-261c-4bf4-8317-8d45b24259b3",
+      "type": "Propulsive Vehicle",
+      "templateId": "5b191d18-bbb7-4bdd-b5cf-003679a14a9f",
+      "name": "Artemis V | SLS Core",
+      "contents": []
+    },
+    {
+      "id": "93722500-0e61-43d9-98bb-f4948d071061",
+      "type": "Propulsive Vehicle",
+      "templateId": "f65e69b5-6810-4309-833a-4ee25b7a3c00",
+      "name": "Artemis V | EUS",
+      "contents": []
+    },
+    {
+      "id": "561c41d4-f2e0-483d-8765-10fa20fb47e1",
+      "type": "Element",
+      "templateId": "3c3d43c1-7861-4f08-b542-0b85e89498c4",
+      "name": "Artemis V | SLS SA"
+    },
+    {
+      "id": "e37a9f45-8e23-49f0-b1c3-f5ad28aa4e14",
+      "type": "Element Carrier",
+      "templateId": "3cc57c4d-d514-48d7-a0e8-e470736008bc",
+      "name": "Artemis V | SLS LAS",
+      "contents": []
+    },
+    {
+      "id": "dca26d20-d1b7-44da-bb56-0d0a472d8e04",
+      "type": "Propulsive Vehicle",
+      "templateId": "c17b6429-d4fd-4b2d-85ff-0529bccffcf4",
+      "name": "Artemis V | Orion SM",
+      "contents": []
+    },
+    {
+      "id": "0cb899f8-c9ca-47dc-a8f9-ecc8f0f5dd49",
+      "type": "Element Carrier",
+      "templateId": "e91dfb74-7b23-4114-a510-29216a19da18",
+      "name": "Artemis V | Orion CM",
+      "contents": []
+    },
+    {
+      "id": "3844d3bc-40c9-4de7-987c-5fc96aa9e76c",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis V | Crew Member A"
+    },
+    {
+      "id": "44bea736-028c-4fd4-acd0-abadc97fe07d",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis V | Crew Member B"
+    },
+    {
+      "id": "1a0f8245-4eb9-47e4-a1db-f9c6a6d5a353",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis V | Crew Member C"
+    },
+    {
+      "id": "acc50254-7443-4841-9636-b226416a7681",
+      "type": "Human Agent",
+      "templateId": "0dc30ce9-c938-45fd-96d4-a11147fed71d",
+      "name": "Artemis V | Crew Member D"
+    },
+    {
+      "id": "5aebf128-df5c-42fb-9081-f2a3dda68da0",
+      "type": "Element",
+      "templateId": "d5c32c06-6d77-4a15-a136-d8d0a828550e",
+      "name": "Artemis V | Lunar Samples"
+    }
+  ],
+  "demandModels": [
+    {
+      "id": "2bf334c1-ee72-4a8c-94f0-7cbb04169d23",
+      "name": "Crew Consumables",
+      "type": "Crew Consumables",
+      "description": "Crew consumables (food, water, gases, hygiene, clothing)",
+      "reservesDuration": 3.0,
+      "waterRecoveryRate": 0.0,
+      "clothingLifetime": 4.0,
+      "transitDemandsOmitted": false,
+      "waterRate": 3.6,
+      "evaWaterRate": 0.6875,
+      "foodSupportRate": 0.05556,
+      "ambientFoodRate": 0.76389,
+      "rfFoodRate": 1.61667,
+      "oxygenRate": 3.85714,
+      "evaOxygenRate": 0.07875,
+      "nitrogenRate": 2.21429,
+      "hygieneRate": 0.27778,
+      "hygieneKit": 1.8,
+      "clothingRate": 2.3,
+      "personalItems": 10.0,
+      "officeEquipment": 5.0,
+      "evaSuit": 107.0,
+      "evaLithiumHydroxide": 0.3625,
+      "healthEquipment": 20.0,
+      "healthConsumables": 0.1,
+      "safetyEquipment": 25.0,
+      "commEquipment": 20.0,
+      "computerEquipment": 5.0,
+      "trashBagRate": 0.05,
+      "wasteContainmentRate": 0.05
+    }
+  ],
+  "resourceList": [
+    {
+      "id": "1cf50100-d7d6-451e-b304-d9f96d0ca200",
+      "name": "PBAN Solid",
+      "classOfSupply": 105,
+      "environment": "Unpressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "description": "Solid rocket propellant",
+      "unitMass": 1.0,
+      "unitVolume": 0.0005830903790087463,
+      "type": "Continuous"
+    },
+    {
+      "id": "164a0026-f77f-448f-8d0f-c72d6c2e36bc",
+      "name": "LOX/LH2",
+      "classOfSupply": 101,
+      "environment": "Unpressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "description": "Liquid oxygen/liquid hydrogen (combined)",
+      "unitMass": 1.0,
+      "unitVolume": 0.002777777777777778,
+      "type": "Continuous"
+    },
+    {
+      "id": "83cee946-7cb9-47e5-b54d-7a3b29b43495",
+      "name": "MMH/N2O4",
+      "classOfSupply": 102,
+      "environment": "Unpressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "description": "Hypergolic propellants",
+      "unitMass": 1.0,
+      "unitVolume": 0.0008333333333333334,
+      "type": "Continuous"
+    },
+    {
+      "id": "34789982-3931-430f-bf82-e63ebd2d612c",
+      "name": "LOX",
+      "classOfSupply": 101,
+      "environment": "Unpressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "description": "Liquid oxygen",
+      "unitMass": 1.0,
+      "unitVolume": 0.0008764241893076249,
+      "type": "Continuous"
+    },
+    {
+      "id": "ae6ba3f6-bf75-4b43-a0ec-ecd09ae4b0a7",
+      "name": "LCH4",
+      "classOfSupply": 101,
+      "environment": "Unpressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "description": "Liquid methane",
+      "unitMass": 1.0,
+      "unitVolume": 0.002364066193853428,
+      "type": "Continuous"
+    }
+  ],
+  "manifest": {
+    "containers": [],
+    "loads": []
+  },
+  "configuration": {
+    "timePrecision": 0.05,
+    "demandPrecision": 0.01,
+    "massPrecision": 0.01,
+    "volumePrecision": 1e-6,
+    "volumeConstrained": false,
+    "itemDiscretization": "None",
+    "itemAggregation": 0.0,
+    "environmentConstrained": false,
+    "scavengeSpares": false,
+    "detailedEva": true,
+    "detailedExploration": true,
+    "genericPackingFactorGas": 1.0,
+    "genericPackingFactorLiquid": 0.5,
+    "genericPackingFactorPressurized": 0.2,
+    "genericPackingFactorUnpressurized": 0.6,
+    "smallGasTankMass": 10.8,
+    "smallGasTankVolume": 0.275,
+    "smallGasTankMaxMass": 10.0,
+    "smallGasTankMaxVolume": 0.275,
+    "largeGasTankMass": 108.0,
+    "largeGasTankVolume": 2.75,
+    "largeGasTankMaxMass": 100.0,
+    "largeGasTankMaxVolume": 2.75,
+    "smallLiquidTankMass": 11.4567,
+    "smallLiquidTankVolume": 0.0249,
+    "smallLiquidTankMaxMass": 24.9333,
+    "smallLiquidTankMaxVolume": 0.0249,
+    "largeLiquidTankMass": 34.37,
+    "largeLiquidTankVolume": 0.0748,
+    "largeLiquidTankMaxMass": 74.8,
+    "largeLiquidTankMaxVolume": 0.0748,
+    "cargoTransferBagMass": 0.83,
+    "cargoTransferBagVolume": 0.053,
+    "cargoTransferBagMaxMass": 26.8,
+    "cargoTransferBagMaxVolume": 0.049
+  }
+}

@@ -62,6 +62,8 @@ def get_enumerations() -> dict:
         "propulsionTypes": [
             {"id": t.value, "name": t.get_name()} for t in s.PropulsionType
         ],
+        "tankSelectors": _values(s.TankSelector),
+        "transferModes": _values(s.TransferMode),
         "eventTypes": _values(EventType),
         "stateTypes": _values(s.StateType),
         "resourceTypes": _values(s.ResourceType),

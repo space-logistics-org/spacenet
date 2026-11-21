@@ -26,8 +26,10 @@ SCENARIOS = (
     "quick_start/completed_quick_start_2_w_db.json",
     "quick_start/completed_quick_start_3_wo_db.json",
     "artemis/artemis_campaign.json",
+    "artemis/artemis_add_campaign.json",
 )
 QUICK_START_2 = SCENARIOS[2]
+ADD_CAMPAIGN = "artemis/artemis_add_campaign.json"
 
 
 def load_json(path: str) -> dict:
@@ -64,6 +66,8 @@ class TestMeta(ApiTestCase):
         enums = self.client.get("/api/meta/enums").json()
         self.assertEqual(len(enums["eventTypes"]), 14)
         self.assertEqual(len(enums["containerTypes"]), 9)
+        self.assertIn("OMS Oxidizer", enums["tankSelectors"])
+        self.assertIn("Fill Destination", enums["transferModes"])
         self.assertIn(
             {"id": 201, "name": "Water and Support Equipment", "base": 2},
             enums["classesOfSupply"],
@@ -332,7 +336,10 @@ class TestAnalysis(ApiTestCase):
                 "/api/simulate", json={"scenario": load_json(path)}
             )
             self.assertEqual(response.status_code, 200)
-            self.assertLess(len(response.content), 600_000)
+            # the network history of the multi-year campaign (235 time steps
+            # with dozens of elements) dominates its response size
+            budget = 10_000_000 if path == ADD_CAMPAIGN else 600_000
+            self.assertLess(len(response.content), budget)
             analysis = response.json()
             self.assertEqual(analysis["errorCount"], 0)
             totals = analysis["totals"]
@@ -345,6 +352,56 @@ class TestAnalysis(ApiTestCase):
             self.assertEqual(
                 len(analysis["networkHistory"]), len(simulator.network_history)
             )
+            propellant = analysis["propellant"]
+            self.assertEqual(len(propellant["tanks"]), len(propellant["budgets"]))
+            self.assertIn("propellantBurnedMass", totals)
+
+
+class TestPropellant(ApiTestCase):
+    def test_size_tankers(self):
+        sizing = self.post(
+            "/propellant/tankers",
+            required=100_000,
+            tankerDelivery=15_000,
+            depotCapacity=120_000,
+            boiloffRate=0.001,
+            intervalDays=10,
+            loiterDays=5,
+        )
+        self.assertTrue(sizing["feasible"])
+        self.assertEqual(sizing["flights"], 8)
+        self.assertGreaterEqual(sizing["final"], 100_000)
+        self.assertEqual(sizing["timeline"][0], [0, 0])
+
+    def test_invalid_tanker_request(self):
+        self.post("/propellant/tankers", status=422, required=100, tankerDelivery=0)
+        self.post(
+            "/propellant/tankers",
+            status=422,
+            required=100,
+            tankerDelivery=10,
+            transferLoss=1,
+        )
+
+    def test_evaluate_fill_transfer(self):
+        scenario = load_json(ADD_CAMPAIGN)
+        missions = scenario["missionList"]
+        mission_index, event_index = next(
+            (m, e)
+            for m, mission in enumerate(missions)
+            for e, event in enumerate(mission["events"])
+            if event.get("transferMode") == "Fill Destination"
+        )
+        evaluation = self.post(
+            "/events/evaluate",
+            scenario=scenario,
+            missionIndex=mission_index,
+            eventIndex=event_index,
+            event=missions[mission_index]["events"][event_index],
+        )
+        self.assertEqual(evaluation["issues"], [])
+        self.assertGreater(len(evaluation["transfers"]), 0)
+        self.assertTrue(all(t["delivered"] > 0 for t in evaluation["transfers"]))
 
 
 class TestManifest(ApiTestCase):
@@ -496,3 +553,8 @@ class TestExports(ApiTestCase):
             "/api/export/manifest", json={"scenario": scenario, "delimiter": "|"}
         )
         self.assertEqual(response.status_code, 422)
+
+    def test_propellant(self):
+        lines = self._export("/propellant", scenario=load_json(ADD_CAMPAIGN))
+        self.assertTrue(lines[0].startswith("Vehicle,Tank,Resource"))
+        self.assertGreater(len(lines), 10)

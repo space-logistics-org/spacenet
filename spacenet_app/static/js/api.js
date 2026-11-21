@@ -93,6 +93,9 @@ export const api = {
 
   simulate: (scenario, signal) => post("/simulate", { scenario }, signal),
 
+  /** Sizes the tanker flights which aggregate propellant in a depot. */
+  sizeTankers: (params, signal) => post("/propellant/tankers", params, signal),
+
   manifest: (operation, scenario, params = {}, signal) =>
     post(`/manifest/${operation}`, { scenario, ...params }, signal),
 

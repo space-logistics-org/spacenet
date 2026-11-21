@@ -31,6 +31,7 @@ SCENARIOS = (
     "quick_start/completed_quick_start_2_w_db.json",
     "quick_start/completed_quick_start_3_wo_db.json",
     "artemis/artemis_campaign.json",
+    "artemis/artemis_add_campaign.json",
 )
 
 

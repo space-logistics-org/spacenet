@@ -433,6 +433,11 @@ class State:
                 for system in systems
                 if system.fuel_tank is not None
             }
+            oxidizer_tanks = {
+                system.type: self._build_tank(system.oxidizer_tank, context)
+                for system in systems
+                if system.oxidizer_tank is not None
+            }
             kwargs["propulsion_systems"] = [
                 SimPropulsionSystem(
                     system.type,
@@ -442,6 +447,12 @@ class State:
                         if system.shared_fuel_tank is None
                         else system.shared_fuel_tank
                     ),
+                    oxidizer_tank=oxidizer_tanks.get(
+                        system.type
+                        if system.shared_oxidizer_tank is None
+                        else system.shared_oxidizer_tank
+                    ),
+                    mixture_ratio=system.mixture_ratio,
                 )
                 for system in systems
             ]
@@ -484,6 +495,7 @@ class State:
             resource=demand.resource,
             amount=demand.raw_amount,
             max_amount=tank.max_amount,
+            boiloff_rate=tank.boiloff_rate or 0.0,
         )
 
     def _build_part(self, part: s.Part, context: str) -> PartApplication:
@@ -761,6 +773,10 @@ class State:
                 destination_container=self._require_element(
                     event.destination_container, context
                 ),
+                origin_tank=event.origin_tank,
+                destination_tank=event.destination_tank,
+                transfer_mode=event.transfer_mode,
+                loss_fraction=event.loss_fraction or 0.0,
                 **kwargs,
             )
         if event_type == EventType.PROPULSIVE_BURN:

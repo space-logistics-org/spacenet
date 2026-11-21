@@ -5,10 +5,16 @@ Endpoints to export demands and manifests as delimited text.
 from fastapi import APIRouter
 from fastapi.responses import Response
 
-from spacenet.simulation import DemandsAnalysis, SimManifest
+from spacenet.simulation import (
+    DemandsAnalysis,
+    FullSimulator,
+    PropellantAnalysis,
+    SimManifest,
+)
 from spacenet.simulation.analysis import (
     export_aggregated_demands,
     export_manifest,
+    export_propellant,
     export_raw_demands,
 )
 
@@ -60,3 +66,14 @@ def export_scenario_manifest(request: ExportRequest):
     manifest = SimManifest.create(request.scenario)
     text = export_manifest(manifest, request.level, request.delimiter)
     return _respond(text, "manifest", request.delimiter)
+
+
+@router.post("/propellant", response_class=Response)
+def export_propellant_budgets(request: ExportRequest):
+    """
+    Exports the propellant budget of each vehicle tank of a scenario.
+    """
+    simulator = FullSimulator(request.scenario)
+    simulator.simulate()
+    text = export_propellant(PropellantAnalysis.create(simulator), request.delimiter)
+    return _respond(text, "propellant", request.delimiter)

@@ -4,14 +4,15 @@ Elements (objects that persist over time) used during simulation.
 
 # pylint: disable=too-many-lines
 
+import math
 from bisect import insort
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 from uuid import UUID, uuid4
 
 from ..schemas import ClassOfSupply, Environment, StateType
 from ..schemas.elements.element import ElementType
-from ..schemas.elements.propulsion import PropulsionType
-from .records import SimScavenge
+from ..schemas.elements.propulsion import PropulsionType, TankSelector
+from .records import PropellantFlowKind, SimScavenge
 from .resources import Demand, DemandSet, SimResource
 from .settings import Settings
 
@@ -532,6 +533,32 @@ class SimResourceContainer(SimElement):
         """
         return self._resources.get(resource, 0.0)
 
+    def get_space(self, resource: SimResource) -> float:
+        """
+        Gets the amount of a resource which can be added within capacity
+        constraints.
+
+        Args:
+            resource (:obj:`SimResource`): The resource.
+
+        Returns:
+            float: The amount (units) which can be added.
+        """
+        if (
+            self.settings.environment_constrained
+            and self.cargo_environment != resource.environment
+        ):
+            return 0.0
+        space = math.inf
+        if resource.unit_mass > 0:
+            space = (self._max_cargo_mass - self.cargo_mass) / resource.unit_mass
+        if self.settings.volume_constrained and resource.unit_volume > 0:
+            space = min(
+                space,
+                (self._max_cargo_volume - self.cargo_volume) / resource.unit_volume,
+            )
+        return max(0.0, space)
+
     def can_add(self, resource: SimResource, amount: float) -> bool:
         """
         Checks if a resource amount can be added within capacity constraints.
@@ -657,12 +684,40 @@ class SimResourceTank(SimElement):
         amount: float = 0.0,
         max_amount: float = 0.0,
         name: str = "Fuel Tank",
+        boiloff_rate: float = 0.0,
         **kwargs,
     ):
         super().__init__(settings, name=name, **kwargs)
         self.resource = resource
         self._amount = amount or 0.0
         self._max_amount = max_amount or 0.0
+        #: Fraction of the capacity lost per day (e.g., cryogenic boiloff).
+        self.boiloff_rate = boiloff_rate or 0.0
+        #: Key of this tank within its vehicle, e.g., "OMS Fuel" or "Fuel".
+        self.key = "Fuel"
+        #: Role of this tank within its vehicle ("Fuel" or "Oxidizer").
+        self.role = "Fuel"
+
+    @property
+    def vehicle(self) -> Optional["SimElement"]:
+        """The vehicle of this (integral) tank, if any."""
+        return self.container if isinstance(self.container, SimElement) else None
+
+    def apply_boiloff(self, days: float) -> float:
+        """
+        Removes the resource lost to boiloff over a duration.
+
+        Args:
+            days (float): The duration (days).
+
+        Returns:
+            float: The amount (units) lost.
+        """
+        if self.boiloff_rate <= 0 or days <= 0 or self._amount <= 0:
+            return 0.0
+        loss = min(self._amount, self.boiloff_rate * self._max_amount * days)
+        self._amount -= loss
+        return loss
 
     @property
     def amount(self) -> float:
@@ -732,6 +787,20 @@ class SimResourceTank(SimElement):
         """
         return self._amount if resource == self.resource else 0.0
 
+    def get_space(self, resource: SimResource) -> float:
+        """
+        Gets the amount of a resource which can be added within capacity.
+
+        Args:
+            resource (:obj:`SimResource`): The resource.
+
+        Returns:
+            float: The amount (units) which can be added.
+        """
+        if self.resource is not None and self.resource != resource:
+            return 0.0
+        return max(0.0, self._max_amount - self._amount)
+
     def can_add(self, resource: SimResource, amount: float) -> bool:
         """
         Checks if a resource amount can be added within capacity constraints.
@@ -797,6 +866,16 @@ class SimResourceTank(SimElement):
         return self.settings.round_mass(mass)
 
     def satisfy_demands(self, demands: DemandSet, simulator: "Simulator"):
+        before = self._amount
+        self._satisfy_demands(demands, simulator)
+        if self._amount != before and simulator is not None:
+            simulator.record_propellant(
+                self,
+                PropellantFlowKind.CONSUMED,
+                before - self._amount,
+            )
+
+    def _satisfy_demands(self, demands: DemandSet, simulator: "Simulator"):
         super().satisfy_demands(demands, simulator)
         for demand in demands:
             if not demand.resource.is_substitutable_for(self.resource):
@@ -961,7 +1040,8 @@ class SimPropulsionSystem:
     """
     An impulsive propulsion system of a propulsive vehicle which burns fuel
     from a fuel tank (which may be shared with other propulsion systems of
-    the same vehicle).
+    the same vehicle). A bipropellant system also burns oxidizer from an
+    oxidizer tank in a fixed (oxidizer-to-fuel) mixture ratio.
     """
 
     def __init__(
@@ -970,6 +1050,8 @@ class SimPropulsionSystem:
         *,
         isp: float = 0.0,
         fuel_tank: Optional[SimResourceTank] = None,
+        oxidizer_tank: Optional[SimResourceTank] = None,
+        mixture_ratio: Optional[float] = None,
     ):
         #: Propulsion type (fired by burns of the same type).
         self.propulsion_type = PropulsionType(propulsion_type)
@@ -977,6 +1059,37 @@ class SimPropulsionSystem:
         self.isp = isp or 0.0
         #: Fuel tank.
         self.fuel_tank = fuel_tank
+        #: Oxidizer tank (bipropellant systems).
+        self.oxidizer_tank = oxidizer_tank
+        #: Oxidizer-to-fuel mass ratio (bipropellant systems).
+        self.mixture_ratio = mixture_ratio
+
+    @property
+    def is_bipropellant(self) -> bool:
+        """True, if this system burns oxidizer from a separate tank."""
+        return (
+            self.oxidizer_tank is not None
+            and self.mixture_ratio is not None
+            and self.mixture_ratio > 0
+        )
+
+    def propellant_split(self) -> List[Tuple[SimResourceTank, float]]:
+        """
+        Lists the tanks from which this system burns propellant with the
+        fraction of the burned propellant mass drawn from each.
+
+        Returns:
+            [(:obj:`SimResourceTank`, float)]: The (tank, mass fraction) pairs.
+        """
+        if self.fuel_tank is None:
+            return []
+        if not self.is_bipropellant:
+            return [(self.fuel_tank, 1.0)]
+        ratio = self.mixture_ratio
+        return [
+            (self.fuel_tank, 1 / (1 + ratio)),
+            (self.oxidizer_tank, ratio / (1 + ratio)),
+        ]
 
     def __repr__(self) -> str:
         return f"{self.propulsion_type.value} ({self.isp} s)"
@@ -984,12 +1097,15 @@ class SimPropulsionSystem:
 
 class _FueledCarrier(SimCarrier):
     """
-    Base class for a carrier with integral fuel tanks.
+    Base class for a carrier with integral fuel (and oxidizer) tanks.
     """
 
     @property
     def fuel_tanks(self) -> List[SimResourceTank]:
-        """The (distinct) integral fuel tanks of this carrier."""
+        """
+        The (distinct) integral propellant tanks of this carrier, including
+        any oxidizer tanks, with the primary fuel tank first.
+        """
         raise NotImplementedError()
 
     @property
@@ -998,8 +1114,37 @@ class _FueledCarrier(SimCarrier):
         tanks = self.fuel_tanks
         return tanks[0] if tanks else None
 
-    def _attach_tank(self, tank: SimResourceTank, label: str):
-        tank.name = f"{self.name} {label}"
+    def get_tank(self, selector: TankSelector) -> Optional[SimResourceTank]:
+        """
+        Gets an integral tank of this carrier.
+
+        Args:
+            selector (:obj:`TankSelector`): The tank selector.
+
+        Returns:
+            :obj:`SimResourceTank`: The tank, or None if it does not exist.
+        """
+        raise NotImplementedError()
+
+    def find_tanks(self, resource: SimResource) -> List[SimResourceTank]:
+        """
+        Lists the integral tanks of this carrier which hold (or are empty
+        and can receive) a resource.
+
+        Args:
+            resource (:obj:`SimResource`): The resource.
+
+        Returns:
+            [:obj:`SimResourceTank`]: The tanks, those holding the resource first.
+        """
+        holding = [t for t in self.fuel_tanks if t.resource == resource]
+        empty = [t for t in self.fuel_tanks if t.resource is None]
+        return holding + empty
+
+    def _attach_tank(self, tank: SimResourceTank, key: str, role: str = "Fuel"):
+        tank.key = key
+        tank.role = role
+        tank.name = f"{self.name} {key} Tank"
         tank.container = self
 
     def get_total_mass(self, class_of_supply: Optional[ClassOfSupply] = None) -> float:
@@ -1035,18 +1180,29 @@ class SimPropulsiveVehicle(_FueledCarrier):
             propulsion_systems or []
         )
         for system in self.propulsion_systems:
-            tank = system.fuel_tank
-            if tank is not None and tank.container is not self:
-                self._attach_tank(tank, f"{system.propulsion_type.value} Fuel Tank")
+            label = system.propulsion_type.value
+            for tank, role in (
+                (system.fuel_tank, "Fuel"),
+                (system.oxidizer_tank, "Oxidizer"),
+            ):
+                if tank is not None and tank.container is not self:
+                    self._attach_tank(tank, f"{label} {role}", role)
 
     @property
     def fuel_tanks(self) -> List[SimResourceTank]:
         tanks: List[SimResourceTank] = []
         for system in self.propulsion_systems:
-            tank = system.fuel_tank
-            if tank is not None and not any(tank is t for t in tanks):
-                tanks.append(tank)
+            for tank in (system.fuel_tank, system.oxidizer_tank):
+                if tank is not None and not any(tank is t for t in tanks):
+                    tanks.append(tank)
         return tanks
+
+    def get_tank(self, selector: TankSelector) -> Optional[SimResourceTank]:
+        selector = TankSelector(selector)
+        system = self.get_propulsion_system(selector.propulsion_type)
+        if system is None:
+            return None
+        return system.oxidizer_tank if selector.is_oxidizer else system.fuel_tank
 
     def get_propulsion_system(
         self, propulsion_type: PropulsionType
@@ -1086,10 +1242,13 @@ class SimSurfaceVehicle(_FueledCarrier):
         self._fuel_tank = (
             fuel_tank if fuel_tank is not None else SimResourceTank(settings)
         )
-        self._attach_tank(self._fuel_tank, "Fuel Tank")
+        self._attach_tank(self._fuel_tank, "Fuel")
         #: Maximum speed (km/hr).
         self.max_speed = max_speed or 0.0
 
     @property
     def fuel_tanks(self) -> List[SimResourceTank]:
         return [self._fuel_tank]
+
+    def get_tank(self, selector: TankSelector) -> Optional[SimResourceTank]:
+        return None if TankSelector(selector).is_oxidizer else self._fuel_tank

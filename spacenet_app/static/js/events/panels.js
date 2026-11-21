@@ -408,9 +408,88 @@ function consumeResources(ctx, panel) {
   );
 }
 
+/**
+ * A select of an integral tank of a vehicle (origin or destination of a
+ * transfer) which defaults to the tanks which hold the transferred resources.
+ */
+function tankSelect(ctx, element, name) {
+  if (element?.type !== "Propulsive Vehicle" || !element.fuelTanks?.length) {
+    delete ctx.draft[name];
+    return null;
+  }
+  const options = [
+    ["", "(tanks holding the resources)"],
+    ...element.fuelTanks.map((tank) => [tank.key, `${tank.label} tank (${tank.fuelName ?? "empty"})`]),
+  ];
+  return h(
+    "div",
+    { class: "mt-2" },
+    h("label", { class: "form-label small mb-0" }, "Tank"),
+    select(options, ctx.draft[name] ?? "", (value) => {
+      if (value) ctx.draft[name] = value;
+      else delete ctx.draft[name];
+      ctx.changed();
+    })
+  );
+}
+
+/** A table of the transfers of an evaluated transfer event. */
+function transferResults(ctx) {
+  const element = h("div");
+  ctx.onEvaluation((evaluation) => {
+    const transfers = evaluation.transfers ?? [];
+    element.replaceChildren(
+      transfers.length
+        ? h(
+            "table",
+            { class: "table table-sm small mb-0" },
+            h(
+              "thead",
+              {},
+              h(
+                "tr",
+                {},
+                ["Resource", "To", "Removed", "Delivered", "Lost", "Remaining space"].map((label) =>
+                  h("th", {}, label)
+                )
+              )
+            ),
+            h(
+              "tbody",
+              {},
+              transfers.map((transfer) =>
+                h(
+                  "tr",
+                  {},
+                  h("td", {}, transfer.resourceName),
+                  h("td", {}, transfer.destinationName),
+                  h("td", {}, fmt(transfer.removed, 1)),
+                  h("td", {}, fmt(transfer.delivered, 1)),
+                  h("td", {}, fmt(transfer.lost, 1)),
+                  h("td", {}, fmt(transfer.destinationSpace, 1))
+                )
+              )
+            )
+          )
+        : h("div", { class: "small text-secondary" }, "No resources transferred.")
+    );
+  });
+  return element;
+}
+
 function transferResources(ctx, panel) {
   ctx.draft.resources ||= [];
-  const origin = flatten(ctx.here()).find((item) => item.element.id === ctx.draft.originContainer)?.element;
+  const find = (id) => flatten(ctx.here()).find((item) => item.element.id === id)?.element;
+  const origin = find(ctx.draft.originContainer);
+  const destination = find(ctx.draft.destinationContainer);
+  const mode = ctx.draft.transferMode ?? "Amount";
+  const modeHelp = {
+    Amount: "Transfers the listed resource amounts.",
+    "Fill Destination":
+      "Transfers as much as possible to fill the destination, using the listed resources or else all resources of the origin.",
+    "Empty Origin":
+      "Transfers as much as possible to empty the origin, using the listed resources or else all resources of the origin.",
+  };
   panel.append(
     h(
       "div",
@@ -421,6 +500,7 @@ function transferResources(ctx, panel) {
         section(
           "Transfer From",
           elementSelect(ctx, "originContainer", isResourceHolder, { refresh: true }),
+          tankSelect(ctx, origin, "originTank"),
           origin
             ? h(
                 "div",
@@ -431,11 +511,50 @@ function transferResources(ctx, panel) {
         ),
         section(
           "Transfer To",
-          elementSelect(ctx, "destinationContainer", isResourceHolder),
+          elementSelect(ctx, "destinationContainer", isResourceHolder, { refresh: true }),
+          tankSelect(ctx, destination, "destinationTank"),
           h("div", { class: "mt-2" }, containerBars(ctx))
         )
       ),
-      h("div", { class: "col-lg-7" }, section("Resources", resourceTable(ctx.draft.resources, ctx.changed)))
+      h(
+        "div",
+        { class: "col-lg-7" },
+        section(
+          "Transfer",
+          h(
+            "div",
+            { class: "row g-2" },
+            labeled(
+              "Mode",
+              select(store.enums.transferModes ?? ["Amount"], mode, (value) => {
+                if (value === "Amount") delete ctx.draft.transferMode;
+                else ctx.draft.transferMode = value;
+                ctx.refresh();
+              }),
+              "col-md-6"
+            ),
+            labeled(
+              "Loss (%)",
+              numberInput(
+                ctx.draft.lossFraction ? ctx.draft.lossFraction * 100 : null,
+                (value) => {
+                  if (value) ctx.draft.lossFraction = value / 100;
+                  else delete ctx.draft.lossFraction;
+                  ctx.changed();
+                },
+                { min: 0, max: 99.9, placeholder: 0 }
+              ),
+              "col-md-3"
+            )
+          ),
+          h("div", { class: "form-text" }, modeHelp[mode])
+        ),
+        section(
+          mode === "Amount" ? "Resources" : "Resources (optional)",
+          resourceTable(ctx.draft.resources, ctx.changed)
+        ),
+        section("Result", transferResults(ctx))
+      )
     )
   );
 }

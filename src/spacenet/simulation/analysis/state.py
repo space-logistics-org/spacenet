@@ -44,6 +44,11 @@ class FuelTankState(CamelModel):
         description="Specific impulse (s) of each propulsion system (by "
         "propulsion type) which burns fuel from the tank",
     )
+    key: Optional[str] = Field(None, description="Tank key, e.g., OMS Fuel")
+    role: str = Field("Fuel", description="Tank role (Fuel or Oxidizer)")
+    boiloff_rate: float = Field(
+        0.0, description="Fraction of the capacity lost per day"
+    )
 
 
 class ElementState(CamelModel):
@@ -222,7 +227,45 @@ class BurnStepResult(CamelModel):
     fuel_remaining: float = Field(
         0.0, description="Fuel amount (units) remaining in the vehicle"
     )
+    oxidizer_used: Optional[float] = Field(
+        None, description="Oxidizer amount (units) consumed (bipropellant systems)"
+    )
+    oxidizer_remaining: Optional[float] = Field(
+        None, description="Oxidizer amount (units) remaining (bipropellant systems)"
+    )
+    propellant_mass_used: float = Field(
+        0.0, description="Total propellant mass (kg) consumed"
+    )
+    propellant_shortfall: float = Field(
+        0.0,
+        description="Additional propellant mass (kg) the vehicle would require "
+        "to achieve the remaining delta-v",
+    )
     message: Optional[str] = Field(None, description="Error which prevented the action")
+
+
+class TransferStepResult(CamelModel):
+    """
+    One resource transfer of an evaluated transfer event.
+    """
+
+    resource_name: str = Field(..., description="Resource name")
+    origin_name: str = Field(..., description="Origin container (or tank) name")
+    destination_name: str = Field(
+        ..., description="Destination container (or tank) name"
+    )
+    removed: float = Field(0.0, description="Amount (units) removed from the origin")
+    delivered: float = Field(0.0, description="Amount (units) added to the destination")
+    lost: float = Field(0.0, description="Amount (units) lost during transfer")
+    origin_remaining: float = Field(
+        0.0, description="Amount (units) remaining in the origin"
+    )
+    destination_amount: float = Field(
+        0.0, description="Amount (units) in the destination after the transfer"
+    )
+    destination_space: float = Field(
+        0.0, description="Remaining capacity (units) of the destination"
+    )
 
 
 class BurnResult(CamelModel):
@@ -318,6 +361,9 @@ class EventEvaluation(CamelModel):
     )
     burns: List[BurnResult] = Field(
         [], description="Burns of a propulsive burn or space transport"
+    )
+    transfers: List[TransferStepResult] = Field(
+        [], description="Resource transfers of a transfer event"
     )
     transport: Optional[TransportResult] = Field(
         None, description="Transport duration and capacity"
@@ -432,6 +478,10 @@ class EventEvaluation(CamelModel):
             time=time,
             issues=sorted(issues, key=lambda i: i.time),
             burns=[BurnResult.create(e) for e in burn_events],
+            transfers=[
+                TransferStepResult.model_validate(asdict(r))
+                for r in getattr(sim_event, "results", [])
+            ],
             transport=transport,
             duration=duration,
             container=container,

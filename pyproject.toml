@@ -66,3 +66,8 @@ app = [
 
 [tool.setuptools.dynamic]
 version = {attr = "spacenet.__version__"}
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: long-running tests (excluded in continuous integration with -m \"not slow\")",
+]

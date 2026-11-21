@@ -55,23 +55,104 @@ function legacyTank(draft) {
   return tank;
 }
 
-/** Lists the fuel tanks of a vehicle. */
+/** Lists the fuel (and oxidizer) tanks of a vehicle. */
 function fuelTanks(draft) {
   if (draft.type === "Surface Vehicle") return draft.fuelTank ? [draft.fuelTank] : [];
   if (draft.type !== "Propulsive Vehicle") return [];
-  return (draft.propulsionSystems ?? []).map((system) => system.fuelTank).filter(Boolean);
+  return (draft.propulsionSystems ?? [])
+    .flatMap((system) => [system.fuelTank, system.oxidizerTank])
+    .filter(Boolean);
 }
 
-/** Creates controls to edit a fuel tank; controls are added before its capacity. */
+/**
+ * Creates controls to edit a fuel (or oxidizer) tank; controls are added
+ * before its capacity and boiloff rate.
+ */
 function tankInput(tank, ...controls) {
+  return tankEditor(tank, "Fuel", controls);
+}
+
+function tankEditor(tank, role, controls = []) {
   return [
     h(
       "div",
       { class: "row g-2 mb-2" },
       controls,
-      numberField("Max Fuel (units)", tank, "maxAmount", { col: "col-md-3", min: 0 })
+      numberField(`Max ${role} (units)`, tank, "maxAmount", { col: "col-md-3", min: 0 }),
+      h(
+        "div",
+        {
+          class: "col-md-3",
+          title:
+            "Fraction of the tank capacity lost per day, e.g., to cryogenic boiloff " +
+            "(not applied on the surface of Earth). Instances which override the " +
+            "propulsion systems do not inherit changes to this value.",
+        },
+        numberField("Boiloff (%/day)", tank, "boiloffRate", { col: "", min: 0, max: 100, scale: 0.01 })
+      )
     ),
-    h("div", { class: "mb-3" }, amountInput(tank.contents, (amount) => (tank.contents = amount))),
+    h("div", { class: "mb-3" }, amountInput(tank.contents, (amount) => (tank.contents = amount), role)),
+  ];
+}
+
+/**
+ * Creates controls to make a propulsion system bipropellant: an oxidizer tank
+ * (own or shared with another system) and an oxidizer-to-fuel mixture ratio.
+ */
+function oxidizerEditor(system, systems, render) {
+  const bipropellant = Boolean(system.oxidizerTank || system.sharedOxidizerTank);
+  const toggle = h(
+    "label",
+    { class: "form-check-label small mb-2 d-block" },
+    h("input", {
+      type: "checkbox",
+      class: "form-check-input me-2",
+      checked: bipropellant,
+      onChange: () => {
+        if (bipropellant) {
+          // systems which shared the removed oxidizer tank take it over
+          for (const other of systems) {
+            if (other.sharedOxidizerTank !== system.type) continue;
+            other.oxidizerTank = system.oxidizerTank ?? newTank();
+            other.sharedOxidizerTank = null;
+          }
+          system.oxidizerTank = null;
+          system.sharedOxidizerTank = null;
+          system.mixtureRatio = null;
+        } else {
+          system.oxidizerTank = newTank();
+          system.sharedOxidizerTank = null;
+          system.mixtureRatio = system.mixtureRatio ?? 3.6;
+        }
+        render();
+      },
+    }),
+    "Bipropellant (separate oxidizer tank)"
+  );
+  if (!bipropellant) return toggle;
+  const shared = systems.some((other) => other.sharedOxidizerTank === system.type);
+  const others = shared ? [] : systems.filter((other) => other !== system && other.oxidizerTank);
+  const controls = [
+    numberField("Mixture Ratio (O:F)", system, "mixtureRatio", { col: "col-md-3", min: 0 }),
+    field(
+      "Oxidizer Tank",
+      select(
+        [["", "Own oxidizer tank"], ...others.map((other) => [other.type, `Shared with ${other.type}`])],
+        system.sharedOxidizerTank ?? "",
+        (value) => {
+          system.sharedOxidizerTank = value || null;
+          system.oxidizerTank = value ? null : newTank();
+          render();
+        }
+      ),
+      { col: "col-md-3" }
+    ),
+  ];
+  return [
+    toggle,
+    system.oxidizerTank
+      ? tankEditor(system.oxidizerTank, "Oxidizer", controls)
+      : h("div", { class: "row g-2 mb-3" }, controls),
   ];
 }
 
@@ -95,11 +176,16 @@ function propulsionEditor(draft) {
           onChange: () => {
             if (system) {
               draft.propulsionSystems = systems.filter((candidate) => candidate !== system);
-              // systems which shared the removed fuel tank take it over
+              // systems which shared the removed fuel (oxidizer) tank take it over
               for (const other of draft.propulsionSystems) {
-                if (other.sharedFuelTank !== id) continue;
-                other.fuelTank = system.fuelTank ?? newTank();
-                other.sharedFuelTank = null;
+                if (other.sharedFuelTank === id) {
+                  other.fuelTank = system.fuelTank ?? newTank();
+                  other.sharedFuelTank = null;
+                }
+                if (other.sharedOxidizerTank === id) {
+                  other.oxidizerTank = system.oxidizerTank ?? newTank();
+                  other.sharedOxidizerTank = null;
+                }
               }
             } else {
               systems.push({ type: id, isp: 0, fuelTank: newTank(), sharedFuelTank: null });
@@ -133,7 +219,8 @@ function propulsionEditor(draft) {
           "div",
           { class: "mb-2" },
           title,
-          system.fuelTank ? tankInput(system.fuelTank, ...controls) : h("div", { class: "row g-2 mb-3" }, controls)
+          system.fuelTank ? tankInput(system.fuelTank, ...controls) : h("div", { class: "row g-2 mb-3" }, controls),
+          oxidizerEditor(system, draft.propulsionSystems, render)
         );
       })
     );
@@ -143,14 +230,14 @@ function propulsionEditor(draft) {
 }
 
 /** Creates controls to edit one resource amount (specific or generic). */
-function amountInput(amount, replace) {
+function amountInput(amount, replace, role = "Fuel") {
   const root = h("div", { class: "row g-2" });
   function render() {
     const generic = !amount.resource;
     const resources = store.library("resources").map((resource) => [resource.id, resource.name]);
     const controls = [
       field(
-        "Fuel Type",
+        `${role} Type`,
         select(["Generic", "Specific"], generic ? "Generic" : "Specific", (value) => {
           const quantity = amount.amount ?? 0;
           if (value === "Generic") {
@@ -182,7 +269,7 @@ function amountInput(amount, replace) {
             { col: "col-md-6" }
           ),
       field(
-        "Initial Fuel (units)",
+        `Initial ${role} (units)`,
         numberInput(amount.amount, (value) => (amount.amount = value ?? 0), { min: 0 }),
         { col: "col-md-3" }
       ),

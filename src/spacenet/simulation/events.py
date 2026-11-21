@@ -10,9 +10,10 @@ import sys
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 
 from ..schemas import ClassOfSupply, StateType
-from ..schemas.elements.propulsion import PropulsionType
+from ..schemas.elements.propulsion import PropulsionType, TankSelector
 from ..schemas.events.burn import BurnStage
 from ..schemas.events.event import EventType
+from ..schemas.events.transfer_resources import TransferMode
 from .elements import (
     ElementContainer,
     OperationalState,
@@ -26,7 +27,7 @@ from .elements import (
 )
 from .errors import SimDemand, SimSpatialError, SimWarning
 from .network import SimBurn, SimEdge, SimLocation, SimNode
-from .records import BurnStep
+from .records import BurnStep, PropellantFlowKind, TransferStep
 from .resources import Demand, DemandSet, SimResource
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -82,6 +83,47 @@ def get_achieved_delta_v(stack_mass: float, isp: float, fuel_mass: float) -> flo
     if fuel_mass >= stack_mass:
         return math.inf
     return isp * G0 * math.log(stack_mass / (stack_mass - fuel_mass))
+
+
+def get_propellant_shortfall(
+    stack_mass: float, propellant_mass: float, delta_v: float, isp: float
+) -> float:
+    """
+    Gets the additional propellant mass which a stack requires to achieve a
+    change in velocity, accounting for the mass of the added propellant.
+
+    Args:
+        stack_mass (float): The initial mass (kg) of the stack including
+            the available propellant.
+        propellant_mass (float): The available propellant mass (kg).
+        delta_v (float): The change in velocity (m/s).
+        isp (float): The specific impulse (s).
+
+    Returns:
+        float: The additional propellant mass (kg), infinite if no amount of
+        propellant suffices.
+    """
+    if delta_v <= 0:
+        return 0.0
+    if isp <= 0:
+        return math.inf
+    fraction = 1 - math.exp(-delta_v / (isp * G0))
+    return max(0.0, (stack_mass * fraction - propellant_mass) / (1 - fraction))
+
+
+def _record_tanks_loaded(simulator: "Simulator", event: "SimEvent", element):
+    """Records the initial contents of the integral tanks of created vehicles."""
+    elements = [element]
+    if isinstance(element, ElementContainer):
+        elements.extend(element.complete_contents)
+    for item in elements:
+        for tank in getattr(item, "fuel_tanks", None) or []:
+            simulator.record_propellant(
+                tank,
+                PropellantFlowKind.LOADED,
+                tank.get_amount(tank.resource),
+                event,
+            )
 
 
 def _sorted_elements(elements) -> List[SimElement]:
@@ -304,6 +346,7 @@ class CreateEvent(SimEvent):
                 )
             if self.container.add(element):
                 simulator.state.network.register(element)
+                _record_tanks_loaded(simulator, self, element)
             else:
                 raise SimSpatialError(
                     simulator.time,
@@ -404,11 +447,18 @@ class AddEvent(SimEvent):
         if len(self.demands) == 0:
             self._warn(simulator, "No demands defined.")
             return
-        self._log("Adding %s to %s", self.demands, container)
+        self._log("Adding %s to %s", self.demands, self.container)
         for demand in self.demands:
-            if not container.add(demand.resource, demand.amount):
+            target = _get_resource_container(
+                simulator, self, self.container, resource=demand.resource
+            )
+            if not target.add(demand.resource, demand.amount):
                 raise SimSpatialError(
-                    simulator.time, self, f"{demand} could not be added to {container}."
+                    simulator.time, self, f"{demand} could not be added to {target}."
+                )
+            if isinstance(target, SimResourceTank):
+                simulator.record_propellant(
+                    target, PropellantFlowKind.ADDED, demand.amount, self
                 )
 
 
@@ -425,17 +475,34 @@ class TransferEvent(SimEvent):
         demands: Optional[DemandSet] = None,
         origin_container: Optional[SimElement] = None,
         destination_container: Optional[SimElement] = None,
+        origin_tank: Optional[TankSelector] = None,
+        destination_tank: Optional[TankSelector] = None,
+        transfer_mode: Optional[TransferMode] = None,
+        loss_fraction: float = 0.0,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.demands = demands if demands is not None else DemandSet()
         self.origin_container = origin_container
         self.destination_container = destination_container
+        #: Integral tank of an origin vehicle (default: by resource).
+        self.origin_tank = origin_tank
+        #: Integral tank of a destination vehicle (default: by resource).
+        self.destination_tank = destination_tank
+        #: Transfer mode (default: transfer the listed amounts).
+        self.transfer_mode = TransferMode(transfer_mode or TransferMode.AMOUNT)
+        #: Fraction of the removed resources lost during transfer.
+        self.loss_fraction = loss_fraction or 0.0
+        #: Trace of the executed transfers.
+        self.results: List[TransferStep] = []
 
     def execute(self, simulator: "Simulator"):
-        origin = _get_resource_container(simulator, self, self.origin_container)
+        self.results = []
+        origin = _get_resource_container(
+            simulator, self, self.origin_container, self.origin_tank
+        )
         destination = _get_resource_container(
-            simulator, self, self.destination_container
+            simulator, self, self.destination_container, self.destination_tank
         )
         if destination.location is None:
             raise SimSpatialError(simulator.time, self, f"{destination} was not found.")
@@ -448,35 +515,207 @@ class TransferEvent(SimEvent):
                 f"{destination} is located at {destination.location} "
                 f"instead of {origin.location}.",
             )
-        if len(self.demands) == 0:
-            self._warn(simulator, "No demands defined.")
+        if self.transfer_mode == TransferMode.AMOUNT:
+            if len(self.demands) == 0:
+                self._warn(simulator, "No demands defined.")
+                return
+            self._log("Transferring %s to %s", self.demands, destination)
+            for demand in self.demands:
+                source, target = self._get_pair(simulator, demand.resource)
+                self._transfer(
+                    simulator, source, target, demand.resource, demand.amount
+                )
             return
-        self._log("Transferring %s to %s", self.demands, destination)
-        for demand in self.demands:
-            if not origin.remove(demand.resource, demand.amount):
-                raise SimSpatialError(
-                    simulator.time,
-                    self,
-                    f"{demand} could not be removed from {origin}.",
+        pairs = self._get_pairs(simulator)
+        if not pairs:
+            self._warn(simulator, "No resources to transfer.")
+            return
+        for source, target, resource in pairs:
+            available = source.get_amount(resource)
+            space = target.get_space(resource)
+            delivered = min(space, available * (1 - self.loss_fraction))
+            removed = (
+                available
+                if delivered >= available * (1 - self.loss_fraction)
+                else delivered / (1 - self.loss_fraction)
+            )
+            if removed > 0:
+                self._log("Transferring %.2f %s to %s", removed, resource, target)
+                self._transfer(simulator, source, target, resource, removed)
+            if (
+                self.transfer_mode == TransferMode.FILL_DESTINATION
+                and target.get_space(resource) > simulator.settings.demand_precision
+            ):
+                self._warn(
+                    simulator,
+                    f"{target} could not be filled with {resource} from {source}.",
                 )
-            if not destination.add(demand.resource, demand.amount):
-                origin.add(demand.resource, demand.amount)
-                raise SimSpatialError(
-                    simulator.time,
-                    self,
-                    f"{demand} could not be added to {destination}.",
+            if (
+                self.transfer_mode == TransferMode.EMPTY_ORIGIN
+                and source.get_amount(resource) > simulator.settings.demand_precision
+            ):
+                self._warn(
+                    simulator,
+                    f"{source} could not be emptied of {resource} into {target}.",
                 )
 
+    def _get_pair(self, simulator: "Simulator", resource: SimResource):
+        """Gets the origin and destination containers for a resource."""
+        return (
+            _get_resource_container(
+                simulator, self, self.origin_container, self.origin_tank, resource
+            ),
+            _get_resource_container(
+                simulator,
+                self,
+                self.destination_container,
+                self.destination_tank,
+                resource,
+            ),
+        )
 
-def _get_resource_container(simulator: "Simulator", event: SimEvent, element):
+    def _get_pairs(
+        self, simulator: "Simulator"
+    ) -> List[Tuple[object, object, SimResource]]:
+        """
+        Lists the (origin, destination, resource) combinations to fill a
+        destination or empty an origin, using the listed resources or else
+        all resources held by the origin (tanks).
+        """
+        if len(self.demands) > 0:
+            return [
+                (*self._get_pair(simulator, d.resource), d.resource)
+                for d in self.demands
+            ]
+        origins = _get_resource_containers(self.origin_container, self.origin_tank)
+        pairs = []
+        for source in origins:
+            for resource, amount in list(source.contents.items()):
+                if amount <= 0:
+                    continue
+                target = _find_resource_container(
+                    self.destination_container, self.destination_tank, resource
+                )
+                if target is not None and target is not source:
+                    pairs.append((source, target, resource))
+        return pairs
+
+    def _transfer(self, simulator, source, target, resource, removed):
+        """Transfers a resource amount (removed from the origin) with losses."""
+        available = source.get_amount(resource)
+        if removed > available and removed - available <= (
+            simulator.settings.demand_precision / 2
+        ):
+            removed = available
+        delivered = removed * (1 - self.loss_fraction)
+        if not source.remove(resource, removed):
+            raise SimSpatialError(
+                simulator.time,
+                self,
+                f"{Demand(resource, removed)} could not be removed from {source}.",
+            )
+        if not target.add(resource, delivered):
+            source.add(resource, removed)
+            raise SimSpatialError(
+                simulator.time,
+                self,
+                f"{Demand(resource, delivered)} could not be added to {target}.",
+            )
+        lost = removed - delivered
+        self.results.append(
+            TransferStep(
+                resource_name=resource.name,
+                origin_name=str(getattr(source, "name", source)),
+                destination_name=str(getattr(target, "name", target)),
+                removed=removed,
+                delivered=delivered,
+                lost=lost,
+                origin_remaining=source.get_amount(resource),
+                destination_amount=target.get_amount(resource),
+                destination_space=target.get_space(resource),
+            )
+        )
+        if isinstance(source, SimResourceTank):
+            simulator.record_propellant(
+                source, PropellantFlowKind.TRANSFER_OUT, delivered, self
+            )
+            if lost > 0:
+                simulator.record_propellant(
+                    source, PropellantFlowKind.TRANSFER_LOSS, lost, self
+                )
+        if isinstance(target, SimResourceTank):
+            simulator.record_propellant(
+                target, PropellantFlowKind.TRANSFER_IN, delivered, self
+            )
+
+
+def _get_resource_containers(element, selector: Optional[TankSelector] = None):
+    """
+    Lists the resource containers of an element: the element itself (resource
+    container) or the selected or else all integral tanks (vehicle).
+    """
+    if element is None:
+        return []
+    if isinstance(element, (SimResourceContainer, SimResourceTank)):
+        return [element]
+    if selector is not None and hasattr(element, "get_tank"):
+        tank = element.get_tank(selector)
+        return [] if tank is None else [tank]
+    return list(getattr(element, "fuel_tanks", None) or [])
+
+
+def _find_resource_container(
+    element,
+    selector: Optional[TankSelector] = None,
+    resource: Optional[SimResource] = None,
+):
+    """
+    Finds the resource container of an element for a resource (see
+    :func:`_get_resource_container`) or None if there is none.
+    """
+    if element is None:
+        return None
+    if isinstance(element, (SimResourceContainer, SimResourceTank)):
+        return element
+    if selector is not None and hasattr(element, "get_tank"):
+        return element.get_tank(selector)
+    if resource is not None and hasattr(element, "find_tanks"):
+        tanks = element.find_tanks(resource)
+        if tanks:
+            return tanks[0]
+        return None
+    return getattr(element, "fuel_tank", None)
+
+
+def _get_resource_container(
+    simulator: "Simulator",
+    event: SimEvent,
+    element,
+    selector: Optional[TankSelector] = None,
+    resource: Optional[SimResource] = None,
+):
     """
     Gets the resource container of an element. Vehicles are represented by
-    their (primary) integral fuel tank.
+    a selected integral tank, the integral tank which holds a resource, or
+    else their (primary) integral fuel tank.
     """
     if element is None:
         raise SimSpatialError(simulator.time, event, "No resource container defined.")
     if isinstance(element, (SimResourceContainer, SimResourceTank)):
         return element
+    if selector is not None and hasattr(element, "get_tank"):
+        tank = element.get_tank(selector)
+        if tank is None:
+            raise SimSpatialError(
+                simulator.time,
+                event,
+                f"{element} has no {TankSelector(selector).value} tank.",
+            )
+        return tank
+    if resource is not None and hasattr(element, "find_tanks"):
+        tanks = element.find_tanks(resource)
+        if tanks:
+            return tanks[0]
     fuel_tank = getattr(element, "fuel_tank", None)
     if fuel_tank is not None:
         return fuel_tank
@@ -668,12 +907,21 @@ class BurnEvent(SimEvent):
                 if BurnStage(action) == BurnStage.BURN:
                     system = self._get_propulsion_system(element)
                     tank = None if system is None else system.fuel_tank
+                    oxidizer = (
+                        system.oxidizer_tank
+                        if system is not None and system.is_bipropellant
+                        else None
+                    )
                     fuel_before = 0.0 if tank is None else tank.amount
-                    remaining = self._burn(simulator, element, delta_v_required)
+                    oxidizer_before = 0.0 if oxidizer is None else oxidizer.amount
+                    remaining = self._burn(simulator, element, delta_v_required, step)
                     step.delta_v_achieved = delta_v_required - remaining
                     step.delta_v_remaining = remaining
                     step.fuel_remaining = 0.0 if tank is None else tank.amount
                     step.fuel_used = fuel_before - step.fuel_remaining
+                    if oxidizer is not None:
+                        step.oxidizer_remaining = oxidizer.amount
+                        step.oxidizer_used = oxidizer_before - oxidizer.amount
                     delta_v_required = remaining
                     self.delta_v_remaining = remaining
                 else:
@@ -705,7 +953,11 @@ class BurnEvent(SimEvent):
         return vehicle.get_propulsion_system(self.burn.propulsion_type)
 
     def _burn(
-        self, simulator: "Simulator", vehicle: SimElement, delta_v: float
+        self,
+        simulator: "Simulator",
+        vehicle: SimElement,
+        delta_v: float,
+        step: Optional[BurnStep] = None,
     ) -> float:
         """Burns fuel from a vehicle and returns the remaining required delta-v."""
         if not isinstance(vehicle, SimPropulsiveVehicle):
@@ -726,7 +978,12 @@ class BurnEvent(SimEvent):
         if system.isp <= 0:
             self._warn(simulator, f"{vehicle} has no {label} specific impulse defined.")
             return delta_v
+        if system.is_bipropellant:
+            return self._burn_bipropellant(
+                simulator, vehicle, system, stack_mass, delta_v, step
+            )
         tank = system.fuel_tank
+        before = tank.get_amount(tank.resource)
         unit_mass = 1.0 if tank.resource is None else tank.resource.unit_mass
         # NOTE: the reference implementation compares fuel mass (kg) to the
         # tank amount (units) which is only valid for a unit mass of 1 kg
@@ -734,11 +991,14 @@ class BurnEvent(SimEvent):
             get_required_fuel_mass(stack_mass, delta_v, system.isp) / unit_mass
         )
         if required_fuel > tank.amount:
-            achieved = get_achieved_delta_v(
-                stack_mass, system.isp, tank.amount * unit_mass
+            available_mass = tank.amount * unit_mass
+            achieved = get_achieved_delta_v(stack_mass, system.isp, available_mass)
+            shortfall = get_propellant_shortfall(
+                stack_mass, available_mass, delta_v, system.isp
             )
             delta_v -= achieved
             tank.amount = 0.0
+            self._record_burned(simulator, tank, before, step, unit_mass, shortfall)
             self._log(
                 "%s Burn (%s) achieved %.2f m/s delta-V, %.2f m/s delta-V remaining",
                 vehicle,
@@ -748,6 +1008,7 @@ class BurnEvent(SimEvent):
             )
             return delta_v
         tank.remove(tank.resource, required_fuel)
+        self._record_burned(simulator, tank, before, step, unit_mass)
         self._log(
             "%s Burn (%s) achieved %.2f m/s delta-V, %.2f kg fuel remaining",
             vehicle,
@@ -756,6 +1017,80 @@ class BurnEvent(SimEvent):
             tank.cargo_mass,
         )
         return 0.0
+
+    def _record_burned(
+        self, simulator, tank, before, step, unit_mass, shortfall=0.0
+    ):  # pylint: disable=too-many-arguments
+        """Records the propellant burned from a tank."""
+        burned = before - tank.get_amount(tank.resource)
+        if burned > 0:
+            simulator.record_propellant(tank, PropellantFlowKind.BURNED, burned, self)
+        if step is not None:
+            step.propellant_mass_used += burned * unit_mass
+            if math.isfinite(shortfall):
+                step.propellant_shortfall += shortfall
+
+    def _burn_bipropellant(
+        self, simulator, vehicle, system, stack_mass, delta_v, step
+    ) -> float:  # pylint: disable=too-many-arguments
+        """
+        Burns fuel and oxidizer in the mixture ratio of a bipropellant system
+        and returns the remaining required delta-v. The burn is limited by
+        the propellant (fuel or oxidizer) which runs out first.
+        """
+        label = PropulsionType(self.burn.propulsion_type).value
+        split = system.propellant_split()
+        tanks = [
+            (
+                tank,
+                fraction,
+                1.0 if tank.resource is None else tank.resource.unit_mass,
+                tank.get_amount(tank.resource),
+            )
+            for tank, fraction in split
+        ]
+        # total propellant mass (kg) which can be burned in the mixture ratio
+        available_mass = min(
+            before * unit_mass / fraction for _, fraction, unit_mass, before in tanks
+        )
+        required_mass = get_required_fuel_mass(stack_mass, delta_v, system.isp)
+        if required_mass <= available_mass:
+            for tank, fraction, unit_mass, before in tanks:
+                tank.amount = max(0.0, before - required_mass * fraction / unit_mass)
+                self._record_burned(simulator, tank, before, step, unit_mass)
+            self._log(
+                "%s Burn (%s) achieved %.2f m/s delta-V, %.2f kg propellant used",
+                vehicle,
+                label,
+                delta_v,
+                required_mass,
+            )
+            return 0.0
+        achieved = get_achieved_delta_v(stack_mass, system.isp, available_mass)
+        shortfall = get_propellant_shortfall(
+            stack_mass, available_mass, delta_v, system.isp
+        )
+        for index, (tank, fraction, unit_mass, before) in enumerate(tanks):
+            amount = before - available_mass * fraction / unit_mass
+            limiting = before * unit_mass / fraction == available_mass
+            tank.amount = 0.0 if limiting or amount < 0 else amount
+            self._record_burned(
+                simulator,
+                tank,
+                before,
+                step,
+                unit_mass,
+                shortfall if index == 0 else 0.0,
+            )
+        delta_v -= achieved
+        self._log(
+            "%s Burn (%s) achieved %.2f m/s delta-V, %.2f m/s delta-V remaining",
+            vehicle,
+            label,
+            achieved,
+            delta_v,
+        )
+        return delta_v
 
 
 class _CrewActivityEvent(SimEvent):

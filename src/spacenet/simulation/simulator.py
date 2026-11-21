@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Tuple
 
 from ..schemas import Body, ClassOfSupply, Scenario
 from ..schemas.scenarios.scenario import ItemDiscretizationType
-from .elements import SimCarrier, SimCrewMember, SimElement
+from .elements import SimCarrier, SimCrewMember, SimElement, SimResourceTank
 from .errors import SimDemand, SimError, SimSpatialError, SimWarning
 from .events import (
     LAST_PRIORITY,
@@ -37,6 +37,8 @@ from .records import (
     MoeLaunchMass,
     MoeMassCapacityUtilization,
     NetworkSnapshot,
+    PropellantFlow,
+    PropellantFlowKind,
     SimRepair,
     SimScavenge,
 )
@@ -104,6 +106,8 @@ class Simulator:
         self.unsatisfied_demands: List[SimDemand] = []
         self.scavenged_parts: List[SimScavenge] = []
         self.repaired_parts: List[SimRepair] = []
+        #: Changes to the contents of the integral tanks of vehicles.
+        self.propellant_flows: List[PropellantFlow] = []
         self._events: List[Tuple[float, int, str, int, SimEvent]] = []
         self._sequence = 0
         self._repaired_items: Dict[int, List[RepairItem]] = {}
@@ -176,6 +180,7 @@ class Simulator:
         self.warnings.clear()
         self.scavenged_parts.clear()
         self.repaired_parts.clear()
+        self.propellant_flows.clear()
         self._item_demands.clear()
         self.time = 0.0
         self.duration = 0.0
@@ -208,14 +213,84 @@ class Simulator:
         except SimError as error:
             self._log_error(error)
 
+    # ------------------------------------------------------------- propellant
+
+    def record_propellant(
+        self,
+        tank: SimResourceTank,
+        kind: PropellantFlowKind,
+        amount: float,
+        event: Optional[SimEvent] = None,
+        attributed: bool = True,
+    ):
+        """
+        Records a change to the contents of an integral tank of a vehicle.
+        Changes to tanks which do not belong to a vehicle are ignored.
+
+        Args:
+            tank (:obj:`SimResourceTank`): The tank (after the change).
+            kind (:obj:`PropellantFlowKind`): The kind of change.
+            amount (float): The amount (units) changed.
+            event (:obj:`SimEvent`): The causing event (default: the current event).
+            attributed (bool): False, if no event causes the change.
+        """
+        vehicle = tank.vehicle
+        # empty tanks are recorded when loaded to report their history
+        if vehicle is None or (amount == 0 and kind != PropellantFlowKind.LOADED):
+            return
+        if event is None and attributed:
+            event = self.event
+        self.propellant_flows.append(
+            PropellantFlow(
+                time=self.time,
+                vehicle_id=vehicle.id,
+                vehicle_name=vehicle.name,
+                tank_key=tank.key,
+                tank_role=tank.role,
+                resource_name=None if tank.resource is None else tank.resource.name,
+                unit_mass=1.0 if tank.resource is None else tank.resource.unit_mass,
+                kind=PropellantFlowKind(kind),
+                amount=amount,
+                amount_after=tank._amount,  # pylint: disable=protected-access
+                max_amount=tank._max_amount,  # pylint: disable=protected-access
+                event_name=None if event is None else event.name,
+            )
+        )
+
+    def _handle_boiloff(self):
+        """
+        Removes the resources lost to boiloff from the integral tanks of all
+        vehicles over the elapsed duration. Vehicles on the surface of Earth
+        are assumed to be topped off before launch.
+        """
+        for element in self.state.network.elements:
+            tanks = getattr(element, "fuel_tanks", None)
+            if not tanks:
+                continue
+            location = element.location
+            if (
+                isinstance(location, SimNode)
+                and location.is_surface
+                and location.body == Body.EARTH
+            ):
+                continue
+            for tank in tanks:
+                loss = tank.apply_boiloff(self.duration)
+                if loss > 0:
+                    self.record_propellant(
+                        tank, PropellantFlowKind.BOILOFF, loss, attributed=False
+                    )
+
     # ---------------------------------------------------------------- demands
 
     def _handle_demands(self):
         """
-        Generates and executes the demands of all elements over the elapsed
-        duration and schedules mission-level demands at the start of a mission.
+        Removes boiloff losses and generates and executes the demands of all
+        elements over the elapsed duration and schedules mission-level demands
+        at the start of a mission.
         """
         if self.duration > 0:
+            self._handle_boiloff()
             for element in self.state.network.elements:
                 demands = element.generate_demands(self.duration, self)
                 demands = self._discretize_demands(demands, element, element.location)

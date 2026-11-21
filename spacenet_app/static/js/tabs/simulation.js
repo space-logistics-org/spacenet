@@ -15,14 +15,19 @@ import {
 } from "../components.js";
 import { drawNetwork } from "../networkMap.js";
 import { store } from "../store.js";
-import { button, checkbox, clear, fmt, formatDate, h, numberInput, select } from "../util.js";
+import { button, checkbox, clear, download, fmt, formatDate, h, numberInput, select, toast } from "../util.js";
 
 const VIEWS = [
   ["network", "Network History"],
   ["measures", "Measures History"],
   ["locations", "Location History"],
   ["elements", "Element History"],
+  ["propellant", "Propellant"],
 ];
+
+// categorical series colors in fixed order (validated for color vision
+// deficiencies on the light surface; values are also shown in tables)
+const SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"];
 
 const MEASURES = [
   ["crewSurfaceDays", "Crew Surface Days", "crew-days"],
@@ -51,6 +56,18 @@ const state = {
   historyLocation: null,
   historyElement: null,
   showDemands: false,
+  propellantVehicle: null,
+  tankers: {
+    required: 1_200_000,
+    tankerDelivery: 150_000,
+    depotCapacity: 1_500_000,
+    initial: 0,
+    boiloffRate: 0.0005,
+    intervalDays: 6,
+    loiterDays: 1,
+    transferLoss: 0.01,
+  },
+  sizing: null,
 };
 
 let root;
@@ -75,6 +92,7 @@ export function init(container, options) {
       locationFilter: null,
       historyLocation: null,
       historyElement: null,
+      propellantVehicle: null,
     });
   });
 }
@@ -228,6 +246,7 @@ function draw() {
   if (state.view === "network") drawHistory(content, result);
   else if (state.view === "measures") drawMeasures(content, result);
   else if (state.view === "locations") drawMassHistory(content, result.locationHistory, "historyLocation", "Location");
+  else if (state.view === "propellant") drawPropellant(content, result);
   else drawMassHistory(content, result.elementHistory, "historyElement", "Element");
 }
 
@@ -241,6 +260,9 @@ function totals(values) {
     ["Return-mass capacity utilization", fmt(100 * values.downMassCapacityUtilization, 1), "%"],
     ["Exploration capability", fmt(values.explorationCapability, 0), "kg-crew-days"],
     ["Relative exploration capability", fmt(values.relativeExplorationCapability, 3), "(Apollo 17 = 1)"],
+    ["Propellant burned", fmt(values.propellantBurnedMass ?? 0, 0), "kg"],
+    ["Propellant boiloff", fmt(values.propellantBoiloffMass ?? 0, 0), "kg"],
+    ["Propellant transfer losses", fmt(values.propellantTransferLossMass ?? 0, 0), "kg"],
   ];
   return h(
     "table",
@@ -512,4 +534,340 @@ function drawMassHistory(content, histories, key, label) {
     })),
     { xaxis: { type: "date" }, yaxis: { title: { text: "Mass (kg)" } } }
   );
+}
+
+// --------------------------------------------------------------- propellant
+
+const BUDGET_COLUMNS = [
+  ["loaded", "Loaded"],
+  ["added", "Added"],
+  ["transferredIn", "Transfer in"],
+  ["transferredOut", "Transfer out"],
+  ["transferLoss", "Transfer loss"],
+  ["burned", "Burned"],
+  ["boiloff", "Boiloff"],
+  ["consumed", "Consumed"],
+  ["residual", "Residual"],
+];
+
+// propellant losses which are compared across vehicles
+const USES = [
+  ["boiloff", "Boiloff"],
+  ["transferLoss", "Transfer loss"],
+];
+
+/** Groups the tank histories and budgets of a propellant analysis by vehicle. */
+function propellantVehicles(propellant) {
+  const vehicles = new Map();
+  for (const budget of propellant.budgets) {
+    const vehicle = vehicles.get(budget.vehicleId) ?? {
+      id: budget.vehicleId,
+      name: budget.vehicleName,
+      budgets: [],
+      tanks: [],
+      uses: Object.fromEntries(USES.map(([key]) => [key, 0])),
+      transferred: 0,
+    };
+    vehicle.budgets.push(budget);
+    for (const [key] of USES) vehicle.uses[key] += budget[key] * budget.unitMass;
+    vehicle.transferred += (budget.transferredIn + budget.transferredOut) * budget.unitMass;
+    vehicles.set(budget.vehicleId, vehicle);
+  }
+  for (const tank of propellant.tanks) vehicles.get(tank.vehicleId)?.tanks.push(tank);
+  return [...vehicles.values()];
+}
+
+function drawPropellant(content, result) {
+  frameParts = null;
+  const propellant = result.propellant ?? { tanks: [], budgets: [], totals: {} };
+  const vehicles = propellantVehicles(propellant).filter((vehicle) =>
+    vehicle.budgets.some((budget) => budget.maxAmount > 0)
+  );
+  if (!vehicles.length) {
+    content.append(h("div", { class: "sn-muted-box" }, "No vehicles with propellant tanks."));
+    return;
+  }
+  if (!vehicles.some((vehicle) => vehicle.id === state.propellantVehicle)) {
+    // default to the vehicle which receives the most propellant (e.g., a lander)
+    const ranked = [...vehicles].sort((a, b) => b.transferred - a.transferred);
+    state.propellantVehicle = ranked[0].id;
+  }
+  const vehicle = vehicles.find((item) => item.id === state.propellantVehicle);
+  const levels = h("div", { class: "sn-chart" });
+  const uses = h("div");
+  content.append(
+    h(
+      "div",
+      { class: "row g-2 mb-1" },
+      h(
+        "div",
+        { class: "col-md-6" },
+        h("label", { class: "form-label small mb-0" }, "Vehicle"),
+        select(
+          vehicles.map((item) => [item.id, item.name]),
+          state.propellantVehicle,
+          (value) => {
+            state.propellantVehicle = value;
+            draw();
+          }
+        )
+      ),
+      h(
+        "div",
+        { class: "col-md-6 d-flex align-items-end justify-content-end" },
+        button("Export budgets (CSV)", exportPropellant)
+      )
+    ),
+    h("h6", { class: "mt-2 mb-0" }, `Tank contents: ${vehicle.name}`),
+    levels,
+    budgetTable(vehicle),
+    h("h6", { class: "mt-3" }, "Propellant losses by vehicle"),
+    uses,
+    tankerCard()
+  );
+  drawTankLevels(levels, vehicle);
+  drawUses(uses, vehicles);
+}
+
+/** Line chart of the contents (kg) of each tank of a vehicle with its capacity. */
+function drawTankLevels(chart, vehicle) {
+  const traces = [];
+  vehicle.tanks.forEach((tank, index) => {
+    const color = SERIES[index % SERIES.length];
+    const name = `${tank.tank} (${tank.resource ?? "empty"})`;
+    const x = tank.points.map((point) => dateOf(point[0]));
+    traces.push({
+      x,
+      y: tank.points.map((point) => point[1] * tank.unitMass),
+      name,
+      legendgroup: name,
+      mode: "lines",
+      line: { color, width: 2 },
+      hovertemplate: `${name}: %{y:,.0f} kg<extra></extra>`,
+    });
+    if (x.length) {
+      traces.push({
+        x: [x[0], x[x.length - 1]],
+        y: [tank.maxAmount * tank.unitMass, tank.maxAmount * tank.unitMass],
+        name: `${name} capacity`,
+        legendgroup: name,
+        showlegend: false,
+        mode: "lines",
+        line: { color, width: 1, dash: "dash" },
+        hovertemplate: `${name} capacity: %{y:,.0f} kg<extra></extra>`,
+      });
+    }
+  });
+  plot(chart, traces, {
+    xaxis: { type: "date" },
+    yaxis: { title: { text: "Contents (kg)" }, rangemode: "tozero" },
+    hovermode: "x unified",
+    showlegend: true,
+  });
+}
+
+/** Table of the propellant budget (kg) of each tank of a vehicle. */
+function budgetTable(vehicle) {
+  const cell = (value) => h("td", { class: "text-end" }, fmt(value, 0));
+  return h(
+    "div",
+    { class: "table-responsive" },
+    h(
+      "table",
+      { class: "table table-sm sn-table small mb-0" },
+      h(
+        "thead",
+        {},
+        h("tr", {}, h("th", {}, "Tank (kg)"), BUDGET_COLUMNS.map(([, label]) => h("th", { class: "text-end" }, label)))
+      ),
+      h(
+        "tbody",
+        {},
+        vehicle.budgets.map((budget) =>
+          h(
+            "tr",
+            {},
+            h("td", {}, `${budget.tank} (${budget.resource ?? "empty"})`),
+            BUDGET_COLUMNS.map(([key]) => cell(budget[key] * budget.unitMass))
+          )
+        )
+      )
+    ),
+    h(
+      "div",
+      { class: "form-text" },
+      "Loaded + added + transfer in − transfer out − transfer loss − burned − boiloff − consumed = residual. " +
+        "Boiloff is a fraction of the tank capacity per day (not applied on the surface of Earth)."
+    )
+  );
+}
+
+/** Horizontal stacked bars of the propellant lost by each vehicle. */
+function drawUses(container, vehicles) {
+  const limit = 15;
+  const ranked = vehicles
+    .map((vehicle) => ({ ...vehicle, total: USES.reduce((sum, [key]) => sum + vehicle.uses[key], 0) }))
+    .filter((vehicle) => vehicle.total > 0)
+    .sort((a, b) => b.total - a.total);
+  const shown = ranked.slice(0, limit);
+  const others = ranked.slice(limit);
+  if (others.length) {
+    shown.push({
+      name: `Other (${others.length} vehicles)`,
+      uses: Object.fromEntries(USES.map(([key]) => [key, others.reduce((sum, v) => sum + v.uses[key], 0)])),
+    });
+  }
+  if (!shown.length) {
+    container.replaceChildren(h("div", { class: "small text-secondary" }, "No boiloff or transfer losses."));
+    return;
+  }
+  const chart = h("div", { style: { height: `${Math.max(160, 26 * shown.length + 70)}px` } });
+  container.replaceChildren(chart);
+  // largest at the top
+  const names = shown.map((vehicle) => vehicle.name).reverse();
+  plot(
+    chart,
+    USES.map(([key, label], index) => ({
+      type: "bar",
+      orientation: "h",
+      name: label,
+      y: names,
+      x: [...shown].reverse().map((vehicle) => vehicle.uses[key]),
+      marker: { color: SERIES[index], line: { color: "#ffffff", width: 1 } },
+      hovertemplate: `%{y}<br>${label}: %{x:,.0f} kg<extra></extra>`,
+    })),
+    {
+      barmode: "stack",
+      bargap: 0.35,
+      margin: { l: 20, r: 20, t: 10, b: 40 },
+      xaxis: { title: { text: "Propellant mass lost (kg)" } },
+      yaxis: { automargin: true },
+      legend: { orientation: "h", y: 1.08, x: 0, traceorder: "normal" },
+    }
+  );
+}
+
+async function exportPropellant() {
+  try {
+    const { name, text } = await api.exportText("propellant", { scenario: store.scenario });
+    download(name, text, "text/csv");
+  } catch (error) {
+    toast(`Export failed: ${error.message}`, "danger");
+  }
+}
+
+/** Card to size a tanker campaign which aggregates propellant in a depot. */
+function tankerCard() {
+  const params = state.tankers;
+  const output = h("div");
+  const chart = h("div", { style: { height: "220px", display: "none" } });
+  const input = (label, key, scale = 1, attrs = {}) =>
+    h(
+      "div",
+      { class: "col-md-3" },
+      h("label", { class: "form-label small mb-0" }, label),
+      numberInput(params[key] === null ? null : params[key] / scale, (value) => {
+        params[key] = value === null ? null : value * scale;
+      }, { min: 0, ...attrs })
+    );
+
+  async function run() {
+    try {
+      state.sizing = await api.sizeTankers(params);
+    } catch (error) {
+      state.sizing = { error: error.message };
+    }
+    show();
+  }
+
+  function show() {
+    const sizing = state.sizing;
+    chart.style.display = sizing && !sizing.error ? "" : "none";
+    if (!sizing) {
+      output.replaceChildren();
+      return;
+    }
+    if (sizing.error) {
+      output.replaceChildren(h("div", { class: "alert alert-danger py-1 small" }, sizing.error));
+      return;
+    }
+    output.replaceChildren(
+      h(
+        "div",
+        { class: sizing.feasible ? "small" : "alert alert-warning py-1 small" },
+        sizing.feasible
+          ? h(
+              "span",
+              {},
+              h("span", { class: "fw-semibold" }, `${sizing.flights} tanker flight${sizing.flights === 1 ? "" : "s"}`),
+              ` deliver ${fmt(sizing.delivered, 0)} kg; ${fmt(sizing.boiloff, 0)} kg boils off and ` +
+                `${fmt(sizing.transferLoss, 0)} kg is lost in transfer, leaving ${fmt(sizing.final, 0)} kg at departure.`
+            )
+          : `Infeasible: ${sizing.reason}`
+      )
+    );
+    plot(
+      chart,
+      [
+        {
+          x: sizing.timeline.map((point) => point[0]),
+          y: sizing.timeline.map((point) => point[1]),
+          name: "Depot contents",
+          mode: "lines+markers",
+          marker: { size: 8, color: SERIES[0], line: { color: "#ffffff", width: 2 } },
+          line: { color: SERIES[0], width: 2 },
+          hovertemplate: "Day %{x:.1f}: %{y:,.0f} kg<extra></extra>",
+        },
+        {
+          x: [0, sizing.timeline.at(-1)?.[0] ?? 0],
+          y: [params.required, params.required],
+          name: "Required",
+          mode: "lines",
+          line: { color: "#52514e", width: 1, dash: "dash" },
+          hovertemplate: "Required: %{y:,.0f} kg<extra></extra>",
+        },
+      ],
+      {
+        margin: { l: 70, r: 20, t: 10, b: 40 },
+        xaxis: { title: { text: "Days after the first tanker flight" } },
+        yaxis: { title: { text: "Depot contents (kg)" }, rangemode: "tozero" },
+        showlegend: true,
+      }
+    );
+  }
+
+  const card = h(
+    "div",
+    { class: "card mt-3" },
+    h(
+      "div",
+      { class: "card-body py-2" },
+      h("h6", { class: "card-title" }, "Tanker campaign sizing"),
+      h(
+        "div",
+        { class: "form-text mb-2" },
+        "Estimates the tanker flights needed to aggregate propellant in a depot, accounting for boiloff " +
+          "between flights (a fraction of the depot capacity per day) and transfer losses. " +
+          "Verify the estimate by simulating a scenario with that many flights."
+      ),
+      h(
+        "div",
+        { class: "row g-2 mb-2" },
+        input("Required at departure (kg)", "required"),
+        input("Delivery per flight (kg)", "tankerDelivery"),
+        input("Depot capacity (kg)", "depotCapacity"),
+        input("Initial contents (kg)", "initial"),
+        input("Boiloff (%/day)", "boiloffRate", 0.01, { max: 100 }),
+        input("Days between flights", "intervalDays"),
+        input("Days before departure", "loiterDays"),
+        input("Transfer loss (%)", "transferLoss", 0.01, { max: 99.9 })
+      ),
+      button("Size tanker campaign", run, "primary"),
+      h("div", { class: "mt-2" }, output),
+      chart
+    )
+  );
+  // charts are drawn once the card is in the document (to size them)
+  requestAnimationFrame(show);
+  return card;
 }

@@ -6,5 +6,6 @@
    :caption: Contents:
 
    getting_started.rst
+   propellant_logistics.rst
    api_reference/index.rst
    contributors.rst
