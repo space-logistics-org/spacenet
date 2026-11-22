@@ -339,6 +339,33 @@ class TestAnalysis(ApiTestCase):
         scenario["endDate"] = scenario["startDate"]
         self.post("/scenario/validate", 422, scenario=scenario)
 
+    def test_lint(self):
+        result = self.post("/scenario/lint", scenario=load_json(SCENARIOS[0]))
+        self.assertEqual(result, {"issues": [], "errorCount": 0, "warningCount": 0})
+        scenario = load_json(SCENARIOS[0])
+        events = scenario["missionList"][0]["events"]
+        events[0]["missionTime"] = "-P1D"
+        events[1]["location"] = "00000000-0000-0000-0000-000000000000"
+        result = self.post("/scenario/lint", scenario=scenario)
+        self.assertEqual(result["errorCount"], 2)
+        self.assertEqual(
+            [(i["code"], i["path"]) for i in result["issues"]],
+            [
+                ("negative-time", "missionList/0/events/0/missionTime"),
+                ("unknown-location", "missionList/0/events/1/location"),
+            ],
+        )
+        # analyses report all errors
+        detail = self.post("/simulate", 422, scenario=scenario)["detail"]
+        self.assertEqual(
+            [(d["code"], d["missionIndex"], d["eventIndex"]) for d in detail],
+            [("negative-time", 0, 0), ("unknown-location", 0, 1)],
+        )
+        self.assertEqual(
+            detail[0]["msg"],
+            "Event Lunar | Create Elements is before the start of its mission.",
+        )
+
     def test_simulate(self):
         for path in SCENARIOS:
             scenario = load_scenario(path)

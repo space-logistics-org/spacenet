@@ -47,19 +47,26 @@ def add_exception_handlers(app: FastAPI):
 
     @app.exception_handler(ScenarioError)
     async def handle_scenario_error(_: Request, error: ScenarioError):
-        return JSONResponse(
-            status_code=UNPROCESSABLE,
-            content={
-                "detail": [
-                    {
-                        "type": "scenario_error",
-                        "msg": error.message,
-                        "missionIndex": error.mission_index,
-                        "eventIndex": error.event_index,
-                    }
-                ]
-            },
-        )
+        # all errors found by checking the scenario, if it was checked
+        detail = [
+            {
+                "type": "scenario_error",
+                "msg": issue.message,
+                "code": issue.code,
+                "path": issue.path,
+                "missionIndex": issue.mission_index,
+                "eventIndex": issue.event_index,
+            }
+            for issue in error.issues
+        ] or [
+            {
+                "type": "scenario_error",
+                "msg": error.message,
+                "missionIndex": error.mission_index,
+                "eventIndex": error.event_index,
+            }
+        ]
+        return JSONResponse(status_code=UNPROCESSABLE, content={"detail": detail})
 
     @app.exception_handler(ValueError)
     async def handle_value_error(_: Request, error: ValueError):

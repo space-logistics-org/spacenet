@@ -6,6 +6,7 @@
    :caption: Contents:
 
    getting_started.rst
+   scenario_checks.rst
    propellant_logistics.rst
    surface_operations.rst
    campaign_analysis.rst

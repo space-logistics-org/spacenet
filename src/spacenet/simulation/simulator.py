@@ -286,10 +286,28 @@ class Simulator:
             index: [item.copy() for item in items]
             for index, items in self.repaired_items.items()
         }
+        self._add_lint_warnings()
         for mission in self.state.missions:
             self.schedule(MissionEvent(mission))
             # identify the crew of each mission in the initial state
             _ = mission.crew_members
+
+    def _add_lint_warnings(self):
+        """
+        Logs the likely mistakes found by checking the scenario as warnings
+        of their events (or of their missions) at their scheduled times.
+        """
+        for issue in self.state.lint_warnings:
+            time, event = 0.0, None
+            if issue.mission_index is not None:
+                mission = self.state.missions[issue.mission_index]
+                time = mission.start_time
+                if issue.event_index is not None:
+                    event = mission.events[issue.event_index]
+                    time += self.settings.round_time(event.mission_time or 0.0)
+                else:
+                    event = MissionEvent(mission)
+            self.warnings.append(SimWarning(time, event, issue.message))
 
     def _has_next_event(self) -> bool:
         """True, if an event remains to be executed before the scenario end."""

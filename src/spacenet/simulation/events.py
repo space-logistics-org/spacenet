@@ -135,6 +135,11 @@ def _sorted_elements(elements) -> List[SimElement]:
     return sorted(unique.values(), key=lambda e: e.sort_key)
 
 
+def _because(problem: Optional[str]) -> str:
+    """Formats the reason why an element or a resource could not be added."""
+    return "" if problem is None else f": {problem}"
+
+
 def _names(elements) -> str:
     return "[" + ", ".join(str(e) for e in elements) + "]"
 
@@ -344,6 +349,7 @@ class CreateEvent(SimEvent):
                     self,
                     f"{element} already exists at {element.location}.",
                 )
+            problem = self.container.get_add_problem(element)
             if self.container.add(element):
                 simulator.state.network.register(element)
                 _record_tanks_loaded(simulator, self, element)
@@ -352,7 +358,8 @@ class CreateEvent(SimEvent):
                 raise SimSpatialError(
                     simulator.time,
                     self,
-                    f"{element} could not be added to {self.container}.",
+                    f"{element} could not be added to {self.container}"
+                    f"{_because(problem)}.",
                 )
 
 
@@ -393,11 +400,13 @@ class MoveEvent(SimEvent):
         self._log("Transferring %s to %s", _names(elements), self.container)
         for element in elements:
             self._check_location(simulator, element)
+            problem = self.container.get_add_problem(element)
             if not self.container.add(element):
                 raise SimSpatialError(
                     simulator.time,
                     self,
-                    f"{element} could not be added to {self.container}.",
+                    f"{element} could not be added to {self.container}"
+                    f"{_because(problem)}.",
                 )
 
 
@@ -453,9 +462,12 @@ class AddEvent(SimEvent):
             target = _get_resource_container(
                 simulator, self, self.container, resource=demand.resource
             )
+            problem = target.get_add_problem(demand.resource, demand.amount)
             if not target.add(demand.resource, demand.amount):
                 raise SimSpatialError(
-                    simulator.time, self, f"{demand} could not be added to {target}."
+                    simulator.time,
+                    self,
+                    f"{demand} could not be added to {target}{_because(problem)}.",
                 )
             if isinstance(target, SimResourceTank):
                 simulator.record_propellant(
@@ -615,12 +627,14 @@ class TransferEvent(SimEvent):
                 self,
                 f"{Demand(resource, removed)} could not be removed from {source}.",
             )
+        problem = target.get_add_problem(resource, delivered)
         if not target.add(resource, delivered):
             source.add(resource, removed)
             raise SimSpatialError(
                 simulator.time,
                 self,
-                f"{Demand(resource, delivered)} could not be added to {target}.",
+                f"{Demand(resource, delivered)} could not be added to {target}"
+                f"{_because(problem)}.",
             )
         lost = removed - delivered
         self.results.append(

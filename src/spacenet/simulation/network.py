@@ -40,6 +40,17 @@ class SimLocation(ElementContainer):
         """
         return True
 
+    def get_add_problem(self, element: SimElement) -> Optional[str]:
+        # pylint: disable=unused-argument
+        """
+        Describes the constraint which prevents adding an element (locations
+        have unlimited capacity).
+
+        Returns:
+            str: None, as any element can be added.
+        """
+        return None
+
     def can_add_mass(self, added_mass: float) -> bool:
         # pylint: disable=unused-argument
         """
@@ -52,6 +63,17 @@ class SimLocation(ElementContainer):
             bool: True, if the mass can be added.
         """
         return True
+
+    def get_mass_problem(self, added_mass: float) -> Optional[str]:
+        # pylint: disable=unused-argument
+        """
+        Describes the constraint which prevents adding a mass (locations have
+        unlimited capacity).
+
+        Returns:
+            str: None, as any mass can be added.
+        """
+        return None
 
     def add(self, element: SimElement) -> bool:
         """

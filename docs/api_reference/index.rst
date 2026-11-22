@@ -9,4 +9,5 @@ The following provide documentation on the SpaceNet Python API.
 
   schemas/index
   io
+  lint
   simulation

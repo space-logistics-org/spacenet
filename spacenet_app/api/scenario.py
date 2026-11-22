@@ -4,15 +4,17 @@ Endpoints to validate scenarios and load model databases.
 
 import tempfile
 from enum import Enum
-from typing import get_args
+from typing import List, get_args
 
 from fastapi import APIRouter, Body, UploadFile
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
+from fastapi_camelcase import CamelModel
+from pydantic import Field, ValidationError
 
 from spacenet import schemas as s
 from spacenet.io import ModelDatabase, load_db
+from spacenet.lint import LintIssue, errors as lint_errors, lint_scenario
 from spacenet.schemas import Scenario
 from spacenet.simulation import State
 
@@ -60,6 +62,29 @@ def validate_scenario(request: ScenarioRequest) -> Scenario:
     """
     State(request.scenario)
     return request.scenario
+
+
+class LintResult(CamelModel):
+    """The issues found by checking a scenario."""
+
+    issues: List[LintIssue] = Field([], description="Errors before warnings")
+    error_count: int = Field(0, description="Number of errors")
+    warning_count: int = Field(0, description="Number of warnings")
+
+
+@router.post("/scenario/lint")
+def lint(request: ScenarioRequest) -> LintResult:
+    """
+    Checks a scenario for errors (which prevent or invalidate its
+    simulation) and warnings (likely mistakes), reporting all of them.
+    """
+    issues = lint_scenario(request.scenario)
+    error_count = len(lint_errors(issues))
+    return LintResult(
+        issues=issues,
+        error_count=error_count,
+        warning_count=len(issues) - error_count,
+    )
 
 
 @router.post("/library/database")

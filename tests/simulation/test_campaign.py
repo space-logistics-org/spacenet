@@ -127,6 +127,99 @@ class TestCadenceAndLife(unittest.TestCase):
         self.assertEqual(sim.state.get_element(habitat.id).created_time, 0)
 
 
+class TestCapacityMessages(unittest.TestCase):
+    """Errors of elements and resources which exceed a capacity say which."""
+
+    def errors(self, builder):
+        simulator = DemandSimulator(builder.build())
+        simulator.simulate()
+        return [e.message for e in simulator.spatial_errors]
+
+    def test_cargo_mass(self):
+        b = ScenarioBuilder()
+        carrier = b.carrier("Carrier", max_cargo_mass=5000)
+        heavy = b.element("Heavy", mass=6000)
+        b.mission(
+            [b.create([carrier], b.ksc), b.create([heavy], carrier, b.ksc, priority=2)]
+        )
+        self.assertEqual(
+            self.errors(b),
+            [
+                "Heavy could not be added to Carrier: its cargo mass would be "
+                "6,000.00 kg, above its capacity of 5,000.00 kg."
+            ],
+        )
+
+    def test_crew_capacity(self):
+        b = ScenarioBuilder()
+        capsule = b.carrier("Capsule", max_crew=1)
+        crew = [b.crew("A"), b.crew("B")]
+        b.mission(
+            [b.create([capsule], b.ksc), b.create(crew, capsule, b.ksc, priority=2)]
+        )
+        self.assertEqual(
+            self.errors(b),
+            ["B could not be added to Capsule: it is at its crew capacity of 1."],
+        )
+
+    def test_nested_cargo_mass(self):
+        b = ScenarioBuilder()
+        outer = b.carrier("Outer", max_cargo_mass=1500)
+        inner = b.carrier("Inner", mass=1000, max_cargo_mass=5000)
+        box = b.element("Box", mass=1000)
+        b.mission(
+            [
+                b.create([outer], b.ksc),
+                b.create([inner], outer, b.ksc, priority=2),
+                b.create([box], inner, b.ksc, priority=3),
+            ]
+        )
+        self.assertEqual(
+            self.errors(b),
+            [
+                "Box could not be added to Inner: in Outer, its cargo mass would "
+                "be 2,000.00 kg, above its capacity of 1,500.00 kg."
+            ],
+        )
+
+    def test_resource_container_and_tank(self):
+        b = ScenarioBuilder()
+        tank = b.container("Tank", max_cargo_mass=100)
+        stage = b.vehicle("Stage", fuel=50, max_fuel=100)
+        b.mission(
+            [
+                b.create([tank, stage], b.lsp),
+                s.AddResources(
+                    name="Fill",
+                    priority=2,
+                    mission_time=timedelta(0),
+                    location=b.lsp.id,
+                    container=tank.id,
+                    resources=[s.ResourceAmount(resource=b.water.id, amount=150)],
+                ),
+                s.AddResources(
+                    name="Refuel",
+                    priority=3,
+                    mission_time=timedelta(0),
+                    location=b.lsp.id,
+                    container=stage.id,
+                    resources=[s.ResourceAmount(resource=b.fuel.id, amount=80)],
+                ),
+            ]
+        )
+        self.assertEqual(
+            self.errors(b),
+            [
+                "150.00 kg of Water could not be added to Tank: its cargo mass "
+                "would be 150.00 kg, above its capacity of 100.00 kg.",
+                "80.00 kg of Fuel could not be added to Stage OMS Fuel Tank (50.0 / "
+                "100.0 kg Fuel): its "
+                "tank contents would be 130.00 units, above its capacity of "
+                "100.00 units.",
+            ],
+        )
+
+
 def water_habitat(builder, name="Habitat", rate=1.0, **kwargs):
     """Adds a habitat which demands water (kg/day) while active."""
     model = s.RatedDemandModel(

@@ -2,9 +2,10 @@
 Errors and warnings logged during simulation.
 """
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:  # pragma: no cover
+    from ..lint import LintIssue
     from .elements import SimElement
     from .events import SimEvent
     from .network import SimLocation
@@ -22,6 +23,7 @@ class ScenarioError(ValueError):
         message: str,
         mission_index: Optional[int] = None,
         event_index: Optional[int] = None,
+        issues: Optional[List["LintIssue"]] = None,
     ):
         super().__init__(message)
         #: Description of the error.
@@ -30,6 +32,9 @@ class ScenarioError(ValueError):
         self.mission_index = mission_index
         #: Position of the related event in the mission event list, if any.
         self.event_index = event_index
+        #: All errors found in the scenario, if it was checked (see
+        #: :func:`spacenet.lint.lint_scenario`).
+        self.issues: List["LintIssue"] = list(issues or [])
 
 
 class SimError(Exception):

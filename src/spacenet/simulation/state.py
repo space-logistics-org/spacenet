@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Union
 from uuid import UUID, uuid4
 
 from .. import schemas as s
+from ..lint import LintIssue, errors as lint_errors, lint_scenario
 from ..schemas.elements.element import ElementType
 from ..schemas.events.burn import BurnStage
 from ..schemas.events.event import EventType
@@ -121,6 +122,21 @@ class State:
         self.manifest_events: List[ManifestEvent] = []
         #: Descriptions of problems found while building the manifest.
         self.manifest_warnings: List[str] = []
+        #: Likely mistakes found by checking the scenario.
+        self.lint_warnings: List[LintIssue] = []
+
+        issues = lint_scenario(scenario)
+        found = lint_errors(issues)
+        if found:
+            first = found[0]
+            more = f" (and {len(found) - 1} more errors)" if len(found) > 1 else ""
+            raise ScenarioError(
+                f"{first.message}{more}",
+                first.mission_index,
+                first.event_index,
+                issues=found,
+            )
+        self.lint_warnings = issues
 
         try:
             self._build_resources()

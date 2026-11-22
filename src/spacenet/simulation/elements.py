@@ -23,6 +23,14 @@ if TYPE_CHECKING:  # pragma: no cover
     from .simulator import Simulator
 
 
+def _over(quantity: str, value: float, capacity: float, units: str) -> str:
+    """Describes a quantity which would exceed its capacity."""
+    return (
+        f"its {quantity} would be {value:,.2f} {units}, above its capacity of "
+        f"{capacity:,.2f} {units}"
+    )
+
+
 class PartApplication:
     """
     The application of a part (resource) within an element.
@@ -619,25 +627,38 @@ class SimResourceContainer(SimElement):
         Returns:
             bool: True, if the resource can be added.
         """
-        if (
-            self.cargo_mass + resource.unit_mass * amount - self._max_cargo_mass
-            > self.settings.mass_precision / 2
-        ):
-            return False  # mass constrained
+        return self.get_add_problem(resource, amount) is None
+
+    def get_add_problem(self, resource: SimResource, amount: float) -> Optional[str]:
+        """
+        Describes the capacity constraint which prevents adding a resource amount.
+
+        Args:
+            resource (:obj:`SimResource`): The resource.
+            amount (float): The amount (units).
+
+        Returns:
+            str: The description, or None if the resource can be added.
+        """
+        mass = self.cargo_mass + resource.unit_mass * amount
+        if mass - self._max_cargo_mass > self.settings.mass_precision / 2:
+            return _over("cargo mass", mass, self._max_cargo_mass, "kg")
+        volume = self.cargo_volume + resource.unit_volume * amount
         if (
             self.settings.volume_constrained
-            and self.cargo_volume
-            + resource.unit_volume * amount
-            - self._max_cargo_volume
-            > self.settings.volume_precision / 2
+            and volume - self._max_cargo_volume > self.settings.volume_precision / 2
         ):
-            return False  # volume constrained
+            return _over("cargo volume", volume, self._max_cargo_volume, "m^3")
         if (
             self.settings.environment_constrained
             and self.cargo_environment != resource.environment
         ):
-            return False  # environment constrained
-        return True
+            return (
+                f"{resource} requires a {Environment(resource.environment).value} "
+                "environment but the cargo environment is "
+                f"{Environment(self.cargo_environment).value}"
+            )
+        return None
 
     def add(self, resource: SimResource, amount: float) -> bool:
         """
@@ -889,12 +910,25 @@ class SimResourceTank(SimElement):
         Returns:
             bool: True, if the resource can be added.
         """
+        return self.get_add_problem(resource, amount) is None
+
+    def get_add_problem(self, resource: SimResource, amount: float) -> Optional[str]:
+        """
+        Describes the capacity constraint which prevents adding a resource amount.
+
+        Args:
+            resource (:obj:`SimResource`): The resource.
+            amount (float): The amount (units).
+
+        Returns:
+            str: The description, or None if the resource can be added.
+        """
         if self.resource is not None and self.resource != resource:
-            return False
-        return not (
-            self._amount + amount - self._max_amount
-            > self.settings.demand_precision / 2
-        )
+            return f"the tank holds {self.resource}"
+        total = self._amount + amount
+        if total - self._max_amount > self.settings.demand_precision / 2:
+            return _over("tank contents", total, self._max_amount, "units")
+        return None
 
     def add(self, resource: SimResource, amount: float) -> bool:
         """
@@ -1060,30 +1094,44 @@ class SimCarrier(SimElement, ElementContainer):
         Returns:
             bool: True, if the element can be added.
         """
+        return self.get_add_problem(element) is None
+
+    def get_add_problem(self, element: SimElement) -> Optional[str]:
+        # pylint: disable=too-many-return-statements
+        """
+        Describes the capacity constraint which prevents adding an element.
+
+        Args:
+            element (:obj:`SimElement`): The element.
+
+        Returns:
+            str: The description, or None if the element can be added.
+        """
         if self.contains(element):
-            return True
+            return None
         if isinstance(element, SimCrewMember):
-            return self.crew_size < self.max_crew_size
-        if (
-            self.cargo_mass + element.total_mass - self.max_cargo_mass
-            > self.settings.mass_precision / 2
-        ):
-            return False  # mass constrained
+            if self.crew_size >= self.max_crew_size:
+                return f"it is at its crew capacity of {self.max_crew_size}"
+            return None
+        mass = self.cargo_mass + element.total_mass
+        if mass - self.max_cargo_mass > self.settings.mass_precision / 2:
+            return _over("cargo mass", mass, self.max_cargo_mass, "kg")
+        volume = self.cargo_volume + element.volume
         if (
             self.settings.volume_constrained
-            and self.cargo_volume + element.volume - self.max_cargo_volume
-            > self.settings.volume_precision / 2
+            and volume - self.max_cargo_volume > self.settings.volume_precision / 2
         ):
-            return False  # volume constrained
+            return _over("cargo volume", volume, self.max_cargo_volume, "m^3")
         if (
             self.settings.environment_constrained
             and element.environment == Environment.PRESSURIZED
             and self.cargo_environment == Environment.UNPRESSURIZED
         ):
-            return False  # environment constrained
+            return f"{element} requires a pressurized environment"
         if self.container is None:
-            return True
-        return self.container.can_add_mass(element.total_mass)
+            return None
+        problem = self.container.get_mass_problem(element.total_mass)
+        return None if problem is None else f"in {self.container}, {problem}"
 
     def can_add_mass(self, added_mass: float) -> bool:
         """
@@ -1095,10 +1143,22 @@ class SimCarrier(SimElement, ElementContainer):
         Returns:
             bool: True, if the mass can be added.
         """
-        return not (
-            self.cargo_mass + added_mass - self.max_cargo_mass
-            > self.settings.mass_precision / 2
-        )
+        return self.get_mass_problem(added_mass) is None
+
+    def get_mass_problem(self, added_mass: float) -> Optional[str]:
+        """
+        Describes the cargo mass constraint which prevents adding a mass.
+
+        Args:
+            added_mass (float): The added mass (kg).
+
+        Returns:
+            str: The description, or None if the mass can be added.
+        """
+        mass = self.cargo_mass + added_mass
+        if mass - self.max_cargo_mass > self.settings.mass_precision / 2:
+            return _over("cargo mass", mass, self.max_cargo_mass, "kg")
+        return None
 
     def add(self, element: SimElement) -> bool:
         """
