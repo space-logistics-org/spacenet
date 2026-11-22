@@ -25,6 +25,7 @@ const VIEWS = [
   ["elements", "Element History"],
   ["propellant", "Propellant"],
   ["power", "Power"],
+  ["isru", "ISRU"],
   ["cost", "Cost"],
   ["timeline", "Timeline"],
 ];
@@ -63,6 +64,7 @@ const state = {
   showDemands: false,
   propellantVehicle: null,
   powerGroup: null,
+  isruProcess: null,
   timelineCrew: false,
   tankers: {
     required: 1_200_000,
@@ -102,6 +104,7 @@ export function init(container, options) {
       historyElement: null,
       propellantVehicle: null,
       powerGroup: null,
+      isruProcess: null,
     });
   });
 }
@@ -259,6 +262,7 @@ function draw() {
   else if (state.view === "locations") drawMassHistory(content, state.history.masses().locations, "historyLocation", "Location");
   else if (state.view === "propellant") drawPropellant(content, result);
   else if (state.view === "power") drawPower(content, result);
+  else if (state.view === "isru") drawISRU(content, result);
   else if (state.view === "cost") drawCost(content, result);
   else if (state.view === "timeline") drawTimeline(content, result);
   else drawMassHistory(content, state.history.masses().elements, "historyElement", "Element");
@@ -278,6 +282,8 @@ function totals(values) {
     ["Propellant boiloff", fmt(values.propellantBoiloffMass ?? 0, 0), "kg"],
     ["Propellant transfer losses", fmt(values.propellantTransferLossMass ?? 0, 0), "kg"],
     ["Energy deficit", fmt(values.energyDeficit ?? 0, 0), "kWh"],
+    ["ISRU production", fmt(values.isruOutputMass ?? 0, 0), "kg"],
+    ["ISRU energy", fmt(values.isruEnergy ?? 0, 0), "kWh"],
     ["Campaign cost", fmt(values.campaignCost ?? 0, 0), "$M"],
   ];
   return h(
@@ -1093,6 +1099,185 @@ function powerTable(groups, id) {
               : cell("—")
           )
         )
+      )
+    )
+  );
+}
+
+// --------------------------------------------------------------------- ISRU
+
+/** Formats the mass of each resource of a map {name: kg}. */
+function massList(masses) {
+  const entries = Object.entries(masses ?? {});
+  return entries.length ? entries.map(([name, mass]) => `${name} ${fmt(mass, 0)}`).join(", ") : "—";
+}
+
+function drawISRU(content, result) {
+  frameParts = null;
+  const processes = result.isru?.processes ?? [];
+  if (!processes.length) {
+    content.append(
+      h(
+        "div",
+        { class: "sn-muted-box" },
+        "No ISRU processes operate (add an ISRU Process demand model to an operational state of an element template)."
+      )
+    );
+    return;
+  }
+  if (!processes.some((item) => item.key === state.isruProcess)) state.isruProcess = processes[0].key;
+  const process = processes.find((item) => item.key === state.isruProcess);
+  const outputChart = h("div", { class: "sn-chart", style: { height: "260px" } });
+  const rateChart = h("div", { class: "sn-chart", style: { height: "200px" } });
+  content.append(
+    h(
+      "div",
+      { class: "row g-2 mb-1" },
+      h(
+        "div",
+        { class: "col-md-6" },
+        h("label", { class: "form-label small mb-0" }, "Process"),
+        select(
+          processes.map((item) => [item.key, `${item.process} (${item.elementName})`]),
+          state.isruProcess,
+          (value) => {
+            state.isruProcess = value;
+            draw();
+          }
+        )
+      ),
+      h(
+        "div",
+        { class: "col-md-6 small text-secondary d-flex align-items-end" },
+        process.specificEnergy != null
+          ? `${fmt(process.specificEnergy, 1)} kWh per kg of ${Object.keys(process.outputs)[0]}`
+          : ""
+      )
+    ),
+    h("h6", { class: "mt-2 mb-0" }, "Cumulative production (kg)"),
+    outputChart,
+    h("h6", { class: "mt-2 mb-0" }, "Rate (% of full rate)"),
+    rateChart,
+    h("h6", { class: "mt-3" }, "ISRU processes"),
+    isruTable(processes),
+    h(
+      "div",
+      { class: "form-text" },
+      "A process operates at the rate allowed by its inputs, the storage for its outputs, and the power " +
+        "remaining in its power group after other consumption (without discharging energy storage). " +
+        "Outputs are stored in the element itself or in tanks and containers which hold the resource."
+    )
+  );
+  const start = dateOf(process.starts[0]);
+  const ends = process.ends.map(dateOf);
+  plot(
+    outputChart,
+    Object.entries(process.outputs).map(([name, masses], i) => ({
+      x: [start, ...ends],
+      y: [0, ...masses],
+      name,
+      mode: "lines",
+      line: { color: SERIES[i % SERIES.length], width: 2 },
+      hovertemplate: `${name}: %{y:,.0f} kg<extra></extra>`,
+    })),
+    {
+      xaxis: { type: "date" },
+      yaxis: { title: { text: "Mass (kg)" }, rangemode: "tozero" },
+      hovermode: "x unified",
+      showlegend: Object.keys(process.outputs).length > 1,
+    }
+  );
+  const x = [];
+  const y = [];
+  const customdata = [];
+  process.starts.forEach((value, i) => {
+    const limit = process.limit[i] ? `limited by ${process.limit[i].toLowerCase()}` : "full rate";
+    x.push(dateOf(value), dateOf(process.ends[i]));
+    y.push(100 * process.rate[i], 100 * process.rate[i]);
+    customdata.push(limit, limit);
+  });
+  plot(
+    rateChart,
+    [
+      {
+        x,
+        y,
+        customdata,
+        name: "Rate",
+        mode: "lines",
+        line: { color: SERIES[0], width: 2 },
+        hovertemplate: "Rate: %{y:.0f}% (%{customdata})<extra></extra>",
+      },
+    ],
+    {
+      xaxis: { type: "date" },
+      yaxis: { title: { text: "Rate (%)" }, range: [0, 105] },
+      hovermode: "x unified",
+      showlegend: false,
+    }
+  );
+}
+
+/** Table of the totals of each ISRU process. */
+function isruTable(processes) {
+  const cell = (value, warn = false) =>
+    h("td", { class: `text-end ${warn ? "text-danger fw-semibold" : ""}` }, value);
+  return h(
+    "div",
+    { class: "table-responsive" },
+    h(
+      "table",
+      { class: "table table-sm sn-table small mb-0" },
+      h(
+        "thead",
+        {},
+        h(
+          "tr",
+          {},
+          [
+            "Process",
+            "Element",
+            "Produced (kg)",
+            "Consumed (kg)",
+            "Energy (kWh)",
+            "kWh/kg",
+            "Full-rate / active (days)",
+            "Limited by (days)",
+          ].map((label, i) => h("th", { class: i > 3 && i < 7 ? "text-end" : "" }, label))
+        )
+      ),
+      h(
+        "tbody",
+        {},
+        processes.map((process) => {
+          const limits = Object.entries(process.limits ?? {});
+          return h(
+            "tr",
+            {
+              class: process.key === state.isruProcess ? "table-active" : "",
+              style: { cursor: "pointer" },
+              onClick: () => {
+                state.isruProcess = process.key;
+                draw();
+              },
+            },
+            h("td", {}, process.process),
+            h("td", {}, process.elementName),
+            h("td", {}, massList(process.totalOutputs)),
+            h("td", {}, massList(process.totalInputs)),
+            cell(fmt(process.totalEnergy, 0)),
+            cell(process.specificEnergy != null ? fmt(process.specificEnergy, 1) : "—"),
+            cell(
+              `${fmt(process.operatingDays, 0)} / ${fmt(process.duration, 0)}`,
+              process.operatingDays < 0.5 * process.duration
+            ),
+            h(
+              "td",
+              {},
+              limits.length ? limits.map(([limit, days]) => `${limit} ${fmt(days, 0)}`).join(", ") : "—"
+            )
+          );
+        })
       )
     )
   );

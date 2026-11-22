@@ -441,3 +441,34 @@ class SimCrewConsumablesDemandModel(SimDemandModel):
         for class_of_supply, amount in amounts:
             demands.add(Demand(SimResource.generic(settings, class_of_supply), amount))
         return demands
+
+
+class SimISRUProcessModel(SimDemandModel):
+    """
+    Model of an in-situ resource utilization (ISRU) process which converts
+    input resources and electrical power to output resources. The simulator
+    operates the process between events (see :meth:`Simulator._handle_isru`)
+    at a rate limited by its inputs, output storage, and power; the process
+    generates no demands.
+    """
+
+    demand_model_type = DemandModelType.ISRU_PROCESS
+
+    def __init__(
+        self,
+        *,
+        inputs: Optional[List[Demand]] = None,
+        outputs: Optional[List[Demand]] = None,
+        power: float = 0.0,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        #: Input rates (units per day) at the full rate.
+        self.inputs: List[Demand] = list(inputs) if inputs is not None else []
+        #: Output rates (units per day) at the full rate.
+        self.outputs: List[Demand] = list(outputs) if outputs is not None else []
+        #: Power (kW) consumed at the full rate.
+        self.power = power or 0.0
+
+    def generate_demands(self, duration: float, simulator: "Simulator") -> DemandSet:
+        return DemandSet()

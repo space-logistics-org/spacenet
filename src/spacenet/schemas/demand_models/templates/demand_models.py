@@ -254,3 +254,36 @@ class SparingByMassDemandModel(ElementDemandModel):
         title="Parts List Enabled",
         description="True, if the element part list identifies specific (non-generic) demands",
     )
+
+
+class ISRUProcessDemandModel(ElementDemandModel):
+    """
+    Element demand model of an in-situ resource utilization (ISRU) process
+    which converts input resources and electrical power to output resources.
+
+    At its full rate, the process consumes its inputs (drawn from the
+    element, its carrier, or other elements at its location) and its power
+    (from the power group of the element) and stores its outputs (in the
+    element itself or in tanks or containers which hold them). The rate is
+    limited by the available inputs, output storage, and power (the power
+    remaining after other consumption, without discharging energy storage).
+    Feedstock collected in situ (e.g., regolith) is not modeled as an input.
+    """
+
+    type: Literal[DemandModelType.ISRU_PROCESS] = Field(
+        DemandModelType.ISRU_PROCESS, description="Demand model type"
+    )
+    inputs: List[ResourceAmountRate] = Field(
+        [],
+        title="Inputs",
+        description="Resources consumed at the full rate (units/day)",
+    )
+    outputs: List[ResourceAmountRate] = Field(
+        ...,
+        title="Outputs",
+        description="Resources produced at the full rate (units/day)",
+        min_length=1,
+    )
+    power: float = Field(
+        0.0, title="Power", description="Power (kW) consumed at the full rate", ge=0
+    )

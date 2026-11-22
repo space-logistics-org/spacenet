@@ -9,8 +9,8 @@ from .demand_models import (
     InstTimedImpulseDemandModel,
     InstRatedDemandModel,
     InstSparingByMassDemandModel,
+    InstISRUProcessDemandModel,
 )
-
 
 AllInstMissionDemandModels = Union[
     InstTimedImpulseDemandModel,
@@ -18,11 +18,15 @@ AllInstMissionDemandModels = Union[
     InstCrewConsumablesDemandModel,
 ]
 AllInstElementDemandModels = Union[
-    InstTimedImpulseDemandModel, InstRatedDemandModel, InstSparingByMassDemandModel
+    InstTimedImpulseDemandModel,
+    InstRatedDemandModel,
+    InstSparingByMassDemandModel,
+    InstISRUProcessDemandModel,
 ]
 AllInstDemandModels = Union[
     InstTimedImpulseDemandModel,
     InstRatedDemandModel,
     InstCrewConsumablesDemandModel,
     InstSparingByMassDemandModel,
+    InstISRUProcessDemandModel,
 ]

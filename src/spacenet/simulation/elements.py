@@ -91,7 +91,11 @@ class OperationalState:
     @property
     def has_power(self) -> bool:
         """True, if this state consumes or generates power."""
-        return self.power_consumption > 0 or self.power_generation > 0
+        return (
+            self.power_consumption > 0
+            or self.power_generation > 0
+            or any(getattr(m, "power", 0) > 0 for m in self.demand_models)
+        )
 
     def generate_demands(self, duration: float, simulator: "Simulator") -> DemandSet:
         """
@@ -672,6 +676,34 @@ class SimResourceContainer(SimElement):
             return True
         return False
 
+    def holds(self, resource: SimResource) -> bool:
+        """True, if this container holds (any amount of) a resource."""
+        return resource in self._resources
+
+    def draw(self, resource: SimResource, amount: float) -> float:
+        """
+        Draws up to an amount of a resource from this container.
+
+        Returns:
+            float: The amount (units) drawn.
+        """
+        drawn = min(amount, self._resources.get(resource, 0.0))
+        if drawn > 0:
+            self._resources[resource] -= drawn
+        return max(0.0, drawn)
+
+    def deposit(self, resource: SimResource, amount: float) -> float:
+        """
+        Deposits up to an amount of a resource within capacity constraints.
+
+        Returns:
+            float: The amount (units) deposited.
+        """
+        deposited = min(amount, self.get_space(resource))
+        if deposited > 0:
+            self._resources[resource] = self._resources.get(resource, 0.0) + deposited
+        return max(0.0, deposited)
+
     def get_total_mass(self, class_of_supply: Optional[ClassOfSupply] = None) -> float:
         if class_of_supply is None:
             return self.settings.round_mass(super().get_total_mass() + self.cargo_mass)
@@ -899,6 +931,36 @@ class SimResourceTank(SimElement):
             self._amount -= amount
             return True
         return False
+
+    def holds(self, resource: SimResource) -> bool:
+        """True, if this tank holds a resource."""
+        return self.resource is not None and self.resource == resource
+
+    def draw(self, resource: SimResource, amount: float) -> float:
+        """
+        Draws up to an amount of a resource from this tank.
+
+        Returns:
+            float: The amount (units) drawn.
+        """
+        if not self.holds(resource):
+            return 0.0
+        drawn = max(0.0, min(amount, self._amount))
+        self._amount -= drawn
+        return drawn
+
+    def deposit(self, resource: SimResource, amount: float) -> float:
+        """
+        Deposits up to an amount of a resource within capacity.
+
+        Returns:
+            float: The amount (units) deposited.
+        """
+        if not self.holds(resource):
+            return 0.0
+        deposited = max(0.0, min(amount, self._max_amount - self._amount))
+        self._amount += deposited
+        return deposited
 
     def get_total_mass(self, class_of_supply: Optional[ClassOfSupply] = None) -> float:
         if class_of_supply is None:

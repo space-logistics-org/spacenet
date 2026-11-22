@@ -73,6 +73,12 @@ Findings
   (two crew, 28-day missions), surface stays (about 6 days), and the
   illumination of the connecting ridge (85%, below the published maximum of
   90%) follow published values.
+* **ISRU.** The pilot plant reproduces NASA's lunar water pilot plant design
+  (1,000 kg of oxygen per year, 1,165 kg) on fission surface power without
+  power or storage limits. Its 8:1 oxygen-to-hydrogen split is within 1% of
+  the stoichiometry of water electrolysis (7.94), and its 36 kWh per kg of
+  oxygen (the published plant power over 225 days per year, an upper bound)
+  exceeds the minimum energy of water electrolysis (4.96 kWh per kg).
 
 -------
 Results

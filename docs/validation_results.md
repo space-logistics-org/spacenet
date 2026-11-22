@@ -37,6 +37,11 @@
 | Dragon XL cargo to Gateway (kg) | >= 5,000 | 5,000 | +0.0% | input | pass | [NASA Gateway Logistics Services award (Spaceflight Now, 2020)](https://www.spaceflightnow.com/2020/03/27/nasa-picks-spacex-to-deliver-cargo-to-gateway-station-in-lunar-orbit) |
 | Dragon XL berthing at Gateway (months) | 6.000 to 12.00 | 11.99 | +0.0% | input | pass | [NASA Gateway Logistics Services award (Spaceflight Now, 2020)](https://www.spaceflightnow.com/2020/03/27/nasa-picks-spacex-to-deliver-cargo-to-gateway-station-in-lunar-orbit) |
 | Low-energy cargo transfer to NRHO (days) | 120.0 | 120.0 | +0.0% | input | pass | [NASA, NRHO: The Artemis Orbit (Architecture Workshop, 2023)](https://www.nasa.gov/wp-content/uploads/2023/10/nrho-artemis-orbit.pdf) |
+| ISRU pilot plant oxygen production (kg/yr) | 1,000 | 1,000 | +0.0% | calibrated | pass | [NASA NTRS 20205008294 (Linne et al., Lunar Water Pilot Plant, ASCEND 2020)](https://ntrs.nasa.gov/citations/20205008294) |
+| ISRU pilot plant mass (kg) | 1,165 | 1,165 | +0.0% | input | pass | [NASA NTRS 20205008294 (Linne et al., Lunar Water Pilot Plant, ASCEND 2020)](https://ntrs.nasa.gov/citations/20205008294) |
+| ISRU pilot plant energy per kg of oxygen (kWh/kg) | <= 36.20 | 36.18 | +0.0% | calibrated | pass | [NASA NTRS 20205008294 (Linne et al., Lunar Water Pilot Plant, ASCEND 2020)](https://ntrs.nasa.gov/citations/20205008294) |
+| Water electrolysis oxygen-to-hydrogen mass ratio (kg/kg) | 7.936 | 8.000 | +0.8% | validated | pass | [IUPAC standard atomic weights (stoichiometry)](https://iupac.qmul.ac.uk/AtWt/) |
+| Minimum energy of water electrolysis (kWh/kg O2) | >= 4.960 | 36.18 | +0.0% | validated | pass | [NIST Chemistry WebBook (water, enthalpy of formation)](https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185) |
 
 ## Default crew consumables rates
 

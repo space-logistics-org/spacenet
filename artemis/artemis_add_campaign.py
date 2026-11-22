@@ -47,6 +47,8 @@ HLS load / solar / storage             10 / 30 kW      400 kWh, notional
 Fission Surface Power                  40 kWe          6,000 kg, FSP project goal
 LTV mass / traverse energy / storage   1,600 kg        0.6 kWh/km, 60 kWh, notional
 LTV crewed endurance / walk-back      8 h / 10 km     approx. EVA suit limits
+ISRU pilot plant O2 / H2 production    1,000 / 125 kg/yr  NASA (Linne 2020)
+ISRU pilot plant mass / power          1,165 kg / 6.7 kW  NASA (Linne 2020), 225 days/yr
 =====================================  ==============  ==========================
 
 Usage: ``python artemis/artemis_add_campaign.py`` writes
@@ -141,6 +143,9 @@ class CampaignParameters:
     site_illumination: float = 0.85
     #: Longest continuous darkness (hours) at the south pole sites.
     site_longest_night: float = 100.0
+    #: True, to deliver an ISRU pilot plant with the surface cargo (its
+    #: oxygen is loaded into the HLS of the next landing).
+    isru_pilot_plant: bool = True
     #: Start dates of the missions.
     dates: Dict[str, datetime] = field(
         default_factory=lambda: {
@@ -201,6 +206,7 @@ class CampaignBuilder:
         self.science = None
         self.ltv = None
         self.halo = None
+        self.isru_plant = None
         self._build_network()
         self._build_resources()
         self._build_templates()
@@ -466,7 +472,32 @@ class CampaignBuilder:
         self.mmh_n2o4 = propellant("MMH/N2O4", "Hypergolic propellants", 102, 1200)
         self.lox = propellant("LOX", "Liquid oxygen", 101, 1141)
         self.lch4 = propellant("LCH4", "Liquid methane", 101, 423)
-        self.resources = [self.pban, self.lox_lh2, self.mmh_n2o4, self.lox, self.lch4]
+        self.lh2 = propellant("LH2", "Liquid hydrogen", 101, 71)
+        self.resources = [
+            self.pban,
+            self.lox_lh2,
+            self.mmh_n2o4,
+            self.lox,
+            self.lch4,
+            self.lh2,
+        ]
+        # NASA lunar water pilot plant conceptual design (Linne, Kleinhenz,
+        # and Paz, ASCEND 2020): 1,000 kg of oxygen per year from 1,125 kg of
+        # water extracted from icy regolith in a permanently shadowed region
+        # (PSR plant: 325 kg, 2.4 kW) and electrolyzed, liquefied, and stored
+        # on a ridge (840 kg, 4.3 kW), operating 225 days per year. On fission
+        # surface power, the plant operates continuously at the same annual
+        # production and energy (6.7 kW x 225 / 365 days = 4.13 kW). The
+        # water is extracted in situ (not modeled as an input).
+        self.isru_process = s.ISRUProcessDemandModel(
+            name="Lunar Water Pilot Plant (NASA 2020)",
+            description="Ice extraction, water electrolysis, and liquefaction",
+            outputs=[
+                s.ResourceAmountRate(resource=self.lox.id, rate=1_000.0 / 365),
+                s.ResourceAmountRate(resource=self.lh2.id, rate=125.0 / 365),
+            ],
+            power=round((2.4 + 4.3) * 225 / 365, 3),
+        )
         # NASA planning values (ASCEND 2023, "Logistics Beyond LEO") for an
         # average (82 kg) crew member in space: drinking (2.79), rehydration
         # (0.50), hygiene (0.40), and flush (0.30) water; packaged food; and
@@ -755,6 +786,38 @@ class CampaignBuilder:
                 current_state_index=0,
                 grid_connected=True,
                 design_life=10.0,  # FSP requirement: at least 10 years
+            )
+        )
+        self.t_isru = self._template(
+            s.ResourceContainer(
+                name="ISRU Pilot Plant",
+                description="Lunar water pilot plant (PSR and ridge plants)",
+                mass=1_165.0,
+                class_of_supply=805,
+                environment=UNPRESSURIZED,
+                cargo_environment=UNPRESSURIZED,
+                # notional: stores one year of production
+                max_cargo_mass=1_125.0,
+                max_cargo_volume=2.7,
+                contents=[
+                    s.ResourceAmount(resource=self.lox.id, amount=0.0),
+                    s.ResourceAmount(resource=self.lh2.id, amount=0.0),
+                ],
+                states=[
+                    s.State(name="Stowed", type="Dormant"),
+                    s.State(
+                        name="Operating",
+                        type="Active",
+                        demand_models=[
+                            s.InstISRUProcessDemandModel(
+                                name=self.isru_process.name,
+                                template_id=self.isru_process.id,
+                            )
+                        ],
+                    ),
+                ],
+                current_state_index=0,
+                grid_connected=True,
             )
         )
         self.t_science = self._template(
@@ -1173,14 +1236,18 @@ class CampaignBuilder:
     def surface_cargo(self):
         """
         Commercial delivery of surface infrastructure to the south pole: a
-        fission power unit and a science station on a power grid, and a
-        lunar terrain vehicle which charges from the grid.
+        fission power unit, a science station, and (optionally) an ISRU
+        pilot plant on a power grid, and a lunar terrain vehicle which
+        charges from the grid.
         """
         prefix = "Surface Cargo"
         self.fsp = self._instance(self.t_fsp, prefix)
         self.science = self._instance(self.t_science, prefix)
         self.ltv = self._instance(self.t_ltv, prefix)
         cargo = [self.fsp, self.science, self.ltv]
+        if self.p.isru_pilot_plant:
+            self.isru_plant = self._instance(self.t_isru, prefix)
+            cargo.append(self.isru_plant)
         events = [
             self._create(f"{prefix} | Create Cargo", 0, 1, self.ksc, self.ksc, cargo),
             self._flight(f"{prefix} | Delivery", 0, 2, self.ksc_lsp_cargo, cargo),
@@ -1189,7 +1256,7 @@ class CampaignBuilder:
                 mission_time=timedelta(days=6),
                 priority=1,
                 location=self.lsp.id,
-                elements=[self.fsp.id, self.science.id],
+                elements=[e.id for e in cargo if e is not self.ltv],
                 state_type="Active",
             ),
         ]
@@ -1390,6 +1457,24 @@ class CampaignBuilder:
             ),
             self._tei(prefix, day + 5 + surface, cm, sm),
         ]
+        if self.isru_plant is not None:
+            # the HLS loads the oxygen produced by the ISRU pilot plant
+            index = next(
+                i for i, e in enumerate(events) if e.name.endswith("Lunar Ascent")
+            )
+            events.insert(
+                index,
+                self._transfer(
+                    f"{prefix} | Load ISRU Oxygen",
+                    day + 2 + surface,
+                    1,
+                    self.lsp,
+                    self.isru_plant,
+                    hls,
+                    "Empty Origin",
+                    self.p.transfer_loss,
+                ),
+            )
         if self.ltv is not None:
             # surface exploration is interrupted by a crewed terrain vehicle sortie
             index = next(
@@ -1450,7 +1535,7 @@ class CampaignBuilder:
             resource_list=self.resources,
             element_templates=self.templates,
             instantiated_elements=self.instances,
-            demand_models=[self.consumables],
+            demand_models=[self.consumables, self.isru_process],
             configuration=s.Configuration(time_phased_consumables=True),
         )
 

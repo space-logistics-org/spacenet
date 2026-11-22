@@ -27,7 +27,7 @@ import {
 
 const AGENTS = ["Human Agent", "Robotic Agent"];
 const CARRIERS = ["Element Carrier", "Propulsive Vehicle", "Surface Vehicle"];
-const STATE_DEMAND_MODELS = ["Timed Impulse", "Rated", "Sparing By Mass"];
+const STATE_DEMAND_MODELS = ["Timed Impulse", "Rated", "Sparing By Mass", "ISRU Process"];
 
 export function newElement(type) {
   return { id: uuid(), type: type || "Element", name: "", description: "" };

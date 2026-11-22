@@ -205,3 +205,23 @@ class InstSparingByMassDemandModel(InstElementDemandModel):
         None, title="Parts List Enabled",
         description="True, if the element part list identifies specific (non-generic) demands",
     )
+
+
+class InstISRUProcessDemandModel(InstElementDemandModel):
+    """
+    Instantiated element demand model of an in-situ resource utilization
+    (ISRU) process which converts input resources and power to outputs.
+    """
+
+    type: Literal[DemandModelType.ISRU_PROCESS] = Field(
+        DemandModelType.ISRU_PROCESS, description="Demand model type"
+    )
+    inputs: Optional[List[ResourceAmountRate]] = Field(
+        None, title="Inputs", description="Resources consumed at the full rate (units/day)"
+    )
+    outputs: Optional[List[ResourceAmountRate]] = Field(
+        None, title="Outputs", description="Resources produced at the full rate (units/day)"
+    )
+    power: Optional[float] = Field(
+        None, title="Power", description="Power (kW) consumed at the full rate", ge=0
+    )

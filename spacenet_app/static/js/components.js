@@ -21,7 +21,11 @@ import {
  * Creates an editable table of resource amounts (or rates). Rows are either
  * specific ({resource, amount}) or generic ({classOfSupply, environment, amount}).
  */
-export function resourceTable(amounts, onChange, { quantity = "amount", label = "Amount" } = {}) {
+export function resourceTable(
+  amounts,
+  onChange,
+  { quantity = "amount", label = "Amount", specific = false } = {}
+) {
   const body = h("tbody");
   const classes = store.enums.classesOfSupply.map((c) => [c.id, `${c.id} ${c.name}`]);
 
@@ -37,7 +41,9 @@ export function resourceTable(amounts, onChange, { quantity = "amount", label = 
           h(
             "td",
             {},
-            select(["Generic", "Specific"], generic ? "Generic" : "Specific", (value) => {
+            specific
+              ? h("span", { class: "text-secondary small" }, "Specific")
+              : select(["Generic", "Specific"], generic ? "Generic" : "Specific", (value) => {
               const value0 = amount[quantity] ?? 0;
               if (value === "Generic") {
                 amounts[index] = {
@@ -117,7 +123,11 @@ export function resourceTable(amounts, onChange, { quantity = "amount", label = 
       body
     ),
     button("Add Resource", () => {
-      amounts.push({ classOfSupply: 2, environment: "Unpressurized", [quantity]: 0 });
+      const first = store.library("resources")[0]?.id;
+      if (specific && first) {
+        amounts.push({ resource: first, [quantity]: 0 });
+        store.include("resources", first);
+      } else amounts.push({ classOfSupply: 2, environment: "Unpressurized", [quantity]: 0 });
       render();
       onChange();
     })

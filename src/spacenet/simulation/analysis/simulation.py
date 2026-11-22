@@ -20,6 +20,7 @@ from ..simulator import FullSimulator
 from .issues import SimIssue, collect_issues
 from .missions import LocationSummary
 from .cost import CostAnalysis
+from .isru import ISRUAnalysis
 from .power import PowerAnalysis
 from .propellant import PropellantAnalysis
 from .state import ElementState
@@ -65,6 +66,12 @@ class MeasureTotals(CamelModel):
         0.0,
         description="Cost (millions of US dollars) of costed elements and transports",
     )
+    isru_output_mass: float = Field(
+        0.0, description="Mass (kg) of resources produced by ISRU processes"
+    )
+    isru_energy: float = Field(
+        0.0, description="Electrical energy (kWh) consumed by ISRU processes"
+    )
 
     @classmethod
     def create(
@@ -73,6 +80,7 @@ class MeasureTotals(CamelModel):
         propellant: Optional["PropellantAnalysis"] = None,
         power: Optional["PowerAnalysis"] = None,
         cost: Optional["CostAnalysis"] = None,
+        isru: Optional["ISRUAnalysis"] = None,
     ) -> "MeasureTotals":
         """
         Creates the total measures of effectiveness of an executed simulator.
@@ -83,6 +91,7 @@ class MeasureTotals(CamelModel):
                 (default: created from the simulator).
             power (:obj:`PowerAnalysis`): The power analysis (default: created).
             cost (:obj:`CostAnalysis`): The cost analysis (default: created).
+            isru (:obj:`ISRUAnalysis`): The ISRU analysis (default: created).
 
         Returns:
             :obj:`MeasureTotals`: The totals.
@@ -90,6 +99,7 @@ class MeasureTotals(CamelModel):
         propellant = propellant or PropellantAnalysis.create(simulator)
         power = power or PowerAnalysis.create(simulator)
         cost = cost or CostAnalysis.create(simulator, simulator.scenario.start_date)
+        isru = isru or ISRUAnalysis.create(simulator)
         return cls(
             crew_surface_days=simulator.total_crew_surface_days,
             crew_time=simulator.total_crew_time,
@@ -104,6 +114,8 @@ class MeasureTotals(CamelModel):
             propellant_transfer_loss_mass=propellant.totals.transfer_loss_mass,
             energy_deficit=power.total_deficit,
             campaign_cost=cost.total,
+            isru_output_mass=isru.total_output_mass,
+            isru_energy=isru.total_energy,
         )
 
 
@@ -541,6 +553,9 @@ class SimulationAnalysis(CamelModel):
     cost: CostAnalysis = Field(
         CostAnalysis(), description="Costs of elements and transports"
     )
+    isru: ISRUAnalysis = Field(
+        ISRUAnalysis(), description="Operation of each ISRU process"
+    )
 
     def network_states(self) -> Iterator[NetworkState]:
         """Iterates over the elements at each location at each time step."""
@@ -629,16 +644,18 @@ class SimulationAnalysis(CamelModel):
         propellant = PropellantAnalysis.create(simulator)
         power = PowerAnalysis.create(simulator)
         cost = CostAnalysis.create(simulator, simulator.scenario.start_date)
+        isru = ISRUAnalysis.create(simulator)
 
         return cls(
             issues=collect_issues(simulator),
             error_count=len(simulator.spatial_errors),
             unsatisfied_demand_count=len(simulator.unsatisfied_demands),
             end_time=simulator.time,
-            totals=MeasureTotals.create(simulator, propellant, power, cost),
+            totals=MeasureTotals.create(simulator, propellant, power, cost, isru),
             propellant=propellant,
             power=power,
             cost=cost,
+            isru=isru,
             measures=Measures(
                 crew_surface_days=_records(simulator.crew_surface_days_history),
                 # crew time is recorded for each crew member at each time step

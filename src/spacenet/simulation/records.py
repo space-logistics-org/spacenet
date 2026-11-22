@@ -139,6 +139,56 @@ class PowerRecord:
 
 
 @dataclass
+class ISRURecord:
+    """
+    Operation of an in-situ resource utilization (ISRU) process of an element
+    over an interval of time.
+    """
+
+    # pylint: disable=too-many-instance-attributes
+
+    #: Time (days) at the end of the interval.
+    time: float
+    #: Duration (days) of the interval.
+    duration: float
+    element_id: UUID
+    element_name: str
+    process: str
+    location_id: Optional[UUID]
+    location_name: Optional[str]
+    #: Average rate as a fraction of the full rate.
+    rate: float
+    #: Constraint which limits the rate ("Power", "Input", "Output Storage") or
+    #: None if the process operates at its full rate.
+    limit: Optional[str]
+    #: Average power (kW) consumed.
+    power: float
+    #: Amount (units) of each input consumed by resource name.
+    inputs: Dict[str, float] = field(default_factory=dict)
+    #: Amount (units) of each output produced by resource name.
+    outputs: Dict[str, float] = field(default_factory=dict)
+    #: Mass (kg) of each input consumed by resource name.
+    input_masses: Dict[str, float] = field(default_factory=dict)
+    #: Mass (kg) of each output produced by resource name.
+    output_masses: Dict[str, float] = field(default_factory=dict)
+
+    @property
+    def energy(self) -> float:
+        """The energy (kWh) consumed."""
+        return self.power * 24 * self.duration
+
+    @property
+    def input_mass(self) -> float:
+        """The mass (kg) of the inputs consumed."""
+        return sum(self.input_masses.values())
+
+    @property
+    def output_mass(self) -> float:
+        """The mass (kg) of the outputs produced."""
+        return sum(self.output_masses.values())
+
+
+@dataclass
 class TransferStep:
     """
     One resource transfer between two containers (or tanks) of an executed

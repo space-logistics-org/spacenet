@@ -46,6 +46,7 @@ from .missions import (
     MissionSummary,
 )
 from .cost import CostAnalysis, CostItem
+from .isru import ISRUAnalysis, ISRUProcessHistory
 from .power import PowerAnalysis, PowerGroupHistory
 from .propellant import (
     BurnRecord,

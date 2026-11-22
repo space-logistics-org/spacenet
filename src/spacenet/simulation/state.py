@@ -15,6 +15,7 @@ from .demand_models import (
     SimDemandModel,
     SimRatedDemandModel,
     SimSparingByMassDemandModel,
+    SimISRUProcessModel,
     SimTimedImpulseDemandModel,
 )
 from .elements import (
@@ -571,6 +572,15 @@ class State:
                 unpressurized_spares_rate=value("unpressurized_spares_rate", 0.0),
                 pressurized_spares_rate=value("pressurized_spares_rate", 0.0),
                 parts_list_enabled=value("parts_list_enabled", True),
+                **kwargs,
+            )
+        if model_type == s.DemandModelType.ISRU_PROCESS:
+            if not isinstance(source, SimElement):
+                raise ValueError(f"{context}: an ISRU process requires an element")
+            return SimISRUProcessModel(
+                inputs=[self._demand(d, context) for d in value("inputs", [])],
+                outputs=[self._demand(d, context) for d in value("outputs", [])],
+                power=value("power", 0.0),
                 **kwargs,
             )
         if not isinstance(source, SimMission):

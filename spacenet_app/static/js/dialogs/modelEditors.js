@@ -415,13 +415,44 @@ export function openResource(model, isNew) {
 
 // ------------------------------------------------------------ demand models
 
-const DEMAND_FIELDS = ["id", "name", "type", "description", "demands"];
+const DEMAND_FIELDS = ["id", "name", "type", "description", "demands", "inputs", "outputs", "power"];
+
+/** Inputs, outputs, and power of an ISRU process (template or instance override). */
+export function isruFields(draft) {
+  const rates = { quantity: "rate", label: "Rate (per day)", specific: true };
+  return h(
+    "div",
+    {},
+    h("h6", { class: "mt-2" }, "Inputs"),
+    h(
+      "div",
+      { class: "small text-secondary mb-1" },
+      "Resources drawn from the element, its carrier, or other elements at its location at the full rate " +
+        "(feedstock collected in situ, such as regolith, is not an input)."
+    ),
+    resourceTable(draft.inputs, () => {}, rates),
+    h("h6", { class: "mt-3" }, "Outputs"),
+    h(
+      "div",
+      { class: "small text-secondary mb-1" },
+      "Resources stored in the element itself or in tanks and containers which hold them."
+    ),
+    resourceTable(draft.outputs, () => {}, rates),
+    h("div", { class: "row g-2 mt-2" }, numberField("Power at full rate (kW)", draft, "power", { min: 0 }))
+  );
+}
 
 export function newDemandModel(type) {
   return { id: uuid(), type: type || "Timed Impulse", name: "", description: "" };
 }
 
 function drawDemandModel(draft) {
+  if (draft.type === "ISRU Process") {
+    draft.inputs ||= [];
+    draft.outputs ||= [];
+    draft.power ??= 0;
+    return section("Process", isruFields(draft));
+  }
   if (draft.type === "Timed Impulse" || draft.type === "Rated") {
     const rated = draft.type === "Rated";
     draft.demands ||= [];

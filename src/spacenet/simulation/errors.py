@@ -96,6 +96,8 @@ class SimWarning:
         self.message = message
 
     def __str__(self):
+        if self.event is None:
+            return self.message
         return f"{self.event} {self.message}"
 
     def __repr__(self):

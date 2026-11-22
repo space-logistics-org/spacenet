@@ -21,7 +21,7 @@ from artemis_add_campaign import (  # noqa: E402
 
 from spacenet import schemas as s  # noqa: E402
 from spacenet.simulation import FullSimulator  # noqa: E402
-from spacenet.simulation.analysis import CostAnalysis  # noqa: E402
+from spacenet.simulation.analysis import CostAnalysis, ISRUAnalysis  # noqa: E402
 from spacenet.simulation.events import G0  # noqa: E402
 from spacenet.validation import (  # noqa: E402
     CheckKind,
@@ -29,6 +29,7 @@ from spacenet.validation import (  # noqa: E402
     ValidationResult,
     compare,
     max_payload,
+    number,
     report_markdown,
 )
 
@@ -61,6 +62,15 @@ OIG = (
     "NASA OIG IG-22-003 (Artemis missions, 2022)",
     "https://oig.nasa.gov/docs/IG-22-003.pdf",
 )
+PILOT_PLANT = (
+    "NASA NTRS 20205008294 (Linne et al., Lunar Water Pilot Plant, ASCEND 2020)",
+    "https://ntrs.nasa.gov/citations/20205008294",
+)
+
+#: Enthalpy of formation (kJ/mol) of liquid water (NIST Chemistry WebBook).
+WATER_FORMATION_ENTHALPY = 285.83
+#: Standard atomic weights (g/mol) of hydrogen and oxygen (IUPAC).
+HYDROGEN, OXYGEN = 1.008, 15.999
 
 REFERENCES = {
     reference.key: reference
@@ -279,6 +289,48 @@ REFERENCES = {
             *NRHO_PAPER,
         ),
         Reference(
+            "isru_production",
+            "ISRU pilot plant oxygen production",
+            1_000.0,
+            "kg/yr",
+            *PILOT_PLANT,
+            note="from 1,125 kg of water extracted from icy regolith",
+        ),
+        Reference(
+            "isru_mass",
+            "ISRU pilot plant mass",
+            325.0 + 840.0,
+            "kg",
+            *PILOT_PLANT,
+            note="PSR plant (325 kg) and ridge plant (840 kg)",
+        ),
+        Reference(
+            "isru_pilot_energy",
+            "ISRU pilot plant energy per kg of oxygen",
+            (None, round((2.4 + 4.3) * 225 * 24 / 1_000.0, 1)),
+            "kWh/kg",
+            *PILOT_PLANT,
+            note="upper bound: PSR (2.4 kW) and ridge (4.3 kW) plant power "
+            "for 225 days of operation per year",
+        ),
+        Reference(
+            "isru_o2_h2_ratio",
+            "Water electrolysis oxygen-to-hydrogen mass ratio",
+            round(2 * OXYGEN / (4 * HYDROGEN), 3),
+            "kg/kg",
+            "IUPAC standard atomic weights (stoichiometry)",
+            "https://iupac.qmul.ac.uk/AtWt/",
+        ),
+        Reference(
+            "isru_minimum_energy",
+            "Minimum energy of water electrolysis",
+            (round(2 * WATER_FORMATION_ENTHALPY / (2 * OXYGEN) / 3.6, 2), None),
+            "kWh/kg O2",
+            "NIST Chemistry WebBook (water, enthalpy of formation)",
+            "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185",
+            note="higher heating value of 285.83 kJ/mol",
+        ),
+        Reference(
             "sls_cadence",
             "Interval between crewed SLS launches",
             365.0,
@@ -479,6 +531,41 @@ def validate(params: Optional[CampaignParameters] = None) -> List[ValidationResu
     berth_days = (disposal.mission_time - transfer.duration).total_seconds() / 86400
     add("dragon_xl_berthing", berth_days / 30.44, tolerance=0.01)
     add("cargo_transfer", transfer.duration.total_seconds() / 86400)
+
+    # ISRU pilot plant (simulated on fission surface power)
+    if params.isru_pilot_plant:
+        (plant,) = ISRUAnalysis.create(simulator).processes
+        oxygen = plant.total_outputs["LOX"]
+        add(
+            "isru_production",
+            oxygen / plant.duration * 365,
+            CheckKind.CALIBRATED,
+            0.01,
+            f"simulated: {number(oxygen)} kg in {number(plant.duration)} days, "
+            "not limited by power or storage",
+        )
+        add("isru_mass", _template(scenario, "ISRU Pilot Plant").mass)
+        add(
+            "isru_pilot_energy",
+            plant.specific_energy,
+            CheckKind.CALIBRATED,
+            0.01,
+            "simulated energy consumed per kg of oxygen",
+        )
+        add(
+            "isru_o2_h2_ratio",
+            oxygen / plant.total_outputs["LH2"],
+            CheckKind.VALIDATED,
+            0.01,
+            "simulated: the published 1,000 / 125 kg split is within 1% of "
+            "stoichiometric",
+        )
+        add(
+            "isru_minimum_energy",
+            plant.specific_energy,
+            CheckKind.VALIDATED,
+            note="simulated energy per kg of oxygen exceeds the minimum",
+        )
     return results
 
 

@@ -12,3 +12,4 @@ class DemandModelType(str, Enum):
     TIMED_IMPULSE = "Timed Impulse"
     RATED = "Rated"
     SPARING_BY_MASS = "Sparing By Mass"
+    ISRU_PROCESS = "ISRU Process"

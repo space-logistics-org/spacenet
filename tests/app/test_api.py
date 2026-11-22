@@ -352,6 +352,14 @@ class TestAnalysis(ApiTestCase):
             propellant = analysis["propellant"]
             self.assertEqual(len(propellant["tanks"]), len(propellant["budgets"]))
             self.assertIn("propellantBurnedMass", totals)
+            self.assertEqual(
+                len(analysis["isru"]["processes"]),
+                len({(r.element_id, r.process) for r in simulator.isru_records}),
+            )
+            self.assertAlmostEqual(
+                totals["isruOutputMass"],
+                sum(r.output_mass for r in simulator.isru_records),
+            )
 
 
 class TestTrades(ApiTestCase):

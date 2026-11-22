@@ -19,8 +19,10 @@ from .elements import (
     SimCarrier,
     SimCrewMember,
     SimElement,
+    SimResourceContainer,
     SimResourceTank,
 )
+from .demand_models import SimISRUProcessModel
 from .errors import SimDemand, SimError, SimSpatialError, SimWarning
 from .events import (
     LAST_PRIORITY,
@@ -49,6 +51,7 @@ from .records import (
     NetworkHistory,
     PropellantFlow,
     CostRecord,
+    ISRURecord,
     PowerRecord,
     PropellantFlowKind,
     SimRepair,
@@ -60,6 +63,23 @@ from .state import State
 from .supply import RepairItem, SupplyEdge, SupplyPoint
 
 logger = logging.getLogger(__name__)
+
+
+class _ISRUPlan:
+    """The planned operation of an ISRU process over an interval of time."""
+
+    # pylint: disable=too-few-public-methods
+
+    def __init__(self, element: SimElement, model: SimISRUProcessModel):
+        self.element = element
+        self.model = model
+        #: Rate (fraction of the full rate) allowed by the constraints.
+        self.rate = 1.0
+        #: Constraint which limits the rate (None if unconstrained).
+        self.limit: Optional[str] = None
+        #: Resource which limits the rate (if limited by inputs or storage).
+        self.resource: Optional[SimResource] = None
+
 
 #: Exploration capability (kg-days) of the Apollo 17 mission.
 APOLLO_17_EXPLORATION_CAPABILITY = 2594.0
@@ -125,6 +145,9 @@ class Simulator:
         self.propellant_flows: List[PropellantFlow] = []
         #: Energy balance of each power group over each interval of time.
         self.power_records: List[PowerRecord] = []
+        #: Operation of each ISRU process over each interval of time.
+        self.isru_records: List[ISRURecord] = []
+        self._isru_warnings: set = set()
         self._power_warnings: set = set()
         #: Time at which each power group arrived at its location.
         self._power_arrivals: Dict[tuple, float] = {}
@@ -211,6 +234,8 @@ class Simulator:
         self.repaired_parts.clear()
         self.propellant_flows.clear()
         self.power_records.clear()
+        self.isru_records.clear()
+        self._isru_warnings.clear()
         self._power_warnings.clear()
         self._power_arrivals.clear()
         self._consumables_departed.clear()
@@ -352,14 +377,21 @@ class Simulator:
                 group[3].extend(members)
         return list(groups.values())
 
-    def _handle_power(self):
+    def _handle_power(self, plans: Optional[List[_ISRUPlan]] = None):
         """
         Balances the power generated and consumed by each power group over
         the elapsed duration, charging or discharging its energy storage, and
         warns (once per group) of energy deficits and of storage which cannot
-        survive the longest night at a surface node.
+        survive the longest night at a surface node. ISRU processes consume
+        the power which remains after other consumption (proportionally to
+        their requests) without discharging energy storage.
+
+        Args:
+            plans ([_ISRUPlan]): The planned ISRU processes (the rates of which
+                are reduced to the available power).
         """
         hours = 24 * self.duration
+        plans = plans or []
         for location, key, name, members in self._power_groups():
             illumination = getattr(location, "illumination", 1.0)
             constant = solar = consumption = 0.0
@@ -373,6 +405,10 @@ class Simulator:
                 else:
                     constant += state.power_generation
             generation = constant + illumination * solar
+            consumption += self._allocate_isru_power(
+                [p for p in plans if any(p.element is m for m in members)],
+                generation - consumption,
+            )
             capacity = sum(member.energy_capacity for member in members)
             stored = sum(member.energy for member in members)
             energy = stored + (generation - consumption) * hours
@@ -436,6 +472,192 @@ class Simulator:
                         f"{capacity:,.1f} kWh.",
                     )
                 )
+
+    # ------------------------------------------------------------------- ISRU
+
+    @staticmethod
+    def _allocate_isru_power(plans: List[_ISRUPlan], surplus: float) -> float:
+        """
+        Reduces the rates of ISRU processes to the surplus power of their
+        group (proportionally to their requests).
+
+        Returns:
+            float: The power (kW) consumed by the processes.
+        """
+        requested = sum(p.rate * p.model.power for p in plans)
+        if requested <= 0:
+            return 0.0
+        fraction = min(1.0, max(0.0, surplus) / requested)
+        if fraction < 1:
+            for plan in plans:
+                if plan.model.power > 0:
+                    plan.rate *= fraction
+                    plan.limit, plan.resource = "Power", None
+        return sum(p.rate * p.model.power for p in plans)
+
+    @staticmethod
+    def _isru_holders(element: SimElement) -> List[SimElement]:
+        """
+        Lists the tanks and resource containers available to an ISRU process
+        of an element: the element and its contents, its carrier and the
+        carrier's contents, and the elements (and contents) at its location,
+        including the integral tanks of vehicles. Outputs are stored in the
+        element itself (if it is a resource container) or in the tanks and
+        containers which hold the output resource.
+        """
+        candidates: List[SimElement] = []
+
+        def add(item):
+            candidates.append(item)
+            if isinstance(item, ElementContainer):
+                candidates.extend(item.complete_contents)
+
+        add(element)
+        if isinstance(element.container, SimElement):
+            add(element.container)
+        if element.location is not None:
+            for item in element.location.contents:
+                add(item)
+        holders, seen = [], set()
+        for candidate in candidates:
+            for holder in [candidate, *(getattr(candidate, "fuel_tanks", None) or [])]:
+                if id(holder) in seen or not isinstance(
+                    holder, (SimResourceContainer, SimResourceTank)
+                ):
+                    continue
+                seen.add(id(holder))
+                holders.append(holder)
+        return holders
+
+    def _isru_material_rate(self, plan: _ISRUPlan, holders: List[SimElement]):
+        """
+        Limits the rate of an ISRU process to its available inputs and output
+        storage over the elapsed duration.
+        """
+        for constraint, rates in (
+            ("Input", plan.model.inputs),
+            ("Output Storage", plan.model.outputs),
+        ):
+            for rate in rates:
+                required = rate.raw_amount * self.duration
+                if required <= 0:
+                    continue
+                if constraint == "Input":
+                    available = sum(h.get_amount(rate.resource) for h in holders)
+                else:
+                    available = sum(
+                        h.get_space(rate.resource)
+                        for h in holders
+                        if h is plan.element or h.holds(rate.resource)
+                    )
+                fraction = max(0.0, min(1.0, available / required))
+                if fraction < plan.rate:
+                    plan.rate = fraction
+                    plan.limit, plan.resource = constraint, rate.resource
+
+    def _plan_isru(self) -> List[_ISRUPlan]:
+        """Plans the ISRU processes of elements in their current states."""
+        plans = []
+        for element in self.state.network.elements:
+            state = element.current_state
+            if state is None:
+                continue
+            for model in state.demand_models:
+                if isinstance(model, SimISRUProcessModel):
+                    plan = _ISRUPlan(element, model)
+                    self._isru_material_rate(plan, self._isru_holders(element))
+                    plans.append(plan)
+        return plans
+
+    def _transfer_isru(self, plan: _ISRUPlan, holders, demands, sign: int):
+        """
+        Draws (sign 1) inputs from or deposits (sign -1) outputs to holders.
+
+        Returns:
+            (dict, dict): The amount (units) and mass (kg) by resource name.
+        """
+        amounts, masses = {}, {}
+        for demand in demands:
+            required = demand.raw_amount * self.duration * plan.rate
+            remaining = required
+            for holder in holders:
+                if remaining <= 0:
+                    break
+                if sign > 0:
+                    moved = holder.draw(demand.resource, remaining)
+                elif holder is plan.element or holder.holds(demand.resource):
+                    moved = holder.deposit(demand.resource, remaining)
+                else:
+                    continue
+                remaining -= moved
+                if isinstance(holder, SimResourceTank) and moved > 0:
+                    self.record_propellant(
+                        holder,
+                        PropellantFlowKind.CONSUMED,
+                        sign * moved,
+                        attributed=False,
+                    )
+            amount = required - max(0.0, remaining)
+            amounts[demand.resource.name] = amount
+            masses[demand.resource.name] = amount * demand.resource.unit_mass
+        return amounts, masses
+
+    def _handle_isru(self, plans: List[_ISRUPlan]):
+        """
+        Operates the planned ISRU processes over the elapsed duration:
+        consumes inputs, stores outputs, and records the operation. Warns
+        (once per process and constraint) if a process cannot operate.
+        """
+        for plan in plans:
+            element, model = plan.element, plan.model
+            holders = self._isru_holders(element)
+            # inputs or storage may have been used by a prior process
+            self._isru_material_rate(plan, holders)
+            inputs, input_masses = self._transfer_isru(plan, holders, model.inputs, 1)
+            outputs, output_masses = self._transfer_isru(
+                plan, holders, model.outputs, -1
+            )
+            location = element.location
+            self.isru_records.append(
+                ISRURecord(
+                    time=self.time,
+                    duration=self.duration,
+                    element_id=element.id,
+                    element_name=element.name,
+                    process=model.name,
+                    location_id=None if location is None else location.id,
+                    location_name=None if location is None else location.name,
+                    rate=plan.rate,
+                    limit=plan.limit if plan.rate < 1 else None,
+                    power=plan.rate * model.power,
+                    inputs=inputs,
+                    outputs=outputs,
+                    input_masses=input_masses,
+                    output_masses=output_masses,
+                )
+            )
+            if plan.rate <= 0:
+                self._warn_isru(plan)
+
+    def _warn_isru(self, plan: _ISRUPlan):
+        key = (plan.element.id, plan.model.name, plan.limit)
+        if key in self._isru_warnings:
+            return
+        self._isru_warnings.add(key)
+        if plan.limit == "Power":
+            reason = "has no surplus power"
+        elif plan.limit == "Input":
+            reason = f"has no {plan.resource.name} input"
+        else:
+            reason = f"has no storage for {plan.resource.name}"
+        self.warnings.append(
+            SimWarning(
+                self.time,
+                None,
+                f"ISRU process {plan.model.name} of {plan.element.name} "
+                f"cannot operate: it {reason}.",
+            )
+        )
 
     # ----------------------------------------------------- cost and lifetime
 
@@ -595,7 +817,9 @@ class Simulator:
             self._handle_crew_consumables()
         if self.duration > 0:
             self._handle_boiloff()
-            self._handle_power()
+            plans = self._plan_isru()
+            self._handle_power(plans)
+            self._handle_isru(plans)
             self._check_design_life()
             for element in self.state.network.elements:
                 demands = element.generate_demands(self.duration, self)

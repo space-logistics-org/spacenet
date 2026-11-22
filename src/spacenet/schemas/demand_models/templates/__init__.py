@@ -9,6 +9,7 @@ from .demand_models import (
     TimedImpulseDemandModel,
     RatedDemandModel,
     SparingByMassDemandModel,
+    ISRUProcessDemandModel,
 )
 
 AllMissionDemandModels = Union[
@@ -17,11 +18,15 @@ AllMissionDemandModels = Union[
     CrewConsumablesDemandModel,
 ]
 AllElementDemandModels = Union[
-    TimedImpulseDemandModel, RatedDemandModel, SparingByMassDemandModel
+    TimedImpulseDemandModel,
+    RatedDemandModel,
+    SparingByMassDemandModel,
+    ISRUProcessDemandModel,
 ]
 AllDemandModels = Union[
     TimedImpulseDemandModel,
     RatedDemandModel,
     CrewConsumablesDemandModel,
     SparingByMassDemandModel,
+    ISRUProcessDemandModel,
 ]

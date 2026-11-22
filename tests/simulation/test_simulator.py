@@ -726,6 +726,18 @@ class TestQuickStartScenarios(unittest.TestCase):
         }
         self.assertIn("Artemis V | Crew Member A", visitors)
         self.assertIn("Surface Cargo | LTV", visitors)
+        # the ISRU pilot plant operates on the grid at its full rate and its
+        # oxygen is loaded into the Artemis V HLS before ascent
+        plant = [r for r in sim.isru_records if r.element_name.endswith("Pilot Plant")]
+        self.assertTrue(plant)
+        self.assertTrue(all(r.rate == 1 for r in plant))
+        loaded = [
+            f
+            for f in sim.propellant_flows
+            if f.event_name == "Artemis V | Load ISRU Oxygen"
+        ]
+        self.assertEqual([f.vehicle_name for f in loaded], ["Artemis V | HLS"])
+        self.assertGreater(loaded[0].amount, 400)
 
 
 if __name__ == "__main__":

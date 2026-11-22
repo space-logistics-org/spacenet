@@ -3,11 +3,13 @@
 // the scenario if none is chosen.
 
 import { resourceTable, schemaForm } from "../components.js";
+import { isruFields } from "./modelEditors.js";
 import { store } from "../store.js";
-import { button, clone, h, openModal, select, textInput, uuid } from "../util.js";
+import { button, clone, fmt, h, openModal, select, textInput, uuid } from "../util.js";
 
 const NEW = "";
-const BASE_FIELDS = ["name", "type", "templateId", "demands"];
+const BASE_FIELDS = ["name", "type", "templateId", "demands", "inputs", "outputs", "power"];
+const ISRU = "ISRU Process";
 
 /**
  * Opens the dialog for a demand model instance ({type} for a new model).
@@ -21,6 +23,9 @@ export function openDemandModel({ model }) {
   let templateId = draft.templateId ?? templates()[0]?.id ?? NEW;
   // demands of a new template
   const newDemands = [];
+  // process of a new ISRU template
+  const newProcess = { inputs: [], outputs: [], power: 0 };
+  const isru = type === ISRU;
   const usesDemands = type === "Timed Impulse" || type === "Rated";
   // schema of the parameters of other types (crew consumables, sparing by mass)
   const templateName = `${type.replace(/ /g, "")}DemandModel`;
@@ -30,7 +35,7 @@ export function openDemandModel({ model }) {
     );
   const quantity = type === "Rated" ? "rate" : "amount";
   const quantityLabel = type === "Rated" ? "Rate (per day)" : "Amount";
-  let override = Array.isArray(draft.demands);
+  let override = Array.isArray(draft.demands) || Array.isArray(draft.outputs);
   const body = h("div");
 
   function template() {
@@ -61,7 +66,9 @@ export function openDemandModel({ model }) {
         )
       ),
     ];
-    if (usesDemands && !chosen) {
+    if (isru) {
+      parts.push(isruPart(chosen));
+    } else if (usesDemands && !chosen) {
       parts.push(
         h("h6", {}, "Demands"),
         resourceTable(newDemands, () => {}, { quantity, label: quantityLabel })
@@ -106,6 +113,39 @@ export function openDemandModel({ model }) {
     body.replaceChildren(...parts);
   }
 
+  /** The process of a new template, or the (overridden) process of a template. */
+  function isruPart(chosen) {
+    if (!chosen) return isruFields(newProcess);
+    const overrideBox = h("input", {
+      type: "checkbox",
+      class: "form-check-input me-2",
+      checked: override,
+      onChange: () => {
+        override = overrideBox.checked;
+        for (const key of ["inputs", "outputs", "power"]) {
+          draft[key] = override ? clone(draft[key] ?? chosen[key] ?? (key === "power" ? 0 : [])) : undefined;
+        }
+        render();
+      },
+    });
+    const describe = (rates) =>
+      (rates ?? []).map((rate) => `${store.resourceLabel(rate)} ${fmt(rate.rate, 3)}/day`).join(", ") || "none";
+    return h(
+      "div",
+      {},
+      h("label", { class: "form-check-label mb-2" }, overrideBox, "Override the process of the template"),
+      override
+        ? isruFields(draft)
+        : h(
+            "ul",
+            { class: "mb-0" },
+            h("li", {}, `Inputs: ${describe(chosen.inputs)}`),
+            h("li", {}, `Outputs: ${describe(chosen.outputs)}`),
+            h("li", {}, `Power: ${chosen.power ?? 0} kW`)
+          )
+    );
+  }
+
   function defaults(name) {
     const result = {};
     for (const [key, property] of Object.entries(store.schema.$defs[name].properties)) {
@@ -126,7 +166,9 @@ export function openDemandModel({ model }) {
           if (templateId === NEW) {
             // a new template is added to the scenario
             const created = { id: uuid(), name: draft.name, type, description: "" };
-            if (usesDemands) {
+            if (isru) {
+              Object.assign(created, clone(newProcess));
+            } else if (usesDemands) {
               created.demands = newDemands;
             } else {
               // the parameters define the new template (required ones default to none)
@@ -146,6 +188,9 @@ export function openDemandModel({ model }) {
             store.update(() => store.include("demandModels", templateId));
           }
           if (usesDemands && !override) delete draft.demands;
+          if (isru && !override) {
+            for (const key of ["inputs", "outputs", "power"]) delete draft[key];
+          }
           c.close({ ...draft, type, templateId });
         },
         "primary"
