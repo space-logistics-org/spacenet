@@ -60,6 +60,7 @@ class SimMission:
         self.events: List[SimEvent] = []
         self.demand_models: List["SimDemandModel"] = []
         self._crew_size: Optional[int] = None
+        self._crew_members: Optional[List[SimCrewMember]] = None
 
     def generate_demands(self, simulator: "Simulator") -> DemandSet:
         """
@@ -73,8 +74,30 @@ class SimMission:
         """
         demands = DemandSet()
         for model in self.demand_models:
-            demands.add_all(model.generate_demands(self.duration, simulator))
+            if self.settings.time_phased_consumables and hasattr(model, "eva_demands"):
+                # other crew consumables are demanded over time (see Simulator)
+                demands.add_all(model.eva_demands())
+            else:
+                demands.add_all(model.generate_demands(self.duration, simulator))
         return demands
+
+    @property
+    def crew_members(self) -> List[SimCrewMember]:
+        """
+        The crew members created in this mission, either directly or inside
+        created carriers (identified in the initial state).
+        """
+        if self._crew_members is None:
+            crew = {}
+            for element in self.elements:
+                if isinstance(element, SimCrewMember):
+                    crew[element.id] = element
+                elif isinstance(element, SimCarrier):
+                    for member in element.complete_contents:
+                        if isinstance(member, SimCrewMember):
+                            crew[member.id] = member
+            self._crew_members = sorted(crew.values(), key=lambda e: e.sort_key)
+        return self._crew_members
 
     def _mission_time(self, event: SimEvent) -> float:
         return self.settings.round_time(event.mission_time or 0.0)

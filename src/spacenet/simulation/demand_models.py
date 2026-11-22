@@ -297,6 +297,103 @@ class SimCrewConsumablesDemandModel(SimDemandModel):
             return 0.0
         return self.mission.transit_duration + self.mission.return_transit_duration
 
+    def _demands(self, amounts) -> DemandSet:
+        settings = self.mission.settings
+        demands = DemandSet()
+        for class_of_supply, amount in amounts:
+            if amount:
+                demands.add(
+                    Demand(SimResource.generic(settings, class_of_supply), amount)
+                )
+        return demands
+
+    def daily_demands(self, crew_days: float) -> DemandSet:
+        """
+        Generates the demands which accrue with time (water, food, gases,
+        hygiene, clothing, and waste) for a number of crew-days.
+
+        Args:
+            crew_days (float): The crew-days.
+
+        Returns:
+            :obj:`DemandSet`: The demands.
+        """
+        return self._demands(
+            [
+                (
+                    ClassOfSupply.COS_201,
+                    crew_days * self.water_rate * (1 - self.water_recovery_rate),
+                ),
+                (ClassOfSupply.COS_202, crew_days * self.food_support_rate),
+                (ClassOfSupply.COS_202, crew_days * self.ambient_food_rate),
+                (ClassOfSupply.COS_202, crew_days * self.rf_food_rate),
+                (ClassOfSupply.COS_203, crew_days * self.oxygen_rate),
+                (ClassOfSupply.COS_203, crew_days * self.nitrogen_rate),
+                (ClassOfSupply.COS_204, crew_days * self.hygiene_rate),
+                (
+                    ClassOfSupply.COS_205,
+                    crew_days * self.clothing_rate / self.clothing_lifetime,
+                ),
+                (ClassOfSupply.COS_701, crew_days * self.trash_bag_rate),
+                (ClassOfSupply.COS_702, crew_days * self.waste_containment_rate),
+            ]
+        )
+
+    def crew_demands(self, crew: int) -> DemandSet:
+        """
+        Generates the demands which are carried by each crew member (kits,
+        personal items, suits, and equipment) and the reserves of daily
+        demands for a number of crew members.
+
+        Args:
+            crew (int): The number of crew members.
+
+        Returns:
+            :obj:`DemandSet`: The demands.
+        """
+        demands = self._demands(
+            [
+                (ClassOfSupply.COS_204, self.hygiene_kit * crew),
+                (ClassOfSupply.COS_206, self.personal_items * crew),
+                (ClassOfSupply.COS_301, self.office_equipment * crew),
+                (ClassOfSupply.COS_302, self.eva_suit * crew),
+                (ClassOfSupply.COS_303, self.health_consumables * crew),
+                (ClassOfSupply.COS_306, self.computer_equipment * crew),
+            ]
+        )
+        if self.reserves_duration > 0:
+            reserves = self.daily_demands(self.reserves_duration * crew)
+            # reserves exclude clothing and trash (as in the mission total)
+            for demand in reserves:
+                if demand.resource.class_of_supply in (
+                    ClassOfSupply.COS_205,
+                    ClassOfSupply.COS_701,
+                ):
+                    continue
+                demands.add(demand)
+        return demands
+
+    def mission_demands(self) -> DemandSet:
+        """Generates the demands for equipment shared by the mission crew."""
+        return self._demands(
+            [
+                (ClassOfSupply.COS_303, self.health_equipment),
+                (ClassOfSupply.COS_304, self.safety_equipment),
+                (ClassOfSupply.COS_305, self.comm_equipment),
+            ]
+        )
+
+    def eva_demands(self) -> DemandSet:
+        """Generates the demands for the extra-vehicular activity of the mission."""
+        eva_time = self.mission_eva_crew_time
+        return self._demands(
+            [
+                (ClassOfSupply.COS_201, eva_time * self.eva_water_rate),
+                (ClassOfSupply.COS_203, eva_time * self.eva_oxygen_rate),
+                (ClassOfSupply.COS_302, self.eva_lithium_hydroxide * eva_time),
+            ]
+        )
+
     def generate_demands(self, duration: float, simulator: "Simulator") -> DemandSet:
         settings = self.mission.settings
         crew = self.mission_crew_size

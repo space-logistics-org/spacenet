@@ -97,6 +97,13 @@ class Configuration(CamelModel):
         title="Detailed Exploration",
         description="True, if the simulator shall model all exploration events (e.g., EVAs).",
     )
+    time_phased_consumables: bool = Field(
+        False,
+        title="Time-Phased Crew Consumables",
+        description="True, if crew consumables are demanded where and when each "
+        "crew member is away from the surface of Earth (instead of all at once "
+        "on arrival at the mission destination).",
+    )
 
     generic_packing_factor_gas: float = Field(
         1.0,

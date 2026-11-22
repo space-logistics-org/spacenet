@@ -48,6 +48,15 @@ Findings
   four (3.86 vs. 0.89 kg per crew-day) and include 2.2 kg per crew-day of
   nitrogen (vs. about 0.02 kg of cabin leakage). The campaign uses the NASA
   planning values; scenarios using the defaults overstate gas logistics.
+* **Crew consumables timing.** The mission-level demand model of the
+  reference implementation counts the days at a mission destination until
+  the next mission starts: for the 10-day Artemis II flyby (whose destination
+  is the splash-down site), it demanded 11.7 t of consumables for four crew
+  over almost a year. With time-phased crew consumables (configuration
+  ``timePhasedConsumables``, used by the campaign), consumables are demanded
+  where and when each crew member is away from Earth: 1.0 t for Artemis II,
+  matching four crew for 10 days at the planning rates plus carried items,
+  reserves, and equipment.
 * **Surface systems.** Fission Surface Power (40 kWe, at most 6,000 kg), the
   terrain vehicle (two suited crew, 10 km walk-back), the pressurized rover
   (two crew, 28-day missions), surface stays (about 6 days), and the

@@ -700,8 +700,13 @@ class TestQuickStartScenarios(unittest.TestCase):
         boiloff = [f for f in sim.propellant_flows if f.kind.value == "Boiloff"]
         self.assertTrue(any("Depot" in f.vehicle_name for f in boiloff))
         self.assertTrue(any("HLS" in f.vehicle_name for f in boiloff))
-        # the crew consumables of the crewed missions are left to the manifest
-        self.assertEqual(len(sim.unsatisfied_demands), 4)
+        # the time-phased crew consumables of the four crewed missions (and
+        # the EVA consumables of the three landings) are left to the manifest
+        names = {d.event.name for d in sim.unsatisfied_demands}
+        self.assertEqual(
+            len({n for n in names if n.startswith("Crew Consumables for")}), 4
+        )
+        self.assertEqual(len({n for n in names if n.startswith("Demand Event for")}), 3)
         # surface power and mobility
         self.assertEqual(locations["Surface Cargo | LTV"], "LSP")
         self.assertEqual(locations["Surface Cargo | FSP"], "LSP")

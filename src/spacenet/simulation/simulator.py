@@ -9,6 +9,7 @@ import logging
 import math
 from collections import defaultdict
 from typing import Dict, List, Optional, Tuple
+from uuid import UUID
 
 from ..schemas import Body, ClassOfSupply, Scenario
 from ..schemas.elements.power import PowerGenerationType
@@ -126,6 +127,9 @@ class Simulator:
         self._power_warnings: set = set()
         #: Time at which each power group arrived at its location.
         self._power_arrivals: Dict[tuple, float] = {}
+        #: Crew members (and missions) whose carried consumables were demanded.
+        self._consumables_departed: set = set()
+        self._consumables_missions: set = set()
         self._events: List[Tuple[float, int, str, int, SimEvent]] = []
         self._sequence = 0
         self._repaired_items: Dict[int, List[RepairItem]] = {}
@@ -202,6 +206,8 @@ class Simulator:
         self.power_records.clear()
         self._power_warnings.clear()
         self._power_arrivals.clear()
+        self._consumables_departed.clear()
+        self._consumables_missions.clear()
         self._item_demands.clear()
         self.time = 0.0
         self.duration = 0.0
@@ -213,6 +219,8 @@ class Simulator:
         }
         for mission in self.state.missions:
             self.schedule(MissionEvent(mission))
+            # identify the crew of each mission in the initial state
+            _ = mission.crew_members
 
     def _next_event(self):
         """Advances the simulation time to the next event."""
@@ -418,6 +426,71 @@ class Simulator:
                     )
                 )
 
+    # ------------------------------------------------------- crew consumables
+
+    def _handle_crew_consumables(self):
+        """
+        Generates time-phased crew consumables: the daily demands of the crew
+        of each mission over the elapsed duration where they are (outside
+        the surface of Earth), and the demands carried by each crew member
+        (with reserves) and shared by the mission when they first leave the
+        surface of Earth.
+        """
+        for mission in self.state.missions:
+            models = [m for m in mission.demand_models if hasattr(m, "daily_demands")]
+            if not models:
+                continue
+            groups: Dict[UUID, List[SimElement]] = {}
+            for member in mission.crew_members:
+                location = member.location
+                if location is None or (
+                    isinstance(location, SimNode)
+                    and location.is_surface
+                    and location.body == Body.EARTH
+                ):
+                    continue
+                if member.id not in self._consumables_departed:
+                    self._consumables_departed.add(member.id)
+                    for model in models:
+                        demands = model.crew_demands(1)
+                        if mission.index not in self._consumables_missions:
+                            demands.add_all(model.mission_demands())
+                        self._execute_crew_demands(mission, [member], demands)
+                    self._consumables_missions.add(mission.index)
+                # crew members leave Earth by an event, so they were away
+                # from Earth for the whole elapsed duration
+                if self.duration > 0:
+                    groups.setdefault(member.container.id, []).append(member)
+            for members in groups.values():
+                on_edge = isinstance(members[0].location, SimEdge)
+                for model in models:
+                    if on_edge and model.transit_demands_omitted:
+                        continue
+                    self._execute_crew_demands(
+                        mission,
+                        members,
+                        model.daily_demands(len(members) * self.duration),
+                    )
+
+    def _execute_crew_demands(self, mission, members, demands: DemandSet):
+        """Executes the crew consumables demands of crew members at their location."""
+        location = members[0].location
+        demands = self._discretize_demands(demands, None, location)
+        if len(demands) == 0:
+            return
+        event = DemandEvent(
+            time=self.time,
+            priority=LAST_PRIORITY,
+            name=f"Crew Consumables for {mission}",
+            element=members[0],
+            location=location,
+            demands=demands,
+        )
+        try:
+            event.execute(self)
+        except SimError as error:
+            self._log_error(error)
+
     # ---------------------------------------------------------------- demands
 
     def _handle_demands(self):
@@ -426,6 +499,8 @@ class Simulator:
         elements over the elapsed duration and schedules mission-level demands
         at the start of a mission.
         """
+        if self.settings.time_phased_consumables:
+            self._handle_crew_consumables()
         if self.duration > 0:
             self._handle_boiloff()
             self._handle_power()

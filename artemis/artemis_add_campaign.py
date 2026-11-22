@@ -1353,7 +1353,7 @@ class CampaignBuilder:
             element_templates=self.templates,
             instantiated_elements=self.instances,
             demand_models=[self.consumables],
-            configuration=s.Configuration(),
+            configuration=s.Configuration(time_phased_consumables=True),
         )
 
     def build(self) -> s.Scenario:
