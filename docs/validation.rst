@@ -80,6 +80,37 @@ Findings
   oxygen (the published plant power over 225 days per year, an upper bound)
   exceeds the minimum energy of water electrolysis (4.96 kWh per kg).
 
+------------
+Verification
+------------
+
+Validation compares the models with published data; verification checks that
+the simulator implements them consistently. Besides unit tests of each model,
+``tests/simulation/test_invariants.py`` checks invariants which every
+simulation must satisfy, for the reference scenarios and for random
+scenarios generated from seeds (``tests/simulation/generator.py``):
+
+* time never decreases, and no event executes after the scenario end date;
+* each element is in exactly one container, consistent with its parent;
+* tanks, resource containers, and energy storage stay within their bounds;
+* every change to a vehicle tank is recorded, so the propellant ledger of
+  each tank closes (initial contents plus recorded flows equal the final
+  contents);
+* burns achieve the delta-v of the rocket equation for the propellant used;
+* transfers conserve resources (removed equals delivered plus lost);
+* the compressed network history composes the simulated states;
+* the total mass of closed scenarios (without demands, burns, boiloff, or
+  losses) is constant;
+* simulations are deterministic (also after a round trip through JSON) and
+  do not modify their scenario; and
+* the simulators agree on the errors and final locations of a scenario.
+
+Random scenarios include events which fail by design (e.g., over capacity)
+so that the invariants are also checked after errors. Each run checks 40 open
+and 40 closed scenarios; a slow test (excluded from continuous integration)
+checks 960 more of each. A failure names its seed, which reproduces the
+scenario with ``random_scenario(seed)``.
+
 -------
 Results
 -------
