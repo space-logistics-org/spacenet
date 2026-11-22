@@ -18,7 +18,7 @@ from spacenet.simulation import (
     size_tankers,
 )
 from spacenet.simulation.analysis import export_propellant
-from spacenet.simulation.analysis.propellant import closed_form_flights
+from spacenet.simulation.analysis.propellant import closed_form_flights, vehicle_group
 from spacenet.simulation.events import (
     get_achieved_delta_v,
     get_propellant_shortfall,
@@ -474,6 +474,55 @@ class TestPropellantAnalysis(unittest.TestCase):
                         for t in analysis.tanks
                     )
                 )
+
+    def _check_links(self, analysis):
+        """Checks that the flows into and out of each vehicle group balance."""
+        groups = {vehicle_group(t.vehicle_name) for t in analysis.tanks}
+        balance = {group: 0.0 for group in groups}
+        for link in analysis.links:
+            self.assertGreater(link.mass, 0)
+            self.assertNotEqual(link.source, link.target)
+            if link.target in balance:
+                balance[link.target] += link.mass
+            if link.source in balance:
+                balance[link.source] -= link.mass
+        for group, value in balance.items():
+            self.assertAlmostEqual(value, 0, delta=1e-6 * max(1, abs(value)), msg=group)
+
+    def test_flow_links_balance_on_fixtures(self):
+        for path in SCENARIOS:
+            with self.subTest(path=path):
+                sim = FullSimulator(load_scenario(path))
+                sim.simulate()
+                self._check_links(PropellantAnalysis.create(sim))
+
+    def test_refueling_flow_links(self):
+        b, _, _, _ = build_refueling()
+        sim = FullSimulator(b.build())
+        sim.simulate()
+        analysis = PropellantAnalysis.create(sim)
+        self._check_links(analysis)
+        links = {(l.source, l.target, l.resource): l.mass for l in analysis.links}
+        self.assertAlmostEqual(links[("Loaded", "Tanker", "Oxidizer")], 3000)
+        self.assertAlmostEqual(links[("Tanker", "Depot", "Oxidizer")], 3000)
+        self.assertIn(("Depot", "Lander", "Fuel"), links)
+        self.assertIn(("Depot", "Boiloff", "Oxidizer"), links)
+        self.assertIn(("Lander", "Burned", "Fuel"), links)
+        self.assertIn(("Depot", "Transfer Loss", "Fuel"), links)
+        self.assertEqual(
+            {
+                f.counterpart
+                for f in sim.propellant_flows
+                if f.kind.value == "Transfer In"
+            },
+            {"Tanker", "Depot"},
+        )
+
+    def test_vehicle_groups(self):
+        self.assertEqual(vehicle_group("Artemis III | Tanker 12"), "Tanker")
+        self.assertEqual(vehicle_group("Artemis III | HLS"), "HLS")
+        self.assertEqual(vehicle_group("Depot"), "Depot")
+        self.assertEqual(vehicle_group("Stage 2"), "Stage")
 
     def test_refueling_budget(self):
         b, depot, tanker, lander = build_refueling()

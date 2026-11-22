@@ -5,6 +5,7 @@ aggregate propellant in a depot.
 """
 
 import math
+import re
 from typing import Dict, List, Optional, Tuple
 from uuid import UUID
 
@@ -97,6 +98,112 @@ class PropellantTotals(CamelModel):
     boiloff_mass: float = Field(0.0, description="Mass lost to boiloff (kg)")
 
 
+class FlowLink(CamelModel):
+    """
+    A flow of a resource (in mass) between two nodes of the propellant
+    logistics network: vehicle groups (vehicles of the same name in all
+    missions, e.g., "Tanker"), sources (loaded, added, and produced
+    propellant), and sinks (burned, boiloff, transfer losses, consumed, and
+    residual propellant).
+    """
+
+    source: str = Field(..., description="Source node")
+    target: str = Field(..., description="Target node")
+    resource: str = Field(..., description="Resource name")
+    mass: float = Field(0.0, description="Mass (kg)")
+
+
+#: Source and sink nodes of the propellant logistics network.
+LOADED, ADDED, PRODUCED = "Loaded", "Added", "Produced"
+BURNED, BOILOFF, LOSS, CONSUMED, RESIDUAL = (
+    "Burned",
+    "Boiloff",
+    "Transfer Loss",
+    "Consumed",
+    "Residual",
+)
+
+
+#: Source of the changes which add to a tank (unless from a counterpart).
+_SOURCES = {
+    PropellantFlowKind.LOADED: LOADED,
+    PropellantFlowKind.ADDED: ADDED,
+    PropellantFlowKind.TRANSFER_IN: ADDED,
+}
+#: Sink of the changes which remove from a tank.
+_SINKS = {
+    PropellantFlowKind.TRANSFER_LOSS: LOSS,
+    PropellantFlowKind.BURNED: BURNED,
+    PropellantFlowKind.BOILOFF: BOILOFF,
+}
+
+
+def vehicle_group(name: str) -> str:
+    """
+    Groups an element by its name without a mission prefix ("Mission | ") or
+    a trailing number, e.g., "Artemis III | Tanker 12" is a "Tanker".
+    """
+    name = name.rsplit(" | ", 1)[-1]
+    return re.sub(r"\s+\d+$", "", name) or name
+
+
+def flow_links(flows: List[PropellantFlow]) -> List[FlowLink]:
+    """
+    Aggregates the changes to the contents of vehicle tanks to the flows of
+    each resource between vehicle groups, sources, and sinks. The flows into
+    and out of each vehicle group balance.
+
+    Args:
+        flows ([:obj:`PropellantFlow`]): The changes to tank contents.
+
+    Returns:
+        [:obj:`FlowLink`]: The flows (largest first).
+    """
+    vehicles = {flow.vehicle_name for flow in flows}
+    masses: Dict[Tuple[str, str, str], float] = {}
+    residual: Dict[Tuple[UUID, str], PropellantFlow] = {}
+
+    def add(source, target, resource, mass):
+        if source != target and mass > 0:
+            key = (source, target, resource)
+            masses[key] = masses.get(key, 0.0) + mass
+
+    for flow in flows:
+        if flow.resource_name is None:
+            continue
+        group = vehicle_group(flow.vehicle_name)
+        resource = flow.resource_name
+        mass = flow.amount * flow.unit_mass
+        other = vehicle_group(flow.counterpart) if flow.counterpart else None
+        residual[(flow.vehicle_id, flow.tank_key)] = flow
+        if flow.kind in _SOURCES:
+            add(other or _SOURCES[flow.kind], group, resource, mass)
+        elif flow.kind in _SINKS:
+            add(group, _SINKS[flow.kind], resource, mass)
+        elif flow.kind == PropellantFlowKind.TRANSFER_OUT:
+            # transfers between vehicles are counted where they are received
+            if flow.counterpart not in vehicles:
+                add(group, other or CONSUMED, resource, mass)
+        elif flow.kind == PropellantFlowKind.CONSUMED:
+            if mass >= 0:
+                add(group, other or CONSUMED, resource, mass)
+            else:
+                add(other or PRODUCED, group, resource, -mass)
+    for flow in residual.values():
+        add(
+            vehicle_group(flow.vehicle_name),
+            RESIDUAL,
+            flow.resource_name,
+            flow.amount_after * flow.unit_mass,
+        )
+    return [
+        FlowLink(source=source, target=target, resource=resource, mass=mass)
+        for (source, target, resource), mass in sorted(
+            masses.items(), key=lambda item: -item[1]
+        )
+    ]
+
+
 class PropellantAnalysis(CamelModel):
     """
     Contents of the integral tanks of all vehicles over time with propellant
@@ -107,6 +214,9 @@ class PropellantAnalysis(CamelModel):
     budgets: List[PropellantBudget] = Field([], description="Tank budgets")
     totals: PropellantTotals = Field(
         PropellantTotals(), description="Total propellant flows"
+    )
+    links: List[FlowLink] = Field(
+        [], description="Flows between vehicle groups, sources, and sinks"
     )
 
     @classmethod
@@ -153,6 +263,7 @@ class PropellantAnalysis(CamelModel):
             tanks=list(histories.values()),
             budgets=list(budgets.values()),
             totals=totals,
+            links=flow_links(simulator.propellant_flows),
         )
 
 

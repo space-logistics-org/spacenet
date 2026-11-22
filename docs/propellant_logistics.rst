@@ -53,13 +53,21 @@ the ``propellantShortfall``: the additional propellant a vehicle would need
 to achieve the remaining delta-v (accounting for the mass of the added
 propellant).
 
+The analysis also aggregates the propellant ``links`` of the campaign: the
+mass of each resource which flows between vehicle groups (vehicles of the
+same name in all missions, e.g., all tankers), from sources (loaded at
+creation, added, or produced by ISRU), to other containers (e.g., from an
+ISRU plant), and to sinks (burned, boiloff, transfer losses, consumed, and
+residual). The flows into and out of each vehicle group balance.
+
 :func:`~spacenet.simulation.analysis.size_tankers` estimates the number of
 tanker flights needed to aggregate a required propellant mass in a depot,
 accounting for boiloff between flights and transfer losses.
 
 In the web application, the *Propellant* view of the *Simulation* tab charts
 tank contents and losses by vehicle, exports the budgets, and sizes tanker
-campaigns; the element template editor defines boiloff rates and bipropellant
+campaigns; the *Flows* view draws the propellant links as a Sankey diagram
+(by resource) with a table of the flows; the element template editor defines boiloff rates and bipropellant
 systems; and the transfer event editor previews each transfer.
 
 --------------------------

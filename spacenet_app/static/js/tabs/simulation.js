@@ -24,6 +24,7 @@ const VIEWS = [
   ["locations", "Location History"],
   ["elements", "Element History"],
   ["propellant", "Propellant"],
+  ["flows", "Flows"],
   ["power", "Power"],
   ["isru", "ISRU"],
   ["cost", "Cost"],
@@ -65,6 +66,7 @@ const state = {
   propellantVehicle: null,
   powerGroup: null,
   isruProcess: null,
+  flowResource: "",
   timelineCrew: false,
   tankers: {
     required: 1_200_000,
@@ -263,6 +265,7 @@ function draw() {
   else if (state.view === "propellant") drawPropellant(content, result);
   else if (state.view === "power") drawPower(content, result);
   else if (state.view === "isru") drawISRU(content, result);
+  else if (state.view === "flows") drawFlows(content, result);
   else if (state.view === "cost") drawCost(content, result);
   else if (state.view === "timeline") drawTimeline(content, result);
   else drawMassHistory(content, state.history.masses().elements, "historyElement", "Element");
@@ -1097,6 +1100,189 @@ function powerTable(groups, id) {
                   group.nightShortfall
                 )
               : cell("—")
+          )
+        )
+      )
+    )
+  );
+}
+
+// -------------------------------------------------------------------- flows
+
+// the basic Plotly bundle has no Sankey traces: the full bundle (same
+// version) is loaded the first time the flows are drawn
+const FULL_PLOTLY = "https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js";
+let fullPlotly = null;
+
+function loadFullPlotly() {
+  if (window.Plotly?.PlotSchema?.get?.().traces?.sankey) return Promise.resolve();
+  fullPlotly ??= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = FULL_PLOTLY;
+    script.onload = resolve;
+    script.onerror = () => {
+      fullPlotly = null;
+      reject(new Error("The charting library could not be loaded."));
+    };
+    document.head.append(script);
+  });
+  return fullPlotly;
+}
+
+const SOURCES = ["Loaded", "Added", "Produced"];
+const SINKS = ["Burned", "Boiloff", "Transfer Loss", "Consumed", "Residual"];
+
+/** Color of a resource (in the order of the resources of the scenario). */
+function resourceColors(links) {
+  const names = [...new Set(links.map((link) => link.resource))];
+  const order = (store.scenario.resourceList ?? []).map((resource) => resource.name);
+  names.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+  return new Map(names.map((name, i) => [name, i < SERIES_FULL.length ? SERIES_FULL[i] : "#8a8984"]));
+}
+
+// categorical palette (validated; values are also shown in the table)
+const SERIES_FULL = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"];
+
+function alpha(hex, opacity) {
+  const value = parseInt(hex.slice(1), 16);
+  return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${opacity})`;
+}
+
+function drawFlows(content, result) {
+  frameParts = null;
+  const all = result.propellant?.links ?? [];
+  if (!all.length) {
+    content.append(h("div", { class: "sn-muted-box" }, "No vehicle tanks hold propellant during the simulation."));
+    return;
+  }
+  const colors = resourceColors(all);
+  if (state.flowResource && !colors.has(state.flowResource)) state.flowResource = "";
+  const links = all.filter((link) => !state.flowResource || link.resource === state.flowResource);
+  const chart = h("div", { class: "sn-chart", style: { height: "520px" } });
+  content.append(
+    h(
+      "div",
+      { class: "row g-2 mb-1" },
+      h(
+        "div",
+        { class: "col-md-4" },
+        h("label", { class: "form-label small mb-0" }, "Resource"),
+        select([["", "All resources"], ...[...colors.keys()].map((name) => [name, name])], state.flowResource, (value) => {
+          state.flowResource = value;
+          draw();
+        })
+      ),
+      h(
+        "div",
+        { class: "col-md-8 d-flex flex-wrap gap-3 align-items-end small" },
+        [...colors.entries()]
+          .filter(([name]) => !state.flowResource || name === state.flowResource)
+          .map(([name, color]) =>
+            h(
+              "span",
+              { class: "d-inline-flex align-items-center gap-1" },
+              h("span", {
+                style: { width: "12px", height: "12px", borderRadius: "2px", background: color, display: "inline-block" },
+              }),
+              name
+            )
+          )
+      )
+    ),
+    h(
+      "div",
+      { class: "form-text mb-1" },
+      "Propellant mass (t) loaded into, transferred between, and burned, lost, or left in vehicle tanks over the " +
+        "campaign. Vehicles of the same name in different missions are combined (e.g., all tankers)."
+    ),
+    chart,
+    h("h6", { class: "mt-3" }, "Flows"),
+    flowTable(links, colors)
+  );
+  const nodes = [...new Set(links.flatMap((link) => [link.source, link.target]))];
+  const index = new Map(nodes.map((name, i) => [name, i]));
+  const nodeColor = (name) => (SOURCES.includes(name) || SINKS.includes(name) ? "#8a8984" : "#52514e");
+  const traces = [
+    {
+      type: "sankey",
+      arrangement: "snap",
+      valueformat: ",.1f",
+      valuesuffix: " t",
+      node: {
+        label: nodes,
+        color: nodes.map(nodeColor),
+        pad: 18,
+        thickness: 14,
+        line: { color: "#ffffff", width: 1 },
+        hovertemplate: "%{label}: %{value:,.1f} t<extra></extra>",
+      },
+      link: {
+        source: links.map((link) => index.get(link.source)),
+        target: links.map((link) => index.get(link.target)),
+        value: links.map((link) => link.mass / 1000),
+        color: links.map((link) => alpha(colors.get(link.resource), 0.45)),
+        customdata: links.map((link) => link.resource),
+        hovertemplate: "%{source.label} → %{target.label}<br>%{customdata}: %{value:,.1f} t<extra></extra>",
+      },
+    },
+  ];
+  chart.append(h("div", { class: "sn-muted-box mt-3" }, "Loading the flow chart…"));
+  loadFullPlotly()
+    .then(() => {
+      if (!chart.isConnected) return;
+      clear(chart);
+      Plotly.react(chart, traces, { margin: { l: 8, r: 8, t: 8, b: 8 }, font: { size: 12 } }, {
+        responsive: true,
+        displaylogo: false,
+      });
+    })
+    .catch((error) => {
+      clear(chart).append(h("div", { class: "sn-muted-box mt-3" }, error.message));
+    });
+}
+
+/** Table of the flows (largest first). */
+function flowTable(links, colors) {
+  return h(
+    "div",
+    { class: "table-responsive sn-scroll border rounded", style: { maxHeight: "320px" } },
+    h(
+      "table",
+      { class: "table table-sm sn-table small mb-0" },
+      h(
+        "thead",
+        {},
+        h(
+          "tr",
+          {},
+          ["From", "To", "Resource", "Mass (t)"].map((label, i) => h("th", { class: i === 3 ? "text-end" : "" }, label))
+        )
+      ),
+      h(
+        "tbody",
+        {},
+        links.map((link) =>
+          h(
+            "tr",
+            {},
+            h("td", {}, link.source),
+            h("td", {}, link.target),
+            h(
+              "td",
+              {},
+              h("span", {
+                style: {
+                  width: "10px",
+                  height: "10px",
+                  borderRadius: "2px",
+                  background: colors.get(link.resource),
+                  display: "inline-block",
+                  marginRight: "6px",
+                },
+              }),
+              link.resource
+            ),
+            h("td", { class: "text-end" }, fmt(link.mass / 1000, 1))
           )
         )
       )

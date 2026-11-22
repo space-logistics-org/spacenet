@@ -226,6 +226,11 @@ class TestISRU(unittest.TestCase):
         (budget,) = PropellantAnalysis.create(sim).budgets
         self.assertAlmostEqual(budget.residual, 10)
         self.assertAlmostEqual(budget.consumed, -10)
+        # the plant is the source of the hydrogen in the propellant flows
+        links = PropellantAnalysis.create(sim).links
+        self.assertIn(
+            ("Plant", "Lander", 10.0), [(l.source, l.target, l.mass) for l in links]
+        )
 
     def test_inactive_state_does_not_operate(self):
         b = self.builder

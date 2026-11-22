@@ -638,7 +638,11 @@ class TransferEvent(SimEvent):
         )
         if isinstance(source, SimResourceTank):
             simulator.record_propellant(
-                source, PropellantFlowKind.TRANSFER_OUT, delivered, self
+                source,
+                PropellantFlowKind.TRANSFER_OUT,
+                delivered,
+                self,
+                counterpart=_owner_name(target),
             )
             if lost > 0:
                 simulator.record_propellant(
@@ -646,8 +650,18 @@ class TransferEvent(SimEvent):
                 )
         if isinstance(target, SimResourceTank):
             simulator.record_propellant(
-                target, PropellantFlowKind.TRANSFER_IN, delivered, self
+                target,
+                PropellantFlowKind.TRANSFER_IN,
+                delivered,
+                self,
+                counterpart=_owner_name(source),
             )
+
+
+def _owner_name(container) -> str:
+    """Gets the name of the vehicle of a tank, or else of the container."""
+    vehicle = getattr(container, "vehicle", None)
+    return str(getattr(vehicle or container, "name", container))
 
 
 def _get_resource_containers(element, selector: Optional[TankSelector] = None):

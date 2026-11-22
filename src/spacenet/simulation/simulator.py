@@ -306,6 +306,7 @@ class Simulator:
         amount: float,
         event: Optional[SimEvent] = None,
         attributed: bool = True,
+        counterpart: Optional[str] = None,
     ):
         """
         Records a change to the contents of an integral tank of a vehicle.
@@ -317,6 +318,7 @@ class Simulator:
             amount (float): The amount (units) changed.
             event (:obj:`SimEvent`): The causing event (default: the current event).
             attributed (bool): False, if no event causes the change.
+            counterpart (str): The name of the other party of the change.
         """
         vehicle = tank.vehicle
         # empty tanks are recorded when loaded to report their history
@@ -338,6 +340,7 @@ class Simulator:
                 amount_after=tank._amount,  # pylint: disable=protected-access
                 max_amount=tank._max_amount,  # pylint: disable=protected-access
                 event_name=None if event is None else event.name,
+                counterpart=counterpart,
             )
         )
 
@@ -615,6 +618,7 @@ class Simulator:
                         PropellantFlowKind.CONSUMED,
                         sign * moved,
                         attributed=False,
+                        counterpart=plan.element.name,
                     )
             amount = required - max(0.0, remaining)
             amounts[demand.resource.name] = amount

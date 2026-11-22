@@ -77,6 +77,10 @@ class PropellantFlow:
     max_amount: float
     #: Name of the causing event, if any.
     event_name: Optional[str] = None
+    #: Name of the other party of the change, if any: the origin (transfer
+    #: in) or destination (transfer out) of a transfer, or the element of an
+    #: ISRU process which produces or consumes the resource.
+    counterpart: Optional[str] = None
 
 
 @dataclass
