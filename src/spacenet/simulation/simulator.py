@@ -179,6 +179,7 @@ class Simulator:
         self._retired_warnings: set = set()
         self._events: List[Tuple[float, int, str, int, SimEvent]] = []
         self._sequence = 0
+        self._end_time: Optional[float] = None
         self._repaired_items: Dict[int, List[RepairItem]] = {}
         self._item_demands: Dict[object, Dict[SimResource, float]] = defaultdict(dict)
 
@@ -186,6 +187,14 @@ class Simulator:
     def settings(self) -> Settings:
         """The numerical precision and analysis options."""
         return self.state.settings
+
+    @property
+    def end_time(self) -> Optional[float]:
+        """
+        The time (days) of the scenario end relative to the scenario start
+        (`None` if the scenario ends with its last event).
+        """
+        return self._end_time
 
     @property
     def errors(self) -> List[SimError]:
@@ -268,6 +277,11 @@ class Simulator:
         self.duration = 0.0
         self.event = None
         self.state = State(self.scenario)
+        self._end_time = (
+            None
+            if self.scenario.end_date is None
+            else self.state.get_time(self.scenario.end_date)
+        )
         self._repaired_items = {
             index: [item.copy() for item in items]
             for index, items in self.repaired_items.items()
@@ -276,6 +290,56 @@ class Simulator:
             self.schedule(MissionEvent(mission))
             # identify the crew of each mission in the initial state
             _ = mission.crew_members
+
+    def _has_next_event(self) -> bool:
+        """True, if an event remains to be executed before the scenario end."""
+        event = self._peek_event()
+        if event is None:
+            return False
+        return self._end_time is None or event.time <= self._end_time
+
+    def _advance_to_end(self) -> bool:
+        """
+        Finishes the events of a simulation at the scenario end: warns of the
+        events after the end (which are not simulated) and advances the time
+        to the end.
+
+        Returns:
+            bool: True, if the time advanced to the end, after which the
+            demands over the final interval remain to be handled.
+        """
+        if self._end_time is None:
+            return False
+        sources = []
+        for entry in sorted(self._events, key=lambda e: e[:4]):
+            event = entry[4]
+            # demand events without demands (e.g., of missions without
+            # mission demand models) have no effect
+            if isinstance(event, DemandEvent) and len(event.demands) == 0:
+                continue
+            root = event.root
+            index = root.mission_index
+            if index is not None and 0 <= index < len(self.state.missions):
+                label = self.state.missions[index].name
+            else:
+                label = root.name
+            if label not in sources:
+                sources.append(label)
+        if sources:
+            self.warnings.append(
+                SimWarning(
+                    self._end_time,
+                    None,
+                    f"Events of {', '.join(sources)} after the scenario end date "
+                    "are not simulated.",
+                )
+            )
+        if self._end_time <= self.time:
+            return False
+        self.duration = self._end_time - self.time
+        self.time = self._end_time
+        self.event = None
+        return True
 
     def _next_event(self):
         """Advances the simulation time to the next event."""
@@ -1104,13 +1168,18 @@ class MiniSimulator(Simulator):
     def simulate(self):
         self.initialize_simulation()
         self.location_history.clear()
-        while self._peek_event() is not None:
+        while self._has_next_event():
             self._next_event()
             self.location_history.append(
                 LocationSnapshot(self.time, self.state.network)
             )
             self._handle_demands()
             self._execute_event()
+            self.location_history.append(
+                LocationSnapshot(self.time, self.state.network)
+            )
+        if self._advance_to_end():
+            self._handle_demands()
             self.location_history.append(
                 LocationSnapshot(self.time, self.state.network)
             )
@@ -1130,16 +1199,22 @@ class PreSimulator(Simulator):
     ):  # pylint: disable=arguments-differ
         """
         Executes the simulation up to (but not including) events at a
-        specified time with a specified priority.
+        specified time with a specified priority. Without a specified time,
+        the simulation continues to the scenario end (including its events).
 
         Args:
-            time (float): The time (days) at which to stop.
+            time (float): The time (days) at which to stop (default: the
+                scenario end, if any). A specified time may be after the
+                scenario end, e.g., to inspect the state before an event
+                which is not simulated by the other simulators.
             priority (int): The priority of coincident events at which to stop.
             reset (bool): True, to restart the simulation; otherwise continue
                 from the current state.
         """
         if self.state is None or reset:
             self.initialize_simulation()
+        if self._end_time is not None and math.isinf(time):
+            time, priority = self._end_time, math.inf
         while self._peek_event() is not None:
             event = self._peek_event()
             if event.time > time:
@@ -1210,12 +1285,14 @@ class DemandSimulator(Simulator):
         self._node_demands = {}
         self._edge_demands = {}
         self.unassigned_demands = []
-        while self._peek_event() is not None:
+        while self._has_next_event():
             self._next_event()
             if isinstance(self.event, TransportEvent) and self.event.edge is not None:
                 self._add_supply_edge(self.event)
             self._handle_demands()
             self._execute_event()
+        if self._advance_to_end():
+            self._handle_demands()
         self.supply_edges.sort(key=lambda e: (-e.end_time, e.origin.index))
         self.supply_points.sort(key=lambda p: (-p.time, p.node.index))
         self._tabulate_repairable_demands()
@@ -1356,7 +1433,7 @@ class FullSimulator(Simulator):
         self.down_mass_capacity_utilization_history.clear()
         self.exploration_capability_history.clear()
         self._record_network()
-        while self._peek_event() is not None:
+        while self._has_next_event():
             self._next_event()
             if self.duration > 0:
                 self._record_crew_measures()
@@ -1367,6 +1444,10 @@ class FullSimulator(Simulator):
             next_event = self._peek_event()
             if next_event is None or next_event.time > self.time:
                 self._record_network()
+        if self._advance_to_end():
+            self._record_crew_measures()
+            self._handle_demands()
+            self._record_network()
 
     def _record_network(self):
         """Records the state of the network at the current time."""

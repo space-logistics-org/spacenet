@@ -128,7 +128,10 @@ class MissionsAnalysis(CamelModel):
         [], description="Locations of each element over time"
     )
     locations: List[LocationSummary] = Field([], description="Network locations")
-    end_time: float = Field(0.0, description="Time (days) of the last event")
+    end_time: float = Field(
+        0.0,
+        description="Time (days) of the scenario end (default: the last event)",
+    )
 
     @classmethod
     def create(cls, scenario: Scenario) -> "MissionsAnalysis":

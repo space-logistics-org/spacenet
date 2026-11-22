@@ -45,6 +45,7 @@ function renderHeader() {
   const fields = {
     "scenario-name": scenario.name,
     "scenario-start": toInputDate(scenario.startDate),
+    "scenario-end": scenario.endDate ? toInputDate(scenario.endDate) : "",
     "scenario-author": scenario.createdBy,
     "scenario-description": scenario.description ?? "",
   };
@@ -80,6 +81,8 @@ function bindHeader() {
     const date = fromInputDate(value);
     if (date) scenario.startDate = date;
   });
+  // an empty end date ends the scenario with its last event
+  bind("scenario-end", (scenario, value) => (scenario.endDate = fromInputDate(value)));
 }
 
 async function confirmDiscard() {

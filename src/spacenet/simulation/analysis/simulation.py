@@ -532,7 +532,10 @@ class SimulationAnalysis(CamelModel):
     unsatisfied_demand_count: int = Field(
         0, description="Number of demands which could not be satisfied"
     )
-    end_time: float = Field(0.0, description="Time (days) of the last event")
+    end_time: float = Field(
+        0.0,
+        description="Time (days) of the scenario end (default: the last event)",
+    )
     totals: MeasureTotals = Field(
         MeasureTotals(), description="Total measures of effectiveness"
     )

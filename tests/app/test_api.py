@@ -327,6 +327,18 @@ class TestAnalysis(ApiTestCase):
         )
         self.assertGreater(packed["totalMass"], analysis["totalMass"])
 
+    def test_simulate_to_the_end_date(self):
+        scenario = load_json(SCENARIOS[0])
+        # the mission ends after 19 days
+        scenario["endDate"] = "2019-07-31T04:00:00Z"
+        analysis = self.post("/simulate", scenario=scenario)
+        self.assertEqual(analysis["endTime"], 30)
+        self.assertEqual(analysis["errorCount"], 0)
+        missions = self.post("/missions/analyze", scenario=scenario)
+        self.assertEqual(missions["endTime"], 30)
+        scenario["endDate"] = scenario["startDate"]
+        self.post("/scenario/validate", 422, scenario=scenario)
+
     def test_simulate(self):
         for path in SCENARIOS:
             scenario = load_scenario(path)

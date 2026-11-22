@@ -107,6 +107,8 @@ class ScenarioBuilder:
         self.demand_models = []
         self.missions = []
         self.configuration = s.Configuration(**configuration)
+        #: Date of the scenario end (default: the last event).
+        self.end_date = None
 
     def add(self, template, cls, name=None, **overrides):
         """Adds an element template (once) and an instance of it."""
@@ -333,6 +335,7 @@ class ScenarioBuilder:
             name="Test",
             created_by="Test",
             start_date=START,
+            end_date=self.end_date,
             scenario_type="Lunar",
             network=s.Network(
                 nodes=[self.ksc, self.leo, self.lsp, self.lsp2],

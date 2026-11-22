@@ -1,6 +1,6 @@
 """Defines object schemas for scenarios."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, List, Optional
 
@@ -323,6 +323,12 @@ class Scenario(CamelModel):
     start_date: datetime = Field(
         ..., title="Start Date", description="Time of scenario start"
     )
+    end_date: Optional[datetime] = Field(
+        None,
+        title="End Date",
+        description="Time of scenario end, up to which elements generate demands "
+        "and after which events are not simulated (default: the last event)",
+    )
     scenario_type: ScenarioType = Field(
         ..., title="Type of Scenario", description="Scenario type"
     )
@@ -352,3 +358,14 @@ class Scenario(CamelModel):
     def _upgrade(cls, data: Any) -> Any:
         # accepts vehicles in the legacy format of the reference implementation
         return upgrade_vehicles(data)
+
+    @model_validator(mode="after")
+    def _check_end_date(self) -> "Scenario":
+        if self.end_date is not None and _utc(self.end_date) <= _utc(self.start_date):
+            raise ValueError("The scenario end date must be after its start date.")
+        return self
+
+
+def _utc(date: datetime) -> datetime:
+    """Interprets a date without a time zone as UTC."""
+    return date if date.tzinfo is not None else date.replace(tzinfo=timezone.utc)
