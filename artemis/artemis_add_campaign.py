@@ -13,10 +13,11 @@ record in NASA's Moon-to-Mars Architecture Definition Document (ADD):
   co-manifests the International Habitation Module (I-Hab) and the ESPRIT
   refueling and communications module, respectively.
 
-All values are notional or approximate public values intended to exercise
-the propellant logistics analysis rather than to reproduce a specific
-design. They can be changed with :class:`CampaignParameters` or by editing
-the scenario.
+Values are published where available (and compared with their sources by
+``artemis/validation.py``; see docs/validation.rst) and otherwise notional,
+intended to exercise the logistics analyses rather than to reproduce a
+specific design. They can be changed with :class:`CampaignParameters` or by
+editing the scenario.
 
 =====================================  ==============  ==========================
 Value                                  Default         Basis
@@ -32,7 +33,13 @@ Depot boiloff                          0.05 %/day      notional passive LEO depo
 HLS boiloff                            0.1 %/day       notional
 Transfer loss                          1 %             notional
 Tanker flight interval                 6 days          notional launch cadence
-SLS / Orion masses and delta-v         see artemis_campaign.py (SciTech 2024)
+SLS / Orion masses                     see artemis_campaign.py (SciTech 2024)
+Orion ESM usable propellant            8,602 kg        NASA NTRS 20180004488
+SLS Block 1 / 1B ascent delta-v        9,500 / 10,325 m/s  1B calibrated to 38 t TLI
+NRHO-LLO / descent / ascent / LLO-NRHO 750 / 2,050 / 1,860 / 750 m/s  NASA (2023)
+Orion NRHO insertion / departure       450 / 470 m/s   NASA (2023), ~1,000 m/s total
+Crew water / food / oxygen             3.99 / 2.36 / 0.89 kg/day  NASA (ASCEND 2023)
+Initial surface stay                   6 days          ADD (LD-07-L)
 EUS dry / propellant mass              15,000 / 129,000 kg  approx. public values
 PPE / HALO / I-Hab / ESPRIT mass       6,000 / 8,000 / 10,000 / 6,000 kg  notional
 Site illumination / longest night      85 % / 100 h    notional (connecting ridge)
@@ -110,8 +117,16 @@ class CampaignParameters:
     isp: float = 375.0
     #: Oxidizer-to-fuel mixture ratio of the LOX/LCH4 vehicles.
     mixture_ratio: float = 3.6
+    #: Equivalent delta-v (m/s) of the SLS Block 1 ascent to LEO.
+    sls_ascent_delta_v: float = 9_500.0
+    #: Equivalent delta-v (m/s) of the SLS Block 1B ascent to LEO (calibrated
+    #: so that Block 1B sends the published 38 t to TLI).
+    sls_1b_ascent_delta_v: float = 10_325.0
+    #: True, to load the Orion ESM with the propellant of the 2024 scenario
+    #: (9,276 kg) instead of the published usable propellant (8,602 kg).
+    legacy_esm_propellant: bool = False
     #: Surface stay (days) of each landing.
-    surface_days: float = 6.5
+    surface_days: float = 6.0
     #: Average fraction of time the south pole sites are illuminated.
     site_illumination: float = 0.85
     #: Longest continuous darkness (hours) at the south pole sites.
@@ -249,16 +264,29 @@ class CampaignBuilder:
             origin=self.ksc.id,
             destination=self.leo.id,
             duration=timedelta(hours=6),
-            burns=burns((0, 9500.0)),
+            burns=burns((0, self.p.sls_ascent_delta_v)),
+        )
+        self.ksc_leo_1b = s.SpaceEdge(
+            name="KSC-LEO (SLS Block 1B)",
+            description="SLS Block 1B Earth ascent (the exploration upper stage "
+            "completes the ascent; equivalent delta-v calibrated to the published "
+            "Block 1B crew capability)",
+            origin=self.ksc.id,
+            destination=self.leo.id,
+            duration=timedelta(hours=6),
+            burns=burns((0, self.p.sls_1b_ascent_delta_v)),
         )
         self.leo_nro = s.SpaceEdge(
             name="LEO-NRHO",
             description="Trans-lunar injection and NRHO insertion",
             origin=self.leo.id,
             destination=self.nro.id,
-            duration=timedelta(days=7),
+            # NASA NRHO white paper (2023): ~450 m/s and 5 days from TLI to
+            # NRHO (outbound powered flyby and NRHO insertion); TLI from the
+            # 2024 scenario; trajectory corrections notional
+            duration=timedelta(days=5),
             burns=burns(
-                (0, 3124.0), (0.3, 30.0), (3.1, 242.0), (4.4, 1.0), (6.4, 126.0)
+                (0, 3124.0), (0.3, 30.0), (1.2, 200.0), (3.0, 1.0), (5.0, 250.0)
             ),
         )
         self.leo_pac = s.SpaceEdge(
@@ -275,23 +303,26 @@ class CampaignBuilder:
             origin=self.nro.id,
             destination=self.llo.id,
             duration=timedelta(days=0.5),
-            burns=burns((0, 126.4), (0.5, 648.6)),
+            # NASA NRHO white paper (2023): ~750 m/s, 0.5 days
+            burns=burns((0, 120.0), (0.5, 630.0)),
         )
         self.llo_lsp = s.SpaceEdge(
             name="LLO-LSP",
             description="Lunar descent",
             origin=self.llo.id,
             destination=self.lsp.id,
-            duration=timedelta(days=0.2),
-            burns=burns((0, 19.4), (0.2, 1692.5)),
+            duration=timedelta(days=0.04),
+            # NASA NRHO white paper (2023): ~2,050 m/s, 0.04 days
+            burns=burns((0, 20.0), (0.04, 2030.0)),
         )
         self.lsp_llo = s.SpaceEdge(
             name="LSP-LLO",
             description="Lunar ascent",
             origin=self.lsp.id,
             destination=self.llo.id,
-            duration=timedelta(days=0.2),
-            burns=burns((0, 1692.4), (0.2, 19.4)),
+            duration=timedelta(days=0.04),
+            # NASA NRHO white paper (2023): ~1,860 m/s, 0.04 days
+            burns=burns((0, 1840.0), (0.04, 20.0)),
         )
         self.llo_nro = s.SpaceEdge(
             name="LLO-NRHO",
@@ -299,15 +330,18 @@ class CampaignBuilder:
             origin=self.llo.id,
             destination=self.nro.id,
             duration=timedelta(days=0.5),
-            burns=burns((0, 649.2), (0.5, 125.1)),
+            # NASA NRHO white paper (2023): ~750 m/s, 0.5 days
+            burns=burns((0, 630.0), (0.5, 120.0)),
         )
         self.nro_pac = s.SpaceEdge(
             name="NRHO-PAC",
             description="Trans-Earth injection",
             origin=self.nro.id,
             destination=self.pac.id,
-            duration=timedelta(days=6.4),
-            burns=burns((0, 147.0), (1.6, 2.0), (2.8, 263.0)),
+            # NASA NRHO white paper (2023): ~450 m/s and 5 days from NRHO to
+            # Earth (NRHO departure and return powered flyby)
+            duration=timedelta(days=5),
+            burns=burns((0, 250.0), (1.2, 200.0), (4.5, 20.0)),
         )
         self.ksc_leo_ship = s.FlightEdge(
             name="KSC-LEO (Super Heavy)",
@@ -365,6 +399,7 @@ class CampaignBuilder:
         ]
         self.edges = [
             self.ksc_leo,
+            self.ksc_leo_1b,
             self.leo_nro,
             self.leo_pac,
             self.nro_llo,
@@ -402,13 +437,25 @@ class CampaignBuilder:
         self.lox = propellant("LOX", "Liquid oxygen", 101, 1141)
         self.lch4 = propellant("LCH4", "Liquid methane", 101, 423)
         self.resources = [self.pban, self.lox_lh2, self.mmh_n2o4, self.lox, self.lch4]
+        # NASA planning values (ASCEND 2023, "Logistics Beyond LEO") for an
+        # average (82 kg) crew member in space: drinking (2.79), rehydration
+        # (0.50), hygiene (0.40), and flush (0.30) water; packaged food; and
+        # metabolic oxygen; nitrogen covers cabin leakage. Other rates keep
+        # the defaults of the demand model.
         self.consumables = s.CrewConsumablesDemandModel(
-            name="Crew Consumables",
-            description="Crew consumables (food, water, gases, hygiene, clothing)",
+            name="Crew Consumables (NASA 2023)",
+            description="Crew consumables with NASA logistics planning values",
             reserves_duration=3.0,
             water_recovery_rate=0.0,
             clothing_lifetime=4.0,
             transit_demands_omitted=False,
+            water_rate=3.99,
+            food_support_rate=0.0,
+            ambient_food_rate=2.36,
+            rf_food_rate=0.0,
+            oxygen_rate=0.89,
+            nitrogen_rate=0.02,
+            hygiene_rate=0.30,
         )
 
     # ---------------------------------------------------------- templates
@@ -559,7 +606,8 @@ class CampaignBuilder:
             6_185.0,
             9022,
             self.mmh_n2o4,
-            9_276.0,
+            # usable propellant (NASA NTRS 20180004488)
+            9_276.0 if self.p.legacy_esm_propellant else 8_602.0,
             316.0,
         )
         self.t_cm = self._module(
@@ -713,6 +761,43 @@ class CampaignBuilder:
                 grid_connected=True,
             )
         )
+        # library template (not yet flown in the campaign): the ADD describes
+        # two crew in a pressurized cabin on missions of up to 28 days with up
+        # to 14 days between cargo resupplies; mass and power are notional
+        self.t_pressurized_rover = self._template(
+            s.SurfaceVehicle(
+                name="Pressurized Rover",
+                description="JAXA Pressurized Rover (2 crew, up to 28-day missions)",
+                mass=10_000.0,
+                class_of_supply=802,
+                environment=UNPRESSURIZED,
+                cargo_environment=PRESSURIZED,
+                max_cargo_mass=1_000.0,
+                max_crew=2,
+                max_speed=10.0,
+                fuel_tank=self._tank(self.lch4, 0.0),
+                energy_consumption=2.0,
+                max_crewed_duration=28 * 24.0,
+                states=[
+                    s.State(
+                        name="Parked",
+                        type="Quiescent",
+                        power_consumption=3.0,
+                        power_generation=10.0,
+                        generation_type="Solar",
+                    ),
+                    s.State(
+                        name="Driving",
+                        type="Active",
+                        power_consumption=6.0,
+                        power_generation=10.0,
+                        generation_type="Solar",
+                    ),
+                ],
+                current_state_index=0,
+                energy_storage=s.EnergyStorage(capacity=400.0),
+            )
+        )
 
     # ---------------------------------------------------------- instances
 
@@ -830,17 +915,7 @@ class CampaignBuilder:
             [self._instance(self.t_crew, prefix, x) for x in "ABCD"] if crewed else []
         )
         stack = [srbs, core, sa, upper, cm, sm, las, *payload]
-        ascent = [
-            ("Burn", srbs),
-            ("Stage", srbs),
-            ("Stage", las),
-            ("Burn", core),
-            ("Stage", core),
-            ("Stage", sa),
-        ]
-        if block_1b:
-            # the exploration upper stage completes the ascent
-            ascent.append(("Burn", upper))
+        ascent = self._ascent_actions(srbs, core, sa, upper, las, block_1b)
         events = [
             self._create(
                 f"{prefix} | Create Launch Stack", 0, 2, self.ksc, self.ksc, stack
@@ -854,7 +929,7 @@ class CampaignBuilder:
                 f"{prefix} | Earth Ascent",
                 0,
                 4,
-                self.ksc_leo,
+                self.ksc_leo_1b if block_1b else self.ksc_leo,
                 stack,
                 [ascent],
             ),
@@ -1126,11 +1201,13 @@ class CampaignBuilder:
         payload = [self._instance(payload_template, prefix)] if payload_template else []
         events, _, upper, cm, sm, crew = self._launch_sls(prefix, block_1b, payload)
         # Orion arrives in NRHO two days after the HLS
-        launch = hls_arrival + 2 - 8
+        # Orion launches a day before trans-lunar injection
+        arrival = 1 + self.leo_nro.duration.total_seconds() / 86400
+        launch = hls_arrival + 2 - arrival
         events.append(self._tli(prefix, 1, upper, cm, sm, payload))
         surface = self.p.surface_days
         via_gateway = block_1b
-        day = 8
+        day = arrival
         if via_gateway:
             # the co-manifested module remains at Gateway in NRHO
             events.append(
@@ -1247,21 +1324,26 @@ class CampaignBuilder:
             return_destination=self.pac.id,
         )
 
-    def build(self) -> s.Scenario:
-        """Builds the campaign scenario."""
-        self.artemis_1()
-        self.artemis_2()
-        self.gateway()
-        self.landing("Artemis III", block_1b=False)
-        self.landing("Artemis IV", block_1b=True, payload_template=self.t_ihab)
-        self.surface_cargo()
-        self.landing("Artemis V", block_1b=True, payload_template=self.t_esprit)
+    @staticmethod
+    def _ascent_actions(srbs, core, sa, upper, las, block_1b: bool):
+        """The burn and stage actions of an SLS ascent."""
+        ascent = [
+            ("Burn", srbs),
+            ("Stage", srbs),
+            ("Stage", las),
+            ("Burn", core),
+            ("Stage", core),
+            ("Stage", sa),
+        ]
+        if block_1b:
+            # the exploration upper stage completes the ascent
+            ascent.append(("Burn", upper))
+        return ascent
+
+    def _scenario(self, name: str, description: str) -> s.Scenario:
         return s.Scenario(
-            name="Artemis Campaign (ADD Baseline)",
-            description="Reference Artemis campaign following the program of "
-            "record in NASA's Moon-to-Mars Architecture Definition Document, "
-            "with propellant aggregation for a Starship-class HLS. Values "
-            "are notional (see artemis/artemis_add_campaign.py).",
+            name=name,
+            description=description,
             created_by="SpaceNet",
             start_date=self.p.dates["Artemis I"],
             scenario_type="Lunar",
@@ -1273,6 +1355,79 @@ class CampaignBuilder:
             demand_models=[self.consumables],
             configuration=s.Configuration(),
         )
+
+    def build(self) -> s.Scenario:
+        """Builds the campaign scenario."""
+        self.artemis_1()
+        self.artemis_2()
+        self.gateway()
+        self.landing("Artemis III", block_1b=False)
+        self.landing("Artemis IV", block_1b=True, payload_template=self.t_ihab)
+        self.surface_cargo()
+        self.landing("Artemis V", block_1b=True, payload_template=self.t_esprit)
+        return self._scenario(
+            "Artemis Campaign (ADD Baseline)",
+            "Reference Artemis campaign following the program of record in "
+            "NASA's Moon-to-Mars Architecture Definition Document, with "
+            "propellant aggregation for a Starship-class HLS. Values are "
+            "notional or published (see artemis/artemis_add_campaign.py and "
+            "artemis/validation.py).",
+        )
+
+    def launch_capability(self, block_1b: bool, payload_mass: float) -> s.Scenario:
+        """
+        Builds a scenario in which SLS launches a payload (in place of Orion)
+        to LEO and its upper stage performs trans-lunar injection, to
+        evaluate the payload capability of the SLS models.
+        """
+        prefix = "Capability"
+        payload = self._instance(
+            self._template(
+                s.Element(
+                    name="TLI Payload",
+                    mass=payload_mass,
+                    class_of_supply=9,
+                    environment=UNPRESSURIZED,
+                )
+            ),
+            prefix,
+        )
+        srbs = self._instance(self.t_srbs, prefix)
+        core = self._instance(self.t_core, prefix)
+        upper = self._instance(self.t_eus if block_1b else self.t_icps, prefix)
+        sa = self._instance(self.t_sa, prefix)
+        las = self._instance(self.t_las, prefix)
+        stack = [srbs, core, sa, upper, las, payload]
+        tli = s.SpaceEdge(
+            name="LEO-TLI",
+            description="Trans-lunar injection only",
+            origin=self.leo.id,
+            destination=self.nro.id,
+            duration=timedelta(days=4),
+            burns=[s.Burn(time=timedelta(0), delta_v=self.leo_nro.burns[0].delta_v)],
+        )
+        self.edges.append(tli)
+        events = [
+            self._create(f"{prefix} | Create Stack", 0, 1, self.ksc, self.ksc, stack),
+            self._space(
+                f"{prefix} | Earth Ascent",
+                0,
+                2,
+                self.ksc_leo_1b if block_1b else self.ksc_leo,
+                stack,
+                [self._ascent_actions(srbs, core, sa, upper, las, block_1b)],
+            ),
+            self._space(
+                f"{prefix} | Trans-Lunar Injection",
+                1,
+                1,
+                tli,
+                [upper, payload],
+                [[("Burn", upper)]],
+            ),
+        ]
+        self._mission(prefix, self.p.dates["Artemis I"], self.ksc, self.nro, events)
+        return self._scenario("SLS Capability", "SLS payload capability to TLI")
 
 
 def build_scenario(params: Optional[CampaignParameters] = None) -> s.Scenario:
