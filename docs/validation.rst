@@ -111,6 +111,39 @@ and 40 closed scenarios; a slow test (excluded from continuous integration)
 checks 960 more of each. A failure names its seed, which reproduces the
 scenario with ``random_scenario(seed)``.
 
+------------------------------
+Parity with the Reference Code
+------------------------------
+
+The simulation was ported from the reference (Java) implementation of
+SpaceNet. ``tests/parity/test_java_parity.py`` compares the outputs of the
+reference implementation's headless modes (raw demands, aggregated demands,
+and automatic manifests, each with and without consuming existing resources)
+with the Python implementation for the reference scenarios which it can read
+and for random scenarios restricted to the features both share. The outputs
+of the reference implementation are stored as fixtures in
+``tests/parity/fixtures`` (with the commit which produced them), so the tests
+do not require Java; ``python -m tests.parity.generate_fixtures`` regenerates
+them (see ``tests/parity/java.py`` to locate the reference implementation).
+
+Raw and aggregated demands match exactly, as do the amounts of each resource
+packed for each supply point by the automatic manifest. The containers and
+the mass loaded on each transport differ in some scenarios for three known
+reasons, which the tests list and check:
+
+* the Python manifest packs any amount of a demand which fits in a container
+  (the reference implementation only packs a demand in a container which fits
+  all of it), so containers are filled and loaded differently;
+* the Python manifest does not load containers on flights which exceed their
+  cargo mass capacity (and would then fail during simulation); and
+* the reference implementation manifests demands on the surface of Earth,
+  carrying them on a round trip from Earth.
+
+Features which the reference implementation lacks (e.g., bipropellant and
+multiple propulsion systems, boiloff, power, ISRU, transfers to vehicle tanks,
+end dates, time-phased consumables, and part failures) or models in other
+units (surface transports) are tested only in the Python implementation.
+
 -------
 Results
 -------

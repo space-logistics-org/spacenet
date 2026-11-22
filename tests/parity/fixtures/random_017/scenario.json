@@ -1,0 +1,588 @@
+{
+  "name": "Test",
+  "createdBy": "Test",
+  "startDate": "2030-01-01T00:00:00Z",
+  "scenarioType": "Lunar",
+  "network": {
+    "nodes": [
+      {
+        "id": "53b33b29-84bd-4271-afb9-52aaa1d7bc62",
+        "name": "KSC",
+        "contents": [],
+        "type": "Surface Node",
+        "body1": "Earth",
+        "latitude": 28.6,
+        "longitude": -80.6
+      },
+      {
+        "id": "fe106b53-b9f5-4c4f-a883-3c4d35e33166",
+        "name": "LEO",
+        "contents": [],
+        "type": "Orbital Node",
+        "body1": "Earth",
+        "apoapsis": 300.0,
+        "periapsis": 300.0,
+        "inclination": 28.5
+      },
+      {
+        "id": "8f8a0bcd-4227-4cf4-a7cb-841a512ad91d",
+        "name": "LSP",
+        "contents": [],
+        "type": "Surface Node",
+        "body1": "Moon",
+        "latitude": -89.9,
+        "longitude": 0.0
+      },
+      {
+        "id": "219f9da6-9b56-4c1a-b7f1-e225f75b2542",
+        "name": "LSP2",
+        "contents": [],
+        "type": "Surface Node",
+        "body1": "Moon",
+        "latitude": -89.0,
+        "longitude": 0.0
+      }
+    ],
+    "edges": [
+      {
+        "id": "7fa535dc-2cca-4614-a256-520c77cdf7b2",
+        "name": "KSC-LEO",
+        "contents": [],
+        "type": "Space Edge",
+        "origin": "53b33b29-84bd-4271-afb9-52aaa1d7bc62",
+        "destination": "fe106b53-b9f5-4c4f-a883-3c4d35e33166",
+        "duration": "PT6H",
+        "burns": [
+          {
+            "id": "fe40fb55-1091-4d24-b81e-e1d3abe8cc36",
+            "time": "PT0S",
+            "deltaV": 1000.0,
+            "type": "OMS"
+          }
+        ]
+      },
+      {
+        "id": "47a1ea6e-b63d-479a-a960-ea519e2e4089",
+        "name": "KSC-LSP",
+        "contents": [],
+        "type": "Flight Edge",
+        "origin": "53b33b29-84bd-4271-afb9-52aaa1d7bc62",
+        "destination": "8f8a0bcd-4227-4cf4-a7cb-841a512ad91d",
+        "duration": "P3D",
+        "maxCrew": 2,
+        "maxCargo": 10000.0
+      },
+      {
+        "id": "f3bec22b-47a8-4788-b246-45f0974aa327",
+        "name": "LSP-KSC",
+        "contents": [],
+        "type": "Flight Edge",
+        "origin": "8f8a0bcd-4227-4cf4-a7cb-841a512ad91d",
+        "destination": "53b33b29-84bd-4271-afb9-52aaa1d7bc62",
+        "duration": "P3D",
+        "maxCrew": 2,
+        "maxCargo": 5000.0
+      },
+      {
+        "id": "40015cad-48c9-4c98-8926-02240848e2d8",
+        "name": "LSP-LSP2",
+        "contents": [],
+        "type": "Surface Edge",
+        "origin": "8f8a0bcd-4227-4cf4-a7cb-841a512ad91d",
+        "destination": "219f9da6-9b56-4c1a-b7f1-e225f75b2542",
+        "distance": 86400.0
+      }
+    ]
+  },
+  "missionList": [
+    {
+      "name": "Setup",
+      "startDate": "2030-01-01T00:00:00Z",
+      "events": [
+        {
+          "name": "Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "PT0S",
+          "location": "53b33b29-84bd-4271-afb9-52aaa1d7bc62",
+          "elements": [
+            "a78645d0-c030-44c8-9f2d-6b6567295b34",
+            "c0aeb5c4-2bcb-4fca-bf40-680e937302e9",
+            "93b8a86b-4dbe-4050-ab45-5f033df25dd5",
+            "1edeca2a-a1a1-447e-9355-6278e5da03aa",
+            "147a3cf9-ca84-4734-9d3a-e458650794e2"
+          ],
+          "container": "53b33b29-84bd-4271-afb9-52aaa1d7bc62"
+        },
+        {
+          "name": "Create",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "53b33b29-84bd-4271-afb9-52aaa1d7bc62",
+          "elements": [
+            "3fb81147-01a7-4b9e-84f8-c294dcdc342c"
+          ],
+          "container": "c0aeb5c4-2bcb-4fca-bf40-680e937302e9"
+        },
+        {
+          "name": "Create",
+          "type": "Create Elements",
+          "priority": 1,
+          "missionTime": "PT0S",
+          "location": "8f8a0bcd-4227-4cf4-a7cb-841a512ad91d",
+          "elements": [
+            "f0fb6d93-a64c-4c79-937f-d6966020d5ec",
+            "b23d1411-a422-4c7a-9216-abff15e7746a"
+          ],
+          "container": "8f8a0bcd-4227-4cf4-a7cb-841a512ad91d"
+        },
+        {
+          "name": "Create",
+          "type": "Create Elements",
+          "priority": 2,
+          "missionTime": "PT0S",
+          "location": "8f8a0bcd-4227-4cf4-a7cb-841a512ad91d",
+          "elements": [
+            "d62c2563-30f8-4ef0-b3f2-865e986ed00a"
+          ],
+          "container": "f0fb6d93-a64c-4c79-937f-d6966020d5ec"
+        }
+      ],
+      "demandModels": [],
+      "origin": "53b33b29-84bd-4271-afb9-52aaa1d7bc62",
+      "destination": "8f8a0bcd-4227-4cf4-a7cb-841a512ad91d"
+    },
+    {
+      "name": "Mission 0",
+      "startDate": "2030-01-18T02:24:00Z",
+      "events": [
+        {
+          "name": "Consume 0",
+          "type": "Consume Resources",
+          "priority": 3,
+          "missionTime": "P2DT14H24M",
+          "location": "53b33b29-84bd-4271-afb9-52aaa1d7bc62",
+          "resources": [
+            {
+              "resource": "412c697f-5289-4306-93b1-b2093d2e3513",
+              "amount": 214.6
+            }
+          ],
+          "source": "93b8a86b-4dbe-4050-ab45-5f033df25dd5"
+        }
+      ],
+      "demandModels": [],
+      "origin": "53b33b29-84bd-4271-afb9-52aaa1d7bc62",
+      "destination": "8f8a0bcd-4227-4cf4-a7cb-841a512ad91d"
+    }
+  ],
+  "elementTemplates": [
+    {
+      "id": "5c23a5ce-1665-441f-bec8-71ffa6690ef3",
+      "name": "Carrier 0",
+      "type": "Element Carrier",
+      "description": "",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 1258.6,
+      "volume": 0.0,
+      "states": [
+        {
+          "id": "108f5f57-60b9-477c-bdf3-5ddeae640471",
+          "name": "Active",
+          "type": "Active",
+          "demandModels": [
+            {
+              "name": "Water",
+              "type": "Rated",
+              "templateId": "60b00d81-5cd0-490f-98fd-053b12f63f17"
+            }
+          ]
+        },
+        {
+          "id": "a3922229-562c-4e6c-a2b1-7ac1fd8d2c97",
+          "name": "Dormant",
+          "type": "Dormant",
+          "demandModels": []
+        }
+      ],
+      "currentStateIndex": 0,
+      "parts": [],
+      "maxCargoMass": 4925.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 1
+    },
+    {
+      "id": "1ed2ae8e-e4f2-4a41-bccb-89968c085b56",
+      "name": "Carrier 1",
+      "type": "Element Carrier",
+      "description": "",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 567.3,
+      "volume": 0.0,
+      "states": [
+        {
+          "id": "16b49b1e-571a-4e45-ae2a-b8dc44b32b9b",
+          "name": "Active",
+          "type": "Active",
+          "demandModels": [
+            {
+              "name": "Water",
+              "type": "Rated",
+              "templateId": "60b00d81-5cd0-490f-98fd-053b12f63f17"
+            }
+          ]
+        },
+        {
+          "id": "472ee21c-ebc9-4e63-9a3f-676558e3ddb5",
+          "name": "Dormant",
+          "type": "Dormant",
+          "demandModels": []
+        }
+      ],
+      "currentStateIndex": 0,
+      "parts": [],
+      "maxCargoMass": 5073.4,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 3
+    },
+    {
+      "id": "40f45884-a6fc-44fb-8902-271df92b6942",
+      "name": "Carrier 2",
+      "type": "Element Carrier",
+      "description": "",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 2505.9,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 7124.2,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Pressurized",
+      "contents": [],
+      "maxCrew": 3
+    },
+    {
+      "id": "a1f7d660-c0d1-4bbc-b977-cab23e99564c",
+      "name": "Stage 0",
+      "type": "Propulsive Vehicle",
+      "description": "",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 709.8,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 2648.4,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [],
+      "maxCrew": 0,
+      "isp": 289.3,
+      "fuel": {
+        "resource": "2e828895-388e-4743-a449-5d0224bbf8ac",
+        "amount": 7333.0
+      },
+      "maxFuel": 10000.0
+    },
+    {
+      "id": "88bf8152-7efb-4a3c-a439-03b98ccbee6d",
+      "name": "Tank 0",
+      "type": "Resource Container",
+      "description": "",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 10.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 603.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [
+        {
+          "resource": "412c697f-5289-4306-93b1-b2093d2e3513",
+          "amount": 576.0
+        }
+      ]
+    },
+    {
+      "id": "ddb39a04-317d-4858-bd42-0677c633a95c",
+      "name": "Tank 1",
+      "type": "Resource Container",
+      "description": "",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 10.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 289.0,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [
+        {
+          "resource": "412c697f-5289-4306-93b1-b2093d2e3513",
+          "amount": 156.0
+        }
+      ]
+    },
+    {
+      "id": "e10b5cb9-aec5-45db-95d0-4762fbb26675",
+      "name": "Tank 2",
+      "type": "Resource Container",
+      "description": "",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 10.0,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "maxCargoMass": 894.2,
+      "maxCargoVolume": 0.0,
+      "cargoEnvironment": "Unpressurized",
+      "contents": [
+        {
+          "resource": "412c697f-5289-4306-93b1-b2093d2e3513",
+          "amount": 571.2
+        }
+      ]
+    },
+    {
+      "id": "b50402ff-3c16-49d8-a46c-2b5f256cd1de",
+      "name": "Crew 0",
+      "type": "Human Agent",
+      "description": "",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 76.4,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "activeTimeFraction": 0.5
+    },
+    {
+      "id": "ec97cbb8-8c31-4638-959d-08b2a951bad7",
+      "name": "Crew 1",
+      "type": "Human Agent",
+      "description": "",
+      "classOfSupply": 0,
+      "environment": "Unpressurized",
+      "accommodationMass": 0.0,
+      "mass": 80.3,
+      "volume": 0.0,
+      "states": [],
+      "parts": [],
+      "activeTimeFraction": 0.5
+    }
+  ],
+  "instantiatedElements": [
+    {
+      "id": "a78645d0-c030-44c8-9f2d-6b6567295b34",
+      "type": "Element Carrier",
+      "templateId": "5c23a5ce-1665-441f-bec8-71ffa6690ef3",
+      "name": "Carrier 0",
+      "contents": []
+    },
+    {
+      "id": "c0aeb5c4-2bcb-4fca-bf40-680e937302e9",
+      "type": "Element Carrier",
+      "templateId": "1ed2ae8e-e4f2-4a41-bccb-89968c085b56",
+      "name": "Carrier 1",
+      "contents": []
+    },
+    {
+      "id": "f0fb6d93-a64c-4c79-937f-d6966020d5ec",
+      "type": "Element Carrier",
+      "templateId": "40f45884-a6fc-44fb-8902-271df92b6942",
+      "name": "Carrier 2",
+      "contents": []
+    },
+    {
+      "id": "b23d1411-a422-4c7a-9216-abff15e7746a",
+      "type": "Propulsive Vehicle",
+      "templateId": "a1f7d660-c0d1-4bbc-b977-cab23e99564c",
+      "name": "Stage 0",
+      "contents": []
+    },
+    {
+      "id": "93b8a86b-4dbe-4050-ab45-5f033df25dd5",
+      "type": "Resource Container",
+      "templateId": "88bf8152-7efb-4a3c-a439-03b98ccbee6d",
+      "name": "Tank 0"
+    },
+    {
+      "id": "1edeca2a-a1a1-447e-9355-6278e5da03aa",
+      "type": "Resource Container",
+      "templateId": "ddb39a04-317d-4858-bd42-0677c633a95c",
+      "name": "Tank 1"
+    },
+    {
+      "id": "147a3cf9-ca84-4734-9d3a-e458650794e2",
+      "type": "Resource Container",
+      "templateId": "e10b5cb9-aec5-45db-95d0-4762fbb26675",
+      "name": "Tank 2"
+    },
+    {
+      "id": "3fb81147-01a7-4b9e-84f8-c294dcdc342c",
+      "type": "Human Agent",
+      "templateId": "b50402ff-3c16-49d8-a46c-2b5f256cd1de",
+      "name": "Crew 0"
+    },
+    {
+      "id": "d62c2563-30f8-4ef0-b3f2-865e986ed00a",
+      "type": "Human Agent",
+      "templateId": "ec97cbb8-8c31-4638-959d-08b2a951bad7",
+      "name": "Crew 1"
+    }
+  ],
+  "demandModels": [
+    {
+      "id": "0135f82d-04f9-40f5-8d7a-c0259b1f263e",
+      "name": "Consumables",
+      "type": "Crew Consumables",
+      "description": "",
+      "reservesDuration": 0.0,
+      "waterRecoveryRate": 0.42,
+      "clothingLifetime": 4.0,
+      "transitDemandsOmitted": false,
+      "waterRate": 3.6,
+      "evaWaterRate": 0.6875,
+      "foodSupportRate": 0.05556,
+      "ambientFoodRate": 0.76389,
+      "rfFoodRate": 1.61667,
+      "oxygenRate": 3.85714,
+      "evaOxygenRate": 0.07875,
+      "nitrogenRate": 2.21429,
+      "hygieneRate": 0.27778,
+      "hygieneKit": 1.8,
+      "clothingRate": 2.3,
+      "personalItems": 10.0,
+      "officeEquipment": 5.0,
+      "evaSuit": 107.0,
+      "evaLithiumHydroxide": 0.3625,
+      "healthEquipment": 20.0,
+      "healthConsumables": 0.1,
+      "safetyEquipment": 25.0,
+      "commEquipment": 20.0,
+      "computerEquipment": 5.0,
+      "trashBagRate": 0.05,
+      "wasteContainmentRate": 0.05
+    },
+    {
+      "id": "60b00d81-5cd0-490f-98fd-053b12f63f17",
+      "name": "Water",
+      "type": "Rated",
+      "description": "",
+      "demands": [
+        {
+          "resource": "412c697f-5289-4306-93b1-b2093d2e3513",
+          "rate": 1.0
+        }
+      ]
+    }
+  ],
+  "resourceList": [
+    {
+      "id": "412c697f-5289-4306-93b1-b2093d2e3513",
+      "name": "Water",
+      "classOfSupply": 201,
+      "environment": "Unpressurized",
+      "packingFactor": 0.5,
+      "units": "kg",
+      "unitMass": 1.0,
+      "unitVolume": 0.001,
+      "type": "Continuous"
+    },
+    {
+      "id": "2e828895-388e-4743-a449-5d0224bbf8ac",
+      "name": "Fuel",
+      "classOfSupply": 101,
+      "environment": "Unpressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "unitMass": 1.0,
+      "unitVolume": 0.0,
+      "type": "Continuous"
+    },
+    {
+      "id": "52c49dac-13de-499b-803a-9505a0960a04",
+      "name": "Oxidizer",
+      "classOfSupply": 101,
+      "environment": "Unpressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "unitMass": 1.0,
+      "unitVolume": 0.0,
+      "type": "Continuous"
+    },
+    {
+      "id": "6412d1bc-8b47-4ec5-b3a9-23d866882e95",
+      "name": "Spare",
+      "classOfSupply": 4011,
+      "environment": "Unpressurized",
+      "packingFactor": 0.0,
+      "units": "kg",
+      "unitMass": 5.0,
+      "unitVolume": 0.0,
+      "type": "Discrete"
+    }
+  ],
+  "manifest": {
+    "containers": [],
+    "loads": []
+  },
+  "configuration": {
+    "timePrecision": 0.05,
+    "demandPrecision": 0.01,
+    "massPrecision": 0.01,
+    "volumePrecision": 1e-06,
+    "volumeConstrained": false,
+    "itemDiscretization": "None",
+    "itemAggregation": 0.0,
+    "environmentConstrained": false,
+    "scavengeSpares": false,
+    "detailedEva": true,
+    "detailedExploration": true,
+    "timePhasedConsumables": false,
+    "genericPackingFactorGas": 1.0,
+    "genericPackingFactorLiquid": 0.5,
+    "genericPackingFactorPressurized": 0.2,
+    "genericPackingFactorUnpressurized": 0.6,
+    "smallGasTankMass": 10.8,
+    "smallGasTankVolume": 0.275,
+    "smallGasTankMaxMass": 10.0,
+    "smallGasTankMaxVolume": 0.275,
+    "largeGasTankMass": 108.0,
+    "largeGasTankVolume": 2.75,
+    "largeGasTankMaxMass": 100.0,
+    "largeGasTankMaxVolume": 2.75,
+    "smallLiquidTankMass": 11.4567,
+    "smallLiquidTankVolume": 0.0249,
+    "smallLiquidTankMaxMass": 24.9333,
+    "smallLiquidTankMaxVolume": 0.0249,
+    "largeLiquidTankMass": 34.37,
+    "largeLiquidTankVolume": 0.0748,
+    "largeLiquidTankMaxMass": 74.8,
+    "largeLiquidTankMaxVolume": 0.0748,
+    "cargoTransferBagMass": 0.83,
+    "cargoTransferBagVolume": 0.053,
+    "cargoTransferBagMaxMass": 26.8,
+    "cargoTransferBagMaxVolume": 0.049
+  }
+}

@@ -26,16 +26,23 @@ class ScenarioGenerator:
         closed (bool): True, to generate a closed scenario in which the total
             mass of elements and resources is constant after the elements
             are created: no demands, burns, boiloff, losses, or removals.
+        java (bool): True, to generate a scenario which the reference (Java)
+            implementation can read and simulates in the same way: without
+            the features it lacks (e.g., bipropellant vehicles, boiloff,
+            power, transfer options, end dates, time-phased consumables,
+            and part failures) or models differently (surface transports
+            and nested carriers).
     """
 
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, seed: int, closed: bool = False):
+    def __init__(self, seed: int, closed: bool = False, java: bool = False):
         self.rng = random.Random(seed)
         self.closed = closed
+        self.java = java
         rng = self.rng
         configuration = {}
-        if not closed:
+        if not closed and not java:
             configuration = {
                 "time_phased_consumables": rng.random() < 0.5,
                 "environment_constrained": rng.random() < 0.3,
@@ -90,8 +97,8 @@ class ScenarioGenerator:
                 )
             )
         for i in range(rng.randint(1, 2)):
-            boiloff = None if self.closed or rng.random() < 0.5 else 0.01
-            if rng.random() < 0.5:
+            boiloff = None if self.closed or self.java or rng.random() < 0.5 else 0.01
+            if self.java or rng.random() < 0.5:
                 vehicle = b.vehicle(
                     f"Stage {i}",
                     mass=self.uniform(500, 2000),
@@ -128,7 +135,7 @@ class ScenarioGenerator:
             )
         for i in range(rng.randint(0, 4)):
             self.crew.append(b.crew(f"Crew {i}", mass=self.uniform(60, 100)))
-        if rng.random() < 0.5:
+        if not self.java and rng.random() < 0.5:
             kwargs = {}
             if not self.closed:
                 kwargs = {
@@ -137,7 +144,7 @@ class ScenarioGenerator:
                     "energy_storage": s.EnergyStorage(capacity=100),
                 }
             self.rovers.append(b.rover("Rover", mass=self.uniform(200, 800), **kwargs))
-        if not self.closed and rng.random() < 0.5:
+        if not self.closed and not self.java and rng.random() < 0.5:
             part = s.Part(
                 resource=b.spare.id, mean_time_to_failure=timedelta(hours=2000)
             )
@@ -153,12 +160,19 @@ class ScenarioGenerator:
 
     def habitat_states(self) -> dict:
         """Makes the operational states of a habitat with demands and power."""
+        demand_models = [
+            s.InstRatedDemandModel(name="Water", template_id=self.water_demand.id)
+        ]
+        if self.java:
+            state = s.State(name="Active", type="Active", demand_models=demand_models)
+            return {
+                "states": [state, s.State(name="Dormant", type="Dormant")],
+                "current_state_index": 0,
+            }
         state = s.State(
             name="Active",
             type="Active",
-            demand_models=[
-                s.InstRatedDemandModel(name="Water", template_id=self.water_demand.id)
-            ],
+            demand_models=demand_models,
             power_consumption=self.uniform(0, 5),
             power_generation=self.uniform(0, 8),
             generation_type=self.rng.choice(["Constant", "Solar"]),
@@ -273,6 +287,9 @@ class ScenarioGenerator:
             )
         if kind == "move":
             movable = [e for e in here if e not in self.rovers]
+            if self.java:
+                # flights count nested crew differently (see the parity tests)
+                movable = [e for e in movable if e not in self.carriers + self.vehicles]
             targets = [c for c in here if c in self.carriers + self.vehicles]
             if not movable:
                 return None
@@ -283,11 +300,14 @@ class ScenarioGenerator:
             return b.move(elements, container, node, days=days, priority=priority)
         if kind == "transfer":
             holders = [e for e in here if e in self.containers + self.vehicles]
+            if self.java:
+                # the reference implementation cannot transfer to vehicle tanks
+                holders = [e for e in holders if e in self.containers]
             if len(holders) < 2:
                 return None
             origin, destination = rng.sample(holders, 2)
             resource = b.water if origin in self.containers else b.fuel
-            if self.closed:
+            if self.closed or self.java:
                 mode, loss = "Amount", None
             else:
                 mode = rng.choice(["Amount", "Fill Destination", "Empty Origin"])
@@ -338,7 +358,8 @@ class ScenarioGenerator:
                 mission_time=mission_time,
                 location=node.id,
                 element=rng.choice(habitats).id,
-                state_index=rng.choice([-1, 0, 1]),
+                # the reference implementation cannot read a state index of -1
+                state_index=rng.choice([0, 1] if self.java else [-1, 0, 1]),
             )
         if kind == "remove":
             removable = [e for e in here if e in self.others + self.containers]
@@ -441,20 +462,22 @@ class ScenarioGenerator:
                 days=start,
                 demand_models=demand_models,
             )
-        if rng.random() < 0.5:
+        if not self.java and rng.random() < 0.5:
             b.end_date = START + timedelta(days=start + self.uniform(0, 60))
         return b.build()
 
 
-def random_scenario(seed: int, closed: bool = False) -> s.Scenario:
+def random_scenario(seed: int, closed: bool = False, java: bool = False) -> s.Scenario:
     """
     Generates a random scenario.
 
     Args:
         seed (int): The seed of the random number generator.
         closed (bool): True, for a closed scenario (see :class:`ScenarioGenerator`).
+        java (bool): True, for a scenario which the reference implementation
+            can simulate (see :class:`ScenarioGenerator`).
 
     Returns:
         :obj:`Scenario`: The scenario.
     """
-    return ScenarioGenerator(seed, closed).generate()
+    return ScenarioGenerator(seed, closed, java).generate()
