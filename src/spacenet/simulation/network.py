@@ -200,9 +200,15 @@ class SimEdge(SimLocation):
         distance: float = 0.0,
         max_crew_size: int = 0,
         max_cargo_mass: float = 0.0,
+        cost_per_transport: Optional[float] = None,
+        min_departure_interval: Optional[float] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
+        #: Cost (millions of US dollars) of each transport along the edge.
+        self.cost_per_transport = cost_per_transport
+        #: Shortest time (days) between transports departing along the edge.
+        self.min_departure_interval = min_departure_interval
         self.edge_type = EdgeType(edge_type)
         self.origin = origin
         self.destination = destination

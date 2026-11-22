@@ -48,6 +48,7 @@ from .records import (
     MoeMassCapacityUtilization,
     NetworkHistory,
     PropellantFlow,
+    CostRecord,
     PowerRecord,
     PropellantFlowKind,
     SimRepair,
@@ -130,6 +131,12 @@ class Simulator:
         #: Crew members (and missions) whose carried consumables were demanded.
         self._consumables_departed: set = set()
         self._consumables_missions: set = set()
+        #: Costs incurred by creating elements and by transports.
+        self.cost_records: List[CostRecord] = []
+        self._costed: set = set()
+        #: Time of the last departure along each edge (by unique identifier).
+        self._departures: Dict[UUID, float] = {}
+        self._retired_warnings: set = set()
         self._events: List[Tuple[float, int, str, int, SimEvent]] = []
         self._sequence = 0
         self._repaired_items: Dict[int, List[RepairItem]] = {}
@@ -208,6 +215,10 @@ class Simulator:
         self._power_arrivals.clear()
         self._consumables_departed.clear()
         self._consumables_missions.clear()
+        self.cost_records.clear()
+        self._costed.clear()
+        self._departures.clear()
+        self._retired_warnings.clear()
         self._item_demands.clear()
         self.time = 0.0
         self.duration = 0.0
@@ -426,6 +437,87 @@ class Simulator:
                     )
                 )
 
+    # ----------------------------------------------------- cost and lifetime
+
+    def record_cost(self, event: Optional[SimEvent], category: str, item: str, amount):
+        """
+        Records a cost incurred by an event.
+
+        Args:
+            event (:obj:`SimEvent`): The causing event.
+            category (str): The category ("Element" or "Transport").
+            item (str): The name of the costed element or edge.
+            amount (float): The cost (millions of US dollars).
+        """
+        mission = None
+        if event is not None:
+            index = event.root.mission_index
+            if index is not None and 0 <= index < len(self.state.missions):
+                mission = self.state.missions[index]
+        self.cost_records.append(
+            CostRecord(
+                time=self.time,
+                mission=None if mission is None else mission.name,
+                category=category,
+                item=item,
+                amount=amount,
+                event_name=None if event is None else event.name,
+            )
+        )
+
+    def record_creation(self, event: SimEvent, element: SimElement):
+        """
+        Records the creation of an element (and its nested contents): its
+        creation time and its unit cost (once per element).
+        """
+        elements = [element]
+        if isinstance(element, ElementContainer):
+            elements.extend(element.complete_contents)
+        for item in elements:
+            if item.created_time is None:
+                item.created_time = self.time
+            if item.unit_cost and item.id not in self._costed:
+                self._costed.add(item.id)
+                self.record_cost(event, "Element", item.name, item.unit_cost)
+
+    def record_departure(self, event: SimEvent, edge: SimEdge):
+        """
+        Records a transport departing along an edge: its cost and a warning
+        if it departs sooner than the minimum departure interval.
+        """
+        interval = edge.min_departure_interval
+        previous = self._departures.get(edge.id)
+        if interval and previous is not None and self.time - previous < interval - 1e-9:
+            self.warnings.append(
+                SimWarning(
+                    self.time,
+                    event,
+                    f"departs along {edge} {self.time - previous:,.1f} days after the "
+                    f"previous transport (minimum interval {interval:,.1f} days).",
+                )
+            )
+        self._departures[edge.id] = self.time
+        if edge.cost_per_transport:
+            self.record_cost(event, "Transport", edge.name, edge.cost_per_transport)
+
+    def _check_design_life(self):
+        """Warns (once per element) of elements used beyond their design life."""
+        for element in self.state.network.elements:
+            life = element.design_life
+            if not life or element.created_time is None:
+                continue
+            age = (self.time - element.created_time) / 365.25
+            if age > life + 1e-9 and element.id not in self._retired_warnings:
+                self._retired_warnings.add(element.id)
+                self.warnings.append(
+                    SimWarning(
+                        self.time,
+                        None,
+                        f"{element} is used beyond its design life of {life:,.1f} "
+                        f"years (age {age:,.1f} years).",
+                    )
+                )
+
     # ------------------------------------------------------- crew consumables
 
     def _handle_crew_consumables(self):
@@ -504,6 +596,7 @@ class Simulator:
         if self.duration > 0:
             self._handle_boiloff()
             self._handle_power()
+            self._check_design_life()
             for element in self.state.network.elements:
                 demands = element.generate_demands(self.duration, self)
                 demands = self._discretize_demands(demands, element, element.location)

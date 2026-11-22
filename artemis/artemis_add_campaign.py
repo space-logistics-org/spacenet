@@ -125,6 +125,16 @@ class CampaignParameters:
     #: True, to load the Orion ESM with the propellant of the 2024 scenario
     #: (9,276 kg) instead of the published usable propellant (8,602 kg).
     legacy_esm_propellant: bool = False
+    #: HLS service cost (millions of US dollars) of each landing: the
+    #: published SpaceX (Artemis III) and Blue Origin (Artemis V) contract
+    #: values; Artemis IV is notional.
+    hls_costs: Dict[str, float] = field(
+        default_factory=lambda: {
+            "Artemis III": 2_890.0,
+            "Artemis IV": 1_150.0,
+            "Artemis V": 3_400.0,
+        }
+    )
     #: Surface stay (days) of each landing.
     surface_days: float = 6.0
     #: Average fraction of time the south pole sites are illuminated.
@@ -139,7 +149,9 @@ class CampaignParameters:
             "Gateway": _utc(2027, 3, 1),
             "Artemis III": _utc(2027, 4, 1),
             "Artemis IV": _utc(2028, 7, 1),
+            "Gateway Logistics 1": _utc(2028, 2, 1),
             "Surface Cargo": _utc(2029, 11, 1),
+            "Gateway Logistics 2": _utc(2029, 12, 1),
             "Artemis V": _utc(2030, 3, 1),
         }
     )
@@ -265,6 +277,10 @@ class CampaignBuilder:
             destination=self.leo.id,
             duration=timedelta(hours=6),
             burns=burns((0, self.p.sls_ascent_delta_v)),
+            # NASA OIG IG-22-003: ground systems $568M per year; ADD: annual
+            # cadence of crewed missions
+            cost_per_transport=568.0,
+            min_departure_interval=365.0,
         )
         self.ksc_leo_1b = s.SpaceEdge(
             name="KSC-LEO (SLS Block 1B)",
@@ -275,6 +291,8 @@ class CampaignBuilder:
             destination=self.leo.id,
             duration=timedelta(hours=6),
             burns=burns((0, self.p.sls_1b_ascent_delta_v)),
+            cost_per_transport=568.0,
+            min_departure_interval=365.0,
         )
         self.leo_nro = s.SpaceEdge(
             name="LEO-NRHO",
@@ -362,6 +380,16 @@ class CampaignBuilder:
             max_crew=0,
             max_cargo=300_000.0,
         )
+        self.ksc_nro_cargo = s.FlightEdge(
+            name="KSC-NRHO (Falcon Heavy, Logistics)",
+            description="Commercial launch and low-energy transfer of logistics "
+            "to NRHO (NASA NRHO white paper, 2023: ~115 m/s, 120 days for cargo)",
+            origin=self.ksc.id,
+            destination=self.nro.id,
+            duration=timedelta(days=120),
+            max_crew=0,
+            max_cargo=14_000.0,
+        )
         self.ksc_nro_fh = s.FlightEdge(
             name="KSC-NRHO (Falcon Heavy + SEP)",
             description="Commercial launch and solar electric propulsion "
@@ -371,6 +399,7 @@ class CampaignBuilder:
             duration=timedelta(days=365),
             max_crew=0,
             max_cargo=16_000.0,
+            cost_per_transport=331.8,
         )
         self.lsp_lsp_2 = s.SurfaceEdge(
             name="LSP-LSP-2",
@@ -410,6 +439,7 @@ class CampaignBuilder:
             self.ksc_leo_ship,
             self.leo_ksc_ship,
             self.ksc_nro_fh,
+            self.ksc_nro_cargo,
             self.lsp_lsp_2,
             self.ksc_lsp_cargo,
         ]
@@ -560,6 +590,7 @@ class CampaignBuilder:
             self.lox_lh2,
             987_000.0,
             414.0,
+            unit_cost=2_200.0,  # SLS rocket (OIG)
         )
         self.t_icps = self._stage(
             "iCPS",
@@ -609,9 +640,14 @@ class CampaignBuilder:
             # usable propellant (NASA NTRS 20180004488)
             9_276.0 if self.p.legacy_esm_propellant else 8_602.0,
             316.0,
+            unit_cost=300.0,  # ESM (OIG)
         )
         self.t_cm = self._module(
-            "Orion CM", "Orion Crew Module", 9_300.0, max_cargo_mass=1_100.0
+            "Orion CM",
+            "Orion Crew Module",
+            9_300.0,
+            max_cargo_mass=1_100.0,
+            unit_cost=1_000.0,  # Orion (OIG)
         )
         self.t_crew = self._template(
             s.HumanAgent(
@@ -678,13 +714,22 @@ class CampaignBuilder:
                 mass=6_000.0,
                 class_of_supply=9,
                 environment=UNPRESSURIZED,
+                unit_cost=375.0,  # NASA contract award (2019)
+                design_life=15.0,  # NASA: minimum 15-year lifespan
             )
         )
         self.t_halo = self._module(
-            "HALO", "Gateway Habitation and Logistics Outpost", 8_000.0
+            "HALO",
+            "Gateway Habitation and Logistics Outpost",
+            8_000.0,
+            unit_cost=935.0,  # NASA contract award (2021)
+            design_life=15.0,
         )
         self.t_ihab = self._module(
-            "I-Hab", "Gateway International Habitation Module", 10_000.0
+            "I-Hab",
+            "Gateway International Habitation Module",
+            10_000.0,
+            design_life=15.0,  # international contribution (not costed)
         )
         self.t_esprit = self._template(
             s.Element(
@@ -693,6 +738,7 @@ class CampaignBuilder:
                 mass=6_000.0,
                 class_of_supply=9,
                 environment=UNPRESSURIZED,
+                design_life=15.0,  # international contribution (not costed)
             )
         )
         self.t_fsp = self._template(
@@ -708,6 +754,7 @@ class CampaignBuilder:
                 ],
                 current_state_index=0,
                 grid_connected=True,
+                design_life=10.0,  # FSP requirement: at least 10 years
             )
         )
         self.t_science = self._template(
@@ -759,11 +806,40 @@ class CampaignBuilder:
                 current_state_index=0,
                 energy_storage=s.EnergyStorage(capacity=60.0),
                 grid_connected=True,
+                design_life=10.0,  # NASA: 10-year operating life
             )
         )
         # library template (not yet flown in the campaign): the ADD describes
         # two crew in a pressurized cabin on missions of up to 28 days with up
         # to 14 days between cargo resupplies; mass and power are notional
+        # Gateway Logistics Element (Dragon XL): more than 5 t of cargo and
+        # 6 to 12 months berthed at Gateway (NASA GLS award); the dry mass and
+        # the mix of consumables are notional
+        self.t_dragon_xl = self._template(
+            s.ResourceContainer(
+                name="Dragon XL",
+                description="Gateway Logistics Element with crew consumables",
+                mass=8_000.0,
+                class_of_supply=5,
+                environment=UNPRESSURIZED,
+                cargo_environment=PRESSURIZED,
+                max_cargo_mass=5_000.0,
+                contents=[
+                    s.GenericResourceAmount(
+                        class_of_supply=cos, environment=PRESSURIZED, amount=amount
+                    )
+                    for cos, amount in (
+                        (201, 900.0),
+                        (202, 550.0),
+                        (203, 250.0),
+                        (204, 100.0),
+                        (205, 150.0),
+                        (701, 25.0),
+                        (702, 25.0),
+                    )
+                ],
+            )
+        )
         self.t_pressurized_rover = self._template(
             s.SurfaceVehicle(
                 name="Pressurized Rover",
@@ -807,6 +883,7 @@ class CampaignBuilder:
             s.ElementCarrier: s.InstElementCarrier,
             s.HumanAgent: s.InstHumanAgent,
             s.Element: s.InstElement,
+            s.ResourceContainer: s.InstResourceContainer,
             s.SurfaceVehicle: s.InstSurfaceVehicle,
         }[type(template)]
         instance = cls(
@@ -1074,6 +1151,25 @@ class CampaignBuilder:
             ),
         ]
 
+    def gateway_logistics(self, number: int):
+        """
+        A Gateway logistics delivery (at least one for each Gateway mission of
+        30 days, ADD) which supplies the consumables of the crew at Gateway.
+        """
+        prefix = f"Gateway Logistics {number}"
+        dragon = self._instance(self.t_dragon_xl, prefix)
+        events = [
+            self._create(
+                f"{prefix} | Create Dragon XL", 0, 1, self.ksc, self.ksc, [dragon]
+            ),
+            self._flight(
+                f"{prefix} | Launch and Transfer", 0, 2, self.ksc_nro_cargo, [dragon]
+            ),
+            # disposed of after 12 months berthed at Gateway (trash removal)
+            self._remove(f"{prefix} | Disposal", 120 + 365, 1, self.nro, [dragon]),
+        ]
+        self._mission(prefix, self.p.dates[prefix], self.ksc, self.nro, events)
+
     def surface_cargo(self):
         """
         Commercial delivery of surface infrastructure to the south pole: a
@@ -1133,6 +1229,8 @@ class CampaignBuilder:
         name = f"{prefix} Propellant Aggregation"
         depot = self._instance(self.t_depot, prefix)
         hls = self._instance(self.t_hls, prefix)
+        # the firm-fixed-price HLS service includes propellant aggregation
+        hls.unit_cost = p.hls_costs.get(prefix)
         events = [
             self._create(f"{name} | Create Depot", 0, 1, self.ksc, self.ksc, [depot]),
             self._flight(f"{name} | Launch Depot", 0, 2, self.ksc_leo_ship, [depot]),
@@ -1362,8 +1460,10 @@ class CampaignBuilder:
         self.artemis_2()
         self.gateway()
         self.landing("Artemis III", block_1b=False)
+        self.gateway_logistics(1)
         self.landing("Artemis IV", block_1b=True, payload_template=self.t_ihab)
         self.surface_cargo()
+        self.gateway_logistics(2)
         self.landing("Artemis V", block_1b=True, payload_template=self.t_esprit)
         return self._scenario(
             "Artemis Campaign (ADD Baseline)",

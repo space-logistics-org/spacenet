@@ -80,6 +80,26 @@ class PropellantFlow:
 
 
 @dataclass
+class CostRecord:
+    """
+    A cost incurred during a simulation.
+    """
+
+    #: Time (days) relative to the scenario start.
+    time: float
+    #: Name of the mission of the causing event (None if not in a mission).
+    mission: Optional[str]
+    #: Category ("Element" or "Transport").
+    category: str
+    #: Name of the costed element or edge.
+    item: str
+    #: Cost (millions of US dollars).
+    amount: float
+    #: Name of the causing event.
+    event_name: Optional[str] = None
+
+
+@dataclass
 class PowerRecord:
     """
     Energy balance of a power group (an element with its contents, or the

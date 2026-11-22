@@ -25,6 +25,8 @@ const VIEWS = [
   ["elements", "Element History"],
   ["propellant", "Propellant"],
   ["power", "Power"],
+  ["cost", "Cost"],
+  ["timeline", "Timeline"],
 ];
 
 // categorical series colors in fixed order (validated for color vision
@@ -61,6 +63,7 @@ const state = {
   showDemands: false,
   propellantVehicle: null,
   powerGroup: null,
+  timelineCrew: false,
   tankers: {
     required: 1_200_000,
     tankerDelivery: 150_000,
@@ -256,6 +259,8 @@ function draw() {
   else if (state.view === "locations") drawMassHistory(content, state.history.masses().locations, "historyLocation", "Location");
   else if (state.view === "propellant") drawPropellant(content, result);
   else if (state.view === "power") drawPower(content, result);
+  else if (state.view === "cost") drawCost(content, result);
+  else if (state.view === "timeline") drawTimeline(content, result);
   else drawMassHistory(content, state.history.masses().elements, "historyElement", "Element");
 }
 
@@ -273,6 +278,7 @@ function totals(values) {
     ["Propellant boiloff", fmt(values.propellantBoiloffMass ?? 0, 0), "kg"],
     ["Propellant transfer losses", fmt(values.propellantTransferLossMass ?? 0, 0), "kg"],
     ["Energy deficit", fmt(values.energyDeficit ?? 0, 0), "kWh"],
+    ["Campaign cost", fmt(values.campaignCost ?? 0, 0), "$M"],
   ];
   return h(
     "table",
@@ -1090,4 +1096,181 @@ function powerTable(groups, id) {
       )
     )
   );
+}
+
+// --------------------------------------------------------------------- cost
+
+const COST_CATEGORIES = ["Element", "Transport"];
+
+function drawCost(content, result) {
+  frameParts = null;
+  const cost = result.cost ?? { items: [], byMission: {}, byYear: {}, byCategory: {}, total: 0 };
+  if (!cost.items.length) {
+    content.append(
+      h(
+        "div",
+        { class: "sn-muted-box" },
+        "No costs: define unit costs of element templates and costs per transport of edges."
+      )
+    );
+    return;
+  }
+  const chart = h("div", { class: "sn-chart", style: { height: "300px" } });
+  // every year in the range (including years without costs)
+  const costYears = Object.keys(cost.byYear).map(Number);
+  const years = [];
+  for (let year = Math.min(...costYears); year <= Math.max(...costYears); year++) years.push(year);
+  const amount = (year, category) =>
+    cost.items
+      .filter((item) => item.year === year && item.category === category)
+      .reduce((sum, item) => sum + item.amount, 0);
+  const rows = Object.entries(cost.byMission);
+  content.append(
+    h("h6", { class: "mb-0" }, `Cost by year (total $${fmt(cost.total, 0)}M, then-year)`),
+    chart,
+    h("h6", { class: "mt-3" }, "Cost by mission"),
+    h(
+      "div",
+      { class: "table-responsive" },
+      h(
+        "table",
+        { class: "table table-sm sn-table small mb-0" },
+        h(
+          "thead",
+          {},
+          h(
+            "tr",
+            {},
+            h("th", {}, "Mission"),
+            COST_CATEGORIES.map((category) => h("th", { class: "text-end" }, `${category} ($M)`)),
+            h("th", { class: "text-end" }, "Total ($M)")
+          )
+        ),
+        h(
+          "tbody",
+          {},
+          rows.map(([mission, total]) =>
+            h(
+              "tr",
+              {},
+              h("td", {}, mission),
+              COST_CATEGORIES.map((category) =>
+                h(
+                  "td",
+                  { class: "text-end" },
+                  fmt(
+                    cost.items
+                      .filter((item) => (item.mission ?? "(none)") === mission && item.category === category)
+                      .reduce((sum, item) => sum + item.amount, 0),
+                    0
+                  )
+                )
+              ),
+              h("td", { class: "text-end fw-semibold" }, fmt(total, 0))
+            )
+          )
+        )
+      )
+    ),
+    h(
+      "div",
+      { class: "form-text" },
+      "Element costs are incurred when elements are created (unit costs of templates or instances); transport " +
+        "costs for each transport along an edge (e.g., launch services). Amounts are as defined (then-year " +
+        "US dollars, not inflation-adjusted)."
+    )
+  );
+  plot(
+    chart,
+    COST_CATEGORIES.map((category, index) => ({
+      type: "bar",
+      name: category,
+      x: years.map(String),
+      y: years.map((year) => amount(year, category)),
+      marker: { color: SERIES[index], line: { color: "#ffffff", width: 1 } },
+      hovertemplate: `%{x}: ${category} $%{y:,.0f}M<extra></extra>`,
+    })),
+    {
+      barmode: "stack",
+      xaxis: { type: "category", title: { text: "Year" } },
+      yaxis: { title: { text: "Cost ($M)" }, rangemode: "tozero" },
+      legend: { orientation: "h", y: 1.1, x: 0, traceorder: "normal" },
+    }
+  );
+}
+
+// ----------------------------------------------------------------- timeline
+
+const TIMELINE_CATEGORIES = [
+  ["transit", "In transit", SERIES[0]],
+  ["space", "In space (orbit)", SERIES[1]],
+  ["surface", "Surface (beyond Earth)", SERIES[2]],
+  ["earth", "Earth surface", "#a3a29c"],
+];
+
+/** Categorizes a location of the simulation result for the timeline. */
+function timelineCategory(result, index) {
+  const location = result.locations[index];
+  if (!location) return "earth";
+  if (location.isEdge) return "transit";
+  const node = store.scenario.network.nodes.find((item) => item.id === location.id);
+  if (node?.type !== "Surface Node") return "space";
+  return node.body1 === "Earth" ? "earth" : "surface";
+}
+
+function drawTimeline(content, result) {
+  frameParts = null;
+  const all = state.history.segments();
+  const elements = all.filter((element) => state.timelineCrew || !element.isCrew);
+  const names = elements.map((element) => element.name);
+  const chart = h("div", { style: { height: `${Math.max(240, 18 * elements.length + 90)}px` } });
+  content.append(
+    h(
+      "div",
+      { class: "d-flex align-items-center mb-1" },
+      h("h6", { class: "mb-0 me-auto" }, `Element timeline (${elements.length} elements)`),
+      checkbox("Show crew members", state.timelineCrew, (value) => {
+        state.timelineCrew = value;
+        draw();
+      })
+    ),
+    chart,
+    h(
+      "div",
+      { class: "form-text" },
+      "Each bar shows where an element (or its top-level carrier) is between recorded time steps."
+    )
+  );
+  // one trace per location category with segments separated by gaps
+  const traces = TIMELINE_CATEGORIES.map(([key, label, color]) => {
+    const trace = {
+      name: label,
+      x: [],
+      y: [],
+      text: [],
+      mode: "lines",
+      line: { color, width: 10 },
+      hovertemplate: "%{y}<br>%{text}<extra></extra>",
+      connectgaps: false,
+    };
+    for (const element of elements) {
+      for (const segment of element.segments) {
+        if (timelineCategory(result, segment.location) !== key) continue;
+        const where = result.locations[segment.location]?.name ?? "?";
+        const span = `${where}: ${formatDate(dateOf(segment.start))} to ${formatDate(dateOf(segment.end))}`;
+        trace.x.push(dateOf(segment.start), dateOf(segment.end), null);
+        trace.y.push(element.name, element.name, null);
+        trace.text.push(span, span, null);
+      }
+    }
+    return trace;
+  }).filter((trace) => trace.x.length);
+  plot(chart, traces, {
+    margin: { l: 20, r: 20, t: 10, b: 40 },
+    xaxis: { type: "date" },
+    yaxis: { automargin: true, autorange: "reversed", categoryorder: "array", categoryarray: names },
+    hovermode: "closest",
+    legend: { orientation: "h", y: 1.02, yanchor: "bottom", x: 0 },
+    showlegend: true,
+  });
 }

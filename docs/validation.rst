@@ -57,6 +57,17 @@ Findings
   where and when each crew member is away from Earth: 1.0 t for Artemis II,
   matching four crew for 10 days at the planning rates plus carried items,
   reserves, and equipment.
+* **Cost.** With the NASA OIG's production and operations costs of SLS ($2.2B),
+  Orion ($1.0B), the ESM ($0.3B), and ground systems ($568M per year, one
+  launch per year), the simulated cost of an SLS/Orion mission is $4.07B,
+  within 1% of the OIG's $4.1B per launch. Published HLS and Gateway contract
+  values are inputs; the campaign totals $29.4B (then-year, excluding
+  development of SLS and Orion and the uncosted surface systems).
+* **Gateway logistics.** One Dragon XL delivery (low-energy transfer of 120
+  days, 12 months berthed) supplies the crew at Gateway during Artemis IV and
+  V, as the ADD requires (at least one delivery for each Gateway mission of
+  30 days); the Artemis III crew in NRHO (before Gateway logistics) and the
+  crew in transit or on the surface remain supplied by the manifest.
 * **Surface systems.** Fission Surface Power (40 kWe, at most 6,000 kg), the
   terrain vehicle (two suited crew, 10 km walk-back), the pressurized rover
   (two crew, 28-day missions), surface stays (about 6 days), and the

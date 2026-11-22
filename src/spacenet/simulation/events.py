@@ -347,6 +347,7 @@ class CreateEvent(SimEvent):
             if self.container.add(element):
                 simulator.state.network.register(element)
                 _record_tanks_loaded(simulator, self, element)
+                simulator.record_creation(self, element)
             else:
                 raise SimSpatialError(
                     simulator.time,
@@ -1343,6 +1344,7 @@ class FlightTransportEvent(TransportEvent):
                 f"Flight crew size over capacity: {crew}/{self.edge.max_crew_size}",
             )
         self._log("Commencing flight")
+        simulator.record_departure(self, self.edge)
         MoveEvent(
             time=self.time,
             priority=self.priority,
@@ -1399,6 +1401,7 @@ class SpaceTransportEvent(TransportEvent):
         for element in elements:
             self._check_location(simulator, element)
         self._log("Commencing space transport")
+        simulator.record_departure(self, self.edge)
         MoveEvent(
             time=self.time,
             priority=self.priority,
@@ -1626,6 +1629,7 @@ class SurfaceTransportEvent(TransportEvent):
         self._check_crew(simulator)
         self._consume_traverse_resources(simulator)
         self._log("Commencing surface transport")
+        simulator.record_departure(self, self.edge)
         duration = simulator.settings.round_time(self.duration)
         previous_state = self.vehicle.current_state
         if self.transport_state is not None:

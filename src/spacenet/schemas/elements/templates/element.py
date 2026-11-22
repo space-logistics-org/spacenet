@@ -73,6 +73,20 @@ class Element(ElementUUID):
         description="True, if the element shares power with the other "
         "grid-connected elements at a surface node",
     )
+    unit_cost: Optional[float] = Field(
+        None,
+        title="Unit Cost",
+        description="Cost (millions of US dollars) incurred when the element is "
+        "created (omitted if not costed)",
+        ge=0,
+    )
+    design_life: Optional[float] = Field(
+        None,
+        title="Design Life",
+        description="Design life (years) after which the element should be "
+        "retired (omitted if unlimited)",
+        ge=0,
+    )
 
 
 class CargoCarrier(Element, ABC):

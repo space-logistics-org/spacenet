@@ -45,6 +45,7 @@ from .missions import (
     MissionsAnalysis,
     MissionSummary,
 )
+from .cost import CostAnalysis, CostItem
 from .power import PowerAnalysis, PowerGroupHistory
 from .propellant import (
     BurnRecord,

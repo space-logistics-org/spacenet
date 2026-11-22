@@ -5,7 +5,7 @@ Edges define valid paths (trajectories) between nodes.
 from abc import ABC
 from datetime import timedelta
 from enum import Enum
-from typing import List, Union
+from typing import List, Optional, Union
 from uuid import UUID
 
 from pydantic import Field
@@ -48,6 +48,20 @@ class Edge(Location, ABC):
         ...,
         title="Destination Node",
         description="Destination node unique identifier",
+    )
+    cost_per_transport: Optional[float] = Field(
+        None,
+        title="Cost per Transport",
+        description="Cost (millions of US dollars) of each transport along the "
+        "edge, e.g., a launch service or ground operations",
+        ge=0,
+    )
+    min_departure_interval: Optional[float] = Field(
+        None,
+        title="Minimum Departure Interval",
+        description="Shortest time (days) between transports departing along "
+        "the edge, e.g., the launch cadence of a pad",
+        ge=0,
     )
 
 

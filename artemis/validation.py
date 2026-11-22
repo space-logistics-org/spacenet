@@ -20,6 +20,8 @@ from artemis_add_campaign import (  # noqa: E402
 )
 
 from spacenet import schemas as s  # noqa: E402
+from spacenet.simulation import FullSimulator  # noqa: E402
+from spacenet.simulation.analysis import CostAnalysis  # noqa: E402
 from spacenet.simulation.events import G0  # noqa: E402
 from spacenet.validation import (  # noqa: E402
     CheckKind,
@@ -54,6 +56,10 @@ LOGISTICS = (
 FSP = (
     "NASA Fission Surface Power (IAC 2024)",
     "https://ntrs.nasa.gov/citations/20240011694",
+)
+OIG = (
+    "NASA OIG IG-22-003 (Artemis missions, 2022)",
+    "https://oig.nasa.gov/docs/IG-22-003.pdf",
 )
 
 REFERENCES = {
@@ -171,6 +177,114 @@ REFERENCES = {
             28.0,
             "days",
             *ADD,
+        ),
+        Reference(
+            "sls_orion_launch_cost",
+            "SLS/Orion production and operations cost per launch",
+            4_100.0,
+            "$M",
+            *OIG,
+            note="SLS $2.2B, Orion $1.0B, ESM $0.3B, ground systems $568M per year",
+        ),
+        Reference(
+            "hls_artemis_iii_cost",
+            "SpaceX HLS contract (development and Artemis III)",
+            2_890.0,
+            "$M",
+            "NASA, Artemis III HLS award (2021)",
+            "https://www.nasa.gov/news-release/as-artemis-moves-forward-nasa-picks-"
+            "spacex-to-land-next-americans-on-moon/",
+        ),
+        Reference(
+            "hls_artemis_v_cost",
+            "Blue Origin HLS contract (Artemis V)",
+            3_400.0,
+            "$M",
+            "NASA, second Artemis lunar lander award (2023)",
+            "https://www.nasa.gov/news-release/nasa-selects-blue-origin-as-second-"
+            "artemis-lunar-lander-provider/",
+            note="the campaign models every lander as Starship-class",
+        ),
+        Reference(
+            "ppe_cost",
+            "Power and Propulsion Element contract",
+            375.0,
+            "$M",
+            "NASA, PPE award (2019)",
+            "https://www.nasa.gov/news-release/nasa-awards-artemis-contract-for-"
+            "lunar-gateway-power-propulsion",
+        ),
+        Reference(
+            "halo_cost",
+            "HALO contract",
+            935.0,
+            "$M",
+            "NASA, HALO contract (2021)",
+            "https://www.nasa.gov/news-release/nasa-northrop-grumman-finalize-moon-"
+            "outpost-living-quarters-contract",
+        ),
+        Reference(
+            "gateway_launch_cost",
+            "Falcon Heavy launch of PPE and HALO",
+            331.8,
+            "$M",
+            "NASA, Gateway launch award (2021)",
+            "https://www.nasa.gov/press-release/nasa-awards-contract-to-launch-"
+            "initial-elements-for-lunar-outpost",
+        ),
+        Reference(
+            "gateway_life",
+            "Gateway design life",
+            (15.0, None),
+            "years",
+            "NASA, About Gateway",
+            "https://www.nasa.gov/reference/gateway-about/",
+            note="minimum 15-year lifespan",
+        ),
+        Reference(
+            "fsp_life", "Fission Surface Power design life", (10.0, None), "years", *FSP
+        ),
+        Reference(
+            "gateway_logistics",
+            "Logistics deliveries per crewed Gateway mission",
+            (1.0, None),
+            "deliveries",
+            *ADD,
+            note="at least one logistics delivery for each Gateway mission of 30 days",
+        ),
+        Reference(
+            "dragon_xl_cargo",
+            "Dragon XL cargo to Gateway",
+            (5_000.0, None),
+            "kg",
+            "NASA Gateway Logistics Services award (Spaceflight Now, 2020)",
+            "https://www.spaceflightnow.com/2020/03/27/nasa-picks-spacex-to-deliver-"
+            "cargo-to-gateway-station-in-lunar-orbit",
+            note="more than 5 t of pressurized and unpressurized cargo",
+        ),
+        Reference(
+            "dragon_xl_berthing",
+            "Dragon XL berthing at Gateway",
+            (6.0, 12.0),
+            "months",
+            "NASA Gateway Logistics Services award (Spaceflight Now, 2020)",
+            "https://www.spaceflightnow.com/2020/03/27/nasa-picks-spacex-to-deliver-"
+            "cargo-to-gateway-station-in-lunar-orbit",
+        ),
+        Reference(
+            "cargo_transfer",
+            "Low-energy cargo transfer to NRHO",
+            120.0,
+            "days",
+            *NRHO_PAPER,
+        ),
+        Reference(
+            "sls_cadence",
+            "Interval between crewed SLS launches",
+            365.0,
+            "days",
+            *ADD,
+            note="annual cadence of crewed missions",
         ),
     ]
 }
@@ -307,6 +421,64 @@ def validate(params: Optional[CampaignParameters] = None) -> List[ValidationResu
     rover = _template(scenario, "Pressurized Rover")
     add("pressurized_rover_crew", rover.max_crew)
     add("pressurized_rover_duration", rover.max_crewed_duration / 24)
+
+    # cost (simulated) and design lives
+    simulator = FullSimulator(scenario)
+    simulator.simulate()
+    costs = CostAnalysis.create(simulator, scenario.start_date)
+    add(
+        "sls_orion_launch_cost",
+        costs.by_mission["Artemis II"],
+        tolerance=0.02,
+        note="simulated cost of Artemis II (SLS, Orion, and ground systems)",
+    )
+    add("hls_artemis_iii_cost", costs.by_mission["Artemis III Propellant Aggregation"])
+    add("hls_artemis_v_cost", costs.by_mission["Artemis V Propellant Aggregation"])
+    by_item = {i.item: i.amount for i in costs.items}
+    add("ppe_cost", by_item["Gateway | PPE"])
+    add("halo_cost", by_item["Gateway | HALO"])
+    add("gateway_launch_cost", by_item["KSC-NRHO (Falcon Heavy + SEP)"])
+    add("gateway_life", _template(scenario, "HALO").design_life)
+    add("fsp_life", fsp.design_life)
+    add("sls_cadence", _edge(scenario, "KSC-LEO (SLS)").min_departure_interval)
+
+    # Gateway logistics: deliveries berthed at Gateway during each crewed
+    # Gateway mission (simulated)
+    berthed = []
+    for mission in ("Artemis IV", "Artemis V"):
+        sim_mission = next(m for m in simulator.state.missions if m.name == mission)
+        arrival = sim_mission.start_time + 6  # Orion arrives in NRHO
+        count = 0
+        for snapshot in simulator.network_history:
+            if snapshot.time >= arrival:
+                count = sum(
+                    1
+                    for element in snapshot.get_elements(
+                        next(n.id for n in scenario.network.nodes if n.name == "NRHO")
+                    )
+                    if element.name.endswith("Dragon XL")
+                )
+                break
+        berthed.append(count)
+    add(
+        "gateway_logistics",
+        min(berthed),
+        CheckKind.VALIDATED,
+        note="Dragon XL berthed at Gateway on arrival of the crew (simulated)",
+    )
+    dragon = _template(scenario, "Dragon XL")
+    add("dragon_xl_cargo", dragon.max_cargo_mass)
+    disposal = next(
+        e
+        for m in scenario.mission_list
+        if m.name == "Gateway Logistics 1"
+        for e in m.events
+        if e.name.endswith("Disposal")
+    )
+    transfer = _edge(scenario, "KSC-NRHO (Falcon Heavy, Logistics)")
+    berth_days = (disposal.mission_time - transfer.duration).total_seconds() / 86400
+    add("dragon_xl_berthing", berth_days / 30.44, tolerance=0.01)
+    add("cargo_transfer", transfer.duration.total_seconds() / 86400)
     return results
 
 

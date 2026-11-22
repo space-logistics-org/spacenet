@@ -24,6 +24,19 @@
 | Suited walk-back distance (km) | 10.00 | 10.00 | +0.0% | input | pass | [NASA NTRS 20250011301 (suited 10 km walkback study)](https://ntrs.nasa.gov/citations/20250011301) |
 | Pressurized rover crew (crew) | 2.000 | 2.000 | +0.0% | input | pass | [NASA Moon to Mars Architecture Definition Document, Rev. C (2025)](https://ntrs.nasa.gov/citations/20250010956) |
 | Pressurized rover mission duration (days) | 28.00 | 28.00 | +0.0% | input | pass | [NASA Moon to Mars Architecture Definition Document, Rev. C (2025)](https://ntrs.nasa.gov/citations/20250010956) |
+| SLS/Orion production and operations cost per launch ($M) | 4,100 | 4,068 | -0.8% | input | pass | [NASA OIG IG-22-003 (Artemis missions, 2022)](https://oig.nasa.gov/docs/IG-22-003.pdf) |
+| SpaceX HLS contract (development and Artemis III) ($M) | 2,890 | 2,890 | +0.0% | input | pass | [NASA, Artemis III HLS award (2021)](https://www.nasa.gov/news-release/as-artemis-moves-forward-nasa-picks-spacex-to-land-next-americans-on-moon/) |
+| Blue Origin HLS contract (Artemis V) ($M) | 3,400 | 3,400 | +0.0% | input | pass | [NASA, second Artemis lunar lander award (2023)](https://www.nasa.gov/news-release/nasa-selects-blue-origin-as-second-artemis-lunar-lander-provider/) |
+| Power and Propulsion Element contract ($M) | 375.0 | 375.0 | +0.0% | input | pass | [NASA, PPE award (2019)](https://www.nasa.gov/news-release/nasa-awards-artemis-contract-for-lunar-gateway-power-propulsion) |
+| HALO contract ($M) | 935.0 | 935.0 | +0.0% | input | pass | [NASA, HALO contract (2021)](https://www.nasa.gov/news-release/nasa-northrop-grumman-finalize-moon-outpost-living-quarters-contract) |
+| Falcon Heavy launch of PPE and HALO ($M) | 331.8 | 331.8 | +0.0% | input | pass | [NASA, Gateway launch award (2021)](https://www.nasa.gov/press-release/nasa-awards-contract-to-launch-initial-elements-for-lunar-outpost) |
+| Gateway design life (years) | >= 15.00 | 15.00 | +0.0% | input | pass | [NASA, About Gateway](https://www.nasa.gov/reference/gateway-about/) |
+| Fission Surface Power design life (years) | >= 10.00 | 10.00 | +0.0% | input | pass | [NASA Fission Surface Power (IAC 2024)](https://ntrs.nasa.gov/citations/20240011694) |
+| Interval between crewed SLS launches (days) | 365.0 | 365.0 | +0.0% | input | pass | [NASA Moon to Mars Architecture Definition Document, Rev. C (2025)](https://ntrs.nasa.gov/citations/20250010956) |
+| Logistics deliveries per crewed Gateway mission (deliveries) | >= 1.000 | 1.000 | +0.0% | validated | pass | [NASA Moon to Mars Architecture Definition Document, Rev. C (2025)](https://ntrs.nasa.gov/citations/20250010956) |
+| Dragon XL cargo to Gateway (kg) | >= 5,000 | 5,000 | +0.0% | input | pass | [NASA Gateway Logistics Services award (Spaceflight Now, 2020)](https://www.spaceflightnow.com/2020/03/27/nasa-picks-spacex-to-deliver-cargo-to-gateway-station-in-lunar-orbit) |
+| Dragon XL berthing at Gateway (months) | 6.000 to 12.00 | 11.99 | +0.0% | input | pass | [NASA Gateway Logistics Services award (Spaceflight Now, 2020)](https://www.spaceflightnow.com/2020/03/27/nasa-picks-spacex-to-deliver-cargo-to-gateway-station-in-lunar-orbit) |
+| Low-energy cargo transfer to NRHO (days) | 120.0 | 120.0 | +0.0% | input | pass | [NASA, NRHO: The Artemis Orbit (Architecture Workshop, 2023)](https://www.nasa.gov/wp-content/uploads/2023/10/nrho-artemis-orbit.pdf) |
 
 ## Default crew consumables rates
 

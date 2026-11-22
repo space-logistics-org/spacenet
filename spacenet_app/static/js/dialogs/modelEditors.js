@@ -338,6 +338,20 @@ function drawEdge(draft) {
       section("Burns", burnTable(draft.burns))
     );
   }
+  parts.push(
+    h(
+      "div",
+      { class: "row g-2 mt-1" },
+      numberField("Cost per Transport ($M)", draft, "costPerTransport", { min: 0 }),
+      numberField("Min. Departure Interval (days)", draft, "minDepartureInterval", { min: 0 }),
+      h(
+        "div",
+        { class: "col-12 form-text" },
+        "The cost of each transport along the edge (e.g., a launch service or ground operations) and the " +
+          "shortest time between departures (e.g., the launch cadence of a pad); empty if none."
+      )
+    )
+  );
   return parts;
 }
 

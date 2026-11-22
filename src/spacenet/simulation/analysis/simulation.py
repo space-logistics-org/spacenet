@@ -19,6 +19,7 @@ from ..records import (
 from ..simulator import FullSimulator
 from .issues import SimIssue, collect_issues
 from .missions import LocationSummary
+from .cost import CostAnalysis
 from .power import PowerAnalysis
 from .propellant import PropellantAnalysis
 from .state import ElementState
@@ -59,6 +60,10 @@ class MeasureTotals(CamelModel):
     )
     energy_deficit: float = Field(
         0.0, description="Electrical energy (kWh) which could not be supplied"
+    )
+    campaign_cost: float = Field(
+        0.0,
+        description="Cost (millions of US dollars) of costed elements and transports",
     )
 
 
@@ -493,6 +498,9 @@ class SimulationAnalysis(CamelModel):
     power: PowerAnalysis = Field(
         PowerAnalysis(), description="Energy balance of each power group"
     )
+    cost: CostAnalysis = Field(
+        CostAnalysis(), description="Costs of elements and transports"
+    )
 
     def network_states(self) -> Iterator[NetworkState]:
         """Iterates over the elements at each location at each time step."""
@@ -580,6 +588,7 @@ class SimulationAnalysis(CamelModel):
         network = simulator.state.network
         propellant = PropellantAnalysis.create(simulator)
         power = PowerAnalysis.create(simulator)
+        cost = CostAnalysis.create(simulator, simulator.scenario.start_date)
 
         return cls(
             issues=collect_issues(simulator),
@@ -599,9 +608,11 @@ class SimulationAnalysis(CamelModel):
                 propellant_boiloff_mass=propellant.totals.boiloff_mass,
                 propellant_transfer_loss_mass=propellant.totals.transfer_loss_mass,
                 energy_deficit=power.total_deficit,
+                campaign_cost=cost.total,
             ),
             propellant=propellant,
             power=power,
+            cost=cost,
             measures=Measures(
                 crew_surface_days=_records(simulator.crew_surface_days_history),
                 # crew time is recorded for each crew member at each time step

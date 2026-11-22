@@ -133,6 +133,52 @@ export function createHistory(result) {
     },
 
     /**
+     * The intervals in which each element existed at each location (of the
+     * element or of its top-level carrier), in order of first appearance.
+     */
+    segments() {
+      const open = new Map(); // element -> { location, start }
+      const result = new Map(); // element -> segments
+      const close = (element, end) => {
+        const segment = open.get(element);
+        if (!segment) return;
+        if (!result.has(element)) result.set(element, []);
+        result.get(element).push({ ...segment, end });
+        open.delete(element);
+      };
+      frames.forEach((frame, index) => {
+        const state = advance(index);
+        const locationOf = (element) => {
+          let change = state.get(element);
+          for (let depth = 0; change && depth < 100; depth++) {
+            if (change.location !== null && change.location !== undefined) return change.location;
+            change = state.get(change.container);
+          }
+          return null;
+        };
+        for (const element of [...open.keys()]) {
+          if (!state.has(element)) close(element, frame.time);
+        }
+        for (const element of state.keys()) {
+          const location = locationOf(element);
+          const segment = open.get(element);
+          if (segment && segment.location === location) continue;
+          close(element, frame.time);
+          open.set(element, { location, start: frame.time });
+          if (!result.has(element)) result.set(element, []);
+        }
+      });
+      for (const element of [...open.keys()]) close(element, times.at(-1) ?? 0);
+      return [...result.entries()].map(([element, segments]) => ({
+        id: elements[element].id,
+        name: elements[element].name,
+        type: elements[element].type,
+        isCrew: elements[element].isCrew,
+        segments,
+      }));
+    },
+
+    /**
      * Mass by class of supply over time of each location (top-level
      * elements) and of each element (including nested contents).
      */

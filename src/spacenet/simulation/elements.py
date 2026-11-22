@@ -232,7 +232,15 @@ class SimElement:
         energy_capacity: float = 0.0,
         energy: Optional[float] = None,
         grid_connected: bool = False,
+        unit_cost: Optional[float] = None,
+        design_life: Optional[float] = None,
     ):
+        #: Cost (millions of US dollars) incurred when the element is created.
+        self.unit_cost = unit_cost
+        #: Design life (years).
+        self.design_life = design_life
+        #: Time (days) at which the element was first created (set by the simulator).
+        self.created_time: Optional[float] = None
         #: Electrical energy storage capacity (kWh).
         self.energy_capacity = energy_capacity or 0.0
         #: Stored electrical energy (kWh).

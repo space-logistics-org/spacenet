@@ -712,7 +712,9 @@ function drawElement(draft) {
       selectField("Environment", draft, "environment", store.enums.environments),
       numberField("Mass (kg)", draft, "mass", { min: 0 }),
       numberField("Volume (m³)", draft, "volume", { min: 0 }),
-      numberField("Accommodation Mass (kg)", draft, "accommodationMass", { min: 0 })
+      numberField("Accommodation Mass (kg)", draft, "accommodationMass", { min: 0 }),
+      numberField("Unit Cost ($M)", draft, "unitCost", { min: 0 }),
+      numberField("Design Life (years)", draft, "designLife", { min: 0 })
     ),
   ];
   if (AGENTS.includes(type)) {

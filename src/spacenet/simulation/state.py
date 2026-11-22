@@ -319,6 +319,8 @@ class State:
                 distance=getattr(edge, "distance", 0.0),
                 max_crew_size=getattr(edge, "max_crew", 0),
                 max_cargo_mass=getattr(edge, "max_cargo", 0.0),
+                cost_per_transport=edge.cost_per_transport,
+                min_departure_interval=edge.min_departure_interval,
             )
             self.network.add(sim_edge)
 
@@ -396,6 +398,8 @@ class State:
             "volume": value("volume", 0.0),
             "icon": value("icon"),
             "grid_connected": value("grid_connected", False),
+            "unit_cost": value("unit_cost"),
+            "design_life": value("design_life"),
             "index": index,
             "template_index": (
                 len(self._template_indices)
