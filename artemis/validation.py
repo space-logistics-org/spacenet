@@ -589,6 +589,8 @@ def compare_default_consumables() -> List[ValidationResult]:
 
 
 if __name__ == "__main__":
+    # the report includes non-ASCII characters (e.g., ±)
+    sys.stdout.reconfigure(encoding="utf-8")
     print("## Reference Artemis campaign\n")
     print(report_markdown(validate()))
     print("\n## Default crew consumables rates\n")

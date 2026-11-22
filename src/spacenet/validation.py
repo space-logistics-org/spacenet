@@ -185,27 +185,80 @@ def max_payload(
     return lower
 
 
-def report_markdown(results: Iterable[ValidationResult]) -> str:
+def describe_difference(result: ValidationResult) -> str:
     """
-    Formats validation results as a Markdown table.
+    Describes the difference of a model value from its reference: the
+    relative difference to the nearest bound, or "in range" for a value
+    within a published range (or bound).
+    """
+    low, high = result.reference.bounds
+    if result.difference == 0 and low != high:
+        return "in range"
+    if math.isinf(result.difference):
+        return "outside"
+    return f"{100 * result.difference:+.1f}%"
+
+
+def describe_tolerance(result: ValidationResult) -> str:
+    """Describes the relative tolerance of a comparison ("exact" if none)."""
+    if result.tolerance <= 0:
+        return "exact"
+    return f"±{100 * result.tolerance:g}%"
+
+
+def summarize(results: Iterable[ValidationResult]) -> str:
+    """
+    Summarizes validation results: the number of comparisons of each kind
+    and the comparisons which fail.
 
     Args:
         results ([:obj:`ValidationResult`]): The results.
 
     Returns:
-        str: The table.
+        str: The summary.
     """
+    results = list(results)
+    counts = [
+        f"{sum(1 for r in results if r.kind == kind)} {kind.value}"
+        for kind in CheckKind
+        if any(r.kind == kind for r in results)
+    ]
+    failed = failures(results)
+    outcome = (
+        "all pass"
+        if not failed
+        else f"{len(failed)} fail ({', '.join(r.reference.quantity for r in failed)})"
+    )
+    return f"{len(results)} comparisons ({', '.join(counts)}): {outcome}."
+
+
+def report_markdown(results: Iterable[ValidationResult]) -> str:
+    """
+    Formats validation results as a Markdown table preceded by a summary. A
+    comparison passes if the model value lies within the published value (or
+    range) widened by the relative tolerance.
+
+    Args:
+        results ([:obj:`ValidationResult`]): The results.
+
+    Returns:
+        str: The summary and table.
+    """
+    results = list(results)
     lines = [
-        "| Quantity | Published | Model | Difference | Kind | Status | Source |",
-        "|---|---|---|---|---|---|---|",
+        summarize(results),
+        "",
+        "| Quantity | Published | Model | Difference | Tolerance | Kind | Status "
+        "| Source |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for result in results:
         ref = result.reference
         source = f"[{ref.source}]({ref.url})" if ref.url else ref.source
         lines.append(
             f"| {ref.quantity} ({ref.unit}) | {ref.describe()} | {number(result.model)} "
-            f"| {100 * result.difference:+.1f}% | {result.kind.value} "
-            f"| {result.status.value} | {source} |"
+            f"| {describe_difference(result)} | {describe_tolerance(result)} "
+            f"| {result.kind.value} | {result.status.value} | {source} |"
         )
     return "\n".join(lines)
 

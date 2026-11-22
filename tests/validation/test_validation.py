@@ -52,9 +52,28 @@ class TestCompare(unittest.TestCase):
         reference = Reference("x", "Mass", 0.89, "kg", "Paper", "https://x")
         text = report_markdown([compare(reference, 0.89, CheckKind.INPUT)])
         self.assertIn(
-            "| Mass (kg) | 0.8900 | 0.8900 | +0.0% | input | pass | [Paper](https://x) |",
+            "| Mass (kg) | 0.8900 | 0.8900 | +0.0% | exact | input | pass "
+            "| [Paper](https://x) |",
             text,
         )
+        self.assertTrue(text.startswith("1 comparisons (1 input): all pass."))
+        flights = Reference("y", "Flights", (8.0, 14.0), "flights", "Report")
+        text = report_markdown(
+            [
+                compare(flights, 9, tolerance=0.1),
+                compare(reference, 1.0, CheckKind.CALIBRATED, 0.05),
+            ]
+        )
+        # a value within a range is not an exact match
+        self.assertIn("| 9.000 | in range | ±10% | validated | pass |", text)
+        self.assertIn("| 1.000 | +12.4% | ±5% | calibrated | fail |", text)
+        self.assertTrue(
+            text.startswith("2 comparisons (1 validated, 1 calibrated): 1 fail (Mass).")
+        )
+        # a bound of zero has no relative difference
+        zero = Reference("z", "Leak", (None, 0.0), "kg", "Spec")
+        text = report_markdown([compare(zero, 1.0)])
+        self.assertIn("| outside | exact | validated | fail |", text)
         self.assertEqual(number(25_566.4), "25,566")
         self.assertEqual(number(3.857), "3.857")
 

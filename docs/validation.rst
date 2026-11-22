@@ -18,6 +18,16 @@ Each comparison states how the published value relates to the model:
 * **input**: the published value is a model input, so the comparison
   confirms traceability.
 
+A comparison passes if the model value lies within the published value (or
+range, or bound) widened by its relative *tolerance*: "exact" (none) for
+inputs and bounds, and otherwise chosen for the precision of the published
+value or of the model (e.g., ±10% for a launch vehicle capability simulated
+from stage masses with an equivalent ascent delta-v, ±1% for calibrations
+and rounded published values). The *difference* is relative to the nearest
+bound of the published value; "in range" denotes a value within a published
+range or bound. Each report starts with the number of comparisons of each
+kind and any which fail.
+
 --------
 Findings
 --------
