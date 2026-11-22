@@ -375,7 +375,8 @@ class TestAnalysis(ApiTestCase):
                 "/api/simulate", json={"scenario": load_json(path)}
             )
             self.assertEqual(response.status_code, 200)
-            self.assertLess(len(response.content), 600_000)
+            # the largest response (the Artemis ADD campaign) is about 620 kB
+            self.assertLess(len(response.content), 750_000)
             analysis = response.json()
             self.assertEqual(analysis["errorCount"], 0)
             totals = analysis["totals"]

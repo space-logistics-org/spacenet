@@ -72,6 +72,39 @@ class MeasureTotals(CamelModel):
     isru_energy: float = Field(
         0.0, description="Electrical energy (kWh) consumed by ISRU processes"
     )
+    landed_mass: float = Field(
+        0.0, description="Mass (kg) landed on the surface of bodies other than Earth"
+    )
+    launch_mass_per_landed_mass: float = Field(
+        0.0, description="Mass launched from Earth per mass landed (kg/kg)"
+    )
+    crew_days: float = Field(
+        0.0, description="Crew-days away from the surface of Earth"
+    )
+    logistics_mass: float = Field(
+        0.0, description="Mass (kg) of resources demanded away from Earth"
+    )
+    logistics_mass_per_crew_day: float = Field(
+        0.0, description="Logistics mass (kg) per crew-day away from Earth"
+    )
+    consumption_mass: float = Field(
+        0.0,
+        description="Mass (kg) of resources consumed or burned away from Earth",
+    )
+    in_situ_consumption_mass: float = Field(
+        0.0,
+        description="Mass (kg) of resources consumed or burned away from Earth "
+        "which was produced in situ",
+    )
+    earth_independence: float = Field(
+        0.0,
+        description="Fraction of the mass consumed away from Earth produced in situ",
+    )
+    min_days_of_supply: Optional[float] = Field(
+        None,
+        description="Fewest days of supply on hand at any location with "
+        "continuous demands",
+    )
 
     @classmethod
     def create(
@@ -116,6 +149,15 @@ class MeasureTotals(CamelModel):
             campaign_cost=cost.total,
             isru_output_mass=isru.total_output_mass,
             isru_energy=isru.total_energy,
+            landed_mass=simulator.total_landed_mass,
+            launch_mass_per_landed_mass=simulator.total_launch_mass_per_landed_mass,
+            crew_days=simulator.total_crew_days,
+            logistics_mass=simulator.total_logistics_mass,
+            logistics_mass_per_crew_day=simulator.total_logistics_mass_per_crew_day,
+            consumption_mass=simulator.total_consumption,
+            in_situ_consumption_mass=simulator.total_in_situ_consumption,
+            earth_independence=simulator.total_earth_independence,
+            min_days_of_supply=simulator.min_days_of_supply,
         )
 
 
@@ -127,7 +169,11 @@ class MeasureRecord(CamelModel):
     time: float = Field(..., description="Time (days) relative to the scenario start")
     location: Optional[UUID] = Field(None, description="Location unique identifier")
     amount: float = Field(0.0, description="Amount of the measure")
-    type: Optional[str] = Field(None, description="Category (crew time)")
+    type: Optional[str] = Field(
+        None,
+        description="Category (crew time), source (consumption), or limiting "
+        "resource (days of supply)",
+    )
     capacity: Optional[float] = Field(
         None, description="Capacity (kg) (capacity utilization)"
     )
@@ -158,6 +204,16 @@ class Measures(CamelModel):
     launch_mass: List[MeasureRecord] = []
     up_mass_capacity_utilization: List[MeasureRecord] = []
     down_mass_capacity_utilization: List[MeasureRecord] = []
+    landed_mass: List[MeasureRecord] = []
+    crew_days: List[MeasureRecord] = []
+    logistics_mass: List[MeasureRecord] = []
+    consumption: List[MeasureRecord] = Field(
+        [], description="Mass (kg) consumed away from Earth by source"
+    )
+    days_of_supply: List[MeasureRecord] = Field(
+        [],
+        description="Days of supply on hand (not cumulative) by limiting resource",
+    )
 
 
 class NetworkState(CamelModel):
@@ -677,6 +733,11 @@ class SimulationAnalysis(CamelModel):
                 down_mass_capacity_utilization=_records(
                     simulator.down_mass_capacity_utilization_history
                 ),
+                landed_mass=_records(simulator.landed_mass_history),
+                crew_days=_aggregate(_records(simulator.crew_days_history)),
+                logistics_mass=_aggregate(_records(simulator.logistics_mass_history)),
+                consumption=_aggregate(_records(simulator.consumption_history)),
+                days_of_supply=_records(simulator.days_of_supply_history),
             ),
             locations=[LocationSummary(id=n.id, name=n.name) for n in network.nodes]
             + [

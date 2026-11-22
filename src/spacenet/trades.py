@@ -223,7 +223,8 @@ def evaluate(scenario: Scenario) -> Dict[str, float]:
             d.demands.total_mass for d in simulator.unsatisfied_demands
         ),
     }
-    metrics.update({k: float(v) for k, v in totals.items()})
+    # undefined measures (e.g., days of supply without demands) are not a number
+    metrics.update({k: math.nan if v is None else float(v) for k, v in totals.items()})
     return metrics
 
 

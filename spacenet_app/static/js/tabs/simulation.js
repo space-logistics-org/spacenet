@@ -43,6 +43,12 @@ const MEASURES = [
   ["upMassCapacityUtilization", "Up-Mass Capacity Utilization", "kg"],
   ["downMassCapacityUtilization", "Return-Mass Capacity Utilization", "kg"],
   ["explorationCapability", "Exploration Capability", "kg-crew-days"],
+  ["landedMass", "Landed Mass", "kg"],
+  ["crewDays", "Crew-Days Away from Earth", "crew-days"],
+  ["logisticsMass", "Logistics Mass", "kg"],
+  ["consumption", "Consumption Beyond Earth Orbit", "kg"],
+  // levels (rather than amounts accumulated over time) by location
+  ["daysOfSupply", "Days of Supply on Hand", "days", "level"],
 ];
 
 const state = {
@@ -288,6 +294,16 @@ function totals(values) {
     ["ISRU production", fmt(values.isruOutputMass ?? 0, 0), "kg"],
     ["ISRU energy", fmt(values.isruEnergy ?? 0, 0), "kWh"],
     ["Campaign cost", fmt(values.campaignCost ?? 0, 0), "$M"],
+    ["Landed mass", fmt(values.landedMass ?? 0, 0), "kg"],
+    ["Launch mass per landed mass", fmt(values.launchMassPerLandedMass ?? 0, 1), "kg/kg"],
+    ["Crew-days away from Earth", fmt(values.crewDays ?? 0, 1), "crew-days"],
+    ["Logistics mass per crew-day", fmt(values.logisticsMassPerCrewDay ?? 0, 2), "kg/crew-day"],
+    ["Earth independence", fmt(100 * (values.earthIndependence ?? 0), 2), "% of consumption beyond Earth orbit"],
+    [
+      "Fewest days of supply on hand",
+      values.minDaysOfSupply === null || values.minDaysOfSupply === undefined ? "–" : fmt(values.minDaysOfSupply, 1),
+      "days",
+    ],
   ];
   return h(
     "table",
@@ -429,6 +445,39 @@ function drawFrame() {
 
 // ----------------------------------------------------------------- measures
 
+/** Plots a measure recorded as a level at each time, by location. */
+function drawLevels(chart, info, records, names, title, units) {
+  const groups = {};
+  for (const record of records) {
+    const group = (groups[record.location] ||= { x: [], y: [], text: [] });
+    group.x.push(dateOf(record.time));
+    group.y.push(record.amount);
+    group.text.push(record.type ?? "");
+  }
+  const traces = Object.entries(groups).map(([location, group]) => ({
+    x: group.x,
+    y: group.y,
+    text: group.text,
+    name: names[location] ?? "?",
+    // levels are sampled at events (not over gaps without demands)
+    mode: "markers",
+    hovertemplate: "%{y:,.1f} " + units + " (%{text})<extra>%{fullData.name}</extra>",
+  }));
+  plot(chart, traces, {
+    xaxis: { type: "date" },
+    yaxis: { title: { text: `${title} (${units})` }, rangemode: "tozero" },
+    showlegend: traces.length > 1,
+  });
+  if (records.length === 0) {
+    info.textContent = "No records";
+    return;
+  }
+  const least = records.reduce((a, b) => (b.amount < a.amount ? b : a));
+  info.textContent =
+    `Fewest: ${fmt(least.amount, 1)} ${units} of ${least.type} at ` +
+    `${names[least.location] ?? "?"} from ${records.length} records`;
+}
+
 function drawMeasures(content, result) {
   frameParts = null;
   const chart = h("div", { class: "sn-chart" });
@@ -443,10 +492,14 @@ function drawMeasures(content, result) {
   );
 
   function update() {
-    const [, title, units] = MEASURES.find(([key]) => key === state.measure);
+    const [, title, units, kind] = MEASURES.find(([key]) => key === state.measure);
     const filtered = records()
       .filter((record) => !record.location || list.selected.has(record.location))
       .sort((a, b) => a.time - b.time);
+    if (kind === "level") {
+      drawLevels(chart, info, filtered, names, title, units);
+      return;
+    }
     // records are accumulated over time for display
     const groups = {};
     for (const record of filtered) {

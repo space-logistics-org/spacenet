@@ -779,6 +779,7 @@ class DemandEvent(SimEvent):
         if self.element is not None:
             self._check_location(simulator, self.element)
         demands = DemandSet(d for d in self.demands if abs(d.amount) > 0)
+        requested = [(d.resource, d.amount) for d in demands]
         self._log(
             "Demand for %s from %s",
             self.demands,
@@ -791,6 +792,7 @@ class DemandEvent(SimEvent):
                     self.element.container.satisfy_demands(demands, simulator)
             for element in self.location.contents:
                 element.satisfy_demands(demands, simulator)
+        simulator.record_demands(self, requested, demands)
         if abs(demands.total_mass) > 0:
             if demands.total_mass > 0 and simulator.packing_demands_added:
                 packing_amount = 0.0

@@ -32,6 +32,7 @@ from .events import (
     DemandEvent,
     FlightTransportEvent,
     MissionEvent,
+    MoveEvent,
     SimEvent,
     SpaceTransportEvent,
     SurfaceTransportEvent,
@@ -45,11 +46,18 @@ from .records import (
     CREW_TIME_UNAVAILABLE,
     ElementSnapshot,
     LocationSnapshot,
+    SOURCE_EARTH,
+    SOURCE_IN_SITU,
+    MoeConsumption,
+    MoeCrewDays,
     MoeCrewSurfaceDays,
     MoeCrewTime,
+    MoeDaysOfSupply,
     MoeExplorationCapability,
     MoeExplorationMassDelivered,
+    MoeLandedMass,
     MoeLaunchMass,
+    MoeLogisticsMass,
     MoeMassCapacityUtilization,
     NetworkHistory,
     PropellantFlow,
@@ -93,6 +101,54 @@ APOLLO_17_LAUNCH_MASS = 2930000.0
 
 #: Synodic day (days) of each body (the period of the day-night cycle).
 SYNODIC_DAYS = {Body.MOON: 29.53, Body.MARS: 1.03, Body.EARTH: 1.0}
+
+
+def _in_earth_orbit(location: Optional[SimLocation]) -> bool:
+    """
+    True, if a location is on the surface of or in orbit around Earth, or is
+    an edge which departs from such a node.
+    """
+    if isinstance(location, SimEdge):
+        location = location.origin
+    return (
+        isinstance(location, SimNode)
+        and location.body == Body.EARTH
+        and (location.is_surface or location.is_orbital)
+    )
+
+
+def _on_earth(location: Optional[SimLocation]) -> bool:
+    """True, if a location is a node on the surface of Earth."""
+    return (
+        isinstance(location, SimNode)
+        and location.is_surface
+        and location.body == Body.EARTH
+    )
+
+
+def _available_amount(element: SimElement, resource: SimResource) -> float:
+    """
+    Gets the amount (units) of a resource which an element (with its
+    contents and integral tanks) can supply to a demand.
+    """
+    amount = 0.0
+    if isinstance(element, SimResourceContainer):
+        amount += sum(
+            quantity
+            for held, quantity in element.contents.items()
+            if held.is_substitutable_for(resource)
+        )
+    elif isinstance(element, SimResourceTank):
+        if element.resource is not None and resource.is_substitutable_for(
+            element.resource
+        ):
+            amount += element.amount
+    for tank in getattr(element, "fuel_tanks", ()):
+        amount += _available_amount(tank, resource)
+    if isinstance(element, SimCarrier):
+        for child in element.contents:
+            amount += _available_amount(child, resource)
+    return amount
 
 
 class Simulator:
@@ -862,6 +918,23 @@ class Simulator:
                 self._costed.add(item.id)
                 self.record_cost(event, "Element", item.name, item.unit_cost)
 
+    def record_demands(
+        self,
+        event: DemandEvent,
+        requested: List[Tuple[SimResource, float]],
+        unsatisfied: DemandSet,
+    ):
+        """
+        Records the demands of a demand event (ignored by this simulator).
+
+        Args:
+            event (:obj:`DemandEvent`): The demand event.
+            requested ([(:obj:`SimResource`, float)]): The demanded amount
+                (units) of each resource.
+            unsatisfied (:obj:`DemandSet`): The demands which could not be
+                satisfied.
+        """
+
     def record_departure(self, event: SimEvent, edge: SimEdge):
         """
         Records a transport departing along an edge: its cost and a warning
@@ -1416,7 +1489,7 @@ class FullSimulator(Simulator):
     Simulator which records the network history and measures of effectiveness.
     """
 
-    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-instance-attributes,too-many-public-methods
 
     def __init__(self, scenario: Scenario, **kwargs):
         kwargs.setdefault("packing_demands_added", False)
@@ -1433,6 +1506,18 @@ class FullSimulator(Simulator):
             MoeMassCapacityUtilization
         ] = []
         self.exploration_capability_history: List[MoeExplorationCapability] = []
+        self.landed_mass_history: List[MoeLandedMass] = []
+        self.crew_days_history: List[MoeCrewDays] = []
+        self.logistics_mass_history: List[MoeLogisticsMass] = []
+        self.consumption_history: List[MoeConsumption] = []
+        self.days_of_supply_history: List[MoeDaysOfSupply] = []
+        # mass (kg) produced in situ and not yet consumed by resource name
+        self._in_situ: Dict[str, float] = {}
+        self._isru_counted = 0
+        # continuous demands (units) of the elapsed interval by location
+        self._interval_demands: Optional[
+            Dict[SimLocation, Dict[SimResource, float]]
+        ] = None
 
     def simulate(self):
         self.initialize_simulation()
@@ -1450,6 +1535,13 @@ class FullSimulator(Simulator):
         self.up_mass_capacity_utilization_history.clear()
         self.down_mass_capacity_utilization_history.clear()
         self.exploration_capability_history.clear()
+        self.landed_mass_history.clear()
+        self.crew_days_history.clear()
+        self.logistics_mass_history.clear()
+        self.consumption_history.clear()
+        self.days_of_supply_history.clear()
+        self._in_situ = {}
+        self._isru_counted = 0
         self._record_network()
         while self._has_next_event():
             self._next_event()
@@ -1459,6 +1551,8 @@ class FullSimulator(Simulator):
                 self._record_transport_measures(self.event)
             self._handle_demands()
             self._execute_event()
+            if isinstance(self.event, MoveEvent):
+                self._record_landing(self.event)
             next_event = self._peek_event()
             if next_event is None or next_event.time > self.time:
                 self._record_network()
@@ -1478,6 +1572,10 @@ class FullSimulator(Simulator):
                 continue
             location = element.location
             fraction = element.available_time_fraction
+            if location is not None and not _on_earth(location):
+                self.crew_days_history.append(
+                    MoeCrewDays(self.time, location, self.duration)
+                )
             self.crew_time_history.append(
                 MoeCrewTime(
                     self.time,
@@ -1546,6 +1644,139 @@ class FullSimulator(Simulator):
             self.down_mass_capacity_utilization_history.append(
                 MoeMassCapacityUtilization(self.time, destination, amount, capacity)
             )
+
+    def _record_landing(self, event: MoveEvent):
+        """
+        Records the mass landed by the arrival of a space or flight transport
+        on the surface of a body other than Earth (from a node which is not
+        on the surface of that body).
+        """
+        transport = event.parent
+        if not isinstance(transport, (SpaceTransportEvent, FlightTransportEvent)):
+            return
+        origin, destination = transport.origin, transport.destination
+        if destination is None or event.container is not destination:
+            return
+        if not destination.is_surface or destination.body == Body.EARTH:
+            return
+        if origin.is_surface and origin.body == destination.body:
+            return
+        # elements staged during the transport are not in the list
+        landed = [e for e in event.elements if e.location == destination]
+        if landed:
+            self.landed_mass_history.append(
+                MoeLandedMass(self.time, destination, sum(e.total_mass for e in landed))
+            )
+
+    def _handle_demands(self):
+        self._interval_demands = {}
+        try:
+            super()._handle_demands()
+        finally:
+            interval, self._interval_demands = self._interval_demands, None
+        if self.duration > 0:
+            self._record_days_of_supply(interval)
+
+    def record_demands(self, event, requested, unsatisfied):
+        location = event.location
+        if _on_earth(location):
+            return
+        remaining: Dict[SimResource, float] = {}
+        for demand in unsatisfied:
+            remaining[demand.resource] = (
+                remaining.get(demand.resource, 0.0) + demand.amount
+            )
+        mass = 0.0
+        for resource, amount in requested:
+            if amount <= 0:  # production
+                continue
+            mass += amount * resource.unit_mass
+            if self._interval_demands is not None and not resource.is_item:
+                demands = self._interval_demands.setdefault(location, {})
+                demands[resource] = demands.get(resource, 0.0) + amount
+            short = min(amount, max(0.0, remaining.get(resource, 0.0)))
+            remaining[resource] = remaining.get(resource, 0.0) - short
+            self._record_consumption(location, resource, amount - short)
+        if mass > 0:
+            self.logistics_mass_history.append(
+                MoeLogisticsMass(self.time, location, mass)
+            )
+
+    def record_propellant(
+        self,
+        tank,
+        kind,
+        amount,
+        event=None,
+        attributed=True,
+        counterpart=None,
+    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+        super().record_propellant(tank, kind, amount, event, attributed, counterpart)
+        if kind != PropellantFlowKind.BURNED or tank.resource is None:
+            return
+        # burns are located on the edge of their transport
+        event = event or self.event
+        location = None if event is None else event.location
+        if location is not None:
+            self._record_consumption(location, tank.resource, amount)
+
+    def _record_consumption(
+        self, location: SimLocation, resource: SimResource, amount: float
+    ):
+        """
+        Records an amount of a resource consumed beyond Earth orbit, which is
+        attributed to resources produced in situ (until they are used up)
+        and otherwise to resources delivered from Earth.
+        """
+        mass = amount * resource.unit_mass
+        if mass <= 0 or _in_earth_orbit(location):
+            return
+        self._count_isru()
+        key = resource.name
+        in_situ = min(mass, self._in_situ.get(key, 0.0))
+        if in_situ > 0:
+            self._in_situ[key] -= in_situ
+            self.consumption_history.append(
+                MoeConsumption(
+                    self.time, location, SOURCE_IN_SITU, in_situ, resource.name
+                )
+            )
+        if mass - in_situ > 0:
+            self.consumption_history.append(
+                MoeConsumption(
+                    self.time, location, SOURCE_EARTH, mass - in_situ, resource.name
+                )
+            )
+
+    def _count_isru(self):
+        """Adds the outputs of the ISRU processes recorded since the last call."""
+        for record in self.isru_records[self._isru_counted :]:
+            for name, mass in record.output_masses.items():
+                self._in_situ[name] = self._in_situ.get(name, 0.0) + mass
+        self._isru_counted = len(self.isru_records)
+
+    def _record_days_of_supply(
+        self, interval: Dict[SimLocation, Dict[SimResource, float]]
+    ):
+        """
+        Records the days of supply on hand at each location with continuous
+        demands over the elapsed interval: the time until the first resource
+        runs out at the demanded rate.
+        """
+        for location, demands in interval.items():
+            days_of_supply = {
+                resource.name: sum(
+                    _available_amount(e, resource) for e in location.contents
+                )
+                / (amount / self.duration)
+                for resource, amount in demands.items()
+                if amount > 0
+            }
+            if days_of_supply:
+                name = min(days_of_supply, key=days_of_supply.get)
+                self.days_of_supply_history.append(
+                    MoeDaysOfSupply(self.time, location, days_of_supply[name], name)
+                )
 
     def _record_repair(self, mission, element, item, resource, amount):
         super()._record_repair(mission, element, item, resource, amount)
@@ -1631,3 +1862,61 @@ class FullSimulator(Simulator):
         return (
             self.total_exploration_capability / APOLLO_17_EXPLORATION_CAPABILITY
         ) / (self.total_launch_mass / APOLLO_17_LAUNCH_MASS)
+
+    @property
+    def total_landed_mass(self) -> float:
+        """The total mass (kg) landed on bodies other than Earth."""
+        return sum(m.amount for m in self.landed_mass_history)
+
+    @property
+    def total_launch_mass_per_landed_mass(self) -> float:
+        """The mass launched from Earth per mass landed (0 if none is landed)."""
+        landed = self.total_landed_mass
+        return self.total_launch_mass / landed if landed > 0 else 0.0
+
+    @property
+    def total_crew_days(self) -> float:
+        """The total crew-days away from the surface of Earth."""
+        return sum(m.amount for m in self.crew_days_history)
+
+    @property
+    def total_logistics_mass(self) -> float:
+        """The total mass (kg) of resources demanded away from Earth."""
+        return sum(m.amount for m in self.logistics_mass_history)
+
+    @property
+    def total_logistics_mass_per_crew_day(self) -> float:
+        """The logistics mass (kg) per crew-day (0 if there are no crew-days)."""
+        crew_days = self.total_crew_days
+        return self.total_logistics_mass / crew_days if crew_days > 0 else 0.0
+
+    @property
+    def total_consumption(self) -> float:
+        """The total mass (kg) of resources consumed away from Earth."""
+        return sum(m.amount for m in self.consumption_history)
+
+    @property
+    def total_in_situ_consumption(self) -> float:
+        """The mass (kg) of resources consumed away from Earth produced in situ."""
+        return sum(
+            m.amount for m in self.consumption_history if m.type == SOURCE_IN_SITU
+        )
+
+    @property
+    def total_earth_independence(self) -> float:
+        """
+        The fraction of the mass of resources consumed away from Earth which
+        was produced in situ (0 if none is consumed).
+        """
+        consumed = self.total_consumption
+        return self.total_in_situ_consumption / consumed if consumed > 0 else 0.0
+
+    @property
+    def min_days_of_supply(self) -> Optional[float]:
+        """
+        The fewest days of supply on hand at any location with continuous
+        demands (None if there are no such demands).
+        """
+        if not self.days_of_supply_history:
+            return None
+        return min(m.amount for m in self.days_of_supply_history)

@@ -2,6 +2,8 @@
 Records of simulation history including measures of effectiveness.
 """
 
+# pylint: disable=too-many-lines
+
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
@@ -340,6 +342,78 @@ class MoeMassCapacityUtilization:
     location: "SimLocation"
     amount: float
     capacity: float
+
+
+@dataclass
+class MoeLandedMass:
+    """
+    Mass (kg) landed on the surface of a body other than Earth, i.e., the
+    total mass of the elements which arrive by a space or flight transport.
+    """
+
+    time: float
+    location: "SimLocation"
+    amount: float
+
+
+@dataclass
+class MoeCrewDays:
+    """
+    Crew-days: time (days) spent by one crew member away from the surface of Earth.
+    """
+
+    time: float
+    location: "SimLocation"
+    amount: float
+
+
+@dataclass
+class MoeLogisticsMass:
+    """
+    Mass (kg) of resources demanded (by elements, crew, and missions) away
+    from the surface of Earth, whether or not the demands are satisfied.
+    """
+
+    time: float
+    location: "SimLocation"
+    amount: float
+
+
+#: Source of resources produced by ISRU processes.
+SOURCE_IN_SITU = "In Situ"
+#: Source of resources delivered from Earth.
+SOURCE_EARTH = "Earth"
+
+
+@dataclass
+class MoeConsumption:
+    """
+    Mass (kg) of a resource consumed (to satisfy demands or burned by
+    vehicles) away from the surface of Earth by source: produced in situ by
+    ISRU processes or delivered from Earth.
+    """
+
+    time: float
+    location: "SimLocation"
+    #: Source (:data:`SOURCE_IN_SITU` or :data:`SOURCE_EARTH`).
+    type: str
+    amount: float
+    resource: str
+
+
+@dataclass
+class MoeDaysOfSupply:
+    """
+    Days of supply on hand at a location: the time (days) until the
+    resources at the location run out at the rate demanded over the elapsed
+    interval, for the resource which runs out first.
+    """
+
+    time: float
+    location: "SimLocation"
+    amount: float
+    #: Name of the resource which runs out first.
+    type: str
 
 
 @dataclass

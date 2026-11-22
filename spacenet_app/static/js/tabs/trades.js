@@ -42,6 +42,15 @@ const METRIC_LABELS = {
   campaignCost: "Campaign cost ($M)",
   isruOutputMass: "ISRU production (kg)",
   isruEnergy: "ISRU energy (kWh)",
+  landedMass: "Landed mass (kg)",
+  launchMassPerLandedMass: "Launch mass per landed mass",
+  crewDays: "Crew-days away from Earth",
+  logisticsMass: "Logistics mass (kg)",
+  logisticsMassPerCrewDay: "Logistics mass per crew-day (kg)",
+  consumptionMass: "Consumption beyond Earth orbit (kg)",
+  inSituConsumptionMass: "In-situ consumption (kg)",
+  earthIndependence: "Earth independence",
+  minDaysOfSupply: "Fewest days of supply on hand",
 };
 
 const state = {
