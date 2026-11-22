@@ -28,6 +28,29 @@ start date. The :class:`~spacenet.simulation.PreSimulator` honors a time
 after the end date (to inspect the state before an event which is not
 simulated) but otherwise stops at the end date.
 
+-----------------
+Maximum Time Step
+-----------------
+
+By default (as in the reference implementation), the simulator evaluates
+demands, power, ISRU processes, and boiloff over each interval between
+events, and the full simulation records results (the network history and
+measures such as days of supply) at events. Over a long interval without
+events (e.g., a surface stay or the time before the scenario end date), the
+results do not show how resources are drawn down. The configuration option
+``maxTimeStep`` (days) divides longer intervals between events (and before
+the scenario end date) into time steps of at most that duration; for
+example, a value of 7 evaluates and records results at least weekly.
+
+Time steps do not change the times of events or the totals of continuous
+demands, ISRU production, or boiloff (which are proportional to duration),
+and demands within a time step aggregate to the same supply points and
+edges. They refine the energy balance of power groups (whose storage is
+charged and discharged over each interval) and divide demands among more
+events, so the discretization of discrete resources and random part
+failures (drawn per interval) may differ. Smaller time steps record more
+results and take longer to simulate.
+
 ----------------------------
 Time-Phased Crew Consumables
 ----------------------------
@@ -92,7 +115,8 @@ Logistics mass per crew-day
     is not a demand and is not logistics mass. It is 0 without crew-days.
 
 Days of supply on hand
-    After each interval between events, at each location with demands for
+    After each interval between events (or time steps; see `Maximum Time
+    Step`_), at each location with demands for
     continuous resources over the interval, the time until the first of
     them runs out at the rate demanded over the interval: the amount which
     the elements at the location could supply (from their containers, tanks,

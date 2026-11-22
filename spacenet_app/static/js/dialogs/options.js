@@ -8,7 +8,7 @@ const GROUPS = [
   ["Numerical Precision", ["timePrecision", "demandPrecision", "massPrecision", "volumePrecision"]],
   ["Cargo Constraints", ["volumeConstrained", "environmentConstrained"]],
   ["Discrete Demands", ["itemDiscretization", "itemAggregation", "scavengeSpares"]],
-  ["Simulation Detail", ["detailedExploration", "detailedEva", "timePhasedConsumables"]],
+  ["Simulation Detail", ["detailedExploration", "detailedEva", "timePhasedConsumables", "maxTimeStep"]],
   ["Part Failures", ["partFailures", "randomSeed"]],
   [
     "Generic Packing Factors (kg of packing per kg)",

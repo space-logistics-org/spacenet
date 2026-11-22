@@ -464,6 +464,8 @@ class ScenarioGenerator:
             )
         if not self.java and rng.random() < 0.5:
             b.end_date = START + timedelta(days=start + self.uniform(0, 60))
+        if not self.java and rng.random() < 0.3:
+            b.configuration.max_time_step = rng.choice([0.5, 2.0, 7.0])
         return b.build()
 
 

@@ -36,6 +36,7 @@ from .events import (
     SimEvent,
     SpaceTransportEvent,
     SurfaceTransportEvent,
+    TimeStepEvent,
     TransportEvent,
 )
 from .mission import SimMission
@@ -366,11 +367,23 @@ class Simulator:
             self.warnings.append(SimWarning(time, event, issue.message))
 
     def _has_next_event(self) -> bool:
-        """True, if an event remains to be executed before the scenario end."""
+        """
+        True, if an event remains to be executed before the scenario end, or
+        a time step remains before the scenario end.
+        """
         event = self._peek_event()
-        if event is None:
-            return False
-        return self._end_time is None or event.time <= self._end_time
+        if event is not None and (
+            self._end_time is None or event.time <= self._end_time
+        ):
+            return True
+        return self._end_time is not None and self._step_due(self._end_time)
+
+    def _step_due(self, time: float) -> bool:
+        """True, if a time step precedes a time (days)."""
+        step = self.settings.max_time_step
+        return (
+            step is not None and math.isfinite(time) and time - self.time > step + 1e-9
+        )
 
     def _advance_to_end(self) -> bool:
         """
@@ -416,8 +429,19 @@ class Simulator:
         return True
 
     def _next_event(self):
-        """Advances the simulation time to the next event."""
-        self.event = heapq.heappop(self._events)[4]
+        """
+        Advances the simulation time to the next event or, if the next event
+        (or the scenario end) is more than the maximum time step away, to the
+        next time step.
+        """
+        event = self._peek_event()
+        target = math.inf if event is None else event.time
+        if self._end_time is not None:
+            target = min(target, self._end_time)
+        if self._step_due(target):
+            self.event = TimeStepEvent(time=self.time + self.settings.max_time_step)
+        else:
+            self.event = heapq.heappop(self._events)[4]
         self.duration = self.event.time - self.time
         self.time = self.event.time
 
@@ -1319,6 +1343,11 @@ class PreSimulator(Simulator):
             self._next_event()
             self._handle_demands()
             self._execute_event()
+        while self._step_due(time):
+            self.event = TimeStepEvent(time=self.time + self.settings.max_time_step)
+            self.duration = self.event.time - self.time
+            self.time = self.event.time
+            self._handle_demands()
         if math.isfinite(time):
             self.duration = time - self.time
             self.time = time

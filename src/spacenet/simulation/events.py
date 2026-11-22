@@ -236,6 +236,18 @@ class SimEvent:
         return f"{type(self).__name__}({self.name!r}, time={self.time})"
 
 
+class TimeStepEvent(SimEvent):
+    """
+    Event without effect which divides a long interval between events into
+    time steps (see the configuration option ``max_time_step``).
+    """
+
+    default_name = "Time Step"
+
+    def execute(self, simulator: "Simulator"):
+        pass
+
+
 class MissionEvent(SimEvent):
     """
     Event which schedules the events of a mission at the mission start.

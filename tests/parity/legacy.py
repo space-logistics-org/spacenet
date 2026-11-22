@@ -86,6 +86,8 @@ def to_legacy(scenario: s.Scenario) -> Dict[str, Any]:
         raise UnsupportedError(
             "time-phased consumables and part failures are unsupported"
         )
+    if configuration.max_time_step is not None:
+        raise UnsupportedError("the maximum time step is unsupported")
     data = scenario.model_dump(mode="json", by_alias=True, exclude_none=True)
     for element in [*data["elementTemplates"], *data["instantiatedElements"]]:
         if element["type"] == "Propulsive Vehicle":

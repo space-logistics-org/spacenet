@@ -122,6 +122,15 @@ class Configuration(CamelModel):
         "crew member is away from the surface of Earth (instead of all at once "
         "on arrival at the mission destination).",
     )
+    max_time_step: Optional[float] = Field(
+        None,
+        title="Maximum Time Step",
+        description="Longest duration (days) between simulated time steps: "
+        "longer intervals between events are divided into time steps at which "
+        "demands, power, ISRU, and boiloff are evaluated and results are "
+        "recorded (default: only at events).",
+        gt=0,
+    )
     part_failures: Optional[PartFailureMode] = Field(
         None,
         title="Part Failures",
