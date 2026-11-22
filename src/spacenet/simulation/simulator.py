@@ -11,7 +11,10 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Tuple
 from uuid import UUID
 
-from ..schemas import Body, ClassOfSupply, Scenario
+import numpy as np
+
+from ..schemas import Body, ClassOfSupply, Scenario, StateType
+from ..schemas.scenarios.scenario import PartFailureMode
 from ..schemas.elements.power import PowerGenerationType
 from ..schemas.scenarios.scenario import ItemDiscretizationType
 from .elements import (
@@ -51,6 +54,7 @@ from .records import (
     NetworkHistory,
     PropellantFlow,
     CostRecord,
+    FailureRecord,
     ISRURecord,
     PowerRecord,
     PropellantFlowKind,
@@ -119,8 +123,21 @@ class Simulator:
         packing_demands_added: bool = False,
         items_repaired: bool = False,
         repaired_items: Optional[Dict[int, List[RepairItem]]] = None,
+        part_failures: Optional[PartFailureMode] = None,
+        seed: Optional[int] = None,
     ):
         self.scenario = scenario
+        #: Model of part failures (default: the scenario configuration).
+        self.part_failures = (
+            PartFailureMode(part_failures)
+            if part_failures is not None
+            else scenario.configuration.part_failures
+        )
+        #: Seed of random part failures (default: the scenario configuration).
+        self.seed = seed if seed is not None else scenario.configuration.random_seed
+        self._rng = np.random.default_rng(self.seed)
+        #: Failures of parts over each interval of time.
+        self.failure_records: List[FailureRecord] = []
         self.demands_satisfied = demands_satisfied
         self.packing_demands_added = packing_demands_added
         self.items_repaired = items_repaired
@@ -236,6 +253,8 @@ class Simulator:
         self.power_records.clear()
         self.isru_records.clear()
         self._isru_warnings.clear()
+        self.failure_records.clear()
+        self._rng = np.random.default_rng(self.seed)
         self._power_warnings.clear()
         self._power_arrivals.clear()
         self._consumables_departed.clear()
@@ -659,6 +678,61 @@ class Simulator:
             )
         )
 
+    # ------------------------------------------------------------ reliability
+
+    def _part_failures(self, element: SimElement) -> DemandSet:
+        """
+        Generates the demands for spare parts of the failures of the parts of
+        an active element over the elapsed duration: each unit of a part with
+        a mean time to failure fails at a constant rate while it operates
+        (for its duty cycle while the element is active), and a failed unit
+        demands a spare. Elements on the surface of Earth do not fail.
+
+        Returns:
+            :obj:`DemandSet`: The demands for spare parts.
+        """
+        demands = DemandSet()
+        state = element.current_state
+        if (
+            self.part_failures is None
+            or state is None
+            or state.state_type != StateType.ACTIVE
+        ):
+            return demands
+        location = element.location
+        if (
+            isinstance(location, SimNode)
+            and location.is_surface
+            and location.body == Body.EARTH
+        ):
+            return demands
+        for application in element.parts:
+            if application.mean_time_to_failure <= 0 or application.quantity <= 0:
+                continue
+            hours = 24 * self.duration * application.duty_cycle * application.quantity
+            expected = hours / application.mean_time_to_failure
+            if self.part_failures == PartFailureMode.RANDOM:
+                failures = float(self._rng.poisson(expected))
+            else:
+                failures = expected
+            self.failure_records.append(
+                FailureRecord(
+                    time=self.time,
+                    duration=self.duration,
+                    element_id=element.id,
+                    element_name=element.name,
+                    part_name=application.part.name,
+                    location_id=None if location is None else location.id,
+                    location_name=None if location is None else location.name,
+                    operating_hours=hours,
+                    expected=expected,
+                    failures=failures,
+                )
+            )
+            if failures > 0:
+                demands.add(Demand(application.part, failures))
+        return demands
+
     # ----------------------------------------------------- cost and lifetime
 
     def record_cost(self, event: Optional[SimEvent], category: str, item: str, amount):
@@ -823,6 +897,7 @@ class Simulator:
             self._check_design_life()
             for element in self.state.network.elements:
                 demands = element.generate_demands(self.duration, self)
+                demands.add_all(self._part_failures(element))
                 demands = self._discretize_demands(demands, element, element.location)
                 demands = self._repair_demands(demands, element)
                 if len(demands) > 0:

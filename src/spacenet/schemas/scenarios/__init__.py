@@ -10,4 +10,4 @@ from .manifest import (
     SupplyPointRef,
 )
 from .mission import Mission
-from .scenario import Scenario, Network, Manifest, Configuration
+from .scenario import Scenario, Network, Manifest, Configuration, PartFailureMode

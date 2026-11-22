@@ -362,6 +362,28 @@ class TestAnalysis(ApiTestCase):
             )
 
 
+class TestReliability(ApiTestCase):
+    def test_run_monte_carlo(self):
+        scenario = load_json(ADD_CAMPAIGN)
+        result = self.post(
+            "/reliability/run", scenario=scenario, study={"runs": 6, "seed": 2}
+        )
+        self.assertEqual(result["runs"], 6)
+        self.assertEqual(result["failedRuns"], 0)
+        parts = {part["part"]: part for part in result["parts"]}
+        self.assertEqual(set(parts), {"Electrolyzer Stack", "Excavator Drive Actuator"})
+        self.assertAlmostEqual(parts["Electrolyzer Stack"]["expected"], 0.6108, 3)
+        self.assertEqual(sum(parts["Electrolyzer Stack"]["histogram"]), 6)
+
+    def test_invalid_study(self):
+        self.post(
+            "/reliability/run",
+            status=422,
+            scenario=load_json(ADD_CAMPAIGN),
+            study={"runs": 0},
+        )
+
+
 class TestTrades(ApiTestCase):
     def test_metrics(self):
         metrics = self.client.get("/api/trades/metrics").json()

@@ -1,6 +1,7 @@
 // Trades tab: varies fields of the scenario (a full-factorial or
 // one-at-a-time design), simulates each case on the server, and compares the
-// measures of effectiveness of the cases.
+// measures of effectiveness of the cases; and runs Monte Carlo reliability
+// studies of random part failures.
 
 import { api, ApiError } from "../api.js";
 import { plot } from "../components.js";
@@ -39,6 +40,8 @@ const METRIC_LABELS = {
   propellantTransferLossMass: "Propellant transfer losses (kg)",
   energyDeficit: "Energy deficit (kWh)",
   campaignCost: "Campaign cost ($M)",
+  isruOutputMass: "ISRU production (kg)",
+  isruEnergy: "ISRU energy (kWh)",
 };
 
 const state = {
@@ -47,6 +50,7 @@ const state = {
   metric: "errorCount",
   result: null,
   running: false,
+  reliability: { runs: 100, seed: 0, result: null, running: false, part: null },
 };
 
 let root;
@@ -56,6 +60,8 @@ export function init(container) {
   store.on("scenario", () => {
     state.variables = [];
     state.result = null;
+    state.reliability.result = null;
+    state.reliability.part = null;
   });
 }
 
@@ -378,9 +384,11 @@ function draw() {
           : h("div", { class: "sn-muted-box" }, "Define variables and run the trade study to compare its cases.")
       )
     ),
-    result ? resultTable(result) : null
+    ...(result ? [resultTable(result)] : []),
+    reliabilitySection()
   );
   if (result) drawChart(chart, result);
+  drawHistogram();
 }
 
 /** Line chart of the metric against the first variable (one line per value of the second). */
@@ -454,5 +462,206 @@ function resultTable(result) {
       )
     ),
     h("div", { class: "form-text" }, "Cases with simulation errors (e.g., insufficient delta-v) are highlighted.")
+  );
+}
+
+// --------------------------------------------------------- reliability
+
+let histogram = null; // chart element of the selected part
+
+async function runReliability() {
+  const reliability = state.reliability;
+  reliability.running = true;
+  draw();
+  try {
+    reliability.result = await api.runMonteCarlo(store.scenario, {
+      runs: Math.max(1, Math.round(reliability.runs)),
+      seed: Math.max(0, Math.round(reliability.seed)),
+    });
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error;
+    toast(`The reliability study could not run: ${error.message}`, "danger");
+  } finally {
+    reliability.running = false;
+  }
+  draw();
+}
+
+/** Parts with a mean time to failure in the element templates of the scenario. */
+function failingParts() {
+  return (store.scenario.elementTemplates ?? []).flatMap((template) =>
+    (template.parts ?? []).filter((part) => part.meanTimeToFailure).map((part) => [template, part])
+  );
+}
+
+function reliabilitySection() {
+  const reliability = state.reliability;
+  const result = reliability.result;
+  const parts = result?.parts ?? [];
+  if (!parts.some((part) => part.part === reliability.part)) reliability.part = parts[0]?.part ?? null;
+  histogram = parts.length ? h("div", { class: "sn-chart", style: { height: "280px" } }) : null;
+  const count = failingParts().length;
+  return h(
+    "div",
+    { class: "mt-4 pt-3 border-top" },
+    h("h6", {}, "Monte Carlo Reliability"),
+    h(
+      "div",
+      { class: "form-text mb-2" },
+      "Simulates the scenario repeatedly with random failures of parts which define a mean time to failure " +
+        "(each unit fails at a constant rate while its element is active, for its duty cycle). A failure " +
+        "demands a spare at the location of the element; a shortfall is a failure without an available spare. " +
+        `The element templates define ${count} failing part${count === 1 ? "" : "s"}.`
+    ),
+    h(
+      "div",
+      { class: "d-flex gap-2 align-items-end flex-wrap mb-2" },
+      h(
+        "div",
+        { style: { width: "8rem" } },
+        h("label", { class: "form-label small mb-0" }, "Runs"),
+        numberInput(reliability.runs, (value) => (reliability.runs = value ?? 100), { min: 1, max: 1000 })
+      ),
+      h(
+        "div",
+        { style: { width: "8rem" } },
+        h("label", { class: "form-label small mb-0" }, "Seed"),
+        numberInput(reliability.seed, (value) => (reliability.seed = value ?? 0), { min: 0 })
+      ),
+      button(reliability.running ? "Running…" : "Run Monte Carlo", runReliability, "primary", {
+        disabled: reliability.running || count === 0,
+      })
+    ),
+    result
+      ? h(
+          "div",
+          { class: "row g-3" },
+          h(
+            "div",
+            { class: "col-xl-6" },
+            h(
+              "div",
+              { class: "mb-2" },
+              h("span", { class: "fs-5 fw-semibold me-2" }, `${fmt(100 * result.shortfallProbability, 1)}%`),
+              h(
+                "span",
+                { class: "text-secondary small" },
+                `of ${result.runs - result.failedRuns} runs exhaust the spares of at least one part` +
+                  (result.failedRuns ? ` (${result.failedRuns} runs failed)` : "")
+              )
+            ),
+            reliabilityTable(parts)
+          ),
+          h(
+            "div",
+            { class: "col-xl-6" },
+            parts.length
+              ? [
+                  h(
+                    "div",
+                    { class: "row g-2 mb-1" },
+                    h(
+                      "div",
+                      { class: "col-md-8" },
+                      h("label", { class: "form-label small mb-0" }, "Part"),
+                      select(
+                        parts.map((part) => [part.part, part.part]),
+                        reliability.part,
+                        (value) => {
+                          reliability.part = value;
+                          draw();
+                        }
+                      )
+                    )
+                  ),
+                  histogram,
+                ]
+              : h("div", { class: "sn-muted-box" }, "No parts operated during the simulation.")
+          )
+        )
+      : null
+  );
+}
+
+function reliabilityTable(parts) {
+  const reliability = state.reliability;
+  const cell = (value, warn = false) =>
+    h("td", { class: `text-end ${warn ? "text-danger fw-semibold" : ""}` }, value);
+  return h(
+    "div",
+    { class: "table-responsive" },
+    h(
+      "table",
+      { class: "table table-sm sn-table small mb-0" },
+      h(
+        "thead",
+        {},
+        h(
+          "tr",
+          {},
+          ["Part", "Expected", "Mean", "95th pct.", "Max", "P(shortfall)", "Mean shortfall"].map((label, i) =>
+            h("th", { class: i > 0 ? "text-end" : "" }, label)
+          )
+        )
+      ),
+      h(
+        "tbody",
+        {},
+        parts.map((part) =>
+          h(
+            "tr",
+            {
+              class: part.part === reliability.part ? "table-active" : "",
+              style: { cursor: "pointer" },
+              title: part.elements.join(", "),
+              onClick: () => {
+                reliability.part = part.part;
+                draw();
+              },
+            },
+            h("td", {}, part.part),
+            cell(fmt(part.expected, 2)),
+            cell(fmt(part.mean, 2)),
+            cell(fmt(part.percentiles["95"], 0)),
+            cell(fmt(part.max, 0)),
+            cell(`${fmt(100 * part.shortfallProbability, 1)}%`, part.shortfallProbability > 0.05),
+            cell(fmt(part.meanShortfall, 2))
+          )
+        )
+      )
+    ),
+    h(
+      "div",
+      { class: "form-text" },
+      "Failures per run. Expected is the mean of the failure distribution; shortfall probabilities above 5% are highlighted."
+    )
+  );
+}
+
+/** Bar chart of the number of runs by number of failures of the selected part. */
+function drawHistogram() {
+  const reliability = state.reliability;
+  const part = reliability.result?.parts.find((item) => item.part === reliability.part);
+  if (!histogram || !part) return;
+  const total = part.histogram.reduce((sum, count) => sum + count, 0) || 1;
+  plot(
+    histogram,
+    [
+      {
+        type: "bar",
+        x: part.histogram.map((_, failures) => failures),
+        y: part.histogram,
+        customdata: part.histogram.map((count) => (100 * count) / total),
+        name: part.part,
+        marker: { color: SERIES[0], cornerradius: 4 },
+        hovertemplate: "%{x} failures: %{y} runs (%{customdata:.1f}%)<extra></extra>",
+      },
+    ],
+    {
+      xaxis: { title: { text: `Failures of ${part.part}` }, dtick: 1 },
+      yaxis: { title: { text: "Runs" }, rangemode: "tozero" },
+      bargap: 0.2,
+      showlegend: false,
+    }
   );
 }

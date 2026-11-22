@@ -49,6 +49,8 @@ LTV mass / traverse energy / storage   1,600 kg        0.6 kWh/km, 60 kWh, notio
 LTV crewed endurance / walk-back      8 h / 10 km     approx. EVA suit limits
 ISRU pilot plant O2 / H2 production    1,000 / 125 kg/yr  NASA (Linne 2020)
 ISRU pilot plant mass / power          1,165 kg / 6.7 kW  NASA (Linne 2020), 225 days/yr
+ISRU electrolyzer / actuator MTTF      20,000 / 25,000 h  notional (1 stack, 4 actuators)
+ISRU spares (stacks / actuators)       1 / 3           notional
 =====================================  ==============  ==========================
 
 Usage: ``python artemis/artemis_add_campaign.py`` writes
@@ -146,6 +148,12 @@ class CampaignParameters:
     #: True, to deliver an ISRU pilot plant with the surface cargo (its
     #: oxygen is loaded into the HLS of the next landing).
     isru_pilot_plant: bool = True
+    #: Mean operating time (hours) to failure of the electrolyzer stack and
+    #: of each of the four excavator drive actuators of the ISRU pilot plant.
+    electrolyzer_mttf: float = 20_000.0
+    actuator_mttf: float = 25_000.0
+    #: Spare electrolyzer stacks and actuators delivered with the plant.
+    isru_spares: Tuple[int, int] = (1, 3)
     #: Start dates of the missions.
     dates: Dict[str, datetime] = field(
         default_factory=lambda: {
@@ -481,6 +489,28 @@ class CampaignBuilder:
             self.lch4,
             self.lh2,
         ]
+        # notional spare parts of the ISRU pilot plant
+        self.electrolyzer_stack = s.DiscreteResource(
+            name="Electrolyzer Stack",
+            description="PEM water electrolyzer stack (ISRU pilot plant)",
+            class_of_supply=4011,
+            environment=UNPRESSURIZED,
+            units="units",
+            unit_mass=30.0,
+            unit_volume=0.05,
+            packing_factor=0.0,
+        )
+        self.drive_actuator = s.DiscreteResource(
+            name="Excavator Drive Actuator",
+            description="Wheel drive actuator (ISRU pilot plant excavator)",
+            class_of_supply=4011,
+            environment=UNPRESSURIZED,
+            units="units",
+            unit_mass=8.0,
+            unit_volume=0.01,
+            packing_factor=0.0,
+        )
+        self.resources += [self.electrolyzer_stack, self.drive_actuator]
         # NASA lunar water pilot plant conceptual design (Linne, Kleinhenz,
         # and Paz, ASCEND 2020): 1,000 kg of oxygen per year from 1,125 kg of
         # water extracted from icy regolith in a permanently shadowed region
@@ -788,6 +818,27 @@ class CampaignBuilder:
                 design_life=10.0,  # FSP requirement: at least 10 years
             )
         )
+        self.t_isru_spares = self._template(
+            s.ResourceContainer(
+                name="ISRU Spares Kit",
+                description="Spare parts of the ISRU pilot plant",
+                mass=10.0,
+                class_of_supply=4011,
+                environment=UNPRESSURIZED,
+                cargo_environment=UNPRESSURIZED,
+                max_cargo_mass=100.0,
+                max_cargo_volume=0.2,
+                contents=[
+                    s.ResourceAmount(
+                        resource=self.electrolyzer_stack.id,
+                        amount=self.p.isru_spares[0],
+                    ),
+                    s.ResourceAmount(
+                        resource=self.drive_actuator.id, amount=self.p.isru_spares[1]
+                    ),
+                ],
+            )
+        )
         self.t_isru = self._template(
             s.ResourceContainer(
                 name="ISRU Pilot Plant",
@@ -818,6 +869,18 @@ class CampaignBuilder:
                 ],
                 current_state_index=0,
                 grid_connected=True,
+                parts=[
+                    s.Part(
+                        resource=self.electrolyzer_stack.id,
+                        mean_time_to_failure=timedelta(hours=self.p.electrolyzer_mttf),
+                        quantity=1,
+                    ),
+                    s.Part(
+                        resource=self.drive_actuator.id,
+                        mean_time_to_failure=timedelta(hours=self.p.actuator_mttf),
+                        quantity=4,
+                    ),
+                ],
             )
         )
         self.t_science = self._template(
@@ -1247,7 +1310,7 @@ class CampaignBuilder:
         cargo = [self.fsp, self.science, self.ltv]
         if self.p.isru_pilot_plant:
             self.isru_plant = self._instance(self.t_isru, prefix)
-            cargo.append(self.isru_plant)
+            cargo += [self.isru_plant, self._instance(self.t_isru_spares, prefix)]
         events = [
             self._create(f"{prefix} | Create Cargo", 0, 1, self.ksc, self.ksc, cargo),
             self._flight(f"{prefix} | Delivery", 0, 2, self.ksc_lsp_cargo, cargo),
@@ -1256,7 +1319,8 @@ class CampaignBuilder:
                 mission_time=timedelta(days=6),
                 priority=1,
                 location=self.lsp.id,
-                elements=[e.id for e in cargo if e is not self.ltv],
+                elements=[self.fsp.id, self.science.id]
+                + ([self.isru_plant.id] if self.isru_plant else []),
                 state_type="Active",
             ),
         ]

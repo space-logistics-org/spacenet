@@ -96,6 +96,9 @@ export const api = {
   /** Runs a trade study of variations of a scenario. */
   runTrade: (scenario, study, signal) => post("/trades/run", { scenario, study }, signal),
 
+  /** Runs a Monte Carlo reliability study of random part failures. */
+  runMonteCarlo: (scenario, study, signal) => post("/reliability/run", { scenario, study }, signal),
+
   /** Sizes the tanker flights which aggregate propellant in a depot. */
   sizeTankers: (params, signal) => post("/propellant/tankers", params, signal),
 

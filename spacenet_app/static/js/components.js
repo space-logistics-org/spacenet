@@ -361,8 +361,17 @@ export function schemaForm(definition, target, names, onChange, { optional = fal
         return h("div", { class: "col-md-6", title: property.description }, control);
       }
       if (schema.enum) {
-        const options = optional ? [["", "(default)"], ...schema.enum] : schema.enum;
-        control = select(options, target[name], (value) => set(value === "" ? null : value));
+        // a nullable enumeration (e.g., an optional model) can be unset
+        const nullable = property.anyOf?.some((option) => option.type === "null");
+        let options = schema.enum;
+        if (optional) options = [["", "(default)"], ...schema.enum];
+        else if (nullable) options = [["", "(none)"], ...schema.enum];
+        control = select(options, target[name] ?? "", (value) => {
+          if (value === "" && nullable && !optional) {
+            delete target[name];
+            onChange?.();
+          } else set(value === "" ? null : value);
+        });
       } else if (schema.type === "number" || schema.type === "integer") {
         control = numberInput(target[name], set, {
           min: schema.minimum,

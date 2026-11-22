@@ -15,7 +15,25 @@ from ..resources import AllResources
 from .manifest import Manifest
 from .mission import Mission
 
-__all__ = ["ScenarioType", "Network", "Scenario", "Manifest", "Configuration"]
+__all__ = [
+    "ScenarioType",
+    "Network",
+    "Scenario",
+    "Manifest",
+    "Configuration",
+    "PartFailureMode",
+]
+
+
+class PartFailureMode(str, Enum):
+    """
+    Enumeration of the models of part failures (which demand spare parts).
+    """
+
+    #: The expected (fractional) number of failures over each interval.
+    EXPECTED = "Expected"
+    #: A random (Poisson-distributed) number of failures over each interval.
+    RANDOM = "Random"
 
 
 class ItemDiscretizationType(str, Enum):
@@ -103,6 +121,19 @@ class Configuration(CamelModel):
         description="True, if crew consumables are demanded where and when each "
         "crew member is away from the surface of Earth (instead of all at once "
         "on arrival at the mission destination).",
+    )
+    part_failures: Optional[PartFailureMode] = Field(
+        None,
+        title="Part Failures",
+        description="Model of the failures of parts with a mean time to failure, "
+        "which demand spare parts while their elements are active (default: "
+        "failures are not modeled).",
+    )
+    random_seed: Optional[int] = Field(
+        None,
+        title="Random Seed",
+        description="Seed of the random number generator for random part failures",
+        ge=0,
     )
 
     generic_packing_factor_gas: float = Field(

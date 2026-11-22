@@ -64,3 +64,49 @@ tanker flights.
 
 .. include:: trade_results.md
    :parser: myst_parser.sphinx_
+
+-----------------------
+Monte Carlo Reliability
+-----------------------
+
+Parts of element templates can define a mean time to failure (MTTF) and a
+duty cycle. With part failures enabled (configuration ``partFailures``), each
+unit of a part fails at a constant rate while it operates (for its duty
+cycle while its element is in an active state, except on the surface of
+Earth), and each failure demands a spare part from the element, its carrier,
+or the elements at its location. Failures are either ``Expected`` (the mean
+number of failures, for deterministic demand estimates) or ``Random`` (a
+Poisson-distributed number with the ``randomSeed``). A failure without an
+available spare is an unsatisfied demand (a shortfall); it does not change
+the operation of the element.
+
+A Monte Carlo study (:mod:`spacenet.reliability`) simulates a scenario
+repeatedly with random failures (run ``i`` uses the seed ``seed + i``) and
+reports, for each part, the expected number of failures, the mean, standard
+deviation, percentiles, and histogram of the simulated failures, and the
+probability and mean size of a shortfall of spares, as well as the
+probability that any part runs short.
+
+.. code-block:: python
+
+    from spacenet.reliability import MonteCarloStudy, run_monte_carlo
+
+    result = run_monte_carlo(scenario, MonteCarloStudy(runs=500, seed=0), workers=4)
+    for part in result.parts:
+        print(part.part, part.mean, part.shortfall_probability)
+
+In the web application, the *Trades* tab runs a Monte Carlo study on the
+server and tabulates the parts with a histogram of the failures of each, and
+the *Options* dialog sets the part failure model of the scenario.
+
+The reference campaign gives the ISRU pilot plant a notional electrolyzer
+stack (MTTF 20,000 h) and four excavator drive actuators (MTTF 25,000 h each)
+with a spares kit of one stack and three actuators. ``artemis/reliability.py``
+simulates the campaign 500 times: over the 509 days that the plant operates,
+the simulated probabilities of exhausting the spares agree with the Poisson
+distribution of failures (a verification of the model), one in four runs
+exhausts the spares of at least one part, and one more spare of each part
+would reduce the risk of each shortfall below 5%.
+
+.. include:: reliability_results.md
+   :parser: myst_parser.sphinx_

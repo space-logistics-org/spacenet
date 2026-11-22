@@ -139,6 +139,31 @@ class PowerRecord:
 
 
 @dataclass
+class FailureRecord:
+    """
+    Failures of a part of an element over an interval of time.
+    """
+
+    # pylint: disable=too-many-instance-attributes
+
+    #: Time (days) at the end of the interval.
+    time: float
+    #: Duration (days) of the interval.
+    duration: float
+    element_id: UUID
+    element_name: str
+    part_name: str
+    location_id: Optional[UUID]
+    location_name: Optional[str]
+    #: Operating time (hours) of the part units during the interval.
+    operating_hours: float
+    #: Expected number of failures during the interval.
+    expected: float
+    #: Number of failures (the expected or a random number).
+    failures: float
+
+
+@dataclass
 class ISRURecord:
     """
     Operation of an in-situ resource utilization (ISRU) process of an element
