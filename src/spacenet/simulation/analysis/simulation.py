@@ -66,6 +66,46 @@ class MeasureTotals(CamelModel):
         description="Cost (millions of US dollars) of costed elements and transports",
     )
 
+    @classmethod
+    def create(
+        cls,
+        simulator: FullSimulator,
+        propellant: Optional["PropellantAnalysis"] = None,
+        power: Optional["PowerAnalysis"] = None,
+        cost: Optional["CostAnalysis"] = None,
+    ) -> "MeasureTotals":
+        """
+        Creates the total measures of effectiveness of an executed simulator.
+
+        Args:
+            simulator (:obj:`FullSimulator`): The executed simulator.
+            propellant (:obj:`PropellantAnalysis`): The propellant analysis
+                (default: created from the simulator).
+            power (:obj:`PowerAnalysis`): The power analysis (default: created).
+            cost (:obj:`CostAnalysis`): The cost analysis (default: created).
+
+        Returns:
+            :obj:`MeasureTotals`: The totals.
+        """
+        propellant = propellant or PropellantAnalysis.create(simulator)
+        power = power or PowerAnalysis.create(simulator)
+        cost = cost or CostAnalysis.create(simulator, simulator.scenario.start_date)
+        return cls(
+            crew_surface_days=simulator.total_crew_surface_days,
+            crew_time=simulator.total_crew_time,
+            exploration_capability=simulator.total_exploration_capability,
+            exploration_mass_delivered=simulator.total_exploration_mass_delivered,
+            launch_mass=simulator.total_launch_mass,
+            up_mass_capacity_utilization=simulator.total_up_mass_capacity_utilization,
+            down_mass_capacity_utilization=simulator.total_down_mass_capacity_utilization,
+            relative_exploration_capability=simulator.total_relative_exploration_capability,
+            propellant_burned_mass=propellant.totals.burned_mass,
+            propellant_boiloff_mass=propellant.totals.boiloff_mass,
+            propellant_transfer_loss_mass=propellant.totals.transfer_loss_mass,
+            energy_deficit=power.total_deficit,
+            campaign_cost=cost.total,
+        )
+
 
 class MeasureRecord(CamelModel):
     """
@@ -595,21 +635,7 @@ class SimulationAnalysis(CamelModel):
             error_count=len(simulator.spatial_errors),
             unsatisfied_demand_count=len(simulator.unsatisfied_demands),
             end_time=simulator.time,
-            totals=MeasureTotals(
-                crew_surface_days=simulator.total_crew_surface_days,
-                crew_time=simulator.total_crew_time,
-                exploration_capability=simulator.total_exploration_capability,
-                exploration_mass_delivered=simulator.total_exploration_mass_delivered,
-                launch_mass=simulator.total_launch_mass,
-                up_mass_capacity_utilization=simulator.total_up_mass_capacity_utilization,
-                down_mass_capacity_utilization=simulator.total_down_mass_capacity_utilization,
-                relative_exploration_capability=simulator.total_relative_exploration_capability,
-                propellant_burned_mass=propellant.totals.burned_mass,
-                propellant_boiloff_mass=propellant.totals.boiloff_mass,
-                propellant_transfer_loss_mass=propellant.totals.transfer_loss_mass,
-                energy_deficit=power.total_deficit,
-                campaign_cost=cost.total,
-            ),
+            totals=MeasureTotals.create(simulator, propellant, power, cost),
             propellant=propellant,
             power=power,
             cost=cost,

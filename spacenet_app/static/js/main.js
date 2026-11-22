@@ -10,9 +10,10 @@ import * as manifest from "./tabs/manifest.js";
 import * as missions from "./tabs/missions.js";
 import * as network from "./tabs/network.js";
 import * as simulation from "./tabs/simulation.js";
+import * as trades from "./tabs/trades.js";
 import { confirmDialog, download, fromInputDate, toast, toInputDate } from "./util.js";
 
-const tabs = { network, missions, demands, manifest, simulation };
+const tabs = { network, missions, demands, manifest, simulation, trades };
 let active = "network";
 
 const $ = (id) => document.getElementById(id);

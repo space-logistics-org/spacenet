@@ -354,6 +354,42 @@ class TestAnalysis(ApiTestCase):
             self.assertIn("propellantBurnedMass", totals)
 
 
+class TestTrades(ApiTestCase):
+    def test_metrics(self):
+        metrics = self.client.get("/api/trades/metrics").json()
+        self.assertIn("campaignCost", metrics)
+        self.assertIn("errorCount", metrics)
+
+    def test_run_trade(self):
+        scenario = load_json(ADD_CAMPAIGN)
+        result = self.post(
+            "/trades/run",
+            scenario=scenario,
+            study={
+                "variables": [
+                    {
+                        "name": "descent",
+                        "path": "network/edges/name=LLO-LSP/burns/1/deltaV",
+                        "values": [2030, 2300],
+                    }
+                ],
+                "metrics": ["errorCount", "propellantBurnedMass"],
+            },
+        )
+        errors = [case["metrics"]["errorCount"] for case in result["cases"]]
+        # the landers cannot achieve a descent of 2,300 m/s
+        self.assertEqual(errors[0], 0)
+        self.assertGreater(errors[1], 0)
+
+    def test_invalid_path(self):
+        self.post(
+            "/trades/run",
+            status=422,
+            scenario=load_json(ADD_CAMPAIGN),
+            study={"variables": [{"name": "x", "path": "nothing/here", "values": [1]}]},
+        )
+
+
 class TestPropellant(ApiTestCase):
     def test_size_tankers(self):
         sizing = self.post(

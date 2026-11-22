@@ -9,6 +9,7 @@
    propellant_logistics.rst
    surface_operations.rst
    campaign_analysis.rst
+   trade_studies.rst
    validation.rst
    api_reference/index.rst
    contributors.rst

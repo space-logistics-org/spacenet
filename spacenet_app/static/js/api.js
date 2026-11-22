@@ -93,6 +93,9 @@ export const api = {
 
   simulate: (scenario, signal) => post("/simulate", { scenario }, signal),
 
+  /** Runs a trade study of variations of a scenario. */
+  runTrade: (scenario, study, signal) => post("/trades/run", { scenario, study }, signal),
+
   /** Sizes the tanker flights which aggregate propellant in a depot. */
   sizeTankers: (params, signal) => post("/propellant/tankers", params, signal),
 
